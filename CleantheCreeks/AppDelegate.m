@@ -7,16 +7,56 @@
 //
 
 #import "AppDelegate.h"
-
+#import <FBSDKCoreKit/FBSDKCoreKit.h>
+#import <FBSDKLoginKit/FBSDKLoginKit.h>
+#import <AWSCore/AWSCore.h>
+#import <AWSCognito/AWSCognito.h>
+#define kGeoCodingString @"http://maps.google.com/maps/geo?q=%f,%f&output=csv"
 @interface AppDelegate ()
 
 @end
 
 @implementation AppDelegate
-
+@synthesize window = _window;
+@synthesize locationManager=_locationManager;
 
 - (BOOL)application:(UIApplication *)application didFinishLaunchingWithOptions:(NSDictionary *)launchOptions {
     // Override point for customization after application launch.
+    UIColor *backgroundColor = [UIColor whiteColor];
+    
+    // set the bar background color
+    [[UITabBar appearance] setBackgroundImage:[AppDelegate imageFromColor:backgroundColor forSize:CGSizeMake(320, 49) withCornerRadius:0]];
+    
+    // set the text color for selected state
+    [[UITabBarItem appearance] setTitleTextAttributes:[NSDictionary dictionaryWithObjectsAndKeys:[UIColor whiteColor], UITextAttributeTextColor, nil] forState:UIControlStateSelected];
+    // set the text color for unselected state
+    [[UITabBarItem appearance] setTitleTextAttributes:[NSDictionary dictionaryWithObjectsAndKeys:[UIColor whiteColor], UITextAttributeTextColor, nil] forState:UIControlStateNormal];
+    
+    // set the selected icon color
+    [[UITabBar appearance] setTintColor:[UIColor whiteColor]];
+    [UITabBar appearance].tintColor=[UIColor whiteColor];
+    // remove the shadow
+    [[UITabBar appearance] setShadowImage:nil];
+    
+    // Set the dark color to selected tab (the dimmed background)
+    [[UITabBar appearance] setSelectionIndicatorImage:[AppDelegate imageFromColor:[UIColor colorWithRed:1/255.0 green:122/255.0 blue:255/255.0 alpha:1] forSize:CGSizeMake(self.window.frame.size.width/4, 49) withCornerRadius:0]];
+    /*AWSCognitoCredentialsProvider *credentialsProvider = [[AWSCognitoCredentialsProvider alloc] initWithRegionType:AWSRegionUSEast1 identityPoolId:@"ap-northeast-1:0b3b76dd-5ae3-46c5-85ec-9f42f39081d1"];*/
+    AWSCognitoCredentialsProvider *credentialsProvider = [[AWSCognitoCredentialsProvider alloc]
+                                                          initWithRegionType:AWSRegionAPNortheast1
+                                                          identityPoolId:@"ap-northeast-1:709bfbb9-9e4d-4ebc-9e98-253f29e9a4d3"];
+    
+    AWSServiceConfiguration *configuration = [[AWSServiceConfiguration alloc] initWithRegion:AWSRegionAPNortheast1 credentialsProvider:credentialsProvider];
+    
+    [AWSServiceManager defaultServiceManager].defaultServiceConfiguration = configuration;
+    AWSCognito *syncClient = [AWSCognito defaultCognito];
+    
+    // Create a record in a dataset and synchronize with the server
+    AWSCognitoDataset *dataset = [syncClient openOrCreateDataset:@"myDataset"];
+    [dataset setString:@"myValue" forKey:@"myKey"];
+    [[dataset synchronize] continueWithBlock:^id(AWSTask *task) {
+        // Your handler code here
+        return nil;
+    }];
     return YES;
 }
 
@@ -40,6 +80,46 @@
 
 - (void)applicationWillTerminate:(UIApplication *)application {
     // Called when the application is about to terminate. Save data if appropriate. See also applicationDidEnterBackground:.
+}
+- (BOOL)application:(UIApplication *)application
+            openURL:(NSURL *)url
+  sourceApplication:(NSString *)sourceApplication
+         annotation:(id)annotation {
+    return [[FBSDKApplicationDelegate sharedInstance] application:application
+                                                          openURL:url
+                                                sourceApplication:sourceApplication
+                                                       annotation:annotation];
+}
++ (UIImage *)imageFromColor:(UIColor *)color forSize:(CGSize)size withCornerRadius:(CGFloat)radius
+{
+    CGRect rect = CGRectMake(0, 0, size.width, size.height);
+    UIGraphicsBeginImageContext(rect.size);
+    CGContextRef context = UIGraphicsGetCurrentContext();
+    CGContextSetFillColorWithColor(context, [color CGColor]);
+    CGContextFillRect(context, rect);
+    UIImage *image = UIGraphicsGetImageFromCurrentImageContext();
+    UIGraphicsEndImageContext();
+    // Begin a new image that will be the new image with the rounded corners
+    // (here with the size of an UIImageView)
+    UIGraphicsBeginImageContext(size);
+    // Add a clip before drawing anything, in the shape of an rounded rect
+    [[UIBezierPath bezierPathWithRoundedRect:rect cornerRadius:radius] addClip];
+    // Draw your image
+    [image drawInRect:rect];
+    // Get the image, here setting the UIImageView image
+    image = UIGraphicsGetImageFromCurrentImageContext();
+    // Lets forget about that we were drawing
+    UIGraphicsEndImageContext();
+    return image;
+}
+
+-(NSString *)getAddressFromLatLon:(double)pdblLatitude:(double)pdblLongitude
+{
+    NSString *urlString = [NSString stringWithFormat:kGeoCodingString,pdblLatitude, pdblLongitude];
+    NSError* error;
+    NSString *locationString = [NSString stringWithContentsOfURL:[NSURL URLWithString:urlString] encoding:NSASCIIStringEncoding error:&error];
+    locationString = [locationString stringByReplacingOccurrencesOfString:@"\"" withString:@""];
+    return locationString;
 }
 
 @end
