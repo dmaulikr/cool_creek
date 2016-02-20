@@ -7,6 +7,7 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		095F77783019A58BBD9134E1 /* libPods.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 4656214352E34CC700C152CD /* libPods.a */; };
 		BD06039F1C595D4700A2C3EC /* main.m in Sources */ = {isa = PBXBuildFile; fileRef = BD06039E1C595D4700A2C3EC /* main.m */; };
 		BD0603A21C595D4700A2C3EC /* AppDelegate.m in Sources */ = {isa = PBXBuildFile; fileRef = BD0603A11C595D4700A2C3EC /* AppDelegate.m */; };
 		BD0603AA1C595D4700A2C3EC /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = BD0603A91C595D4700A2C3EC /* Assets.xcassets */; };
@@ -18,30 +19,9 @@
 		E2149DF51C755FE00005D50A /* FacebookPostVC.m in Sources */ = {isa = PBXBuildFile; fileRef = E2149DF41C755FE00005D50A /* FacebookPostVC.m */; };
 		E22A79A61C77A77100CE66E5 /* LocationAnnotation.m in Sources */ = {isa = PBXBuildFile; fileRef = E22A79A51C77A77100CE66E5 /* LocationAnnotation.m */; };
 		E252E5F91C611ECB0013F1B7 /* Location.m in Sources */ = {isa = PBXBuildFile; fileRef = E252E5F81C611ECB0013F1B7 /* Location.m */; };
-		E252E5FB1C611FDF0013F1B7 /* AWSDynamoDB.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = E252E5FA1C611FDF0013F1B7 /* AWSDynamoDB.framework */; };
-		E252E60E1C611FFF0013F1B7 /* AWSAPIGateway.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = E252E5FC1C611FFF0013F1B7 /* AWSAPIGateway.framework */; };
-		E252E60F1C611FFF0013F1B7 /* AWSAutoScaling.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = E252E5FD1C611FFF0013F1B7 /* AWSAutoScaling.framework */; };
-		E252E6101C611FFF0013F1B7 /* AWSCloudWatch.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = E252E5FE1C611FFF0013F1B7 /* AWSCloudWatch.framework */; };
-		E252E6111C611FFF0013F1B7 /* AWSCore.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = E252E5FF1C611FFF0013F1B7 /* AWSCore.framework */; };
-		E252E6121C611FFF0013F1B7 /* AWSDynamoDB.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = E252E6001C611FFF0013F1B7 /* AWSDynamoDB.framework */; };
-		E252E6131C611FFF0013F1B7 /* AWSEC2.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = E252E6011C611FFF0013F1B7 /* AWSEC2.framework */; };
-		E252E6141C611FFF0013F1B7 /* AWSElasticLoadBalancing.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = E252E6021C611FFF0013F1B7 /* AWSElasticLoadBalancing.framework */; };
-		E252E6151C611FFF0013F1B7 /* AWSIoT.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = E252E6031C611FFF0013F1B7 /* AWSIoT.framework */; };
-		E252E6161C611FFF0013F1B7 /* AWSKinesis.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = E252E6041C611FFF0013F1B7 /* AWSKinesis.framework */; };
-		E252E6171C611FFF0013F1B7 /* AWSLambda.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = E252E6051C611FFF0013F1B7 /* AWSLambda.framework */; };
-		E252E6181C611FFF0013F1B7 /* AWSMachineLearning.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = E252E6061C611FFF0013F1B7 /* AWSMachineLearning.framework */; };
-		E252E6191C611FFF0013F1B7 /* AWSMobileAnalytics.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = E252E6071C611FFF0013F1B7 /* AWSMobileAnalytics.framework */; };
-		E252E61A1C611FFF0013F1B7 /* AWSS3.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = E252E6081C611FFF0013F1B7 /* AWSS3.framework */; };
-		E252E61B1C611FFF0013F1B7 /* AWSSES.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = E252E6091C611FFF0013F1B7 /* AWSSES.framework */; };
-		E252E61C1C611FFF0013F1B7 /* AWSSimpleDB.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = E252E60A1C611FFF0013F1B7 /* AWSSimpleDB.framework */; };
-		E252E61D1C611FFF0013F1B7 /* AWSSNS.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = E252E60B1C611FFF0013F1B7 /* AWSSNS.framework */; };
-		E252E61E1C611FFF0013F1B7 /* AWSSQS.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = E252E60C1C611FFF0013F1B7 /* AWSSQS.framework */; };
-		E252E61F1C611FFF0013F1B7 /* AWSCognito.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = E252E60D1C611FFF0013F1B7 /* AWSCognito.framework */; };
 		E252E6211C6120CB0013F1B7 /* libsqlite3.tbd in Frameworks */ = {isa = PBXBuildFile; fileRef = E252E6201C6120CB0013F1B7 /* libsqlite3.tbd */; };
 		E252E6231C6120D70013F1B7 /* libz.tbd in Frameworks */ = {isa = PBXBuildFile; fileRef = E252E6221C6120D70013F1B7 /* libz.tbd */; };
 		E252E6251C6120E10013F1B7 /* SystemConfiguration.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = E252E6241C6120E10013F1B7 /* SystemConfiguration.framework */; };
-		E2656BE71C5D2B6A004786EA /* AWSCore.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = E2656BE61C5D2B6A004786EA /* AWSCore.framework */; };
-		E2656BE91C5D2B8C004786EA /* AWSCognito.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = E2656BE81C5D2B8C004786EA /* AWSCognito.framework */; };
 		E2656BEC1C5DA885004786EA /* PhotoDetailsVC.m in Sources */ = {isa = PBXBuildFile; fileRef = E2656BEB1C5DA885004786EA /* PhotoDetailsVC.m */; };
 		E27FC5041C69D20300489DE3 /* LocationHeaderViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = E27FC5031C69D20300489DE3 /* LocationHeaderViewController.m */; };
 		E27FC5091C69E0BA00489DE3 /* MapView.m in Sources */ = {isa = PBXBuildFile; fileRef = E27FC5081C69E0BA00489DE3 /* MapView.m */; };
@@ -50,7 +30,6 @@
 		E2960D7A1C6E36D8009425CA /* DetailCell1.m in Sources */ = {isa = PBXBuildFile; fileRef = E2960D791C6E36D8009425CA /* DetailCell1.m */; };
 		E2D1034B1C64D06900FD67A0 /* photoViewCell.m in Sources */ = {isa = PBXBuildFile; fileRef = E2D1034A1C64D06900FD67A0 /* photoViewCell.m */; };
 		E2D1034F1C6528EB00FD67A0 /* locationCell.m in Sources */ = {isa = PBXBuildFile; fileRef = E2D1034E1C6528EB00FD67A0 /* locationCell.m */; };
-		E2D1035A1C65499E00FD67A0 /* libMBProgressHUD.a in Frameworks */ = {isa = PBXBuildFile; fileRef = E2D103571C65493500FD67A0 /* libMBProgressHUD.a */; };
 		E2D103601C6933ED00FD67A0 /* CoreLocation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = E2D1035F1C6933ED00FD67A0 /* CoreLocation.framework */; };
 		E2D5F7131C6CA677005A497F /* MapKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = E2D5F7121C6CA677005A497F /* MapKit.framework */; };
 		E2F36ECD1C5AFFE700923DF0 /* FirstPageView.m in Sources */ = {isa = PBXBuildFile; fileRef = E2F36EC61C5AFFE700923DF0 /* FirstPageView.m */; };
@@ -83,30 +62,12 @@
 			remoteGlobalIDString = BD0603991C595D4700A2C3EC;
 			remoteInfo = CleantheCreeks;
 		};
-		E2D103561C65493500FD67A0 /* PBXContainerItemProxy */ = {
-			isa = PBXContainerItemProxy;
-			containerPortal = E2D103511C65493300FD67A0 /* MBProgressHUD.xcodeproj */;
-			proxyType = 2;
-			remoteGlobalIDString = D286A7491518C70F00E13FB8;
-			remoteInfo = "MBProgressHUD Static Library";
-		};
-		E2D103581C65493500FD67A0 /* PBXContainerItemProxy */ = {
-			isa = PBXContainerItemProxy;
-			containerPortal = E2D103511C65493300FD67A0 /* MBProgressHUD.xcodeproj */;
-			proxyType = 2;
-			remoteGlobalIDString = 1D104D7A1ACA36CC00973364;
-			remoteInfo = "MBProgressHUD Framework";
-		};
-		E2D1035B1C6549A800FD67A0 /* PBXContainerItemProxy */ = {
-			isa = PBXContainerItemProxy;
-			containerPortal = E2D103511C65493300FD67A0 /* MBProgressHUD.xcodeproj */;
-			proxyType = 1;
-			remoteGlobalIDString = D286A7481518C70F00E13FB8;
-			remoteInfo = "MBProgressHUD Static Library";
-		};
 /* End PBXContainerItemProxy section */
 
 /* Begin PBXFileReference section */
+		4656214352E34CC700C152CD /* libPods.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; includeInIndex = 0; path = libPods.a; sourceTree = BUILT_PRODUCTS_DIR; };
+		4C6CBB01DE1D421604AC1E1D /* Pods.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = Pods.debug.xcconfig; path = "Pods/Target Support Files/Pods/Pods.debug.xcconfig"; sourceTree = "<group>"; };
+		893EA3F1F71074BC15B9E306 /* Pods.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = Pods.release.xcconfig; path = "Pods/Target Support Files/Pods/Pods.release.xcconfig"; sourceTree = "<group>"; };
 		BD06039A1C595D4700A2C3EC /* Clean the Creek.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = "Clean the Creek.app"; sourceTree = BUILT_PRODUCTS_DIR; };
 		BD06039E1C595D4700A2C3EC /* main.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = main.m; sourceTree = "<group>"; };
 		BD0603A01C595D4700A2C3EC /* AppDelegate.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = AppDelegate.h; sourceTree = "<group>"; };
@@ -126,30 +87,9 @@
 		E22A79A51C77A77100CE66E5 /* LocationAnnotation.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = LocationAnnotation.m; sourceTree = "<group>"; };
 		E252E5F41C611CFC0013F1B7 /* Location.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = Location.h; sourceTree = "<group>"; };
 		E252E5F81C611ECB0013F1B7 /* Location.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = Location.m; sourceTree = "<group>"; };
-		E252E5FA1C611FDF0013F1B7 /* AWSDynamoDB.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = AWSDynamoDB.framework; path = "../aws-ios-sdk-2.3.4/frameworks/AWSDynamoDB.framework"; sourceTree = "<group>"; };
-		E252E5FC1C611FFF0013F1B7 /* AWSAPIGateway.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = AWSAPIGateway.framework; path = "../aws-ios-sdk-2.3.4/frameworks/AWSAPIGateway.framework"; sourceTree = "<group>"; };
-		E252E5FD1C611FFF0013F1B7 /* AWSAutoScaling.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = AWSAutoScaling.framework; path = "../aws-ios-sdk-2.3.4/frameworks/AWSAutoScaling.framework"; sourceTree = "<group>"; };
-		E252E5FE1C611FFF0013F1B7 /* AWSCloudWatch.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = AWSCloudWatch.framework; path = "../aws-ios-sdk-2.3.4/frameworks/AWSCloudWatch.framework"; sourceTree = "<group>"; };
-		E252E5FF1C611FFF0013F1B7 /* AWSCore.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = AWSCore.framework; path = "../aws-ios-sdk-2.3.4/frameworks/AWSCore.framework"; sourceTree = "<group>"; };
-		E252E6001C611FFF0013F1B7 /* AWSDynamoDB.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = AWSDynamoDB.framework; path = "../aws-ios-sdk-2.3.4/frameworks/AWSDynamoDB.framework"; sourceTree = "<group>"; };
-		E252E6011C611FFF0013F1B7 /* AWSEC2.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = AWSEC2.framework; path = "../aws-ios-sdk-2.3.4/frameworks/AWSEC2.framework"; sourceTree = "<group>"; };
-		E252E6021C611FFF0013F1B7 /* AWSElasticLoadBalancing.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = AWSElasticLoadBalancing.framework; path = "../aws-ios-sdk-2.3.4/frameworks/AWSElasticLoadBalancing.framework"; sourceTree = "<group>"; };
-		E252E6031C611FFF0013F1B7 /* AWSIoT.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = AWSIoT.framework; path = "../aws-ios-sdk-2.3.4/frameworks/AWSIoT.framework"; sourceTree = "<group>"; };
-		E252E6041C611FFF0013F1B7 /* AWSKinesis.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = AWSKinesis.framework; path = "../aws-ios-sdk-2.3.4/frameworks/AWSKinesis.framework"; sourceTree = "<group>"; };
-		E252E6051C611FFF0013F1B7 /* AWSLambda.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = AWSLambda.framework; path = "../aws-ios-sdk-2.3.4/frameworks/AWSLambda.framework"; sourceTree = "<group>"; };
-		E252E6061C611FFF0013F1B7 /* AWSMachineLearning.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = AWSMachineLearning.framework; path = "../aws-ios-sdk-2.3.4/frameworks/AWSMachineLearning.framework"; sourceTree = "<group>"; };
-		E252E6071C611FFF0013F1B7 /* AWSMobileAnalytics.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = AWSMobileAnalytics.framework; path = "../aws-ios-sdk-2.3.4/frameworks/AWSMobileAnalytics.framework"; sourceTree = "<group>"; };
-		E252E6081C611FFF0013F1B7 /* AWSS3.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = AWSS3.framework; path = "../aws-ios-sdk-2.3.4/frameworks/AWSS3.framework"; sourceTree = "<group>"; };
-		E252E6091C611FFF0013F1B7 /* AWSSES.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = AWSSES.framework; path = "../aws-ios-sdk-2.3.4/frameworks/AWSSES.framework"; sourceTree = "<group>"; };
-		E252E60A1C611FFF0013F1B7 /* AWSSimpleDB.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = AWSSimpleDB.framework; path = "../aws-ios-sdk-2.3.4/frameworks/AWSSimpleDB.framework"; sourceTree = "<group>"; };
-		E252E60B1C611FFF0013F1B7 /* AWSSNS.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = AWSSNS.framework; path = "../aws-ios-sdk-2.3.4/frameworks/AWSSNS.framework"; sourceTree = "<group>"; };
-		E252E60C1C611FFF0013F1B7 /* AWSSQS.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = AWSSQS.framework; path = "../aws-ios-sdk-2.3.4/frameworks/AWSSQS.framework"; sourceTree = "<group>"; };
-		E252E60D1C611FFF0013F1B7 /* AWSCognito.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = AWSCognito.framework; path = "../aws-ios-sdk-2.3.4/frameworks/extras/AWSCognito.framework"; sourceTree = "<group>"; };
 		E252E6201C6120CB0013F1B7 /* libsqlite3.tbd */ = {isa = PBXFileReference; lastKnownFileType = "sourcecode.text-based-dylib-definition"; name = libsqlite3.tbd; path = usr/lib/libsqlite3.tbd; sourceTree = SDKROOT; };
 		E252E6221C6120D70013F1B7 /* libz.tbd */ = {isa = PBXFileReference; lastKnownFileType = "sourcecode.text-based-dylib-definition"; name = libz.tbd; path = usr/lib/libz.tbd; sourceTree = SDKROOT; };
 		E252E6241C6120E10013F1B7 /* SystemConfiguration.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = SystemConfiguration.framework; path = System/Library/Frameworks/SystemConfiguration.framework; sourceTree = SDKROOT; };
-		E2656BE61C5D2B6A004786EA /* AWSCore.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; path = AWSCore.framework; sourceTree = "<group>"; };
-		E2656BE81C5D2B8C004786EA /* AWSCognito.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; path = AWSCognito.framework; sourceTree = "<group>"; };
 		E2656BEA1C5DA885004786EA /* PhotoDetailsVC.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = PhotoDetailsVC.h; sourceTree = "<group>"; };
 		E2656BEB1C5DA885004786EA /* PhotoDetailsVC.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = PhotoDetailsVC.m; sourceTree = "<group>"; };
 		E27FC5021C69D20300489DE3 /* LocationHeaderViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = LocationHeaderViewController.h; sourceTree = "<group>"; };
@@ -165,7 +105,6 @@
 		E2D1034A1C64D06900FD67A0 /* photoViewCell.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = photoViewCell.m; sourceTree = "<group>"; };
 		E2D1034D1C6528EB00FD67A0 /* locationCell.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = locationCell.h; sourceTree = "<group>"; };
 		E2D1034E1C6528EB00FD67A0 /* locationCell.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = locationCell.m; sourceTree = "<group>"; };
-		E2D103511C65493300FD67A0 /* MBProgressHUD.xcodeproj */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.pb-project"; name = MBProgressHUD.xcodeproj; path = "../MBProgressHUD-master/MBProgressHUD.xcodeproj"; sourceTree = "<group>"; };
 		E2D1035F1C6933ED00FD67A0 /* CoreLocation.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = CoreLocation.framework; path = System/Library/Frameworks/CoreLocation.framework; sourceTree = SDKROOT; };
 		E2D5F7121C6CA677005A497F /* MapKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = MapKit.framework; path = System/Library/Frameworks/MapKit.framework; sourceTree = SDKROOT; };
 		E2F36EC51C5AFFE700923DF0 /* FirstPageView.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = FirstPageView.h; sourceTree = "<group>"; };
@@ -210,36 +149,15 @@
 			files = (
 				E2D5F7131C6CA677005A497F /* MapKit.framework in Frameworks */,
 				E2D103601C6933ED00FD67A0 /* CoreLocation.framework in Frameworks */,
-				E2D1035A1C65499E00FD67A0 /* libMBProgressHUD.a in Frameworks */,
 				E252E6251C6120E10013F1B7 /* SystemConfiguration.framework in Frameworks */,
 				E252E6231C6120D70013F1B7 /* libz.tbd in Frameworks */,
 				E252E6211C6120CB0013F1B7 /* libsqlite3.tbd in Frameworks */,
 				E2F36EDF1C5B25AD00923DF0 /* FBSDKCoreKit.framework in Frameworks */,
-				E252E6141C611FFF0013F1B7 /* AWSElasticLoadBalancing.framework in Frameworks */,
 				BD0603E31C595F9500A2C3EC /* CoreGraphics.framework in Frameworks */,
-				E252E6171C611FFF0013F1B7 /* AWSLambda.framework in Frameworks */,
-				E252E6151C611FFF0013F1B7 /* AWSIoT.framework in Frameworks */,
-				E252E5FB1C611FDF0013F1B7 /* AWSDynamoDB.framework in Frameworks */,
-				E252E60E1C611FFF0013F1B7 /* AWSAPIGateway.framework in Frameworks */,
 				BD0603E11C595F8500A2C3EC /* Foundation.framework in Frameworks */,
-				E252E6121C611FFF0013F1B7 /* AWSDynamoDB.framework in Frameworks */,
-				E252E6111C611FFF0013F1B7 /* AWSCore.framework in Frameworks */,
-				E252E6161C611FFF0013F1B7 /* AWSKinesis.framework in Frameworks */,
 				E2F36EDD1C5B253000923DF0 /* FBSDKLoginKit.framework in Frameworks */,
-				E252E6101C611FFF0013F1B7 /* AWSCloudWatch.framework in Frameworks */,
-				E252E6131C611FFF0013F1B7 /* AWSEC2.framework in Frameworks */,
-				E252E61B1C611FFF0013F1B7 /* AWSSES.framework in Frameworks */,
 				BD0603DF1C595F7000A2C3EC /* UIKit.framework in Frameworks */,
-				E2656BE71C5D2B6A004786EA /* AWSCore.framework in Frameworks */,
-				E252E6181C611FFF0013F1B7 /* AWSMachineLearning.framework in Frameworks */,
-				E252E61C1C611FFF0013F1B7 /* AWSSimpleDB.framework in Frameworks */,
-				E252E61D1C611FFF0013F1B7 /* AWSSNS.framework in Frameworks */,
-				E252E61E1C611FFF0013F1B7 /* AWSSQS.framework in Frameworks */,
-				E252E61A1C611FFF0013F1B7 /* AWSS3.framework in Frameworks */,
-				E2656BE91C5D2B8C004786EA /* AWSCognito.framework in Frameworks */,
-				E252E60F1C611FFF0013F1B7 /* AWSAutoScaling.framework in Frameworks */,
-				E252E61F1C611FFF0013F1B7 /* AWSCognito.framework in Frameworks */,
-				E252E6191C611FFF0013F1B7 /* AWSMobileAnalytics.framework in Frameworks */,
+				095F77783019A58BBD9134E1 /* libPods.a in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -253,15 +171,24 @@
 /* End PBXFrameworksBuildPhase section */
 
 /* Begin PBXGroup section */
+		29EB99E7AFF272E8C286239F /* Pods */ = {
+			isa = PBXGroup;
+			children = (
+				4C6CBB01DE1D421604AC1E1D /* Pods.debug.xcconfig */,
+				893EA3F1F71074BC15B9E306 /* Pods.release.xcconfig */,
+			);
+			name = Pods;
+			sourceTree = "<group>";
+		};
 		BD0603911C595D4700A2C3EC = {
 			isa = PBXGroup;
 			children = (
-				E2D103511C65493300FD67A0 /* MBProgressHUD.xcodeproj */,
 				BD0603DD1C595F5000A2C3EC /* Frameworks */,
 				BD06039C1C595D4700A2C3EC /* CleantheCreek */,
 				E2FD055E1C59C96B004B2C34 /* Resource */,
 				BD0603B61C595D4700A2C3EC /* CleantheCreeksTests */,
 				BD06039B1C595D4700A2C3EC /* Products */,
+				29EB99E7AFF272E8C286239F /* Pods */,
 			);
 			sourceTree = "<group>";
 		};
@@ -321,32 +248,12 @@
 				E252E6241C6120E10013F1B7 /* SystemConfiguration.framework */,
 				E252E6221C6120D70013F1B7 /* libz.tbd */,
 				E252E6201C6120CB0013F1B7 /* libsqlite3.tbd */,
-				E252E5FC1C611FFF0013F1B7 /* AWSAPIGateway.framework */,
-				E252E5FD1C611FFF0013F1B7 /* AWSAutoScaling.framework */,
-				E252E5FE1C611FFF0013F1B7 /* AWSCloudWatch.framework */,
-				E252E5FF1C611FFF0013F1B7 /* AWSCore.framework */,
-				E252E6001C611FFF0013F1B7 /* AWSDynamoDB.framework */,
-				E252E6011C611FFF0013F1B7 /* AWSEC2.framework */,
-				E252E6021C611FFF0013F1B7 /* AWSElasticLoadBalancing.framework */,
-				E252E6031C611FFF0013F1B7 /* AWSIoT.framework */,
-				E252E6041C611FFF0013F1B7 /* AWSKinesis.framework */,
-				E252E6051C611FFF0013F1B7 /* AWSLambda.framework */,
-				E252E6061C611FFF0013F1B7 /* AWSMachineLearning.framework */,
-				E252E6071C611FFF0013F1B7 /* AWSMobileAnalytics.framework */,
-				E252E6081C611FFF0013F1B7 /* AWSS3.framework */,
-				E252E6091C611FFF0013F1B7 /* AWSSES.framework */,
-				E252E60A1C611FFF0013F1B7 /* AWSSimpleDB.framework */,
-				E252E60B1C611FFF0013F1B7 /* AWSSNS.framework */,
-				E252E60C1C611FFF0013F1B7 /* AWSSQS.framework */,
-				E252E60D1C611FFF0013F1B7 /* AWSCognito.framework */,
-				E252E5FA1C611FDF0013F1B7 /* AWSDynamoDB.framework */,
-				E2656BE81C5D2B8C004786EA /* AWSCognito.framework */,
-				E2656BE61C5D2B6A004786EA /* AWSCore.framework */,
 				E2F36EDE1C5B25AD00923DF0 /* FBSDKCoreKit.framework */,
 				E2F36EDC1C5B253000923DF0 /* FBSDKLoginKit.framework */,
 				BD0603E21C595F9500A2C3EC /* CoreGraphics.framework */,
 				BD0603E01C595F8500A2C3EC /* Foundation.framework */,
 				BD0603DE1C595F7000A2C3EC /* UIKit.framework */,
+				4656214352E34CC700C152CD /* libPods.a */,
 			);
 			name = Frameworks;
 			sourceTree = "<group>";
@@ -425,15 +332,6 @@
 				E2D1034E1C6528EB00FD67A0 /* locationCell.m */,
 			);
 			name = LocationCell;
-			sourceTree = "<group>";
-		};
-		E2D103521C65493300FD67A0 /* Products */ = {
-			isa = PBXGroup;
-			children = (
-				E2D103571C65493500FD67A0 /* libMBProgressHUD.a */,
-				E2D103591C65493500FD67A0 /* MBProgressHUD.framework */,
-			);
-			name = Products;
 			sourceTree = "<group>";
 		};
 		E2F36EC41C5AFFE700923DF0 /* IntroControll */ = {
@@ -603,14 +501,16 @@
 			isa = PBXNativeTarget;
 			buildConfigurationList = BD0603BC1C595D4700A2C3EC /* Build configuration list for PBXNativeTarget "Clean the Creek" */;
 			buildPhases = (
+				F014797FAA42CD4BD11E2E1B /* Check Pods Manifest.lock */,
 				BD0603961C595D4700A2C3EC /* Sources */,
 				BD0603981C595D4700A2C3EC /* Resources */,
 				BD0603971C595D4700A2C3EC /* Frameworks */,
+				993B031DFA96827DF8D70BC4 /* Embed Pods Frameworks */,
+				A7FB0902CD177F13B9727355 /* Copy Pods Resources */,
 			);
 			buildRules = (
 			);
 			dependencies = (
-				E2D1035C1C6549A800FD67A0 /* PBXTargetDependency */,
 			);
 			name = "Clean the Creek";
 			productName = CleantheCreeks;
@@ -664,12 +564,6 @@
 			mainGroup = BD0603911C595D4700A2C3EC;
 			productRefGroup = BD06039B1C595D4700A2C3EC /* Products */;
 			projectDirPath = "";
-			projectReferences = (
-				{
-					ProductGroup = E2D103521C65493300FD67A0 /* Products */;
-					ProjectRef = E2D103511C65493300FD67A0 /* MBProgressHUD.xcodeproj */;
-				},
-			);
 			projectRoot = "";
 			targets = (
 				BD0603991C595D4700A2C3EC /* Clean the Creek */,
@@ -677,23 +571,6 @@
 			);
 		};
 /* End PBXProject section */
-
-/* Begin PBXReferenceProxy section */
-		E2D103571C65493500FD67A0 /* libMBProgressHUD.a */ = {
-			isa = PBXReferenceProxy;
-			fileType = archive.ar;
-			path = libMBProgressHUD.a;
-			remoteRef = E2D103561C65493500FD67A0 /* PBXContainerItemProxy */;
-			sourceTree = BUILT_PRODUCTS_DIR;
-		};
-		E2D103591C65493500FD67A0 /* MBProgressHUD.framework */ = {
-			isa = PBXReferenceProxy;
-			fileType = wrapper.framework;
-			path = MBProgressHUD.framework;
-			remoteRef = E2D103581C65493500FD67A0 /* PBXContainerItemProxy */;
-			sourceTree = BUILT_PRODUCTS_DIR;
-		};
-/* End PBXReferenceProxy section */
 
 /* Begin PBXResourcesBuildPhase section */
 		BD0603981C595D4700A2C3EC /* Resources */ = {
@@ -719,6 +596,54 @@
 			runOnlyForDeploymentPostprocessing = 0;
 		};
 /* End PBXResourcesBuildPhase section */
+
+/* Begin PBXShellScriptBuildPhase section */
+		993B031DFA96827DF8D70BC4 /* Embed Pods Frameworks */ = {
+			isa = PBXShellScriptBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			inputPaths = (
+			);
+			name = "Embed Pods Frameworks";
+			outputPaths = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+			shellPath = /bin/sh;
+			shellScript = "\"${SRCROOT}/Pods/Target Support Files/Pods/Pods-frameworks.sh\"\n";
+			showEnvVarsInLog = 0;
+		};
+		A7FB0902CD177F13B9727355 /* Copy Pods Resources */ = {
+			isa = PBXShellScriptBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			inputPaths = (
+			);
+			name = "Copy Pods Resources";
+			outputPaths = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+			shellPath = /bin/sh;
+			shellScript = "\"${SRCROOT}/Pods/Target Support Files/Pods/Pods-resources.sh\"\n";
+			showEnvVarsInLog = 0;
+		};
+		F014797FAA42CD4BD11E2E1B /* Check Pods Manifest.lock */ = {
+			isa = PBXShellScriptBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			inputPaths = (
+			);
+			name = "Check Pods Manifest.lock";
+			outputPaths = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+			shellPath = /bin/sh;
+			shellScript = "diff \"${PODS_ROOT}/../Podfile.lock\" \"${PODS_ROOT}/Manifest.lock\" > /dev/null\nif [[ $? != 0 ]] ; then\n    cat << EOM\nerror: The sandbox is not in sync with the Podfile.lock. Run 'pod install' or update your CocoaPods installation.\nEOM\n    exit 1\nfi\n";
+			showEnvVarsInLog = 0;
+		};
+/* End PBXShellScriptBuildPhase section */
 
 /* Begin PBXSourcesBuildPhase section */
 		BD0603961C595D4700A2C3EC /* Sources */ = {
@@ -768,11 +693,6 @@
 			isa = PBXTargetDependency;
 			target = BD0603991C595D4700A2C3EC /* Clean the Creek */;
 			targetProxy = BD0603B41C595D4700A2C3EC /* PBXContainerItemProxy */;
-		};
-		E2D1035C1C6549A800FD67A0 /* PBXTargetDependency */ = {
-			isa = PBXTargetDependency;
-			name = "MBProgressHUD Static Library";
-			targetProxy = E2D1035B1C6549A800FD67A0 /* PBXContainerItemProxy */;
 		};
 /* End PBXTargetDependency section */
 
@@ -879,6 +799,7 @@
 		};
 		BD0603BD1C595D4700A2C3EC /* Debug */ = {
 			isa = XCBuildConfiguration;
+			baseConfigurationReference = 4C6CBB01DE1D421604AC1E1D /* Pods.debug.xcconfig */;
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				CODE_SIGN_IDENTITY = "iPhone Developer: Dan Carter (ZGN82PD75F)";
@@ -897,6 +818,7 @@
 		};
 		BD0603BE1C595D4700A2C3EC /* Release */ = {
 			isa = XCBuildConfiguration;
+			baseConfigurationReference = 893EA3F1F71074BC15B9E306 /* Pods.release.xcconfig */;
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				CODE_SIGN_IDENTITY = "iPhone Developer: Dan Carter (ZGN82PD75F)";
