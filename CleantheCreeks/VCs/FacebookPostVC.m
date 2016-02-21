@@ -15,11 +15,9 @@
 }
 - (IBAction)skip:(id)sender {
     [self.tabBarController setSelectedIndex:1];
+    [self.tabBarController.tabBar setHidden:NO];
 }
--(void)showtab
-{
-    
-}
+
 - (IBAction)FBPost:(id)sender {
     /*UIImage *bottomImage =fbPostImage.
      UIImage *image       = [UIImage imageNamed:@"top.png"]; //foreground image
@@ -32,7 +30,6 @@
      
      // Apply supplied opacity if applicable
      [image drawInRect:CGRectMake(0,0,newSize.width,newSize.height) blendMode:kCGBlendModeNormal alpha:0.8];*/
-    
     UIImage *newImage = UIGraphicsGetImageFromCurrentImageContext();
     
     UIGraphicsEndImageContext();
@@ -51,17 +48,15 @@
         NSString *output;
         switch (result) {
             case SLComposeViewControllerResultCancelled:
-                //output = @"Action Cancelled";
+                
                 break;
             case SLComposeViewControllerResultDone:
-                //output = @"Post Successfull";
+                
                 [self performSegueWithIdentifier:@"showFBSuccess" sender:self];
                 break;
             default:
                 break;
-        } //check if everything worked properly. Give out a message on the state.
-        /*UIAlertView *alert = [[UIAlertView alloc] initWithTitle:@"Facebook" message:output delegate:nil cancelButtonTitle:@"Ok" otherButtonTitles:nil];
-        [alert show];*/
+        }
     }];
 
 }

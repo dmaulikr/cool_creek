@@ -3703,21 +3703,6 @@
                                     </mask>
                                 </variation>
                             </label>
-                            <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" hasAttributedTitle="YES" translatesAutoresizingMaskIntoConstraints="NO" id="hq5-vR-vIh">
-                                <rect key="frame" x="-23" y="-15" width="46" height="30"/>
-                                <color key="backgroundColor" red="0.0039215686269999999" green="0.47843137250000001" blue="1" alpha="1" colorSpace="calibratedRGB"/>
-                                <fontDescription key="fontDescription" type="system" pointSize="15"/>
-                                <state key="normal">
-                                    <attributedString key="attributedTitle">
-                                        <fragment content="POST TO FACEBOOK">
-                                            <attributes>
-                                                <color key="NSColor" white="1" alpha="1" colorSpace="calibratedWhite"/>
-                                                <font key="NSFont" size="15" name="Lato-Black"/>
-                                            </attributes>
-                                        </fragment>
-                                    </attributedString>
-                                </state>
-                            </button>
                             <imageView userInteractionEnabled="NO" contentMode="scaleAspectFill" horizontalHuggingPriority="251" verticalHuggingPriority="251" image="FBPost2" translatesAutoresizingMaskIntoConstraints="NO" id="2o5-2Q-cyz">
                                 <rect key="frame" x="0.0" y="0.0" width="240" height="128"/>
                                 <constraints>
@@ -3781,6 +3766,27 @@
                                         <include reference="U7R-fZ-Wht"/>
                                     </mask>
                                 </variation>
+                                <connections>
+                                    <action selector="skip:" destination="Lbw-xl-Vwd" eventType="touchUpInside" id="gcu-Wk-5D7"/>
+                                </connections>
+                            </button>
+                            <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" hasAttributedTitle="YES" translatesAutoresizingMaskIntoConstraints="NO" id="hq5-vR-vIh">
+                                <rect key="frame" x="-23" y="-15" width="46" height="30"/>
+                                <color key="backgroundColor" red="0.0039215686269999999" green="0.47843137250000001" blue="1" alpha="1" colorSpace="calibratedRGB"/>
+                                <fontDescription key="fontDescription" type="system" pointSize="15"/>
+                                <state key="normal">
+                                    <attributedString key="attributedTitle">
+                                        <fragment content="POST TO FACEBOOK">
+                                            <attributes>
+                                                <color key="NSColor" white="1" alpha="1" colorSpace="calibratedWhite"/>
+                                                <font key="NSFont" size="15" name="Lato-Black"/>
+                                            </attributes>
+                                        </fragment>
+                                    </attributedString>
+                                </state>
+                                <connections>
+                                    <action selector="FBPost:" destination="Lbw-xl-Vwd" eventType="touchUpInside" id="yL9-s4-ktU"/>
+                                </connections>
                             </button>
                         </subviews>
                         <color key="backgroundColor" red="0.95686274510000002" green="0.95686274510000002" blue="0.95686274510000002" alpha="1" colorSpace="calibratedRGB"/>
@@ -3813,10 +3819,10 @@
                                 <exclude reference="mah-6d-kQu"/>
                                 <exclude reference="mq4-Ms-Jhr"/>
                                 <exclude reference="UkX-LT-tzb"/>
-                                <exclude reference="hq5-vR-vIh"/>
                                 <exclude reference="2o5-2Q-cyz"/>
                                 <exclude reference="xHq-nw-RLv"/>
                                 <exclude reference="NAA-kd-uB9"/>
+                                <exclude reference="hq5-vR-vIh"/>
                             </mask>
                             <mask key="constraints">
                                 <exclude reference="TmF-eS-kQi"/>
@@ -3848,10 +3854,10 @@
                                 <include reference="mah-6d-kQu"/>
                                 <include reference="mq4-Ms-Jhr"/>
                                 <include reference="UkX-LT-tzb"/>
-                                <include reference="hq5-vR-vIh"/>
                                 <include reference="2o5-2Q-cyz"/>
                                 <include reference="xHq-nw-RLv"/>
                                 <include reference="NAA-kd-uB9"/>
+                                <include reference="hq5-vR-vIh"/>
                             </mask>
                             <mask key="constraints">
                                 <include reference="TmF-eS-kQi"/>
@@ -4125,7 +4131,7 @@
         <image name="TabBarSearchBtn" width="24" height="24"/>
     </resources>
     <inferredMetricsTieBreakers>
-        <segue reference="gH4-y5-LAs"/>
+        <segue reference="QEo-eV-9tj"/>
         <segue reference="X73-qe-qwQ"/>
         <segue reference="Kn9-FF-p3p"/>
     </inferredMetricsTieBreakers>

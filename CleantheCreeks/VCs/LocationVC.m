@@ -41,6 +41,7 @@
     tableRect.size.width -= tableBorderLeft + tableBorderRight; // reduce the width of the table
     
     //self.locationTable.separatorStyle=UITableViewCellSeparatorStyleNone;
+    self.locationArray
     [self.locationTable setFrame:tableRect];
 }
 
@@ -111,7 +112,7 @@
                  
                  NSString *downloadingFilePath = [NSTemporaryDirectory() stringByAppendingPathComponent:@"downloaded-myImage.jpg"];
                  NSURL *downloadingFileURL = [NSURL fileURLWithPath:downloadingFilePath];
-                 if(distance<100000.0)
+                 if(distance<100.0)
                  {
                      [self.locationArray addObject:location];
                  // Construct the download request.
