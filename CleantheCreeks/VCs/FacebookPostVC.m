@@ -11,14 +11,11 @@
 @implementation FacebookPostVC
 
 - (IBAction)skip:(id)sender {
-    [self dismissViewControllerAnimated:YES completion:nil];
-    self.tabBarController.selectedViewController
-    = [self.tabBarController.viewControllers objectAtIndex:1];
-    
+    [self.tabBarController setSelectedIndex:1];
 }
 -(void)showtab
 {
-    [self.tabBarController setSelectedIndex:2];
+    
 }
 - (IBAction)FBPost:(id)sender {
     /*UIImage *bottomImage =fbPostImage.
