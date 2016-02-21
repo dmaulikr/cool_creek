@@ -10,6 +10,8 @@
 @implementation LocationVC
 - (void)viewWillAppear:(BOOL)animated
 {
+    [self.locationArray removeAllObjects];
+    [self.imageArray removeAllObjects];
     [_locationManager requestWhenInUseAuthorization];
     _locationManager=[[CLLocationManager alloc] init];
     if([CLLocationManager authorizationStatus]==kCLAuthorizationStatusNotDetermined)
@@ -41,7 +43,7 @@
     tableRect.size.width -= tableBorderLeft + tableBorderRight; // reduce the width of the table
     
     //self.locationTable.separatorStyle=UITableViewCellSeparatorStyleNone;
-    self.locationArray
+    
     [self.locationTable setFrame:tableRect];
 }
 
@@ -63,18 +65,21 @@
 {
     locationCell * cell=nil;
     cell = (locationCell*)[tableView dequeueReusableCellWithIdentifier:@"locationCell"];
-    Location * location=[self.locationArray objectAtIndex:indexPath.row];
-    [cell.locationName setText:location.location_name];
-    
-    CLLocation*exitingLocation=[[CLLocation alloc]initWithLatitude:location.latitude longitude:location.longitude];
-    CLLocationDistance distance=[exitingLocation distanceFromLocation:self.currentLocation];
-    distance=distance/1000.0;
-    NSString*distanceText=[[NSString alloc]initWithFormat:@"%.02fKM",distance];
-    [cell.distance setText:distanceText];
-    
-    // Construct the download request.
-    if([self.imageArray objectForKey:location.location_id])
-        cell.image.image=(UIImage*)[self.imageArray objectForKey:location.location_id];
+    if([self.locationArray count]>0)
+    {
+        Location * location=[self.locationArray objectAtIndex:indexPath.row];
+        [cell.locationName setText:location.location_name];
+        
+        CLLocation*exitingLocation=[[CLLocation alloc]initWithLatitude:location.latitude longitude:location.longitude];
+        CLLocationDistance distance=[exitingLocation distanceFromLocation:self.currentLocation];
+        distance=distance/1000.0;
+        NSString*distanceText=[[NSString alloc]initWithFormat:@"%.02fKM",distance];
+        [cell.distance setText:distanceText];
+        
+        // Construct the download request.
+        if([self.imageArray objectForKey:location.location_id])
+            cell.image.image=(UIImage*)[self.imageArray objectForKey:location.location_id];
+    }
     if(!cell)
     {
         cell=(locationCell*)[[UITableViewCell alloc]init];
