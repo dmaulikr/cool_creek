@@ -2925,24 +2925,32 @@
                                     </mask>
                                 </variation>
                             </label>
-                            <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" hasAttributedTitle="YES" translatesAutoresizingMaskIntoConstraints="NO" id="YXU-sb-lbd">
-                                <rect key="frame" x="-23" y="-15" width="46" height="30"/>
-                                <color key="backgroundColor" red="0.0039215686269999999" green="0.47843137250000001" blue="1" alpha="1" colorSpace="calibratedRGB"/>
-                                <fontDescription key="fontDescription" type="system" pointSize="15"/>
-                                <state key="normal">
-                                    <attributedString key="attributedTitle">
-                                        <fragment content="POST TO FACEBOOK">
-                                            <attributes>
-                                                <color key="NSColor" white="1" alpha="1" colorSpace="calibratedWhite"/>
-                                                <font key="NSFont" size="15" name="Lato-Black"/>
-                                            </attributes>
-                                        </fragment>
-                                    </attributedString>
-                                </state>
-                                <connections>
-                                    <action selector="FBPost:" destination="zjz-55-lMB" eventType="touchUpInside" id="ZkH-mu-kwL"/>
-                                </connections>
-                            </button>
+                            <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" usesAttributedText="YES" lineBreakMode="middleTruncation" numberOfLines="2" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="3Sb-vs-5XV">
+                                <rect key="frame" x="-42" y="-21" width="42" height="21"/>
+                                <constraints>
+                                    <constraint firstAttribute="width" constant="226" id="N86-Jn-OaD"/>
+                                </constraints>
+                                <attributedString key="attributedText">
+                                    <fragment content="The following has been posted to the activity timeline">
+                                        <attributes>
+                                            <color key="NSColor" red="0.0" green="0.0" blue="0.0" alpha="1" colorSpace="calibratedRGB"/>
+                                            <font key="NSFont" size="15" name="Lato-Regular"/>
+                                            <paragraphStyle key="NSParagraphStyle" alignment="center" lineBreakMode="wordWrapping" baseWritingDirection="natural"/>
+                                        </attributes>
+                                    </fragment>
+                                </attributedString>
+                                <nil key="highlightedColor"/>
+                                <variation key="default">
+                                    <mask key="constraints">
+                                        <exclude reference="N86-Jn-OaD"/>
+                                    </mask>
+                                </variation>
+                                <variation key="heightClass=regular-widthClass=compact">
+                                    <mask key="constraints">
+                                        <exclude reference="N86-Jn-OaD"/>
+                                    </mask>
+                                </variation>
+                            </label>
                             <imageView userInteractionEnabled="NO" contentMode="scaleAspectFill" horizontalHuggingPriority="251" verticalHuggingPriority="251" image="FBPost2" translatesAutoresizingMaskIntoConstraints="NO" id="foI-cA-k30">
                                 <rect key="frame" x="0.0" y="0.0" width="240" height="128"/>
                                 <constraints>
@@ -3010,32 +3018,24 @@
                                     <action selector="skip:" destination="zjz-55-lMB" eventType="touchUpInside" id="ECF-do-sCI"/>
                                 </connections>
                             </button>
-                            <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" usesAttributedText="YES" lineBreakMode="middleTruncation" numberOfLines="2" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="3Sb-vs-5XV">
-                                <rect key="frame" x="-42" y="-21" width="42" height="21"/>
-                                <constraints>
-                                    <constraint firstAttribute="width" constant="226" id="N86-Jn-OaD"/>
-                                </constraints>
-                                <attributedString key="attributedText">
-                                    <fragment content="The following has been posted to the activity timeline">
-                                        <attributes>
-                                            <color key="NSColor" red="0.0" green="0.0" blue="0.0" alpha="1" colorSpace="calibratedRGB"/>
-                                            <font key="NSFont" size="15" name="Lato-Regular"/>
-                                            <paragraphStyle key="NSParagraphStyle" alignment="center" lineBreakMode="wordWrapping" baseWritingDirection="natural"/>
-                                        </attributes>
-                                    </fragment>
-                                </attributedString>
-                                <nil key="highlightedColor"/>
-                                <variation key="default">
-                                    <mask key="constraints">
-                                        <exclude reference="N86-Jn-OaD"/>
-                                    </mask>
-                                </variation>
-                                <variation key="heightClass=regular-widthClass=compact">
-                                    <mask key="constraints">
-                                        <exclude reference="N86-Jn-OaD"/>
-                                    </mask>
-                                </variation>
-                            </label>
+                            <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" hasAttributedTitle="YES" translatesAutoresizingMaskIntoConstraints="NO" id="YXU-sb-lbd">
+                                <rect key="frame" x="-23" y="-15" width="46" height="30"/>
+                                <color key="backgroundColor" red="0.0039215686269999999" green="0.47843137250000001" blue="1" alpha="1" colorSpace="calibratedRGB"/>
+                                <fontDescription key="fontDescription" type="system" pointSize="15"/>
+                                <state key="normal">
+                                    <attributedString key="attributedTitle">
+                                        <fragment content="POST TO FACEBOOK">
+                                            <attributes>
+                                                <color key="NSColor" white="1" alpha="1" colorSpace="calibratedWhite"/>
+                                                <font key="NSFont" size="15" name="Lato-Black"/>
+                                            </attributes>
+                                        </fragment>
+                                    </attributedString>
+                                </state>
+                                <connections>
+                                    <action selector="FBPost:" destination="zjz-55-lMB" eventType="touchUpInside" id="ZkH-mu-kwL"/>
+                                </connections>
+                            </button>
                         </subviews>
                         <color key="backgroundColor" red="0.95686274510000002" green="0.95686274510000002" blue="0.95686274510000002" alpha="1" colorSpace="calibratedRGB"/>
                         <constraints>
@@ -3066,11 +3066,11 @@
                             <mask key="subviews">
                                 <exclude reference="2OJ-OX-DCQ"/>
                                 <exclude reference="euI-de-Hcm"/>
-                                <exclude reference="YXU-sb-lbd"/>
+                                <exclude reference="3Sb-vs-5XV"/>
                                 <exclude reference="foI-cA-k30"/>
                                 <exclude reference="Iqy-8L-fQe"/>
                                 <exclude reference="4P9-ML-S2u"/>
-                                <exclude reference="3Sb-vs-5XV"/>
+                                <exclude reference="YXU-sb-lbd"/>
                             </mask>
                             <mask key="constraints">
                                 <exclude reference="veM-yq-NPG"/>
@@ -3101,11 +3101,11 @@
                             <mask key="subviews">
                                 <include reference="2OJ-OX-DCQ"/>
                                 <include reference="euI-de-Hcm"/>
-                                <include reference="YXU-sb-lbd"/>
+                                <include reference="3Sb-vs-5XV"/>
                                 <include reference="foI-cA-k30"/>
                                 <include reference="Iqy-8L-fQe"/>
                                 <include reference="4P9-ML-S2u"/>
-                                <include reference="3Sb-vs-5XV"/>
+                                <include reference="YXU-sb-lbd"/>
                             </mask>
                             <mask key="constraints">
                                 <include reference="veM-yq-NPG"/>
@@ -3879,10 +3879,10 @@
             </objects>
             <point key="canvasLocation" x="1227.5" y="-804.5"/>
         </scene>
-        <!--CleanedFBPost-->
+        <!--FBSuccessVC-->
         <scene sceneID="WIK-Wp-80D">
             <objects>
-                <viewController id="bXz-fE-HI5" userLabel="CleanedFBPost" customClass="FacebookPostVC" sceneMemberID="viewController">
+                <viewController id="bXz-fE-HI5" userLabel="FBSuccessVC" customClass="FBSuccessVC" sceneMemberID="viewController">
                     <layoutGuides>
                         <viewControllerLayoutGuide type="top" id="Zgb-ck-Chs"/>
                         <viewControllerLayoutGuide type="bottom" id="8AQ-sG-2ou"/>
@@ -3964,7 +3964,7 @@
                                     </mask>
                                 </variation>
                             </label>
-                            <imageView userInteractionEnabled="NO" contentMode="scaleAspectFill" horizontalHuggingPriority="251" verticalHuggingPriority="251" image="FBPost2" translatesAutoresizingMaskIntoConstraints="NO" id="m6L-dB-z5U">
+                            <imageView userInteractionEnabled="NO" contentMode="scaleAspectFit" horizontalHuggingPriority="251" verticalHuggingPriority="251" image="FBSuccess" translatesAutoresizingMaskIntoConstraints="NO" id="m6L-dB-z5U">
                                 <rect key="frame" x="0.0" y="0.0" width="240" height="128"/>
                                 <constraints>
                                     <constraint firstAttribute="width" secondItem="m6L-dB-z5U" secondAttribute="height" multiplier="48:49" id="6vs-eC-cDv"/>
@@ -3978,27 +3978,12 @@
                                         <exclude reference="6vs-eC-cDv"/>
                                     </mask>
                                 </variation>
-                                <variation key="heightClass=regular-widthClass=compact">
+                                <variation key="heightClass=regular-widthClass=compact" misplaced="YES">
+                                    <rect key="frame" x="75" y="242" width="225" height="197"/>
                                     <mask key="constraints">
                                         <include reference="Ooq-xO-6Do"/>
                                         <exclude reference="MFO-Ww-01m"/>
                                         <exclude reference="6vs-eC-cDv"/>
-                                    </mask>
-                                </variation>
-                            </imageView>
-                            <imageView userInteractionEnabled="NO" contentMode="scaleAspectFill" horizontalHuggingPriority="251" verticalHuggingPriority="251" image="FBPost3" translatesAutoresizingMaskIntoConstraints="NO" id="uL4-7w-2vC">
-                                <rect key="frame" x="0.0" y="0.0" width="240" height="128"/>
-                                <constraints>
-                                    <constraint firstAttribute="height" constant="50" id="bTn-E2-dzq"/>
-                                </constraints>
-                                <variation key="default">
-                                    <mask key="constraints">
-                                        <exclude reference="bTn-E2-dzq"/>
-                                    </mask>
-                                </variation>
-                                <variation key="heightClass=regular-widthClass=compact">
-                                    <mask key="constraints">
-                                        <include reference="bTn-E2-dzq"/>
                                     </mask>
                                 </variation>
                             </imageView>
@@ -4027,9 +4012,6 @@
                                         <include reference="uWQ-RS-0P2"/>
                                     </mask>
                                 </variation>
-                                <connections>
-                                    <action selector="skip:" destination="bXz-fE-HI5" eventType="touchUpInside" id="CKe-yY-ivh"/>
-                                </connections>
                             </button>
                             <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" hasAttributedTitle="YES" translatesAutoresizingMaskIntoConstraints="NO" id="Lw9-Su-Imi">
                                 <rect key="frame" x="-23" y="-15" width="46" height="30"/>
@@ -4037,16 +4019,17 @@
                                 <fontDescription key="fontDescription" type="system" pointSize="15"/>
                                 <state key="normal">
                                     <attributedString key="attributedTitle">
-                                        <fragment content="POST TO FACEBOOK">
+                                        <fragment content="VIEW YOUR FACEBOOK POST">
                                             <attributes>
                                                 <color key="NSColor" white="1" alpha="1" colorSpace="calibratedWhite"/>
                                                 <font key="NSFont" size="15" name="Lato-Black"/>
+                                                <paragraphStyle key="NSParagraphStyle" alignment="natural" lineBreakMode="wordWrapping" baseWritingDirection="natural"/>
                                             </attributes>
                                         </fragment>
                                     </attributedString>
                                 </state>
                                 <connections>
-                                    <action selector="FBPost:" destination="bXz-fE-HI5" eventType="touchUpInside" id="d2h-Of-3xN"/>
+                                    <action selector="showFBPost:" destination="bXz-fE-HI5" eventType="touchUpInside" id="VsH-vP-3Bo"/>
                                 </connections>
                             </button>
                         </subviews>
@@ -4056,9 +4039,7 @@
                             <constraint firstItem="zXR-w8-I7U" firstAttribute="centerX" secondItem="DOg-AE-ExK" secondAttribute="centerX" id="4di-4h-exv"/>
                             <constraint firstItem="zXR-w8-I7U" firstAttribute="top" secondItem="s4A-wZ-R4S" secondAttribute="bottom" constant="20" id="6ym-Hk-Xnm"/>
                             <constraint firstItem="Lw9-Su-Imi" firstAttribute="top" secondItem="m6L-dB-z5U" secondAttribute="bottom" constant="19" id="8Ps-96-CXv"/>
-                            <constraint firstItem="m6L-dB-z5U" firstAttribute="top" secondItem="uL4-7w-2vC" secondAttribute="bottom" id="Fdt-Wh-MOP"/>
                             <constraint firstItem="s4A-wZ-R4S" firstAttribute="centerX" secondItem="DOg-AE-ExK" secondAttribute="centerX" id="HyZ-HB-hh2"/>
-                            <constraint firstItem="uL4-7w-2vC" firstAttribute="leading" secondItem="m6L-dB-z5U" secondAttribute="leading" id="ML6-T5-zMZ"/>
                             <constraint firstItem="8AQ-sG-2ou" firstAttribute="top" secondItem="dhN-ru-QsY" secondAttribute="bottom" constant="37" id="SWf-AS-E7I"/>
                             <constraint firstItem="Bnm-5x-ICj" firstAttribute="centerX" secondItem="DOg-AE-ExK" secondAttribute="centerX" id="U6y-EV-8GT"/>
                             <constraint firstItem="Bnm-5x-ICj" firstAttribute="leading" secondItem="DOg-AE-ExK" secondAttribute="leading" id="UId-v2-JID"/>
@@ -4069,11 +4050,9 @@
                             <constraint firstItem="m6L-dB-z5U" firstAttribute="top" secondItem="zXR-w8-I7U" secondAttribute="bottom" constant="30" id="dIP-1O-guf"/>
                             <constraint firstItem="Lw9-Su-Imi" firstAttribute="centerX" secondItem="DOg-AE-ExK" secondAttribute="centerX" id="eaQ-Vt-ibm"/>
                             <constraint firstItem="s4A-wZ-R4S" firstAttribute="top" secondItem="Zgb-ck-Chs" secondAttribute="bottom" constant="77" id="kaa-Fe-xRy"/>
-                            <constraint firstItem="uL4-7w-2vC" firstAttribute="width" secondItem="m6L-dB-z5U" secondAttribute="width" id="kmD-D8-JFv"/>
                             <constraint firstItem="zXR-w8-I7U" firstAttribute="width" relation="lessThanOrEqual" secondItem="DOg-AE-ExK" secondAttribute="width" multiplier="0.7" id="nls-3G-e8j"/>
                             <constraint firstItem="dhN-ru-QsY" firstAttribute="top" secondItem="Lw9-Su-Imi" secondAttribute="bottom" constant="36" id="uRe-Gv-MH9"/>
                             <constraint firstItem="dhN-ru-QsY" firstAttribute="centerX" secondItem="DOg-AE-ExK" secondAttribute="centerX" id="ucx-0C-8Mo"/>
-                            <constraint firstItem="uL4-7w-2vC" firstAttribute="trailing" secondItem="m6L-dB-z5U" secondAttribute="trailing" id="vgL-WV-xi9"/>
                         </constraints>
                         <variation key="default">
                             <mask key="subviews">
@@ -4081,7 +4060,6 @@
                                 <exclude reference="s4A-wZ-R4S"/>
                                 <exclude reference="zXR-w8-I7U"/>
                                 <exclude reference="m6L-dB-z5U"/>
-                                <exclude reference="uL4-7w-2vC"/>
                                 <exclude reference="dhN-ru-QsY"/>
                                 <exclude reference="Lw9-Su-Imi"/>
                             </mask>
@@ -4101,11 +4079,7 @@
                                 <exclude reference="cDT-aK-RpK"/>
                                 <exclude reference="UId-v2-JID"/>
                                 <exclude reference="U6y-EV-8GT"/>
-                                <exclude reference="ML6-T5-zMZ"/>
-                                <exclude reference="vgL-WV-xi9"/>
-                                <exclude reference="kmD-D8-JFv"/>
                                 <exclude reference="dIP-1O-guf"/>
-                                <exclude reference="Fdt-Wh-MOP"/>
                                 <exclude reference="US4-fE-DpG"/>
                                 <exclude reference="cZY-i9-p84"/>
                             </mask>
@@ -4116,7 +4090,6 @@
                                 <include reference="s4A-wZ-R4S"/>
                                 <include reference="zXR-w8-I7U"/>
                                 <include reference="m6L-dB-z5U"/>
-                                <include reference="uL4-7w-2vC"/>
                                 <include reference="dhN-ru-QsY"/>
                                 <include reference="Lw9-Su-Imi"/>
                             </mask>
@@ -4136,11 +4109,7 @@
                                 <include reference="cDT-aK-RpK"/>
                                 <include reference="UId-v2-JID"/>
                                 <include reference="U6y-EV-8GT"/>
-                                <include reference="ML6-T5-zMZ"/>
-                                <include reference="vgL-WV-xi9"/>
-                                <include reference="kmD-D8-JFv"/>
                                 <exclude reference="dIP-1O-guf"/>
-                                <include reference="Fdt-Wh-MOP"/>
                                 <include reference="US4-fE-DpG"/>
                                 <include reference="cZY-i9-p84"/>
                             </mask>
@@ -4150,7 +4119,6 @@
                     <simulatedScreenMetrics key="simulatedDestinationMetrics" type="retina47"/>
                     <connections>
                         <outlet property="fbPostImg" destination="m6L-dB-z5U" id="IbK-Tu-uUf"/>
-                        <outlet property="fbTopImage" destination="uL4-7w-2vC" id="YS0-B2-SvK"/>
                     </connections>
                 </viewController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="Sq9-MZ-8R3" userLabel="First Responder" sceneMemberID="firstResponder"/>
@@ -4164,6 +4132,7 @@
         <image name="EmptyPhoto" width="154" height="154"/>
         <image name="FBPost2" width="221" height="189"/>
         <image name="FBPost3" width="175" height="44"/>
+        <image name="FBSuccess" width="174" height="200"/>
         <image name="FoundByIcon" width="30" height="30"/>
         <image name="HeaderBackBtn" width="13" height="22"/>
         <image name="HeaderMapBtnSelected" width="35" height="34"/>

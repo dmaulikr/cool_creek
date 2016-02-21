@@ -32,7 +32,6 @@
 
 -(void)imagePickerController:(UIImagePickerController *)picker didFinishPickingMediaWithInfo:(NSDictionary<NSString *,id> *)info
 {
-    NSLog(@"perform Segue");
     self.cameraPicture=[[UIImage alloc]init];
     self.cameraPicture=[info objectForKey:UIImagePickerControllerOriginalImage];
     self.photoURL=[[NSURL alloc]init];

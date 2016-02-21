@@ -373,7 +373,6 @@ bool secondPhototaken=false;
     }
     else
     {
-        
         [self.navigationController popViewControllerAnimated:YES];
     }
 }

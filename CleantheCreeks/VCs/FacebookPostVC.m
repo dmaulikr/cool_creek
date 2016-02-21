@@ -18,6 +18,7 @@
     
 }
 - (IBAction)FBPost:(id)sender {
+    [self performSegueWithIdentifier:@"showFBSuccess" sender:self];
     /*UIImage *bottomImage =fbPostImage.
      UIImage *image       = [UIImage imageNamed:@"top.png"]; //foreground image
      
@@ -39,7 +40,7 @@
     {
         _mySLComposerSheet = [[SLComposeViewController alloc] init]; //initiate the Social Controller
         _mySLComposerSheet = [SLComposeViewController composeViewControllerForServiceType:SLServiceTypeFacebook]; //Tell him with what social plattform to use it, e.g. facebook or twitter
-        [_mySLComposerSheet setInitialText:[NSString stringWithFormat:@"Test",_mySLComposerSheet.serviceType]]; //the message you want to post
+        [_mySLComposerSheet setInitialText:[NSString stringWithFormat:@"Clean the Creek",_mySLComposerSheet.serviceType]]; //the message you want to post
         [_mySLComposerSheet addImage:_fbPostImg.image]; //an image you could post
         //for more instance methodes, go here:https://developer.apple.com/library/ios/#documentation/NetworkingInternet/Reference/SLComposeViewController_Class/Reference/Reference.html#//apple_ref/doc/uid/TP40012205
         [self presentViewController:_mySLComposerSheet animated:YES completion:nil];
@@ -48,16 +49,17 @@
         NSString *output;
         switch (result) {
             case SLComposeViewControllerResultCancelled:
-                output = @"Action Cancelled";
+                //output = @"Action Cancelled";
                 break;
             case SLComposeViewControllerResultDone:
-                output = @"Post Successfull";
+                //output = @"Post Successfull";
+                //[self performSegueWithIdentifier:@"showFBSuccess" sender:self];
                 break;
             default:
                 break;
         } //check if everything worked properly. Give out a message on the state.
-        UIAlertView *alert = [[UIAlertView alloc] initWithTitle:@"Facebook" message:output delegate:nil cancelButtonTitle:@"Ok" otherButtonTitles:nil];
-        [alert show];
+        /*UIAlertView *alert = [[UIAlertView alloc] initWithTitle:@"Facebook" message:output delegate:nil cancelButtonTitle:@"Ok" otherButtonTitles:nil];
+        [alert show];*/
     }];
 
 }
