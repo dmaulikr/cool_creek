@@ -9,7 +9,10 @@
 #import "FBSuccessVC.h"
 
 @implementation FBSuccessVC
-
+-(void)viewDidLoad
+{
+    [self.tabBarController.tabBar setHidden:NO];
+}
 - (IBAction)showFBPost:(id)sender {
     NSUserDefaults *defaults = [NSUserDefaults standardUserDefaults];
     NSString *user_id = [defaults objectForKey:@"user_id"];

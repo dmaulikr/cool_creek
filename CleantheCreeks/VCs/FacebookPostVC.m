@@ -9,7 +9,10 @@
 #import "FacebookPostVC.h"
 #import "MainTabnav.h"
 @implementation FacebookPostVC
-
+-(void)viewDidLoad
+{
+    
+}
 - (IBAction)skip:(id)sender {
     [self.tabBarController setSelectedIndex:1];
 }
@@ -18,7 +21,6 @@
     
 }
 - (IBAction)FBPost:(id)sender {
-    [self performSegueWithIdentifier:@"showFBSuccess" sender:self];
     /*UIImage *bottomImage =fbPostImage.
      UIImage *image       = [UIImage imageNamed:@"top.png"]; //foreground image
      
@@ -53,7 +55,7 @@
                 break;
             case SLComposeViewControllerResultDone:
                 //output = @"Post Successfull";
-                //[self performSegueWithIdentifier:@"showFBSuccess" sender:self];
+                [self performSegueWithIdentifier:@"showFBSuccess" sender:self];
                 break;
             default:
                 break;

@@ -16,6 +16,7 @@ bool secondPhototaken=false;
 -(void)viewDidLoad
 {
     [super viewDidLoad];
+    [self.tabBarController.tabBar setHidden:YES];
     _locationManager=[[CLLocationManager alloc] init];
     if([CLLocationManager authorizationStatus]==kCLAuthorizationStatusNotDetermined)
         [_locationManager requestWhenInUseAuthorization];
