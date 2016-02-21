@@ -94,6 +94,18 @@
     self.locationArray = [[NSMutableArray alloc]init];
     self.imageArray = [[NSMutableDictionary alloc]init];
     self.currentLocation=newLocation;
+    CLGeocoder *ceo = [[CLGeocoder alloc]init];
+    [ceo reverseGeocodeLocation:self.currentLocation
+              completionHandler:^(NSArray *placemarks, NSError *error) {
+                  CLPlacemark *placemark = [placemarks objectAtIndex:0];
+                  //String to hold address
+                  NSString *locatedAt = [[placemark.addressDictionary valueForKey:@"FormattedAddressLines"] componentsJoinedByString:@", "];
+                  [self.btnCountry setTitle:placemark.country forState:UIControlStateNormal];
+                  [self.btnState setTitle:locatedAt forState:UIControlStateNormal];
+                  [self.btnLocal setTitle:placemark.locality forState:UIControlStateNormal];
+              }
+     ];
+
     AWSDynamoDBObjectMapper *dynamoDBObjectMapper = [AWSDynamoDBObjectMapper defaultDynamoDBObjectMapper];
     
     AWSDynamoDBScanExpression *scanExpression = [AWSDynamoDBScanExpression new];

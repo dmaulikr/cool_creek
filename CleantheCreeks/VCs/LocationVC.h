@@ -10,5 +10,8 @@
 @property (weak, nonatomic) IBOutlet UIButton *mapButton;
 - (IBAction)mapButtonClicked:(id)sender;
 @property (strong, nonatomic) CLLocationManager *locationManager;
+@property (weak, nonatomic) IBOutlet UIButton *btnCountry;
+@property (weak, nonatomic) IBOutlet UIButton *btnState;
+@property (weak, nonatomic) IBOutlet UIButton *btnLocal;
 @property (retain) CLLocation * currentLocation;
 @end

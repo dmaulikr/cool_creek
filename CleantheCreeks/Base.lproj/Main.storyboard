@@ -1669,18 +1669,27 @@
                                         <state key="normal" title="Canada">
                                             <color key="titleColor" red="0.56862745098039214" green="0.56862745098039214" blue="0.56862745098039214" alpha="1" colorSpace="calibratedRGB"/>
                                         </state>
+                                        <variation key="heightClass=regular-widthClass=compact" misplaced="YES">
+                                            <rect key="frame" x="10" y="8" width="53" height="30"/>
+                                        </variation>
+                                    </button>
+                                    <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="left" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="Y7M-6U-q4h" userLabel="I">
+                                        <rect key="frame" x="-23" y="-15" width="46" height="30"/>
+                                        <state key="normal" title="BC">
+                                            <color key="titleColor" red="0.56862745100000001" green="0.56862745100000001" blue="0.56862745100000001" alpha="1" colorSpace="calibratedRGB"/>
+                                        </state>
+                                        <variation key="heightClass=regular-widthClass=compact" misplaced="YES">
+                                            <rect key="frame" x="82" y="8" width="30" height="30"/>
+                                        </variation>
                                     </button>
                                     <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="fBD-GI-BZX">
                                         <rect key="frame" x="-23" y="-15" width="46" height="30"/>
                                         <state key="normal" title="Kelowna">
                                             <color key="titleColor" red="0.56862745100000001" green="0.56862745100000001" blue="0.56862745100000001" alpha="1" colorSpace="calibratedRGB"/>
                                         </state>
-                                    </button>
-                                    <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="left" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="Y7M-6U-q4h">
-                                        <rect key="frame" x="-23" y="-15" width="46" height="30"/>
-                                        <state key="normal" title="BC">
-                                            <color key="titleColor" red="0.56862745100000001" green="0.56862745100000001" blue="0.56862745100000001" alpha="1" colorSpace="calibratedRGB"/>
-                                        </state>
+                                        <variation key="heightClass=regular-widthClass=compact" misplaced="YES">
+                                            <rect key="frame" x="135" y="8" width="58" height="30"/>
+                                        </variation>
                                     </button>
                                 </subviews>
                                 <color key="backgroundColor" red="0.95686274509803915" green="0.95686274509803915" blue="0.95686274509803915" alpha="1" colorSpace="calibratedRGB"/>
@@ -1711,8 +1720,8 @@
                                         <exclude reference="qdc-Oh-d0w"/>
                                         <exclude reference="GJe-lL-yCc"/>
                                         <exclude reference="Zam-Jl-q0R"/>
-                                        <exclude reference="fBD-GI-BZX"/>
                                         <exclude reference="Y7M-6U-q4h"/>
+                                        <exclude reference="fBD-GI-BZX"/>
                                     </mask>
                                     <mask key="constraints">
                                         <exclude reference="h0z-GQ-CqP"/>
@@ -1734,8 +1743,8 @@
                                         <include reference="qdc-Oh-d0w"/>
                                         <include reference="GJe-lL-yCc"/>
                                         <include reference="Zam-Jl-q0R"/>
-                                        <include reference="fBD-GI-BZX"/>
                                         <include reference="Y7M-6U-q4h"/>
+                                        <include reference="fBD-GI-BZX"/>
                                     </mask>
                                     <mask key="constraints">
                                         <include reference="h0z-GQ-CqP"/>
@@ -1775,12 +1784,6 @@
                             <view contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="33F-VS-lvl">
                                 <rect key="frame" x="0.0" y="0.0" width="240" height="128"/>
                                 <subviews>
-                                    <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="DIRTY LOCATIONS" textAlignment="center" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="f07-PR-4Hb">
-                                        <rect key="frame" x="-42" y="-21" width="42" height="21"/>
-                                        <fontDescription key="fontDescription" name="HelveticaNeue-Bold" family="Helvetica Neue" pointSize="16"/>
-                                        <color key="textColor" red="0.93725490199999995" green="0.93725490199999995" blue="0.95686274510000002" alpha="1" colorSpace="calibratedRGB"/>
-                                        <nil key="highlightedColor"/>
-                                    </label>
                                     <button opaque="NO" contentMode="scaleAspectFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="0Kd-CW-nJE">
                                         <rect key="frame" x="-23" y="-15" width="46" height="30"/>
                                         <constraints>
@@ -1827,6 +1830,12 @@
                                             <segue destination="qKb-TZ-GoL" kind="show" animates="NO" id="LeL-2C-3gh"/>
                                         </connections>
                                     </button>
+                                    <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="DIRTY LOCATIONS" textAlignment="center" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="f07-PR-4Hb">
+                                        <rect key="frame" x="-42" y="-21" width="42" height="21"/>
+                                        <fontDescription key="fontDescription" name="HelveticaNeue-Bold" family="Helvetica Neue" pointSize="16"/>
+                                        <color key="textColor" red="0.93725490199999995" green="0.93725490199999995" blue="0.95686274510000002" alpha="1" colorSpace="calibratedRGB"/>
+                                        <nil key="highlightedColor"/>
+                                    </label>
                                 </subviews>
                                 <color key="backgroundColor" red="0.0039215686269999999" green="0.47843137250000001" blue="1" alpha="1" colorSpace="calibratedRGB"/>
                                 <constraints>
@@ -1849,9 +1858,9 @@
                                 </constraints>
                                 <variation key="default">
                                     <mask key="subviews">
-                                        <exclude reference="f07-PR-4Hb"/>
                                         <exclude reference="0Kd-CW-nJE"/>
                                         <exclude reference="QhR-fX-8Zz"/>
+                                        <exclude reference="f07-PR-4Hb"/>
                                     </mask>
                                     <mask key="constraints">
                                         <exclude reference="db6-nB-9tA"/>
@@ -1868,9 +1877,9 @@
                                 </variation>
                                 <variation key="heightClass=regular-widthClass=compact">
                                     <mask key="subviews">
-                                        <include reference="f07-PR-4Hb"/>
                                         <include reference="0Kd-CW-nJE"/>
                                         <include reference="QhR-fX-8Zz"/>
+                                        <include reference="f07-PR-4Hb"/>
                                     </mask>
                                     <mask key="constraints">
                                         <include reference="db6-nB-9tA"/>
@@ -2162,6 +2171,9 @@
                     <navigationItem key="navigationItem" id="EOd-96-SJG"/>
                     <simulatedScreenMetrics key="simulatedDestinationMetrics" type="retina47"/>
                     <connections>
+                        <outlet property="btnCountry" destination="Zam-Jl-q0R" id="Ycs-4G-7df"/>
+                        <outlet property="btnLocal" destination="fBD-GI-BZX" id="pg6-3a-7fV"/>
+                        <outlet property="btnState" destination="Y7M-6U-q4h" id="VGM-0m-BVc"/>
                         <outlet property="locationTable" destination="KYe-ug-VNz" id="099-pR-eWv"/>
                     </connections>
                 </viewController>
@@ -4072,8 +4084,8 @@
         <image name="TabBarSearchBtn" width="24" height="24"/>
     </resources>
     <inferredMetricsTieBreakers>
-        <segue reference="BTd-do-kiK"/>
         <segue reference="QEo-eV-9tj"/>
         <segue reference="X73-qe-qwQ"/>
+        <segue reference="Kn9-FF-p3p"/>
     </inferredMetricsTieBreakers>
 </document>

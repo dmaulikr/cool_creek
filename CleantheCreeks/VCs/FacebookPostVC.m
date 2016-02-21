@@ -31,9 +31,7 @@
      // Apply supplied opacity if applicable
      [image drawInRect:CGRectMake(0,0,newSize.width,newSize.height) blendMode:kCGBlendModeNormal alpha:0.8];*/
     UIImage *newImage = UIGraphicsGetImageFromCurrentImageContext();
-    
     UIGraphicsEndImageContext();
-    
     
     if([SLComposeViewController isAvailableForServiceType:SLServiceTypeFacebook]) //check if Facebook Account is linked
     {
@@ -41,17 +39,15 @@
         _mySLComposerSheet = [SLComposeViewController composeViewControllerForServiceType:SLServiceTypeFacebook]; //Tell him with what social plattform to use it, e.g. facebook or twitter
         [_mySLComposerSheet setInitialText:[NSString stringWithFormat:@"Clean the Creek",_mySLComposerSheet.serviceType]]; //the message you want to post
         [_mySLComposerSheet addImage:_fbPostImg.image]; //an image you could post
-        //for more instance methodes, go here:https://developer.apple.com/library/ios/#documentation/NetworkingInternet/Reference/SLComposeViewController_Class/Reference/Reference.html#//apple_ref/doc/uid/TP40012205
+        [_mySLComposerSheet setTitle:@"Look what I just cleaned up #cleanthecreek"];
         [self presentViewController:_mySLComposerSheet animated:YES completion:nil];
     }
     [_mySLComposerSheet setCompletionHandler:^(SLComposeViewControllerResult result) {
-        NSString *output;
         switch (result) {
             case SLComposeViewControllerResultCancelled:
                 
                 break;
             case SLComposeViewControllerResultDone:
-                
                 [self performSegueWithIdentifier:@"showFBSuccess" sender:self];
                 break;
             default:
