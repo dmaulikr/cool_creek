@@ -2165,7 +2165,7 @@
                 </viewController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="e8Q-L1-AXP" userLabel="First Responder" sceneMemberID="firstResponder"/>
             </objects>
-            <point key="canvasLocation" x="-590.25" y="-1026.375"/>
+            <point key="canvasLocation" x="-602.5" y="-839.5"/>
         </scene>
         <!--SeperatorVC-->
         <scene sceneID="Nq4-Lg-pgo">
@@ -2965,6 +2965,9 @@
                                         </fragment>
                                     </attributedString>
                                 </state>
+                                <connections>
+                                    <action selector="FBPost:" destination="zjz-55-lMB" eventType="touchUpInside" id="ZkH-mu-kwL"/>
+                                </connections>
                             </button>
                             <imageView userInteractionEnabled="NO" contentMode="scaleAspectFill" horizontalHuggingPriority="251" verticalHuggingPriority="251" image="FBPost2" translatesAutoresizingMaskIntoConstraints="NO" id="foI-cA-k30">
                                 <rect key="frame" x="0.0" y="0.0" width="240" height="128"/>
@@ -3132,10 +3135,32 @@
                     </view>
                     <nil key="simulatedBottomBarMetrics"/>
                     <simulatedScreenMetrics key="simulatedDestinationMetrics" type="retina47"/>
+                    <connections>
+                        <outlet property="fbPostImg" destination="foI-cA-k30" id="FcK-kH-j9h"/>
+                        <outlet property="fbTopImage" destination="Iqy-8L-fQe" id="i7o-80-RD9"/>
+                    </connections>
                 </viewController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="Ed3-xM-dvG" userLabel="First Responder" sceneMemberID="firstResponder"/>
             </objects>
-            <point key="canvasLocation" x="1227.75" y="-1678.875"/>
+            <point key="canvasLocation" x="1074.5" y="-1687.5"/>
+        </scene>
+        <!--View Controller-->
+        <scene sceneID="YSY-oG-BpD">
+            <objects>
+                <viewController id="YsT-N4-CpP" sceneMemberID="viewController">
+                    <layoutGuides>
+                        <viewControllerLayoutGuide type="top" id="zy5-WH-cah"/>
+                        <viewControllerLayoutGuide type="bottom" id="0gH-iX-xrX"/>
+                    </layoutGuides>
+                    <view key="view" contentMode="scaleToFill" id="uQz-XV-I5d">
+                        <rect key="frame" x="0.0" y="0.0" width="600" height="600"/>
+                        <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
+                        <color key="backgroundColor" white="1" alpha="1" colorSpace="calibratedWhite"/>
+                    </view>
+                </viewController>
+                <placeholder placeholderIdentifier="IBFirstResponder" id="Ey0-K7-4Ci" userLabel="First Responder" sceneMemberID="firstResponder"/>
+            </objects>
+            <point key="canvasLocation" x="1634" y="-1721"/>
         </scene>
         <!--View Controller-->
         <scene sceneID="dUR-0D-ppR">
@@ -3599,7 +3624,7 @@
                 </viewController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="ie2-NS-7qL" userLabel="First Responder" sceneMemberID="firstResponder"/>
             </objects>
-            <point key="canvasLocation" x="236.25" y="-1026.375"/>
+            <point key="canvasLocation" x="317.5" y="-898.5"/>
         </scene>
         <!--FoundFBPost-->
         <scene sceneID="va6-No-t0H">
@@ -3869,7 +3894,7 @@
                 </viewController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="zJ6-yT-fvc" userLabel="First Responder" sceneMemberID="firstResponder"/>
             </objects>
-            <point key="canvasLocation" x="1227.75" y="-1126.875"/>
+            <point key="canvasLocation" x="1227.5" y="-804.5"/>
         </scene>
     </scenes>
     <resources>
@@ -3895,8 +3920,8 @@
         <image name="TabBarSearchBtn" width="24" height="24"/>
     </resources>
     <inferredMetricsTieBreakers>
-        <segue reference="Kn9-FF-p3p"/>
-        <segue reference="X73-qe-qwQ"/>
         <segue reference="gH4-y5-LAs"/>
+        <segue reference="X73-qe-qwQ"/>
+        <segue reference="Kn9-FF-p3p"/>
     </inferredMetricsTieBreakers>
 </document>
