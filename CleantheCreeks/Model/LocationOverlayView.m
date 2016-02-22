@@ -8,16 +8,18 @@
 
 #import "LocationOverlayView.h"
 #import "LocationAnnotation.h"
+#import "AppDelegate.h"
+#import "PhotoDetailsVC.h"
 @implementation LocationOverlayView
 - (id)initWithAnnotation:(id<MKAnnotation>)annotation reuseIdentifier:(NSString *)reuseIdentifier {
     
     self = [super initWithAnnotation:annotation reuseIdentifier:reuseIdentifier];
+     AppDelegate *mainDelegate = (AppDelegate *)[[UIApplication sharedApplication]delegate];
     if (self) {
         LocationAnnotation *locAnnotation = self.annotation;
-        
-        self.image = locAnnotation.image;
+         if([mainDelegate.locationData objectForKey:annotation.title])
+             self.image = [PhotoDetailsVC scaleImage:mainDelegate.locationData[annotation.title] toSize:CGSizeMake(50.0,50.0)];
     }
-    
     return self;
 }
 @end

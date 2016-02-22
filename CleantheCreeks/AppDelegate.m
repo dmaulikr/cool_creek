@@ -19,11 +19,12 @@
 @implementation AppDelegate
 @synthesize window = _window;
 @synthesize locationManager=_locationManager;
+@synthesize locationData=_locationData;
 
 - (BOOL)application:(UIApplication *)application didFinishLaunchingWithOptions:(NSDictionary *)launchOptions {
     // Override point for customization after application launch.
     UIColor *backgroundColor = [UIColor whiteColor];
-    
+    _locationData=[[NSMutableDictionary alloc]init];
     // set the bar background color
     [[UITabBar appearance] setBackgroundImage:[AppDelegate imageFromColor:backgroundColor forSize:CGSizeMake(320, 49) withCornerRadius:0]];
     

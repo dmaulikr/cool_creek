@@ -45,7 +45,6 @@
     [_mySLComposerSheet setCompletionHandler:^(SLComposeViewControllerResult result) {
         switch (result) {
             case SLComposeViewControllerResultCancelled:
-                
                 break;
             case SLComposeViewControllerResultDone:
                 [self performSegueWithIdentifier:@"showFBSuccess2" sender:self];

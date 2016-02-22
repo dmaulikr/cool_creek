@@ -312,7 +312,8 @@ bool secondPhototaken=false;
     AWSS3TransferManager *transferManager = [AWSS3TransferManager defaultS3TransferManager];
     NSArray *paths = NSSearchPathForDirectoriesInDomains(NSDocumentDirectory, NSUserDomainMask, YES);
     NSString *filePath = [[paths objectAtIndex:0] stringByAppendingPathComponent:[NSString stringWithFormat:@"%@.png", location_id]];
-    [UIImagePNGRepresentation(self.firstPicture) writeToFile:filePath atomically:YES];
+    UIImage *cimage = [PhotoDetailsVC scaleImage:self.firstPicture toSize:CGSizeMake(320.0,320.0)];
+    [UIImagePNGRepresentation(cimage) writeToFile:filePath atomically:YES];
     
     NSURL* fileUrl = [NSURL fileURLWithPath:filePath];
     
@@ -320,9 +321,9 @@ bool secondPhototaken=false;
     AWSS3TransferManagerUploadRequest *uploadRequest = [AWSS3TransferManagerUploadRequest new];
     uploadRequest.body = fileUrl;
     uploadRequest.bucket = @"cleanthecreeks";
-    uploadRequest.key = [NSString stringWithFormat:@"%.2f,%.2f",
-                         self.currentLocation.coordinate.latitude, self.currentLocation.coordinate.longitude];
     uploadRequest.contentType = @"image/png";
+    uploadRequest.key = [NSString stringWithFormat:@"%.2f,%.2fa",
+                         self.currentLocation.coordinate.latitude, self.currentLocation.coordinate.longitude];
     [[transferManager upload:uploadRequest] continueWithExecutor:[AWSExecutor mainThreadExecutor]
                                                        withBlock:^id(AWSTask *task) {
                                                            if (task.error) {
@@ -348,6 +349,36 @@ bool secondPhototaken=false;
                                                            }
                                                            return nil;
                                                        }];
+    if(secondPhototaken)
+    {
+        uploadRequest.key = [NSString stringWithFormat:@"%.2f,%.2fb",
+                             self.currentLocation.coordinate.latitude, self.currentLocation.coordinate.longitude];
+        [[transferManager upload:uploadRequest] continueWithExecutor:[AWSExecutor mainThreadExecutor]
+                                                           withBlock:^id(AWSTask *task) {
+                                                               if (task.error) {
+                                                                   if ([task.error.domain isEqualToString:AWSS3TransferManagerErrorDomain]) {
+                                                                       switch (task.error.code) {
+                                                                           case AWSS3TransferManagerErrorCancelled:
+                                                                           case AWSS3TransferManagerErrorPaused:
+                                                                               break;
+                                                                               
+                                                                           default:
+                                                                               NSLog(@"Error: %@", task.error);
+                                                                               break;
+                                                                       }
+                                                                   } else {
+                                                                       // Unknown error.
+                                                                       NSLog(@"Error: %@", task.error);
+                                                                   }
+                                                               }
+                                                               
+                                                               if (task.result) {
+                                                                   AWSS3TransferManagerUploadOutput *uploadOutput = task.result;
+                                                                   // The file uploaded successfully.
+                                                               }
+                                                               return nil;
+                                                           }];
+    }
 }
 -(void)imagePickerController:(UIImagePickerController *)picker didFinishPickingMediaWithInfo:(NSDictionary<NSString *,id> *)info
 {
@@ -377,9 +408,18 @@ bool secondPhototaken=false;
     {
         
         [self.tabBarController setSelectedIndex:1];
+        [self.tabBarController.tabBar setHidden:NO];
         //[self.navigationController popViewControllerAnimated:YES];
     }
 }
 
 
++(UIImage *)scaleImage:(UIImage *)image toSize:(CGSize)newSize
+{
+    UIGraphicsBeginImageContext(newSize);
+    [image drawInRect:CGRectMake(0, 0, newSize.width, newSize.height)];
+    UIImage *newImage = UIGraphicsGetImageFromCurrentImageContext();
+    UIGraphicsEndImageContext();
+    return newImage;
+}
 @end

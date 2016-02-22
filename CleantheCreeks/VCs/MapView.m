@@ -14,6 +14,7 @@
 #import <AWSCore/AWSCore.h>
 #import <AWSDynamoDB/AWSDynamoDB.h>
 #import <AWSS3/AWSS3.h>
+#import "AppDelegate.h"
 @implementation MapView
 
 
@@ -38,6 +39,7 @@
             }
         }
     }
+    self.locationArray=[[NSMutableArray alloc]init];
     self.mapView.delegate=self;
 
 }
@@ -56,7 +58,7 @@
     region.center = cLocation;
     [self.mapView setRegion:region animated:YES];
     AWSDynamoDBObjectMapper *dynamoDBObjectMapper = [AWSDynamoDBObjectMapper defaultDynamoDBObjectMapper];
-    
+    AppDelegate *mainDelegate = (AppDelegate *)[[UIApplication sharedApplication]delegate];
     AWSDynamoDBScanExpression *scanExpression = [AWSDynamoDBScanExpression new];
     AWSS3TransferManager *transferManager = [AWSS3TransferManager defaultS3TransferManager];
     [[dynamoDBObjectMapper scan:[Location class]
@@ -78,9 +80,7 @@
                  
                  NSString *downloadingFilePath = [NSTemporaryDirectory() stringByAppendingPathComponent:@"downloaded-myImage.jpg"];
                  NSURL *downloadingFileURL = [NSURL fileURLWithPath:downloadingFilePath];
-                 if(distance<100.0)
-                 {
-                     
+                
                      // Construct the download request.
                      AWSS3TransferManagerDownloadRequest *downloadRequest = [AWSS3TransferManagerDownloadRequest new];
                      
@@ -90,12 +90,12 @@
                      LocationAnnotation *annotation = [[LocationAnnotation alloc] init];
                     
                      annotation.coordinate = CLLocationCoordinate2DMake(location.latitude, location.longitude);
-                     annotation.title = @"Title";
-                     
+                     annotation.title = [location.location_id stringByAppendingString:@"a"];
                      annotation.subtitle = @"subtitle";
-                     annotation.image=[UIImage imageNamed:@"PlaceIcon"];
+                     //annotation.image=[UIImage imageNamed:@"PlaceIcon"];
                      
-                    [[transferManager download:downloadRequest] continueWithExecutor:[AWSExecutor mainThreadExecutor] withBlock:^id(AWSTask *task) {
+                     [mainDelegate.locationData setValue:annotation forKey:annotation.title];
+                     [[transferManager download:downloadRequest] continueWithExecutor:[AWSExecutor mainThreadExecutor] withBlock:^id(AWSTask *task) {
                          if (task.error){
                              if ([task.error.domain isEqualToString:AWSS3TransferManagerErrorDomain]) {
                                  switch (task.error.code) {
@@ -115,19 +115,25 @@
                          
                          if (task.result) {
                              AWSS3TransferManagerDownloadOutput *downloadOutput = task.result;
-                             annotation.image=[UIImage imageWithContentsOfFile:downloadingFilePath];
+                             
+                             //annotation.image=[UIImage imageWithContentsOfFile:downloadingFilePath];
+                             
+                             mainDelegate.locationData[annotation.title]=[UIImage imageWithContentsOfFile:downloadingFilePath];
+                             
                              [self.mapView addAnnotation:annotation];
                              
                          }
                          return nil;
                      }];
                  }
-                 
-             }
+             
              
          }
          return nil;
      }];
+  
+    
+    
 }
 - (MKAnnotationView *)mapView:(MKMapView *)mapView viewForAnnotation:(id<MKAnnotation>)annotation {
     LocationOverlayView *annotationView = [[LocationOverlayView alloc] initWithAnnotation:annotation reuseIdentifier:@"Attraction"];

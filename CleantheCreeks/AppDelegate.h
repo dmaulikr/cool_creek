@@ -14,7 +14,7 @@
 
 //Add a location manager property to this app delegate
 @property (strong, nonatomic) CLLocationManager *locationManager;
-
+@property (strong, nonatomic) NSMutableDictionary * locationData;
 
 -(NSString *)getAddressFromLatLon:(double)pdblLatitude:(double)pdblLongitude;
 

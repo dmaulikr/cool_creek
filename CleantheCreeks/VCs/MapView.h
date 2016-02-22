@@ -16,5 +16,6 @@
 - (IBAction)listButtonClicked:(id)sender;
 @property (weak, nonatomic) IBOutlet UIButton *mapButton;
 @property (strong, nonatomic) CLLocationManager *locationManager;
+@property (strong,nonatomic) NSMutableArray * locationArray;
 
 @end

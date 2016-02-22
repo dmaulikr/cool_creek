@@ -75,10 +75,10 @@
         distance=distance/1000.0;
         NSString*distanceText=[[NSString alloc]initWithFormat:@"%.02fKM",distance];
         [cell.distance setText:distanceText];
-        
+        NSString * key=[location.location_id stringByAppendingString:@"a"];
         // Construct the download request.
-        if([self.imageArray objectForKey:location.location_id])
-            cell.image.image=(UIImage*)[self.imageArray objectForKey:location.location_id];
+        if([self.imageArray objectForKey:key])
+            cell.image.image=(UIImage*)[self.imageArray objectForKey:key];
     }
     if(!cell)
     {
@@ -95,6 +95,7 @@
     self.imageArray = [[NSMutableDictionary alloc]init];
     self.currentLocation=newLocation;
     CLGeocoder *ceo = [[CLGeocoder alloc]init];
+    
     [ceo reverseGeocodeLocation:self.currentLocation
               completionHandler:^(NSArray *placemarks, NSError *error) {
                   CLPlacemark *placemark = [placemarks objectAtIndex:0];
@@ -131,12 +132,13 @@
                  NSURL *downloadingFileURL = [NSURL fileURLWithPath:downloadingFilePath];
                  if(distance<100.0)
                  {
+                     NSString * key=[location.location_id stringByAppendingString:@"a"];
                      [self.locationArray addObject:location];
-                 // Construct the download request.
+                 
                      AWSS3TransferManagerDownloadRequest *downloadRequest = [AWSS3TransferManagerDownloadRequest new];
                      
                      downloadRequest.bucket = @"cleanthecreeks";
-                     downloadRequest.key = location.location_id;
+                     downloadRequest.key = key;
                      downloadRequest.downloadingFileURL = downloadingFileURL;
                      [[transferManager download:downloadRequest] continueWithExecutor:[AWSExecutor mainThreadExecutor] withBlock:^id(AWSTask *task) {
                          if (task.error){
@@ -157,8 +159,8 @@
                          }
                          
                          if (task.result) {
-                        AWSS3TransferManagerDownloadOutput *downloadOutput = task.result;
-                             self.imageArray[location.location_id]=[UIImage imageWithContentsOfFile:downloadingFilePath];
+                             AWSS3TransferManagerDownloadOutput *downloadOutput = task.result;
+                             self.imageArray[key]=[UIImage imageWithContentsOfFile:downloadingFilePath];
                              
                          }
                          return nil;
