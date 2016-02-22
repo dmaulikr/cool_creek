@@ -7,6 +7,9 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		0084F3EA1C7ABA6200E111D0 /* ActivityCell.m in Sources */ = {isa = PBXBuildFile; fileRef = 0084F3E91C7ABA6200E111D0 /* ActivityCell.m */; };
+		0084F3ED1C7ABA8800E111D0 /* KudoCell.m in Sources */ = {isa = PBXBuildFile; fileRef = 0084F3EC1C7ABA8800E111D0 /* KudoCell.m */; };
+		0084F3F41C7AFBD300E111D0 /* CCUtils.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0084F3F31C7AFBD300E111D0 /* CCUtils.swift */; };
 		095F77783019A58BBD9134E1 /* libPods.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 4656214352E34CC700C152CD /* libPods.a */; };
 		BD06039F1C595D4700A2C3EC /* main.m in Sources */ = {isa = PBXBuildFile; fileRef = BD06039E1C595D4700A2C3EC /* main.m */; };
 		BD0603A21C595D4700A2C3EC /* AppDelegate.m in Sources */ = {isa = PBXBuildFile; fileRef = BD0603A11C595D4700A2C3EC /* AppDelegate.m */; };
@@ -65,6 +68,30 @@
 /* End PBXContainerItemProxy section */
 
 /* Begin PBXFileReference section */
+		0084F3E81C7ABA6200E111D0 /* ActivityCell.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ActivityCell.h; sourceTree = "<group>"; };
+		0084F3E91C7ABA6200E111D0 /* ActivityCell.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = ActivityCell.m; sourceTree = "<group>"; };
+		0084F3EB1C7ABA8800E111D0 /* KudoCell.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = KudoCell.h; sourceTree = "<group>"; };
+		0084F3EC1C7ABA8800E111D0 /* KudoCell.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = KudoCell.m; sourceTree = "<group>"; };
+		0084F3F21C7AFBD300E111D0 /* Clean the Creek-Bridging-Header.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = "Clean the Creek-Bridging-Header.h"; sourceTree = "<group>"; };
+		0084F3F31C7AFBD300E111D0 /* CCUtils.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = CCUtils.swift; sourceTree = "<group>"; };
+		0084F4011C7B018700E111D0 /* Lato-Black.ttf */ = {isa = PBXFileReference; lastKnownFileType = file; path = "Lato-Black.ttf"; sourceTree = "<group>"; };
+		0084F4021C7B018700E111D0 /* Lato-BlackItalic.ttf */ = {isa = PBXFileReference; lastKnownFileType = file; path = "Lato-BlackItalic.ttf"; sourceTree = "<group>"; };
+		0084F4031C7B018700E111D0 /* Lato-Bold.ttf */ = {isa = PBXFileReference; lastKnownFileType = file; path = "Lato-Bold.ttf"; sourceTree = "<group>"; };
+		0084F4041C7B018700E111D0 /* Lato-BoldItalic.ttf */ = {isa = PBXFileReference; lastKnownFileType = file; path = "Lato-BoldItalic.ttf"; sourceTree = "<group>"; };
+		0084F4051C7B018700E111D0 /* Lato-Hairline.ttf */ = {isa = PBXFileReference; lastKnownFileType = file; path = "Lato-Hairline.ttf"; sourceTree = "<group>"; };
+		0084F4061C7B018700E111D0 /* Lato-HairlineItalic.ttf */ = {isa = PBXFileReference; lastKnownFileType = file; path = "Lato-HairlineItalic.ttf"; sourceTree = "<group>"; };
+		0084F4071C7B018700E111D0 /* Lato-Heavy.ttf */ = {isa = PBXFileReference; lastKnownFileType = file; path = "Lato-Heavy.ttf"; sourceTree = "<group>"; };
+		0084F4081C7B018700E111D0 /* Lato-HeavyItalic.ttf */ = {isa = PBXFileReference; lastKnownFileType = file; path = "Lato-HeavyItalic.ttf"; sourceTree = "<group>"; };
+		0084F4091C7B018700E111D0 /* Lato-Italic.ttf */ = {isa = PBXFileReference; lastKnownFileType = file; path = "Lato-Italic.ttf"; sourceTree = "<group>"; };
+		0084F40A1C7B018700E111D0 /* Lato-Light.ttf */ = {isa = PBXFileReference; lastKnownFileType = file; path = "Lato-Light.ttf"; sourceTree = "<group>"; };
+		0084F40B1C7B018700E111D0 /* Lato-LightItalic.ttf */ = {isa = PBXFileReference; lastKnownFileType = file; path = "Lato-LightItalic.ttf"; sourceTree = "<group>"; };
+		0084F40C1C7B018700E111D0 /* Lato-Medium.ttf */ = {isa = PBXFileReference; lastKnownFileType = file; path = "Lato-Medium.ttf"; sourceTree = "<group>"; };
+		0084F40D1C7B018700E111D0 /* Lato-MediumItalic.ttf */ = {isa = PBXFileReference; lastKnownFileType = file; path = "Lato-MediumItalic.ttf"; sourceTree = "<group>"; };
+		0084F40E1C7B018700E111D0 /* Lato-Regular.ttf */ = {isa = PBXFileReference; lastKnownFileType = file; path = "Lato-Regular.ttf"; sourceTree = "<group>"; };
+		0084F40F1C7B018700E111D0 /* Lato-Semibold.ttf */ = {isa = PBXFileReference; lastKnownFileType = file; path = "Lato-Semibold.ttf"; sourceTree = "<group>"; };
+		0084F4101C7B018700E111D0 /* Lato-SemiboldItalic.ttf */ = {isa = PBXFileReference; lastKnownFileType = file; path = "Lato-SemiboldItalic.ttf"; sourceTree = "<group>"; };
+		0084F4111C7B018700E111D0 /* Lato-Thin.ttf */ = {isa = PBXFileReference; lastKnownFileType = file; path = "Lato-Thin.ttf"; sourceTree = "<group>"; };
+		0084F4121C7B018700E111D0 /* Lato-ThinItalic.ttf */ = {isa = PBXFileReference; lastKnownFileType = file; path = "Lato-ThinItalic.ttf"; sourceTree = "<group>"; };
 		4656214352E34CC700C152CD /* libPods.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; includeInIndex = 0; path = libPods.a; sourceTree = BUILT_PRODUCTS_DIR; };
 		4C6CBB01DE1D421604AC1E1D /* Pods.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = Pods.debug.xcconfig; path = "Pods/Target Support Files/Pods/Pods.debug.xcconfig"; sourceTree = "<group>"; };
 		893EA3F1F71074BC15B9E306 /* Pods.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = Pods.release.xcconfig; path = "Pods/Target Support Files/Pods/Pods.release.xcconfig"; sourceTree = "<group>"; };
@@ -171,6 +198,66 @@
 /* End PBXFrameworksBuildPhase section */
 
 /* Begin PBXGroup section */
+		0084F3E61C7AB95B00E111D0 /* ActivityCell */ = {
+			isa = PBXGroup;
+			children = (
+				0084F3E81C7ABA6200E111D0 /* ActivityCell.h */,
+				0084F3E91C7ABA6200E111D0 /* ActivityCell.m */,
+			);
+			name = ActivityCell;
+			sourceTree = "<group>";
+		};
+		0084F3E71C7AB96B00E111D0 /* KudoCell */ = {
+			isa = PBXGroup;
+			children = (
+				0084F3EB1C7ABA8800E111D0 /* KudoCell.h */,
+				0084F3EC1C7ABA8800E111D0 /* KudoCell.m */,
+			);
+			name = KudoCell;
+			sourceTree = "<group>";
+		};
+		0084F3F11C7AFBC400E111D0 /* Utils */ = {
+			isa = PBXGroup;
+			children = (
+				0084F3F31C7AFBD300E111D0 /* CCUtils.swift */,
+				0084F3F21C7AFBD300E111D0 /* Clean the Creek-Bridging-Header.h */,
+			);
+			path = Utils;
+			sourceTree = "<group>";
+		};
+		0084F3F51C7AFEE000E111D0 /* Fonts */ = {
+			isa = PBXGroup;
+			children = (
+				0084F3F61C7AFEE000E111D0 /* Lato2OFL */,
+			);
+			path = Fonts;
+			sourceTree = "<group>";
+		};
+		0084F3F61C7AFEE000E111D0 /* Lato2OFL */ = {
+			isa = PBXGroup;
+			children = (
+				0084F4011C7B018700E111D0 /* Lato-Black.ttf */,
+				0084F4021C7B018700E111D0 /* Lato-BlackItalic.ttf */,
+				0084F4031C7B018700E111D0 /* Lato-Bold.ttf */,
+				0084F4041C7B018700E111D0 /* Lato-BoldItalic.ttf */,
+				0084F4051C7B018700E111D0 /* Lato-Hairline.ttf */,
+				0084F4061C7B018700E111D0 /* Lato-HairlineItalic.ttf */,
+				0084F4071C7B018700E111D0 /* Lato-Heavy.ttf */,
+				0084F4081C7B018700E111D0 /* Lato-HeavyItalic.ttf */,
+				0084F4091C7B018700E111D0 /* Lato-Italic.ttf */,
+				0084F40A1C7B018700E111D0 /* Lato-Light.ttf */,
+				0084F40B1C7B018700E111D0 /* Lato-LightItalic.ttf */,
+				0084F40C1C7B018700E111D0 /* Lato-Medium.ttf */,
+				0084F40D1C7B018700E111D0 /* Lato-MediumItalic.ttf */,
+				0084F40E1C7B018700E111D0 /* Lato-Regular.ttf */,
+				0084F40F1C7B018700E111D0 /* Lato-Semibold.ttf */,
+				0084F4101C7B018700E111D0 /* Lato-SemiboldItalic.ttf */,
+				0084F4111C7B018700E111D0 /* Lato-Thin.ttf */,
+				0084F4121C7B018700E111D0 /* Lato-ThinItalic.ttf */,
+			);
+			path = Lato2OFL;
+			sourceTree = "<group>";
+		};
 		29EB99E7AFF272E8C286239F /* Pods */ = {
 			isa = PBXGroup;
 			children = (
@@ -206,11 +293,11 @@
 			children = (
 				E2FD056B1C59CA09004B2C34 /* CacheHandler */,
 				E2FD056A1C59CA04004B2C34 /* ApiHandler */,
+				0084F3F51C7AFEE000E111D0 /* Fonts */,
 				E2FD05691C59C9FA004B2C34 /* ExtLibs */,
 				E2FD056C1C59CA0E004B2C34 /* Model */,
+				0084F3F11C7AFBC400E111D0 /* Utils */,
 				E2FD056D1C59CA16004B2C34 /* VCs */,
-				E2FD056E1C59CA1B004B2C34 /* Utils */,
-				E2FD056F1C59CA22004B2C34 /* Font */,
 				BD0603A01C595D4700A2C3EC /* AppDelegate.h */,
 				BD0603A11C595D4700A2C3EC /* AppDelegate.m */,
 				BD0603A91C595D4700A2C3EC /* Assets.xcassets */,
@@ -415,20 +502,6 @@
 			path = VCs;
 			sourceTree = "<group>";
 		};
-		E2FD056E1C59CA1B004B2C34 /* Utils */ = {
-			isa = PBXGroup;
-			children = (
-			);
-			path = Utils;
-			sourceTree = "<group>";
-		};
-		E2FD056F1C59CA22004B2C34 /* Font */ = {
-			isa = PBXGroup;
-			children = (
-			);
-			path = Font;
-			sourceTree = "<group>";
-		};
 		E2FD05731C59E269004B2C34 /* SlideVC */ = {
 			isa = PBXGroup;
 			children = (
@@ -470,6 +543,8 @@
 		E2FD057A1C59E47B004B2C34 /* ActivityVC */ = {
 			isa = PBXGroup;
 			children = (
+				0084F3E71C7AB96B00E111D0 /* KudoCell */,
+				0084F3E61C7AB95B00E111D0 /* ActivityCell */,
 				E2FD05831C59E548004B2C34 /* ActivityVC.h */,
 				E2FD05841C59E548004B2C34 /* ActivityVC.m */,
 			);
@@ -661,6 +736,7 @@
 				E2FD058B1C59E5D8004B2C34 /* MainTabNav.m in Sources */,
 				E27FC5041C69D20300489DE3 /* LocationHeaderViewController.m in Sources */,
 				E2F36ECE1C5AFFE700923DF0 /* IntroControll.m in Sources */,
+				0084F3F41C7AFBD300E111D0 /* CCUtils.swift in Sources */,
 				E27FC5091C69E0BA00489DE3 /* MapView.m in Sources */,
 				E2D1034F1C6528EB00FD67A0 /* locationCell.m in Sources */,
 				E2FD05771C59E354004B2C34 /* SplashVC.m in Sources */,
@@ -670,9 +746,11 @@
 				E22A79A61C77A77100CE66E5 /* LocationAnnotation.m in Sources */,
 				BD0603A21C595D4700A2C3EC /* AppDelegate.m in Sources */,
 				E2656BEC1C5DA885004786EA /* PhotoDetailsVC.m in Sources */,
+				0084F3EA1C7ABA6200E111D0 /* ActivityCell.m in Sources */,
 				E2F36ECD1C5AFFE700923DF0 /* FirstPageView.m in Sources */,
 				E2960D7A1C6E36D8009425CA /* DetailCell1.m in Sources */,
 				E252E5F91C611ECB0013F1B7 /* Location.m in Sources */,
+				0084F3ED1C7ABA8800E111D0 /* KudoCell.m in Sources */,
 				E2D1034B1C64D06900FD67A0 /* photoViewCell.m in Sources */,
 				BD06039F1C595D4700A2C3EC /* main.m in Sources */,
 			);
@@ -802,6 +880,7 @@
 			baseConfigurationReference = 4C6CBB01DE1D421604AC1E1D /* Pods.debug.xcconfig */;
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
+				CLANG_ENABLE_MODULES = YES;
 				CODE_SIGN_IDENTITY = "iPhone Developer: Dan Carter (ZGN82PD75F)";
 				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "iPhone Developer: Dan Carter (ZGN82PD75F)";
 				FRAMEWORK_SEARCH_PATHS = (
@@ -813,6 +892,8 @@
 				PRODUCT_BUNDLE_IDENTIFIER = com.redcherry.CleantheCreeks;
 				PRODUCT_NAME = "Clean the Creek";
 				PROVISIONING_PROFILE = "810defcd-4264-42b8-9621-1efe3d1a498e";
+				SWIFT_OBJC_BRIDGING_HEADER = "CleantheCreeks/Utils/Clean the Creek-Bridging-Header.h";
+				SWIFT_OPTIMIZATION_LEVEL = "-Onone";
 			};
 			name = Debug;
 		};
@@ -821,6 +902,7 @@
 			baseConfigurationReference = 893EA3F1F71074BC15B9E306 /* Pods.release.xcconfig */;
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
+				CLANG_ENABLE_MODULES = YES;
 				CODE_SIGN_IDENTITY = "iPhone Developer: Dan Carter (ZGN82PD75F)";
 				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "iPhone Developer: Dan Carter (ZGN82PD75F)";
 				FRAMEWORK_SEARCH_PATHS = (
@@ -832,6 +914,7 @@
 				PRODUCT_BUNDLE_IDENTIFIER = com.redcherry.CleantheCreeks;
 				PRODUCT_NAME = "Clean the Creek";
 				PROVISIONING_PROFILE = "810defcd-4264-42b8-9621-1efe3d1a498e";
+				SWIFT_OBJC_BRIDGING_HEADER = "CleantheCreeks/Utils/Clean the Creek-Bridging-Header.h";
 			};
 			name = Release;
 		};
