@@ -8,7 +8,7 @@
 
 #import <UIKit/UIKit.h>
 
-#import "photoViewCell.h"
+#import "PhotoViewCell.h"
 #import <CoreLocation/CoreLocation.h>
 #import "Location.h"
 

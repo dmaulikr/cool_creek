@@ -1,5 +1,5 @@
 //
-//  photoViewCell.h
+//  PhotoViewCell.h
 //  Clean the Creeks
 //
 //  Created by Kimura Isoroku on 2/5/16.
@@ -12,7 +12,7 @@
 @optional
 -(void) setSecondPhoto:(BOOL)set;
 @end
-@interface photoViewCell : UITableViewCell<UIImagePickerControllerDelegate,UITableViewDelegate,UINavigationControllerDelegate>
+@interface PhotoViewCell : UITableViewCell<UIImagePickerControllerDelegate,UITableViewDelegate,UINavigationControllerDelegate>
 @property (weak, nonatomic) IBOutlet UIImageView *firstPhoto;
 @property (weak, nonatomic) IBOutlet UIImageView *secondPhoto;
 @property(nonatomic, retain) id<SetPhotoDelegate> delegate;

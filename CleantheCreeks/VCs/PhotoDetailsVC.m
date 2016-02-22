@@ -7,12 +7,14 @@
 //
 
 #import "PhotoDetailsVC.h"
-#import "DetailCell1.h"
+#import "DetailCell.h"
 #import <AWSCore/AWSCore.h>
 #import <AWSDynamoDB/AWSDynamoDB.h>
 #import <AWSS3/AWSS3.h>
 @implementation PhotoDetailsVC
+
 bool secondPhototaken=false;
+
 -(void)viewDidLoad
 {
     [super viewDidLoad];
@@ -37,9 +39,8 @@ bool secondPhototaken=false;
     [self.nextButton setEnabled:NO];
     
 }
-- (void)locationManager:(CLLocationManager *)manager
-    didUpdateToLocation:(CLLocation *)newLocation
-           fromLocation:(CLLocation *)oldLocation
+
+- (void)locationManager:(CLLocationManager *)manager didUpdateToLocation:(CLLocation *)newLocation fromLocation:(CLLocation *)oldLocation
 {
     self.currentLocation=newLocation;
     CLGeocoder *ceo = [[CLGeocoder alloc]init];
@@ -70,6 +71,7 @@ bool secondPhototaken=false;
                   [self.detailTable reloadData];
               }
      ];
+    
     [_locationManager stopUpdatingLocation];
 }
 
@@ -78,11 +80,13 @@ bool secondPhototaken=false;
     [textField resignFirstResponder];
     return NO;
 }
+
 -(void) SetSecondPhoto:(bool)set
 {
-    secondPhototaken=set;
+    secondPhototaken = set;
     
 }
+
 - (CGFloat)tableView:(UITableView *)tableView heightForRowAtIndexPath:(NSIndexPath *)indexPath
 {
     int height=0;
@@ -145,12 +149,12 @@ bool secondPhototaken=false;
     if(indexPath.section==0)
     {
         if(indexPath.row==0)
-            cell = [tableView dequeueReusableCellWithIdentifier:@"bar1"];
+            cell = [tableView dequeueReusableCellWithIdentifier:@"FirstBar"];
         else if(indexPath.row==1)
         {
-            cell = (photoViewCell*)[tableView dequeueReusableCellWithIdentifier:@"photoCell"];
-            [((photoViewCell*)cell).firstPhoto setImage:self.firstPicture];
-            ((photoViewCell*)cell).delegate=self;
+            cell = (PhotoViewCell*)[tableView dequeueReusableCellWithIdentifier:@"PhotoCell"];
+            [((PhotoViewCell*)cell).firstPhoto setImage:self.firstPicture];
+            ((PhotoViewCell*)cell).delegate=self;
         }
     }
     else if(indexPath.section==1)
@@ -162,36 +166,36 @@ bool secondPhototaken=false;
         [dateFormatter setDateFormat:@"MMM dd, yyyy"];
         
         if(indexPath.row==0)
-            cell = [tableView dequeueReusableCellWithIdentifier:@"bar2"];
+            cell = [tableView dequeueReusableCellWithIdentifier:@"SecondBar"];
         else if(indexPath.row==1)
         {
-            cell = (DetailCell1*)[tableView dequeueReusableCellWithIdentifier:@"detailCell1"];
+            cell = (DetailCell*)[tableView dequeueReusableCellWithIdentifier:@"FirstDetailCell"];
             
-            [((DetailCell1*)cell).locationName1 setText:self.locationName1];
-            [((DetailCell1*)cell).locationName2 setText:self.locationName2];
+            [((DetailCell*)cell).locationName1 setText:self.locationName1];
+            [((DetailCell*)cell).locationName2 setText:self.locationName2];
             
         }
         else if(indexPath.row==2)
         {
-            cell = (DetailCell1*)[tableView dequeueReusableCellWithIdentifier:@"detailCell2"];
-            [((DetailCell1*)cell).finderName setText:user_name];
-            [((DetailCell1*)cell).foundDate setText:[dateFormatter stringFromDate:self.foundDate]];
+            cell = (DetailCell*)[tableView dequeueReusableCellWithIdentifier:@"SecondDetailCell"];
+            [((DetailCell*)cell).finderName setText:user_name];
+            [((DetailCell*)cell).foundDate setText:[dateFormatter stringFromDate:self.foundDate]];
             
         }
         else if(indexPath.row==3)
         {
-            cell = (DetailCell1*)[tableView dequeueReusableCellWithIdentifier:@"detailCell3"];
-            [((DetailCell1*)cell).cleanerName setText:user_name];
-            [((DetailCell1*)cell).cleanedDate setText:[dateFormatter stringFromDate:[NSDate date]]];
+            cell = (DetailCell*)[tableView dequeueReusableCellWithIdentifier:@"ThirdDetailCell"];
+            [((DetailCell*)cell).cleanerName setText:user_name];
+            [((DetailCell*)cell).cleanedDate setText:[dateFormatter stringFromDate:[NSDate date]]];
         }
 
     }
     else if(indexPath.section==2)
     {
         if(indexPath.row==0)
-            cell = [tableView dequeueReusableCellWithIdentifier:@"bar3"];
+            cell = [tableView dequeueReusableCellWithIdentifier:@"ThirdBar"];
         else if(indexPath.row==1)
-            cell = [tableView dequeueReusableCellWithIdentifier:@"detailCell4"];
+            cell = [tableView dequeueReusableCellWithIdentifier:@"FourthDetailCell"];
     }
     if(!cell){
         cell = nil;
@@ -208,12 +212,12 @@ bool secondPhototaken=false;
 - (nullable NSString *)tableView:(UITableView *)tableView titleForHeaderInSection:(NSInteger)section
 {
     NSString* title;
-    if(section==0)
-        title=@"Details";
-    else if(section==1)
-        title=@"Timeline";
-    else if(section==2)
-        title=@"Comments";
+    if(section == 0)
+        title = @"Details";
+    else if(section == 1)
+        title = @"Timeline";
+    else if(section == 2)
+        title = @"Comments";
     return title;
 }
 

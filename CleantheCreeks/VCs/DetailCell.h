@@ -8,7 +8,7 @@
 
 #import <UIKit/UIKit.h>
 
-@interface DetailCell1 : UITableViewCell
+@interface DetailCell : UITableViewCell
 @property (weak, nonatomic) IBOutlet UILabel *locationName1;
 @property (weak, nonatomic) IBOutlet UILabel *finderName;
 

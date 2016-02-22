@@ -6,9 +6,9 @@
 //  Copyright © 2016 RedCherry. All rights reserved.
 //
 
-#import "photoViewCell.h"
+#import "PhotoViewCell.h"
 
-@implementation photoViewCell
+@implementation PhotoViewCell
 
 - (void)awakeFromNib {
     // Initialization code

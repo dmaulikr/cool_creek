@@ -30,6 +30,7 @@
 		0084F4241C7B086B00E111D0 /* Lato-ThinItalic.ttf in Resources */ = {isa = PBXBuildFile; fileRef = 0084F4121C7B018700E111D0 /* Lato-ThinItalic.ttf */; };
 		0084F4271C7B14A600E111D0 /* KudosVC.m in Sources */ = {isa = PBXBuildFile; fileRef = 0084F4261C7B14A600E111D0 /* KudosVC.m */; };
 		0084F42B1C7B17D800E111D0 /* KudosCell.m in Sources */ = {isa = PBXBuildFile; fileRef = 0084F42A1C7B17D800E111D0 /* KudosCell.m */; };
+		0084F42E1C7B1C8500E111D0 /* ActivityPhotoDetailsVC.m in Sources */ = {isa = PBXBuildFile; fileRef = 0084F42D1C7B1C8500E111D0 /* ActivityPhotoDetailsVC.m */; };
 		095F77783019A58BBD9134E1 /* libPods.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 4656214352E34CC700C152CD /* libPods.a */; };
 		BD06039F1C595D4700A2C3EC /* main.m in Sources */ = {isa = PBXBuildFile; fileRef = BD06039E1C595D4700A2C3EC /* main.m */; };
 		BD0603A21C595D4700A2C3EC /* AppDelegate.m in Sources */ = {isa = PBXBuildFile; fileRef = BD0603A11C595D4700A2C3EC /* AppDelegate.m */; };
@@ -50,8 +51,8 @@
 		E27FC5091C69E0BA00489DE3 /* MapView.m in Sources */ = {isa = PBXBuildFile; fileRef = E27FC5081C69E0BA00489DE3 /* MapView.m */; };
 		E27FC50D1C69E31600489DE3 /* Main.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = E27FC50B1C69E31600489DE3 /* Main.storyboard */; };
 		E27FC5101C69E7A300489DE3 /* LocationNav.m in Sources */ = {isa = PBXBuildFile; fileRef = E27FC50F1C69E7A300489DE3 /* LocationNav.m */; };
-		E2960D7A1C6E36D8009425CA /* DetailCell1.m in Sources */ = {isa = PBXBuildFile; fileRef = E2960D791C6E36D8009425CA /* DetailCell1.m */; };
-		E2D1034B1C64D06900FD67A0 /* photoViewCell.m in Sources */ = {isa = PBXBuildFile; fileRef = E2D1034A1C64D06900FD67A0 /* photoViewCell.m */; };
+		E2960D7A1C6E36D8009425CA /* DetailCell.m in Sources */ = {isa = PBXBuildFile; fileRef = E2960D791C6E36D8009425CA /* DetailCell.m */; };
+		E2D1034B1C64D06900FD67A0 /* PhotoViewCell.m in Sources */ = {isa = PBXBuildFile; fileRef = E2D1034A1C64D06900FD67A0 /* PhotoViewCell.m */; };
 		E2D1034F1C6528EB00FD67A0 /* locationCell.m in Sources */ = {isa = PBXBuildFile; fileRef = E2D1034E1C6528EB00FD67A0 /* locationCell.m */; };
 		E2D103601C6933ED00FD67A0 /* CoreLocation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = E2D1035F1C6933ED00FD67A0 /* CoreLocation.framework */; };
 		E2D5F7131C6CA677005A497F /* MapKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = E2D5F7121C6CA677005A497F /* MapKit.framework */; };
@@ -116,6 +117,8 @@
 		0084F4261C7B14A600E111D0 /* KudosVC.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = KudosVC.m; sourceTree = "<group>"; };
 		0084F4291C7B17D800E111D0 /* KudosCell.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = KudosCell.h; sourceTree = "<group>"; };
 		0084F42A1C7B17D800E111D0 /* KudosCell.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = KudosCell.m; sourceTree = "<group>"; };
+		0084F42C1C7B1C8500E111D0 /* ActivityPhotoDetailsVC.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ActivityPhotoDetailsVC.h; sourceTree = "<group>"; };
+		0084F42D1C7B1C8500E111D0 /* ActivityPhotoDetailsVC.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = ActivityPhotoDetailsVC.m; sourceTree = "<group>"; };
 		4656214352E34CC700C152CD /* libPods.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; includeInIndex = 0; path = libPods.a; sourceTree = BUILT_PRODUCTS_DIR; };
 		4C6CBB01DE1D421604AC1E1D /* Pods.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = Pods.debug.xcconfig; path = "Pods/Target Support Files/Pods/Pods.debug.xcconfig"; sourceTree = "<group>"; };
 		893EA3F1F71074BC15B9E306 /* Pods.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = Pods.release.xcconfig; path = "Pods/Target Support Files/Pods/Pods.release.xcconfig"; sourceTree = "<group>"; };
@@ -150,10 +153,10 @@
 		E27FC50C1C69E31600489DE3 /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; name = Base; path = CleantheCreeks/Base.lproj/Main.storyboard; sourceTree = "<group>"; };
 		E27FC50E1C69E7A300489DE3 /* LocationNav.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = LocationNav.h; path = ../LocationNav.h; sourceTree = "<group>"; };
 		E27FC50F1C69E7A300489DE3 /* LocationNav.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = LocationNav.m; path = ../LocationNav.m; sourceTree = "<group>"; };
-		E2960D781C6E36D8009425CA /* DetailCell1.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = DetailCell1.h; sourceTree = "<group>"; };
-		E2960D791C6E36D8009425CA /* DetailCell1.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = DetailCell1.m; sourceTree = "<group>"; };
-		E2D103491C64D06900FD67A0 /* photoViewCell.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = photoViewCell.h; sourceTree = "<group>"; };
-		E2D1034A1C64D06900FD67A0 /* photoViewCell.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = photoViewCell.m; sourceTree = "<group>"; };
+		E2960D781C6E36D8009425CA /* DetailCell.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = DetailCell.h; sourceTree = "<group>"; };
+		E2960D791C6E36D8009425CA /* DetailCell.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = DetailCell.m; sourceTree = "<group>"; };
+		E2D103491C64D06900FD67A0 /* PhotoViewCell.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = PhotoViewCell.h; sourceTree = "<group>"; };
+		E2D1034A1C64D06900FD67A0 /* PhotoViewCell.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = PhotoViewCell.m; sourceTree = "<group>"; };
 		E2D1034D1C6528EB00FD67A0 /* locationCell.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = locationCell.h; sourceTree = "<group>"; };
 		E2D1034E1C6528EB00FD67A0 /* locationCell.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = locationCell.m; sourceTree = "<group>"; };
 		E2D1035F1C6933ED00FD67A0 /* CoreLocation.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = CoreLocation.framework; path = System/Library/Frameworks/CoreLocation.framework; sourceTree = SDKROOT; };
@@ -392,8 +395,8 @@
 			children = (
 				E2656BEA1C5DA885004786EA /* PhotoDetailsVC.h */,
 				E2656BEB1C5DA885004786EA /* PhotoDetailsVC.m */,
-				E2D1034C1C64D06D00FD67A0 /* photoViewCell */,
-				E2960D7C1C6E36DF009425CA /* DetailCell1 */,
+				E2D1034C1C64D06D00FD67A0 /* PhotoViewCell */,
+				E2960D7C1C6E36DF009425CA /* DetailCell */,
 			);
 			name = PhotoDetailsVC;
 			sourceTree = "<group>";
@@ -427,22 +430,22 @@
 			name = LocationNav;
 			sourceTree = "<group>";
 		};
-		E2960D7C1C6E36DF009425CA /* DetailCell1 */ = {
+		E2960D7C1C6E36DF009425CA /* DetailCell */ = {
 			isa = PBXGroup;
 			children = (
-				E2960D781C6E36D8009425CA /* DetailCell1.h */,
-				E2960D791C6E36D8009425CA /* DetailCell1.m */,
+				E2960D781C6E36D8009425CA /* DetailCell.h */,
+				E2960D791C6E36D8009425CA /* DetailCell.m */,
 			);
-			name = DetailCell1;
+			name = DetailCell;
 			sourceTree = "<group>";
 		};
-		E2D1034C1C64D06D00FD67A0 /* photoViewCell */ = {
+		E2D1034C1C64D06D00FD67A0 /* PhotoViewCell */ = {
 			isa = PBXGroup;
 			children = (
-				E2D103491C64D06900FD67A0 /* photoViewCell.h */,
-				E2D1034A1C64D06900FD67A0 /* photoViewCell.m */,
+				E2D103491C64D06900FD67A0 /* PhotoViewCell.h */,
+				E2D1034A1C64D06900FD67A0 /* PhotoViewCell.m */,
 			);
-			name = photoViewCell;
+			name = PhotoViewCell;
 			sourceTree = "<group>";
 		};
 		E2D103501C6528F100FD67A0 /* LocationCell */ = {
@@ -583,6 +586,8 @@
 				E2FD05841C59E548004B2C34 /* ActivityVC.m */,
 				0084F4251C7B14A600E111D0 /* KudosVC.h */,
 				0084F4261C7B14A600E111D0 /* KudosVC.m */,
+				0084F42C1C7B1C8500E111D0 /* ActivityPhotoDetailsVC.h */,
+				0084F42D1C7B1C8500E111D0 /* ActivityPhotoDetailsVC.m */,
 			);
 			name = ActivityVC;
 			sourceTree = "<group>";
@@ -800,14 +805,15 @@
 				E2FD05821C59E4FD004B2C34 /* CameraVC.m in Sources */,
 				E2FD05721C59CA42004B2C34 /* SlideVC.m in Sources */,
 				E22A79A61C77A77100CE66E5 /* LocationAnnotation.m in Sources */,
+				0084F42E1C7B1C8500E111D0 /* ActivityPhotoDetailsVC.m in Sources */,
 				BD0603A21C595D4700A2C3EC /* AppDelegate.m in Sources */,
 				E2656BEC1C5DA885004786EA /* PhotoDetailsVC.m in Sources */,
 				0084F3EA1C7ABA6200E111D0 /* CleaningCommentCell.m in Sources */,
 				E2F36ECD1C5AFFE700923DF0 /* FirstPageView.m in Sources */,
-				E2960D7A1C6E36D8009425CA /* DetailCell1.m in Sources */,
+				E2960D7A1C6E36D8009425CA /* DetailCell.m in Sources */,
 				E252E5F91C611ECB0013F1B7 /* Location.m in Sources */,
 				0084F3ED1C7ABA8800E111D0 /* CleaningDoneCell.m in Sources */,
-				E2D1034B1C64D06900FD67A0 /* photoViewCell.m in Sources */,
+				E2D1034B1C64D06900FD67A0 /* PhotoViewCell.m in Sources */,
 				BD06039F1C595D4700A2C3EC /* main.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;

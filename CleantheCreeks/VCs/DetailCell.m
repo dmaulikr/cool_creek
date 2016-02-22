@@ -6,8 +6,8 @@
 //  Copyright © 2016 RedCherry. All rights reserved.
 //
 
-#import "DetailCell1.h"
+#import "DetailCell.h"
 
-@implementation DetailCell1
+@implementation DetailCell
 
 @end
