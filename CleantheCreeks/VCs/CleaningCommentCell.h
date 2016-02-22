@@ -1,5 +1,5 @@
 //
-//  KudoCell.h
+//  CleaningCommentCell.h
 //  Clean the Creek
 //
 //  Created by a on 2/22/16.
@@ -8,9 +8,11 @@
 
 #import <UIKit/UIKit.h>
 
-@interface KudoCell : UITableViewCell
+@interface CleaningCommentCell : UITableViewCell
 @property (weak, nonatomic) IBOutlet UIImageView *profileAvatar;
-@property (weak, nonatomic) IBOutlet UILabel *activityHours;
 @property (weak, nonatomic) IBOutlet UILabel *lblContent;
+@property (weak, nonatomic) IBOutlet UILabel *activityHours;
 
+
+- (void)setValue:(id)delegate avatarImage:(NSString*)avatarImage content:(NSString*)content activityHours:(NSNumber*)hours;
 @end

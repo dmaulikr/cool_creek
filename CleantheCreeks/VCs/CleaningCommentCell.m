@@ -1,14 +1,14 @@
 //
-//  ActivityCell.m
+//  CleaningCommentCell.m
 //  Clean the Creek
 //
 //  Created by a on 2/22/16.
 //  Copyright © 2016 RedCherry. All rights reserved.
 //
 
-#import "ActivityCell.h"
+#import "CleaningCommentCell.h"
 
-@implementation ActivityCell
+@implementation CleaningCommentCell
 
 - (void)awakeFromNib {
     // Initialization code

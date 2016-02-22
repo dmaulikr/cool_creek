@@ -1,6 +1,6 @@
 #import "ActivityVC.h"
-#import "ActivityCell.h"
-#import "KudoCell.h"
+#import "CleaningCommentCell.h"
+#import "CleaningDoneCell.h"
 
 @implementation ActivityVC
 
@@ -35,13 +35,13 @@
     NSInteger row = indexPath.row;
     UITableViewCell *cell;
     if (row % 2 == 0){
-        cell = [tableView dequeueReusableCellWithIdentifier:@"ActivityCell" forIndexPath:indexPath];
+        cell = [tableView dequeueReusableCellWithIdentifier:@"CleaningCommentCell" forIndexPath:indexPath];
         
         if (cell == nil){
             cell = [[UITableViewCell alloc] init];
         }
     }else{
-        cell = [tableView dequeueReusableCellWithIdentifier:@"KudoCell" forIndexPath:indexPath];
+        cell = [tableView dequeueReusableCellWithIdentifier:@"CleaningDoneCell" forIndexPath:indexPath];
         
         if (cell == nil){
             cell = [[UITableViewCell alloc] init];

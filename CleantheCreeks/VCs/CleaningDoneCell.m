@@ -6,9 +6,9 @@
 //  Copyright © 2016 RedCherry. All rights reserved.
 //
 
-#import "KudoCell.h"
+#import "CleaningDoneCell.h"
 
-@implementation KudoCell
+@implementation CleaningDoneCell
 
 - (void)awakeFromNib {
     // Initialization code

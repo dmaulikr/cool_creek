@@ -7,8 +7,8 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
-		0084F3EA1C7ABA6200E111D0 /* ActivityCell.m in Sources */ = {isa = PBXBuildFile; fileRef = 0084F3E91C7ABA6200E111D0 /* ActivityCell.m */; };
-		0084F3ED1C7ABA8800E111D0 /* KudoCell.m in Sources */ = {isa = PBXBuildFile; fileRef = 0084F3EC1C7ABA8800E111D0 /* KudoCell.m */; };
+		0084F3EA1C7ABA6200E111D0 /* CleaningCommentCell.m in Sources */ = {isa = PBXBuildFile; fileRef = 0084F3E91C7ABA6200E111D0 /* CleaningCommentCell.m */; };
+		0084F3ED1C7ABA8800E111D0 /* CleaningDoneCell.m in Sources */ = {isa = PBXBuildFile; fileRef = 0084F3EC1C7ABA8800E111D0 /* CleaningDoneCell.m */; };
 		0084F3F41C7AFBD300E111D0 /* CCUtils.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0084F3F31C7AFBD300E111D0 /* CCUtils.swift */; };
 		0084F4131C7B086B00E111D0 /* Lato-Black.ttf in Resources */ = {isa = PBXBuildFile; fileRef = 0084F4011C7B018700E111D0 /* Lato-Black.ttf */; };
 		0084F4141C7B086B00E111D0 /* Lato-BlackItalic.ttf in Resources */ = {isa = PBXBuildFile; fileRef = 0084F4021C7B018700E111D0 /* Lato-BlackItalic.ttf */; };
@@ -28,6 +28,8 @@
 		0084F4221C7B086B00E111D0 /* Lato-SemiboldItalic.ttf in Resources */ = {isa = PBXBuildFile; fileRef = 0084F4101C7B018700E111D0 /* Lato-SemiboldItalic.ttf */; };
 		0084F4231C7B086B00E111D0 /* Lato-Thin.ttf in Resources */ = {isa = PBXBuildFile; fileRef = 0084F4111C7B018700E111D0 /* Lato-Thin.ttf */; };
 		0084F4241C7B086B00E111D0 /* Lato-ThinItalic.ttf in Resources */ = {isa = PBXBuildFile; fileRef = 0084F4121C7B018700E111D0 /* Lato-ThinItalic.ttf */; };
+		0084F4271C7B14A600E111D0 /* KudosVC.m in Sources */ = {isa = PBXBuildFile; fileRef = 0084F4261C7B14A600E111D0 /* KudosVC.m */; };
+		0084F42B1C7B17D800E111D0 /* KudosCell.m in Sources */ = {isa = PBXBuildFile; fileRef = 0084F42A1C7B17D800E111D0 /* KudosCell.m */; };
 		095F77783019A58BBD9134E1 /* libPods.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 4656214352E34CC700C152CD /* libPods.a */; };
 		BD06039F1C595D4700A2C3EC /* main.m in Sources */ = {isa = PBXBuildFile; fileRef = BD06039E1C595D4700A2C3EC /* main.m */; };
 		BD0603A21C595D4700A2C3EC /* AppDelegate.m in Sources */ = {isa = PBXBuildFile; fileRef = BD0603A11C595D4700A2C3EC /* AppDelegate.m */; };
@@ -86,10 +88,10 @@
 /* End PBXContainerItemProxy section */
 
 /* Begin PBXFileReference section */
-		0084F3E81C7ABA6200E111D0 /* ActivityCell.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ActivityCell.h; sourceTree = "<group>"; };
-		0084F3E91C7ABA6200E111D0 /* ActivityCell.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = ActivityCell.m; sourceTree = "<group>"; };
-		0084F3EB1C7ABA8800E111D0 /* KudoCell.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = KudoCell.h; sourceTree = "<group>"; };
-		0084F3EC1C7ABA8800E111D0 /* KudoCell.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = KudoCell.m; sourceTree = "<group>"; };
+		0084F3E81C7ABA6200E111D0 /* CleaningCommentCell.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = CleaningCommentCell.h; sourceTree = "<group>"; };
+		0084F3E91C7ABA6200E111D0 /* CleaningCommentCell.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = CleaningCommentCell.m; sourceTree = "<group>"; };
+		0084F3EB1C7ABA8800E111D0 /* CleaningDoneCell.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = CleaningDoneCell.h; sourceTree = "<group>"; };
+		0084F3EC1C7ABA8800E111D0 /* CleaningDoneCell.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = CleaningDoneCell.m; sourceTree = "<group>"; };
 		0084F3F21C7AFBD300E111D0 /* Clean the Creek-Bridging-Header.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = "Clean the Creek-Bridging-Header.h"; sourceTree = "<group>"; };
 		0084F3F31C7AFBD300E111D0 /* CCUtils.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = CCUtils.swift; sourceTree = "<group>"; };
 		0084F4011C7B018700E111D0 /* Lato-Black.ttf */ = {isa = PBXFileReference; lastKnownFileType = file; path = "Lato-Black.ttf"; sourceTree = "<group>"; };
@@ -110,6 +112,10 @@
 		0084F4101C7B018700E111D0 /* Lato-SemiboldItalic.ttf */ = {isa = PBXFileReference; lastKnownFileType = file; path = "Lato-SemiboldItalic.ttf"; sourceTree = "<group>"; };
 		0084F4111C7B018700E111D0 /* Lato-Thin.ttf */ = {isa = PBXFileReference; lastKnownFileType = file; path = "Lato-Thin.ttf"; sourceTree = "<group>"; };
 		0084F4121C7B018700E111D0 /* Lato-ThinItalic.ttf */ = {isa = PBXFileReference; lastKnownFileType = file; path = "Lato-ThinItalic.ttf"; sourceTree = "<group>"; };
+		0084F4251C7B14A600E111D0 /* KudosVC.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = KudosVC.h; sourceTree = "<group>"; };
+		0084F4261C7B14A600E111D0 /* KudosVC.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = KudosVC.m; sourceTree = "<group>"; };
+		0084F4291C7B17D800E111D0 /* KudosCell.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = KudosCell.h; sourceTree = "<group>"; };
+		0084F42A1C7B17D800E111D0 /* KudosCell.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = KudosCell.m; sourceTree = "<group>"; };
 		4656214352E34CC700C152CD /* libPods.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; includeInIndex = 0; path = libPods.a; sourceTree = BUILT_PRODUCTS_DIR; };
 		4C6CBB01DE1D421604AC1E1D /* Pods.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = Pods.debug.xcconfig; path = "Pods/Target Support Files/Pods/Pods.debug.xcconfig"; sourceTree = "<group>"; };
 		893EA3F1F71074BC15B9E306 /* Pods.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = Pods.release.xcconfig; path = "Pods/Target Support Files/Pods/Pods.release.xcconfig"; sourceTree = "<group>"; };
@@ -216,22 +222,22 @@
 /* End PBXFrameworksBuildPhase section */
 
 /* Begin PBXGroup section */
-		0084F3E61C7AB95B00E111D0 /* ActivityCell */ = {
+		0084F3E61C7AB95B00E111D0 /* CleaningCommentCell */ = {
 			isa = PBXGroup;
 			children = (
-				0084F3E81C7ABA6200E111D0 /* ActivityCell.h */,
-				0084F3E91C7ABA6200E111D0 /* ActivityCell.m */,
+				0084F3E81C7ABA6200E111D0 /* CleaningCommentCell.h */,
+				0084F3E91C7ABA6200E111D0 /* CleaningCommentCell.m */,
 			);
-			name = ActivityCell;
+			name = CleaningCommentCell;
 			sourceTree = "<group>";
 		};
-		0084F3E71C7AB96B00E111D0 /* KudoCell */ = {
+		0084F3E71C7AB96B00E111D0 /* CleaningDoneCell */ = {
 			isa = PBXGroup;
 			children = (
-				0084F3EB1C7ABA8800E111D0 /* KudoCell.h */,
-				0084F3EC1C7ABA8800E111D0 /* KudoCell.m */,
+				0084F3EB1C7ABA8800E111D0 /* CleaningDoneCell.h */,
+				0084F3EC1C7ABA8800E111D0 /* CleaningDoneCell.m */,
 			);
-			name = KudoCell;
+			name = CleaningDoneCell;
 			sourceTree = "<group>";
 		};
 		0084F3F11C7AFBC400E111D0 /* Utils */ = {
@@ -274,6 +280,15 @@
 				0084F4121C7B018700E111D0 /* Lato-ThinItalic.ttf */,
 			);
 			path = Lato2OFL;
+			sourceTree = "<group>";
+		};
+		0084F4281C7B14BB00E111D0 /* KudoCell */ = {
+			isa = PBXGroup;
+			children = (
+				0084F4291C7B17D800E111D0 /* KudosCell.h */,
+				0084F42A1C7B17D800E111D0 /* KudosCell.m */,
+			);
+			name = KudoCell;
 			sourceTree = "<group>";
 		};
 		29EB99E7AFF272E8C286239F /* Pods */ = {
@@ -561,10 +576,13 @@
 		E2FD057A1C59E47B004B2C34 /* ActivityVC */ = {
 			isa = PBXGroup;
 			children = (
-				0084F3E71C7AB96B00E111D0 /* KudoCell */,
-				0084F3E61C7AB95B00E111D0 /* ActivityCell */,
+				0084F4281C7B14BB00E111D0 /* KudoCell */,
+				0084F3E71C7AB96B00E111D0 /* CleaningDoneCell */,
+				0084F3E61C7AB95B00E111D0 /* CleaningCommentCell */,
 				E2FD05831C59E548004B2C34 /* ActivityVC.h */,
 				E2FD05841C59E548004B2C34 /* ActivityVC.m */,
+				0084F4251C7B14A600E111D0 /* KudosVC.h */,
+				0084F4261C7B14A600E111D0 /* KudosVC.m */,
 			);
 			name = ActivityVC;
 			sourceTree = "<group>";
@@ -765,6 +783,8 @@
 				E2F36EDB1C5B103400923DF0 /* LastPageView.m in Sources */,
 				E2F36ED01C5AFFE700923DF0 /* IntroView.m in Sources */,
 				E2FD05881C59E579004B2C34 /* LocationVC.m in Sources */,
+				0084F42B1C7B17D800E111D0 /* KudosCell.m in Sources */,
+				0084F4271C7B14A600E111D0 /* KudosVC.m in Sources */,
 				E2FD05851C59E548004B2C34 /* ActivityVC.m in Sources */,
 				E27FC5101C69E7A300489DE3 /* LocationNav.m in Sources */,
 				E2149DF51C755FE00005D50A /* FacebookPostVC.m in Sources */,
@@ -782,11 +802,11 @@
 				E22A79A61C77A77100CE66E5 /* LocationAnnotation.m in Sources */,
 				BD0603A21C595D4700A2C3EC /* AppDelegate.m in Sources */,
 				E2656BEC1C5DA885004786EA /* PhotoDetailsVC.m in Sources */,
-				0084F3EA1C7ABA6200E111D0 /* ActivityCell.m in Sources */,
+				0084F3EA1C7ABA6200E111D0 /* CleaningCommentCell.m in Sources */,
 				E2F36ECD1C5AFFE700923DF0 /* FirstPageView.m in Sources */,
 				E2960D7A1C6E36D8009425CA /* DetailCell1.m in Sources */,
 				E252E5F91C611ECB0013F1B7 /* Location.m in Sources */,
-				0084F3ED1C7ABA8800E111D0 /* KudoCell.m in Sources */,
+				0084F3ED1C7ABA8800E111D0 /* CleaningDoneCell.m in Sources */,
 				E2D1034B1C64D06900FD67A0 /* photoViewCell.m in Sources */,
 				BD06039F1C595D4700A2C3EC /* main.m in Sources */,
 			);

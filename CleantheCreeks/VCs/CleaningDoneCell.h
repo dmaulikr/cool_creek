@@ -1,5 +1,5 @@
 //
-//  ActivityCell.h
+//  CleaningDoneCell.h
 //  Clean the Creek
 //
 //  Created by a on 2/22/16.
@@ -8,11 +8,9 @@
 
 #import <UIKit/UIKit.h>
 
-@interface ActivityCell : UITableViewCell
+@interface CleaningDoneCell : UITableViewCell
 @property (weak, nonatomic) IBOutlet UIImageView *profileAvatar;
-@property (weak, nonatomic) IBOutlet UILabel *lblContent;
 @property (weak, nonatomic) IBOutlet UILabel *activityHours;
+@property (weak, nonatomic) IBOutlet UILabel *lblContent;
 
-
-- (void)setValue:(id)delegate avatarImage:(NSString*)avatarImage content:(NSString*)content activityHours:(NSNumber*)hours;
 @end
