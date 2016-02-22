@@ -5,8 +5,14 @@
 - (void)viewDidLoad
 {
     [super viewDidLoad];
-    [self takePhoto];
+    
 	// Do any additional setup after loading the view.
+}
+-(void)viewWillAppear:(BOOL)animated
+{
+    [super viewWillAppear:YES];
+    if(!self.cameraPicture)
+        [self takePhoto];
 }
 - (void)viewDidAppear:(BOOL)animated
 {
@@ -43,6 +49,7 @@
 - (void)imagePickerControllerDidCancel:(UIImagePickerController *)picker
 {
     [picker dismissViewControllerAnimated:YES completion:NULL];
+    [self.tabBarController setSelectedIndex:1];
 }
 
 - (void)didReceiveMemoryWarning
@@ -61,6 +68,7 @@
         photoDetailsVC.firstPath=self.photoURL;
 
         photoDetailsVC.foundDate=[NSDate date];
+        
     }
 }
 

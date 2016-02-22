@@ -48,12 +48,12 @@
                 
                 break;
             case SLComposeViewControllerResultDone:
-                [self performSegueWithIdentifier:@"showFBSuccess" sender:self];
+                [self performSegueWithIdentifier:@"showFBSuccess2" sender:self];
                 break;
             default:
                 break;
         }
     }];
-
+    
 }
 @end

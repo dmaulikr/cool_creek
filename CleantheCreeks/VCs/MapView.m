@@ -78,7 +78,7 @@
                  
                  NSString *downloadingFilePath = [NSTemporaryDirectory() stringByAppendingPathComponent:@"downloaded-myImage.jpg"];
                  NSURL *downloadingFileURL = [NSURL fileURLWithPath:downloadingFilePath];
-                 if(distance<100000.0)
+                 if(distance<100.0)
                  {
                      
                      // Construct the download request.
@@ -94,7 +94,7 @@
                      
                      annotation.subtitle = @"subtitle";
                      annotation.image=[UIImage imageNamed:@"PlaceIcon"];
-                     [self.mapView addAnnotation:annotation];
+                     
                     [[transferManager download:downloadRequest] continueWithExecutor:[AWSExecutor mainThreadExecutor] withBlock:^id(AWSTask *task) {
                          if (task.error){
                              if ([task.error.domain isEqualToString:AWSS3TransferManagerErrorDomain]) {
@@ -116,6 +116,7 @@
                          if (task.result) {
                              AWSS3TransferManagerDownloadOutput *downloadOutput = task.result;
                              annotation.image=[UIImage imageWithContentsOfFile:downloadingFilePath];
+                             [self.mapView addAnnotation:annotation];
                              
                          }
                          return nil;

@@ -5,4 +5,5 @@
 	-(void) takePhoto;
 @property(strong,atomic) UIImage * cameraPicture;
 @property(strong,atomic) NSURL* photoURL;
+
 @end

@@ -370,11 +370,14 @@ bool secondPhototaken=false;
     [picker dismissViewControllerAnimated:YES completion:NULL];
     if(secondPhototaken)
     {
+        secondPhototaken=false;
         
     }
     else
     {
-        [self.navigationController popViewControllerAnimated:YES];
+        
+        [self.tabBarController setSelectedIndex:1];
+        //[self.navigationController popViewControllerAnimated:YES];
     }
 }
 
