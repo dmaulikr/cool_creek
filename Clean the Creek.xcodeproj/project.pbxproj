@@ -7,6 +7,7 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		000467E11C7C728300946DE8 /* SettingVC.m in Sources */ = {isa = PBXBuildFile; fileRef = 000467E01C7C728300946DE8 /* SettingVC.m */; };
 		0084F3EA1C7ABA6200E111D0 /* CleaningCommentCell.m in Sources */ = {isa = PBXBuildFile; fileRef = 0084F3E91C7ABA6200E111D0 /* CleaningCommentCell.m */; };
 		0084F3ED1C7ABA8800E111D0 /* CleaningDoneCell.m in Sources */ = {isa = PBXBuildFile; fileRef = 0084F3EC1C7ABA8800E111D0 /* CleaningDoneCell.m */; };
 		0084F3F41C7AFBD300E111D0 /* CCUtils.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0084F3F31C7AFBD300E111D0 /* CCUtils.swift */; };
@@ -89,6 +90,8 @@
 /* End PBXContainerItemProxy section */
 
 /* Begin PBXFileReference section */
+		000467DF1C7C728300946DE8 /* SettingVC.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = SettingVC.h; sourceTree = "<group>"; };
+		000467E01C7C728300946DE8 /* SettingVC.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = SettingVC.m; sourceTree = "<group>"; };
 		0084F3E81C7ABA6200E111D0 /* CleaningCommentCell.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = CleaningCommentCell.h; sourceTree = "<group>"; };
 		0084F3E91C7ABA6200E111D0 /* CleaningCommentCell.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = CleaningCommentCell.m; sourceTree = "<group>"; };
 		0084F3EB1C7ABA8800E111D0 /* CleaningDoneCell.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = CleaningDoneCell.h; sourceTree = "<group>"; };
@@ -225,6 +228,15 @@
 /* End PBXFrameworksBuildPhase section */
 
 /* Begin PBXGroup section */
+		000467DE1C7C726E00946DE8 /* SettingVC */ = {
+			isa = PBXGroup;
+			children = (
+				000467DF1C7C728300946DE8 /* SettingVC.h */,
+				000467E01C7C728300946DE8 /* SettingVC.m */,
+			);
+			name = SettingVC;
+			sourceTree = "<group>";
+		};
 		0084F3E61C7AB95B00E111D0 /* CleaningCommentCell */ = {
 			isa = PBXGroup;
 			children = (
@@ -604,6 +616,7 @@
 		E2FD057C1C59E4A2004B2C34 /* ProfileVC */ = {
 			isa = PBXGroup;
 			children = (
+				000467DE1C7C726E00946DE8 /* SettingVC */,
 				E2FD057D1C59E4B2004B2C34 /* ProfileVC.h */,
 				E2FD057E1C59E4B2004B2C34 /* ProfileVC.m */,
 			);
@@ -813,6 +826,7 @@
 				E2960D7A1C6E36D8009425CA /* DetailCell.m in Sources */,
 				E252E5F91C611ECB0013F1B7 /* Location.m in Sources */,
 				0084F3ED1C7ABA8800E111D0 /* CleaningDoneCell.m in Sources */,
+				000467E11C7C728300946DE8 /* SettingVC.m in Sources */,
 				E2D1034B1C64D06900FD67A0 /* PhotoViewCell.m in Sources */,
 				BD06039F1C595D4700A2C3EC /* main.m in Sources */,
 			);
