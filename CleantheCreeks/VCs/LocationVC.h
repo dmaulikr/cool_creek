@@ -1,17 +1,25 @@
 #import <UIKit/UIKit.h>
+#import <MapKit/MapKit.h>
 #import <CoreLocation/CoreLocation.h>
-@interface LocationVC : UIViewController<UITableViewDelegate,UITableViewDataSource,CLLocationManagerDelegate>
-@property (weak, nonatomic) IBOutlet UITableView *locationTable;
-@property (strong,nonatomic) NSMutableArray * locationArray;
-@property (strong,nonatomic) NSMutableDictionary * imageArray;
-@property (weak, nonatomic) IBOutlet UIButton *listButton;
 
-- (IBAction)listButtonClicked:(id)sender;
+@interface LocationVC : UIViewController<UITableViewDelegate, UITableViewDataSource, MKMapViewDelegate, CLLocationManagerDelegate>
+
+@property (weak, nonatomic) IBOutlet UITableView *locationTable;
+
+@property (weak, nonatomic) IBOutlet UIButton *listButton;
 @property (weak, nonatomic) IBOutlet UIButton *mapButton;
-- (IBAction)mapButtonClicked:(id)sender;
-@property (strong, nonatomic) CLLocationManager *locationManager;
+
+@property (weak, nonatomic) IBOutlet MKMapView *mapView;
+
 @property (weak, nonatomic) IBOutlet UIButton *btnCountry;
 @property (weak, nonatomic) IBOutlet UIButton *btnState;
 @property (weak, nonatomic) IBOutlet UIButton *btnLocal;
+
+@property (strong, nonatomic) CLLocationManager *locationManager;
 @property (retain) CLLocation * currentLocation;
+@property (strong,nonatomic) NSMutableArray * locationArray;
+@property (strong,nonatomic) NSMutableDictionary * imageArray;
+
+- (IBAction)listButtonTapped:(id)sender;
+- (IBAction)mapButtonTapped:(id)sender;
 @end

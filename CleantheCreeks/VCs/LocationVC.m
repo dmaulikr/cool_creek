@@ -1,15 +1,19 @@
 #import "LocationVC.h"
+#import "AppDelegate.h"
+
 #import <AWSCore/AWSCore.h>
 #import <AWSDynamoDB/AWSDynamoDB.h>
+#import <MBProgressHUD/MBProgressHUD.h>
 #import <AWSS3/AWSS3.h>
+
 #import "Location.h"
 #import "locationCell.h"
-#import <MBProgressHUD/MBProgressHUD.h>
-#include "AppDelegate.h"
+#import "LocationOverlayView.h"
 
 @implementation LocationVC
-- (void)viewWillAppear:(BOOL)animated
-{
+
+- (void)viewWillAppear:(BOOL)animated{
+    
     [self.locationArray removeAllObjects];
     [self.imageArray removeAllObjects];
     [_locationManager requestWhenInUseAuthorization];
@@ -25,48 +29,35 @@
     if([CLLocationManager locationServicesEnabled]){
         
         [self.locationManager startUpdatingLocation];
-    }
-    else
-    {
+    }else{
+        
         [self.locationManager requestWhenInUseAuthorization];
     }
-
     
 }
-- (void)viewDidLoad
-{
-    CGFloat tableBorderLeft = 20;
-    CGFloat tableBorderRight = 20;
-    
-    CGRect tableRect=self.locationTable.frame;
-    tableRect.origin.x+=tableBorderLeft;
-    tableRect.size.width -= tableBorderLeft + tableBorderRight; // reduce the width of the table
-    
-    //self.locationTable.separatorStyle=UITableViewCellSeparatorStyleNone;
-    
-    [self.locationTable setFrame:tableRect];
+
+- (void)viewDidLoad{
+    [super viewDidLoad];
 }
 
-- (void)didReceiveMemoryWarning
-{
+- (void)didReceiveMemoryWarning{
     [super didReceiveMemoryWarning];
     // Dispose of any resources that can be recreated.
 }
 
-- (NSInteger)tableView:(UITableView *)tableView numberOfRowsInSection:(NSInteger)section
-{
+#pragma TableViewDelegate Implementation
+
+- (NSInteger)tableView:(UITableView *)tableView numberOfRowsInSection:(NSInteger)section{
     return [self.locationArray count];
 }
-- (void)tableView:(UITableView *)tableView didSelectRowAtIndexPath:(NSIndexPath *)indexPath
-{
+
+- (UITableViewCell *)tableView:(UITableView *)tableView cellForRowAtIndexPath:(NSIndexPath *)indexPath{
     
-}
-- (UITableViewCell *)tableView:(UITableView *)tableView cellForRowAtIndexPath:(NSIndexPath *)indexPath
-{
     locationCell * cell=nil;
     cell = (locationCell*)[tableView dequeueReusableCellWithIdentifier:@"locationCell"];
-    if([self.locationArray count]>0)
-    {
+    
+    if([self.locationArray count]>0){
+        
         Location * location=[self.locationArray objectAtIndex:indexPath.row];
         [cell.locationName setText:location.location_name];
         
@@ -76,16 +67,23 @@
         NSString*distanceText=[[NSString alloc]initWithFormat:@"%.02fKM",distance];
         [cell.distance setText:distanceText];
         NSString * key=[location.location_id stringByAppendingString:@"a"];
-        // Construct the download request.
+        
         if([self.imageArray objectForKey:key])
             cell.image.image=(UIImage*)[self.imageArray objectForKey:key];
     }
-    if(!cell)
-    {
+    
+    if(!cell){
         cell=(locationCell*)[[UITableViewCell alloc]init];
     }
+    
     return cell;
 }
+
+- (void)tableView:(UITableView *)tableView didSelectRowAtIndexPath:(NSIndexPath *)indexPath{
+    
+}
+
+#pragma CLLocationDelegate
 
 - (void)locationManager:(CLLocationManager *)manager
     didUpdateToLocation:(CLLocation *)newLocation
@@ -176,6 +174,22 @@
    
     [self.locationManager stopUpdatingLocation];
     
+}
+
+- (MKAnnotationView *)mapView:(MKMapView *)mapView viewForAnnotation:(id<MKAnnotation>)annotation{
+    LocationOverlayView *annotationView = [[LocationOverlayView alloc] initWithAnnotation:annotation reuseIdentifier:@"Attraction"];
+    annotationView.canShowCallout = YES;
+    return annotationView;
+}
+
+- (IBAction)listButtonTapped:(id)sender{
+    [self.locationTable setHidden:NO];
+    [self.mapView setHidden:YES];
+}
+
+- (IBAction)mapButtonTapped:(id)sender{
+    [self.locationTable setHidden:YES];
+    [self.mapView setHidden:NO];
 }
 
 @end

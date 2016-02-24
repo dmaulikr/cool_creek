@@ -17,10 +17,6 @@
 #import "AppDelegate.h"
 @implementation MapView
 
-
-- (IBAction)listButtonClicked:(id)sender
-{
-}
 -(void)viewDidLoad
 {
     if(!([CLLocationManager authorizationStatus]==kCLAuthorizationStatusRestricted ||[CLLocationManager authorizationStatus]==kCLAuthorizationStatusDenied))
@@ -43,6 +39,7 @@
     self.mapView.delegate=self;
 
 }
+
 - (void)locationManager:(CLLocationManager *)manager
     didUpdateToLocation:(CLLocation *)newLocation
            fromLocation:(CLLocation *)oldLocation
@@ -132,12 +129,17 @@
          return nil;
      }];
   
-    
-    
 }
+
 - (MKAnnotationView *)mapView:(MKMapView *)mapView viewForAnnotation:(id<MKAnnotation>)annotation {
     LocationOverlayView *annotationView = [[LocationOverlayView alloc] initWithAnnotation:annotation reuseIdentifier:@"Attraction"];
     annotationView.canShowCallout = YES;
     return annotationView;
 }
+
+- (IBAction)listButtonClicked:(id)sender
+{
+    [self dismissViewControllerAnimated:YES completion:nil];
+}
+
 @end

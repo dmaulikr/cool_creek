@@ -50,7 +50,6 @@
 		E252E6231C6120D70013F1B7 /* libz.tbd in Frameworks */ = {isa = PBXBuildFile; fileRef = E252E6221C6120D70013F1B7 /* libz.tbd */; };
 		E252E6251C6120E10013F1B7 /* SystemConfiguration.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = E252E6241C6120E10013F1B7 /* SystemConfiguration.framework */; };
 		E2656BEC1C5DA885004786EA /* PhotoDetailsVC.m in Sources */ = {isa = PBXBuildFile; fileRef = E2656BEB1C5DA885004786EA /* PhotoDetailsVC.m */; };
-		E27FC5041C69D20300489DE3 /* LocationHeaderViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = E27FC5031C69D20300489DE3 /* LocationHeaderViewController.m */; };
 		E27FC5091C69E0BA00489DE3 /* MapView.m in Sources */ = {isa = PBXBuildFile; fileRef = E27FC5081C69E0BA00489DE3 /* MapView.m */; };
 		E27FC50D1C69E31600489DE3 /* Main.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = E27FC50B1C69E31600489DE3 /* Main.storyboard */; };
 		E27FC5101C69E7A300489DE3 /* LocationNav.m in Sources */ = {isa = PBXBuildFile; fileRef = E27FC50F1C69E7A300489DE3 /* LocationNav.m */; };
@@ -155,8 +154,6 @@
 		E252E6241C6120E10013F1B7 /* SystemConfiguration.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = SystemConfiguration.framework; path = System/Library/Frameworks/SystemConfiguration.framework; sourceTree = SDKROOT; };
 		E2656BEA1C5DA885004786EA /* PhotoDetailsVC.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = PhotoDetailsVC.h; sourceTree = "<group>"; };
 		E2656BEB1C5DA885004786EA /* PhotoDetailsVC.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = PhotoDetailsVC.m; sourceTree = "<group>"; };
-		E27FC5021C69D20300489DE3 /* LocationHeaderViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = LocationHeaderViewController.h; sourceTree = "<group>"; };
-		E27FC5031C69D20300489DE3 /* LocationHeaderViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = LocationHeaderViewController.m; sourceTree = "<group>"; };
 		E27FC5071C69E0BA00489DE3 /* MapView.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = MapView.h; sourceTree = "<group>"; };
 		E27FC5081C69E0BA00489DE3 /* MapView.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = MapView.m; sourceTree = "<group>"; };
 		E27FC50C1C69E31600489DE3 /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; name = Base; path = CleantheCreeks/Base.lproj/Main.storyboard; sourceTree = "<group>"; };
@@ -419,15 +416,6 @@
 			name = PhotoDetailsVC;
 			sourceTree = "<group>";
 		};
-		E27FC5061C69D20E00489DE3 /* LocationHeaderView */ = {
-			isa = PBXGroup;
-			children = (
-				E27FC5021C69D20300489DE3 /* LocationHeaderViewController.h */,
-				E27FC5031C69D20300489DE3 /* LocationHeaderViewController.m */,
-			);
-			name = LocationHeaderView;
-			sourceTree = "<group>";
-		};
 		E27FC50A1C69E0C200489DE3 /* MapView */ = {
 			isa = PBXGroup;
 			children = (
@@ -591,7 +579,6 @@
 			children = (
 				E2FD05861C59E579004B2C34 /* LocationVC.h */,
 				E2FD05871C59E579004B2C34 /* LocationVC.m */,
-				E27FC5061C69D20E00489DE3 /* LocationHeaderView */,
 				E2D103501C6528F100FD67A0 /* LocationCell */,
 			);
 			name = LocationVC;
@@ -819,7 +806,6 @@
 				E2149DF51C755FE00005D50A /* FacebookPostVC.m in Sources */,
 				E2FD057F1C59E4B2004B2C34 /* ProfileVC.m in Sources */,
 				E2FD058B1C59E5D8004B2C34 /* MainTabNav.m in Sources */,
-				E27FC5041C69D20300489DE3 /* LocationHeaderViewController.m in Sources */,
 				E2F36ECE1C5AFFE700923DF0 /* IntroControll.m in Sources */,
 				0084F3F41C7AFBD300E111D0 /* CCUtils.swift in Sources */,
 				E27FC5091C69E0BA00489DE3 /* MapView.m in Sources */,
