@@ -1,5 +1,8 @@
 #import <UIKit/UIKit.h>
+#import "BaseVC.h"
 
-@interface ProfileVC : UIViewController
+@interface ProfileVC : BaseVC
+
+
 
 @end

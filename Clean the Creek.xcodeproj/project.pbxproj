@@ -8,6 +8,8 @@
 
 /* Begin PBXBuildFile section */
 		000467E11C7C728300946DE8 /* SettingVC.m in Sources */ = {isa = PBXBuildFile; fileRef = 000467E01C7C728300946DE8 /* SettingVC.m */; };
+		000467E51C7CB53400946DE8 /* ProfileTopBarVC.m in Sources */ = {isa = PBXBuildFile; fileRef = 000467E41C7CB53400946DE8 /* ProfileTopBarVC.m */; };
+		0044B7CC1C7D9C6B000BB837 /* BaseVC.m in Sources */ = {isa = PBXBuildFile; fileRef = 0044B7CB1C7D9C6B000BB837 /* BaseVC.m */; };
 		0084F3EA1C7ABA6200E111D0 /* CleaningCommentCell.m in Sources */ = {isa = PBXBuildFile; fileRef = 0084F3E91C7ABA6200E111D0 /* CleaningCommentCell.m */; };
 		0084F3ED1C7ABA8800E111D0 /* CleaningDoneCell.m in Sources */ = {isa = PBXBuildFile; fileRef = 0084F3EC1C7ABA8800E111D0 /* CleaningDoneCell.m */; };
 		0084F3F41C7AFBD300E111D0 /* CCUtils.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0084F3F31C7AFBD300E111D0 /* CCUtils.swift */; };
@@ -92,6 +94,10 @@
 /* Begin PBXFileReference section */
 		000467DF1C7C728300946DE8 /* SettingVC.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = SettingVC.h; sourceTree = "<group>"; };
 		000467E01C7C728300946DE8 /* SettingVC.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = SettingVC.m; sourceTree = "<group>"; };
+		000467E31C7CB53400946DE8 /* ProfileTopBarVC.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ProfileTopBarVC.h; sourceTree = "<group>"; };
+		000467E41C7CB53400946DE8 /* ProfileTopBarVC.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = ProfileTopBarVC.m; sourceTree = "<group>"; };
+		0044B7CA1C7D9C6B000BB837 /* BaseVC.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = BaseVC.h; sourceTree = "<group>"; };
+		0044B7CB1C7D9C6B000BB837 /* BaseVC.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = BaseVC.m; sourceTree = "<group>"; };
 		0084F3E81C7ABA6200E111D0 /* CleaningCommentCell.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = CleaningCommentCell.h; sourceTree = "<group>"; };
 		0084F3E91C7ABA6200E111D0 /* CleaningCommentCell.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = CleaningCommentCell.m; sourceTree = "<group>"; };
 		0084F3EB1C7ABA8800E111D0 /* CleaningDoneCell.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = CleaningDoneCell.h; sourceTree = "<group>"; };
@@ -235,6 +241,15 @@
 				000467E01C7C728300946DE8 /* SettingVC.m */,
 			);
 			name = SettingVC;
+			sourceTree = "<group>";
+		};
+		000467E21C7CB51700946DE8 /* TopBarVCs */ = {
+			isa = PBXGroup;
+			children = (
+				000467E31C7CB53400946DE8 /* ProfileTopBarVC.h */,
+				000467E41C7CB53400946DE8 /* ProfileTopBarVC.m */,
+			);
+			name = TopBarVCs;
 			sourceTree = "<group>";
 		};
 		0084F3E61C7AB95B00E111D0 /* CleaningCommentCell */ = {
@@ -537,6 +552,7 @@
 		E2FD056D1C59CA16004B2C34 /* VCs */ = {
 			isa = PBXGroup;
 			children = (
+				000467E21C7CB51700946DE8 /* TopBarVCs */,
 				E27FC5111C69E7BC00489DE3 /* LocationNav */,
 				E2656BED1C5DA8AF004786EA /* PhotoDetailsVC */,
 				E2FD057C1C59E4A2004B2C34 /* ProfileVC */,
@@ -546,6 +562,8 @@
 				E2FD05741C59E277004B2C34 /* SplashVC */,
 				E2FD05731C59E269004B2C34 /* SlideVC */,
 				E2149DF71C7577C70005D50A /* FacebookPostVC */,
+				0044B7CA1C7D9C6B000BB837 /* BaseVC.h */,
+				0044B7CB1C7D9C6B000BB837 /* BaseVC.m */,
 			);
 			path = VCs;
 			sourceTree = "<group>";
@@ -804,6 +822,7 @@
 				0084F42B1C7B17D800E111D0 /* KudosCell.m in Sources */,
 				0084F4271C7B14A600E111D0 /* KudosVC.m in Sources */,
 				E2FD05851C59E548004B2C34 /* ActivityVC.m in Sources */,
+				0044B7CC1C7D9C6B000BB837 /* BaseVC.m in Sources */,
 				E27FC5101C69E7A300489DE3 /* LocationNav.m in Sources */,
 				E2149DF51C755FE00005D50A /* FacebookPostVC.m in Sources */,
 				E2FD057F1C59E4B2004B2C34 /* ProfileVC.m in Sources */,
@@ -820,6 +839,7 @@
 				E22A79A61C77A77100CE66E5 /* LocationAnnotation.m in Sources */,
 				0084F42E1C7B1C8500E111D0 /* ActivityPhotoDetailsVC.m in Sources */,
 				BD0603A21C595D4700A2C3EC /* AppDelegate.m in Sources */,
+				000467E51C7CB53400946DE8 /* ProfileTopBarVC.m in Sources */,
 				E2656BEC1C5DA885004786EA /* PhotoDetailsVC.m in Sources */,
 				0084F3EA1C7ABA6200E111D0 /* CleaningCommentCell.m in Sources */,
 				E2F36ECD1C5AFFE700923DF0 /* FirstPageView.m in Sources */,

@@ -10,4 +10,19 @@
 
 @implementation SettingVC
 
+- (void)viewDidLoad{
+    [super viewDidLoad];
+    [self.profileTopBar setHeaderStyle:NO title:@"SETTINGS" rightBtnHidden:YES];
+}
+
+#pragma ProfileTopBarVCDelegate Implementation
+
+- (void)leftBtnTopBarTapped:(UIButton *)sender topBar:(id)topBar{
+    [self dismissVC];
+}
+
+- (void)rightBtnTopBarTapped:(UIButton *)sender topBar:(id)topBar{
+    
+}
+
 @end
