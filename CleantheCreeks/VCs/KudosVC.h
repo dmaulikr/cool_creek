@@ -7,7 +7,8 @@
 //
 
 #import <UIKit/UIKit.h>
+#import "BaseVC.h"
 
-@interface KudosVC : UIViewController
+@interface KudosVC : BaseVC
 
 @end

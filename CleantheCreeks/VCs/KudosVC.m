@@ -10,4 +10,18 @@
 
 @implementation KudosVC
 
+- (void)viewDidLoad{
+    [super viewDidLoad];
+    [self.profileTopBar setHeaderStyle:NO title:@"KUDOS" rightBtnHidden:YES];
+}
+#pragma ProfileTopBarVCDelegate Implementation
+
+- (void)leftBtnTopBarTapped:(UIButton *)sender topBar:(id)topBar{
+    
+}
+
+- (void)rightBtnTopBarTapped:(UIButton *)sender topBar:(id)topBar{
+    
+}
+
 @end

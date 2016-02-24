@@ -18,6 +18,8 @@
     
     self.tv.estimatedRowHeight = 65.f;
     self.tv.rowHeight = UITableViewAutomaticDimension;
+    
+    [self.profileTopBar setHeaderStyle:YES title:@"ACTIVITY" rightBtnHidden:YES];
 }
 
 - (void)didReceiveMemoryWarning
@@ -49,6 +51,16 @@
     }
     
     return cell;
+}
+
+#pragma ProfileTopBarVCDelegate Implementation
+
+- (void)leftBtnTopBarTapped:(UIButton *)sender topBar:(id)topBar{
+    
+}
+
+- (void)rightBtnTopBarTapped:(UIButton *)sender topBar:(id)topBar{
+    
 }
 
 @end

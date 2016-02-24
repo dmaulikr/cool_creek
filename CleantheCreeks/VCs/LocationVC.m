@@ -130,8 +130,8 @@
                  
                  NSString *downloadingFilePath = [NSTemporaryDirectory() stringByAppendingPathComponent:@"downloaded-myImage.jpg"];
                  NSURL *downloadingFileURL = [NSURL fileURLWithPath:downloadingFilePath];
-                 if(distance<100.0)
-                 {
+                 //if(distance<100.0)
+                 //{
                      NSString * key=[location.location_id stringByAppendingString:@"a"];
                      [self.locationArray addObject:location];
                  
@@ -165,7 +165,7 @@
                          }
                          return nil;
                      }];
-                 }
+                 //}
                  
              }
              [self.locationTable reloadData];

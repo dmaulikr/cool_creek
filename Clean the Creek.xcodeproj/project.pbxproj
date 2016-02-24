@@ -234,15 +234,6 @@
 /* End PBXFrameworksBuildPhase section */
 
 /* Begin PBXGroup section */
-		000467DE1C7C726E00946DE8 /* SettingVC */ = {
-			isa = PBXGroup;
-			children = (
-				000467DF1C7C728300946DE8 /* SettingVC.h */,
-				000467E01C7C728300946DE8 /* SettingVC.m */,
-			);
-			name = SettingVC;
-			sourceTree = "<group>";
-		};
 		000467E21C7CB51700946DE8 /* TopBarVCs */ = {
 			isa = PBXGroup;
 			children = (
@@ -634,7 +625,8 @@
 		E2FD057C1C59E4A2004B2C34 /* ProfileVC */ = {
 			isa = PBXGroup;
 			children = (
-				000467DE1C7C726E00946DE8 /* SettingVC */,
+				000467DF1C7C728300946DE8 /* SettingVC.h */,
+				000467E01C7C728300946DE8 /* SettingVC.m */,
 				E2FD057D1C59E4B2004B2C34 /* ProfileVC.h */,
 				E2FD057E1C59E4B2004B2C34 /* ProfileVC.m */,
 			);
