@@ -14,5 +14,6 @@
 @property (nonatomic, copy) NSString *subtitle;
 
 @property (nonatomic, copy) UIImage *image;
+@property(nonatomic, copy)NSString *imageURL;
 
 @end

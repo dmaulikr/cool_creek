@@ -14,11 +14,12 @@
 - (id)initWithAnnotation:(id<MKAnnotation>)annotation reuseIdentifier:(NSString *)reuseIdentifier {
     
     self = [super initWithAnnotation:annotation reuseIdentifier:reuseIdentifier];
-     AppDelegate *mainDelegate = (AppDelegate *)[[UIApplication sharedApplication]delegate];
+    AppDelegate *mainDelegate = (AppDelegate *)[[UIApplication sharedApplication]delegate];
     if (self) {
         LocationAnnotation *locAnnotation = self.annotation;
-         if([mainDelegate.locationData objectForKey:annotation.title])
-             self.image = [PhotoDetailsVC scaleImage:mainDelegate.locationData[annotation.title] toSize:CGSizeMake(50.0,50.0)];
+        
+         if([mainDelegate.locationData objectForKey:annotation.subtitle])
+             self.image = [PhotoDetailsVC scaleImage:mainDelegate.locationData[annotation.subtitle] toSize:CGSizeMake(50.0,50.0)];
     }
     return self;
 }

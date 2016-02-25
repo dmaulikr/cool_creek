@@ -7,7 +7,7 @@
 //
 
 #import <UIKit/UIKit.h>
-#import "LocationHeaderViewController.h"
+
 #import <CoreLocation/CoreLocation.h>
 @interface LocationNav : UINavigationController<CLLocationManagerDelegate>
 @property (strong, nonatomic) CLLocationManager *locationManager;

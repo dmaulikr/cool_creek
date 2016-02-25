@@ -47,7 +47,8 @@
             case SLComposeViewControllerResultCancelled:
                 break;
             case SLComposeViewControllerResultDone:
-                [self performSegueWithIdentifier:@"showFBSuccess2" sender:self];
+                [self performSegueWithIdentifier:@"showFBSuccess" sender:self];
+                [self.tabBarController.tabBar setHidden:NO];
                 break;
             default:
                 break;

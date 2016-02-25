@@ -1,7 +1,7 @@
 #import <UIKit/UIKit.h>
 #import <MapKit/MapKit.h>
 #import <CoreLocation/CoreLocation.h>
-
+#import "AppDelegate.h"
 @interface LocationVC : UIViewController<UITableViewDelegate, UITableViewDataSource, MKMapViewDelegate, CLLocationManagerDelegate>
 
 @property (weak, nonatomic) IBOutlet UITableView *locationTable;
@@ -19,7 +19,8 @@
 @property (retain) CLLocation * currentLocation;
 @property (strong,nonatomic) NSMutableArray * locationArray;
 @property (strong,nonatomic) NSMutableDictionary * imageArray;
-
+@property (strong,nonatomic )AppDelegate * mainDelegate;
 - (IBAction)listButtonTapped:(id)sender;
 - (IBAction)mapButtonTapped:(id)sender;
+
 @end
