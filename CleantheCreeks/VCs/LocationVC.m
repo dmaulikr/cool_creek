@@ -14,12 +14,10 @@
 
 - (void)viewWillAppear:(BOOL)animated{
     
-    
 }
 
 - (void)viewDidLoad{
     [super viewDidLoad];
-    
     [_locationManager requestWhenInUseAuthorization];
     _locationManager=[[CLLocationManager alloc] init];
     if([CLLocationManager authorizationStatus]==kCLAuthorizationStatusNotDetermined)
@@ -29,7 +27,6 @@
     _locationManager.desiredAccuracy=kCLLocationAccuracyBest;
     _locationManager.distanceFilter=500;
     self.locationManager=_locationManager;
-    
     if([CLLocationManager locationServicesEnabled]){
         
         [self.locationManager startUpdatingLocation];
@@ -136,13 +133,12 @@
                  distance=distance/1000.0;
                  NSString *downloadingFilePath = [NSTemporaryDirectory() stringByAppendingPathComponent:@"downloaded-myImage.jpg"];
                  NSURL *downloadingFileURL = [NSURL fileURLWithPath:downloadingFilePath];
-                 if(distance<100.0)
+                 if(distance<100.0 && location.isDirty==@"true")
                  {
                      NSString * key=[location.location_id stringByAppendingString:@"a"];
                      [self.locationArray addObject:location];
                      
                      AWSS3TransferManagerDownloadRequest *downloadRequest = [AWSS3TransferManagerDownloadRequest new];
-                     
                      downloadRequest.bucket = @"cleanthecreeks";
                      downloadRequest.key = key;
                      downloadRequest.downloadingFileURL = downloadingFileURL;
