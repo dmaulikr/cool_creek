@@ -63,7 +63,7 @@ UIImage*secondPicture;
 {
     FBSDKLoginManager *login = [[FBSDKLoginManager alloc] init];
     [login
-     logInWithReadPermissions: @[@"public_profile"]
+     logInWithReadPermissions: @[@"public_profile",@"email"]
      fromViewController:self
      handler:^(FBSDKLoginManagerLoginResult *result, NSError *error) {
          if (error) {
@@ -72,7 +72,9 @@ UIImage*secondPicture;
              NSLog(@"Cancelled");
          } else
          {
-             [[[FBSDKGraphRequest alloc] initWithGraphPath:@"me" parameters:nil]
+             NSMutableDictionary* parameters = [NSMutableDictionary dictionary];
+             [parameters setValue:@"id,name,email,location,quotes" forKey:@"fields"];
+             [[[FBSDKGraphRequest alloc] initWithGraphPath:@"me" parameters:parameters]
               startWithCompletionHandler:^(FBSDKGraphRequestConnection *connection, id result, NSError *error) {
                   
                   if (!error) {
@@ -80,11 +82,15 @@ UIImage*secondPicture;
                        NSUserDefaults *loginInfo=[NSUserDefaults standardUserDefaults];
                       [loginInfo setObject:result[@"id"] forKey:@"user_id"];
                       [loginInfo setObject:result[@"name"] forKey:@"user_name"];
+                      [loginInfo setObject:result[@"email"] forKey:@"user_email"];
+                      [loginInfo setObject:result[@"location"] forKey:@"user_location"];
+                      [loginInfo setObject:result[@"quotes"] forKey:@"user_quotes"];
                       [loginInfo synchronize];
                       User * user_info = [User new];
                       user_info.user_id = result[@"id"];
                       //user_info.kudos = [[NSArray alloc]init];
                       user_info.user_name=result[@"name"];
+                      
                       AWSDynamoDBObjectMapperConfiguration *updateMapperConfig = [AWSDynamoDBObjectMapperConfiguration new];
                       updateMapperConfig.saveBehavior = AWSDynamoDBObjectMapperSaveBehaviorAppendSet;
                       AWSDynamoDBObjectMapper *dynamoDBObjectMapper = [AWSDynamoDBObjectMapper defaultDynamoDBObjectMapper];
