@@ -3,6 +3,7 @@
 #import "LocationVC.h"
 #import <FBSDKCoreKit/FBSDKCoreKit.h>
 #import <FBSDKLoginKit/FBSDKLoginKit.h>
+#import "User.h"
 @implementation SlideVC
 UIImage*firstPicture;
 UIImage*secondPicture;
@@ -31,10 +32,6 @@ UIImage*secondPicture;
 - (void)viewDidLoad
 {
    
-    NSUserDefaults *defaults = [NSUserDefaults standardUserDefaults];
-    NSString *user_id = [defaults objectForKey:@"user_id"];
-    NSString *user_name = [defaults objectForKey:@"user_name"];
-    NSLog(user_name);
     [super viewDidLoad];
     UIButton *loginButton = [[UIButton alloc] initWithFrame:CGRectMake(0,0,0,0)];
     loginButton = [UIButton buttonWithType:UIButtonTypeCustom];
@@ -48,11 +45,7 @@ UIImage*secondPicture;
     [loginButton addTarget:self action:@selector(loginButtonClicked) forControlEvents:UIControlEventTouchUpInside];
     [self.view addSubview:loginButton];
     
-    if(user_id!=nil)
-    {
-        [self moveToMainNav];
-        
-    }
+    
 	// Do any additional setup after loading the view.
 }
 
@@ -89,6 +82,29 @@ UIImage*secondPicture;
                       [loginInfo setObject:result[@"id"] forKey:@"user_id"];
                       [loginInfo setObject:result[@"name"] forKey:@"user_name"];
                       [loginInfo synchronize];
+                      
+                      User * user_info = [User new];
+                      user_info.user_id = result[@"id"];
+                      //user_info.kudos = [[NSArray alloc]init];
+                      user_info.user_name=result[@"name"];
+                      AWSDynamoDBObjectMapperConfiguration *updateMapperConfig = [AWSDynamoDBObjectMapperConfiguration new];
+                      updateMapperConfig.saveBehavior = AWSDynamoDBObjectMapperSaveBehaviorAppendSet;
+
+                      AWSDynamoDBObjectMapper *dynamoDBObjectMapper = [AWSDynamoDBObjectMapper defaultDynamoDBObjectMapper];
+                      [[dynamoDBObjectMapper save:user_info configuration:updateMapperConfig]
+                       continueWithBlock:^id(AWSTask *task) {
+                           if (task.error) {
+                               NSLog(@"The request failed. Error: [%@]", task.error);
+                           }
+                           if (task.exception) {
+                               NSLog(@"The request failed. Exception: [%@]", task.exception);
+                           }
+                           if (task.result) {
+                               //Do something with the result.
+                           }
+                           return nil;
+                       }];
+
                   }
               }];
             [self moveToMainNav];

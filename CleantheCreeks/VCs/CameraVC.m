@@ -17,7 +17,6 @@
 - (void)viewDidAppear:(BOOL)animated
 {
     [super viewDidAppear:YES];
-    NSLog(@"Camera View Controller");
 }
 
 -(void) takePhoto

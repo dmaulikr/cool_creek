@@ -47,10 +47,10 @@ bool secondPhototaken=false;
     [ceo reverseGeocodeLocation:self.currentLocation
               completionHandler:^(NSArray *placemarks, NSError *error) {
                   CLPlacemark *placemark = [placemarks objectAtIndex:0];
-                  NSLog(@"placemark %@",placemark);
+                  //NSLog(@"placemark %@",placemark);
                   //String to hold address
                   NSString *locatedAt = [[placemark.addressDictionary valueForKey:@"FormattedAddressLines"] componentsJoinedByString:@", "];
-                  NSLog(@"addressDictionary %@", placemark.addressDictionary);
+                  /*NSLog(@"addressDictionary %@", placemark.addressDictionary);
                   
                   NSLog(@"region %@",placemark.region);
                   NSLog(@"country %@",placemark.country);  // Give Country Name
@@ -62,8 +62,7 @@ bool secondPhototaken=false;
                   
                   NSLog(@"location %@",placemark.location);
                   //Print the location to console
-                  NSLog(@"I am currently at %@",locatedAt);
-                  
+                  NSLog(@"I am currently at %@",locatedAt);*/
                   self.locationName1=placemark.locality;
                   self.locationName2=locatedAt;
                   self.countryName=placemark.country;

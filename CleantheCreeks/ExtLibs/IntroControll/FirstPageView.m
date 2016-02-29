@@ -37,12 +37,10 @@
         CGSize three = [@"1 \n 2 \n 3" sizeWithFont:descriptionLabel.font constrainedToSize:CGSizeMake(frame.size.width-40, CGFLOAT_MAX) lineBreakMode:NSLineBreakByWordWrapping];
         
         descriptionLabel.frame = CGRectMake((self.frame.size.width-s.width)/2, titleLabel.frame.origin.y+titleLabel.frame.size.height+30,s.width, MIN(s.height, three.height));
-        
-        NSLog(@"%f", s.height);
 
         [self addSubview:descriptionLabel];
         
-           }
+    }
     return self;
 }
 @end
