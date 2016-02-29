@@ -13,11 +13,7 @@
 @implementation LocationVC
 
 - (void)viewWillAppear:(BOOL)animated{
-    
-}
-
-- (void)viewDidLoad{
-    [super viewDidLoad];
+    [super viewWillAppear:YES];
     [_locationManager requestWhenInUseAuthorization];
     _locationManager=[[CLLocationManager alloc] init];
     if([CLLocationManager authorizationStatus]==kCLAuthorizationStatusNotDetermined)
@@ -28,16 +24,24 @@
     _locationManager.distanceFilter=500;
     self.locationManager=_locationManager;
     if([CLLocationManager locationServicesEnabled]){
-        
         [self.locationManager startUpdatingLocation];
-    }else{
+    }
+    else{
         
         [self.locationManager requestWhenInUseAuthorization];
     }
     self.locationArray = [[NSMutableArray alloc]init];
-    self.imageArray = [[NSMutableDictionary alloc]init];
+    [self.locationArray removeAllObjects];
     self.mapView.delegate=self;
     self.mainDelegate=(AppDelegate*)[[UIApplication sharedApplication]delegate];
+}
+
+- (void)viewDidLoad{
+    [super viewDidLoad];
+     //  [self.mapView addGestureRecognizer:panGesture];
+    
+    [self.mapView setScrollEnabled:YES];
+    [self.mapView setZoomEnabled:YES];
 }
 
 - (void)didReceiveMemoryWarning{
@@ -48,7 +52,9 @@
 #pragma TableViewDelegate Implementation
 
 - (NSInteger)tableView:(UITableView *)tableView numberOfRowsInSection:(NSInteger)section{
-    return [self.locationArray count];
+    if(self.locationArray)
+        return [self.locationArray count];
+    return 0;
 }
 
 - (UITableViewCell *)tableView:(UITableView *)tableView cellForRowAtIndexPath:(NSIndexPath *)indexPath{
@@ -66,9 +72,9 @@
         [cell.distance setText:distanceText];
         NSString * key=[location.location_id stringByAppendingString:@"a"];
         if(self.mainDelegate.locationData[location.location_id])
-            cell.image.image=(UIImage*)[self.imageArray objectForKey:location.location_id];
+            cell.image.image=(UIImage*)(self.mainDelegate.locationData[location.location_id]);
     }
-    
+    //[self.locationArray removeAllObjects];
     if(!cell){
         cell=(locationCell*)[[UITableViewCell alloc]init];
     }
@@ -85,8 +91,9 @@
     didUpdateToLocation:(CLLocation *)newLocation
            fromLocation:(CLLocation *)oldLocation
 {
+    self.locationArray = [[NSMutableArray alloc]init];
     [self.locationArray removeAllObjects];
-    
+    [self.mainDelegate.locationData removeAllObjects];
     MKCoordinateRegion region;
     MKCoordinateSpan span;
     span.latitudeDelta = 0.2;
@@ -99,91 +106,68 @@
     [self.mapView setRegion:region animated:YES];
     
     self.currentLocation=newLocation;
+
     CLGeocoder *ceo = [[CLGeocoder alloc]init];
     
     [ceo reverseGeocodeLocation:self.currentLocation
               completionHandler:^(NSArray *placemarks, NSError *error) {
                   CLPlacemark *placemark = [placemarks objectAtIndex:0];
-                  //String to hold address
-                  NSString *locatedAt = [[placemark.addressDictionary valueForKey:@"FormattedAddressLines"] componentsJoinedByString:@", "];
                   [self.btnCountry setTitle:placemark.country forState:UIControlStateNormal];
-                  [self.btnState setTitle:locatedAt forState:UIControlStateNormal];
-                  [self.btnLocal setTitle:placemark.locality forState:UIControlStateNormal];
+                  [self.btnState setTitle:[placemark.addressDictionary valueForKey:@"State"] forState:UIControlStateNormal];
+                  [self.btnLocal setTitle:[placemark.addressDictionary valueForKey:@"Name"] forState:UIControlStateNormal];
               }
      ];
     
     AWSDynamoDBObjectMapper *dynamoDBObjectMapper = [AWSDynamoDBObjectMapper defaultDynamoDBObjectMapper];
-    
     AWSDynamoDBScanExpression *scanExpression = [AWSDynamoDBScanExpression new];
     AWSS3TransferManager *transferManager = [AWSS3TransferManager defaultS3TransferManager];
-    [[dynamoDBObjectMapper scan:[Location class]
-                     expression:scanExpression]
-     continueWithBlock:^id(AWSTask *task) {
-         if (task.error) {
-             //NSLog(@"The request failed. Error: [%@]", task.error);
-         }
-         if (task.exception) {
-             //NSLog(@"The request failed. Exception: [%@]", task.exception);
-         }
+    
+    [[dynamoDBObjectMapper scan:[Location class] expression:scanExpression] continueWithBlock:^id(AWSTask *task) {
          if (task.result) {
              AWSDynamoDBPaginatedOutput *paginatedOutput = task.result;
              for (Location *location in paginatedOutput.items) {
                  CLLocation*exitingLocation=[[CLLocation alloc]initWithLatitude:location.latitude longitude:location.longitude];
                  CLLocationDistance distance=[exitingLocation distanceFromLocation:self.currentLocation];
                  distance=distance/1000.0;
-                 NSString *downloadingFilePath = [NSTemporaryDirectory() stringByAppendingPathComponent:@"downloaded-myImage.jpg"];
+                 NSString *downloadingFilePath = [NSTemporaryDirectory() stringByAppendingPathComponent:location.location_id];
                  NSURL *downloadingFileURL = [NSURL fileURLWithPath:downloadingFilePath];
-                 if(distance<100.0 && location.isDirty==@"true")
+                 if(distance<100.0)
                  {
-                     NSString * key=[location.location_id stringByAppendingString:@"a"];
                      [self.locationArray addObject:location];
-                     
                      AWSS3TransferManagerDownloadRequest *downloadRequest = [AWSS3TransferManagerDownloadRequest new];
                      downloadRequest.bucket = @"cleanthecreeks";
+                     NSString * key=[location.location_id stringByAppendingString:@"a"];
                      downloadRequest.key = key;
                      downloadRequest.downloadingFileURL = downloadingFileURL;
                      LocationAnnotation *annotation=[[LocationAnnotation alloc]init];
                      annotation.coordinate = CLLocationCoordinate2DMake(location.latitude, location.longitude);
                      
-                     annotation.title=location.location_name;
+                     annotation.title = location.location_name;
                      annotation.subtitle = location.location_id;
                      [self.mainDelegate.locationData setValue:annotation forKey:location.location_id];
-                     self.mainDelegate.locationData[annotation.subtitle]=[UIImage imageNamed:@"PlaceIcon"];
-                     [[transferManager download:downloadRequest] continueWithExecutor:[AWSExecutor mainThreadExecutor] withBlock:^id(AWSTask *task) {
-                         if (task.error){
-                             if ([task.error.domain isEqualToString:AWSS3TransferManagerErrorDomain]) {
-                                 switch (task.error.code) {
-                                     case AWSS3TransferManagerErrorCancelled:
-                                     case AWSS3TransferManagerErrorPaused:
-                                         break;
-                                         
-                                     default:
-                                         //  NSLog(@"Error: %@", task.error);
-                                         break;
-                                 }
-                             } else {
-                                 // Unknown error.
-                                 //NSLog(@"Error: %@", task.error);
-                             }
-                         }
-                         
-                         if (task.result) {
-                             AWSS3TransferManagerDownloadOutput *downloadOutput = task.result;
-                             //self.imageArray[key]=[UIImage imageWithContentsOfFile:downloadingFilePath];
-                             self.mainDelegate.locationData[annotation.subtitle]=[UIImage imageWithContentsOfFile:downloadingFilePath];
+                     self.mainDelegate.locationData[location.location_id]=[UIImage imageNamed:@"PlaceIcon"];
+                     [[transferManager download:downloadRequest] continueWithExecutor:[AWSExecutor mainThreadExecutor] withBlock:^id(AWSTask *task2) {
+                         if (task2.result) {
+                             self.imageArray[key]=[UIImage imageWithContentsOfFile:downloadingFilePath];
+                             self.mainDelegate.locationData[location.location_id]=[UIImage imageWithContentsOfFile:downloadingFilePath];
                              [self.mapView addAnnotation:annotation];
-                             [self.locationTable reloadData];
+                             
                          }
                          return nil;
                      }];
+                     
                  }
                  
              }
              
          }
-         
-         return nil;
+        [self.locationTable reloadData];
+
+        return nil;
+        
      }];
+    
+    [self.locationManager stopUpdatingLocation];
 }
 
 - (MKAnnotationView *)mapView:(MKMapView *)mapView viewForAnnotation:(id<MKAnnotation>)annotation{

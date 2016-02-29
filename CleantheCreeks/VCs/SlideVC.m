@@ -72,7 +72,6 @@ UIImage*secondPicture;
              NSLog(@"Cancelled");
          } else
          {
-             
              [[[FBSDKGraphRequest alloc] initWithGraphPath:@"me" parameters:nil]
               startWithCompletionHandler:^(FBSDKGraphRequestConnection *connection, id result, NSError *error) {
                   
@@ -82,14 +81,12 @@ UIImage*secondPicture;
                       [loginInfo setObject:result[@"id"] forKey:@"user_id"];
                       [loginInfo setObject:result[@"name"] forKey:@"user_name"];
                       [loginInfo synchronize];
-                      
                       User * user_info = [User new];
                       user_info.user_id = result[@"id"];
                       //user_info.kudos = [[NSArray alloc]init];
                       user_info.user_name=result[@"name"];
                       AWSDynamoDBObjectMapperConfiguration *updateMapperConfig = [AWSDynamoDBObjectMapperConfiguration new];
                       updateMapperConfig.saveBehavior = AWSDynamoDBObjectMapperSaveBehaviorAppendSet;
-
                       AWSDynamoDBObjectMapper *dynamoDBObjectMapper = [AWSDynamoDBObjectMapper defaultDynamoDBObjectMapper];
                       [[dynamoDBObjectMapper save:user_info configuration:updateMapperConfig]
                        continueWithBlock:^id(AWSTask *task) {

@@ -16,17 +16,18 @@ CLLocationManager * locationManager;
 
 @implementation MainTabNav
 
-- (void)viewDidLoad {
+- (void)viewDidLoad
+{
     [super viewDidLoad];
     self.selectedViewController=[self.viewControllers objectAtIndex:1];
 }
+
 -(void)locationManager:(CLLocationManager *)manager didUpdateToLocation:(CLLocation *)newLocation fromLocation:(CLLocation *)oldLocation{
     
 }
 
 -(void) viewDidAppear:(BOOL)animated
 {
-    //[self.tabBarController setSelectedIndex:2];
 }
 - (void)didReceiveMemoryWarning {
     [super didReceiveMemoryWarning];

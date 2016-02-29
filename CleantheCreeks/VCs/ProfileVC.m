@@ -33,4 +33,5 @@
     [self performSegueWithIdentifier:@"ProfileVC2SettingVC" sender:nil];
 }
 
+
 @end

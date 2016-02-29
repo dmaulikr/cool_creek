@@ -50,9 +50,9 @@ bool secondPhototaken=false;
                   //NSLog(@"placemark %@",placemark);
                   //String to hold address
                   NSString *locatedAt = [[placemark.addressDictionary valueForKey:@"FormattedAddressLines"] componentsJoinedByString:@", "];
-                  /*NSLog(@"addressDictionary %@", placemark.addressDictionary);
+                  NSLog(@"addressDictionary %@", placemark.addressDictionary);
                   
-                  NSLog(@"region %@",placemark.region);
+                  /*NSLog(@"region %@",placemark.region);
                   NSLog(@"country %@",placemark.country);  // Give Country Name
                   NSLog(@"locality %@",placemark.locality); // Extract the city name
                   NSLog(@"name %@",placemark.name);
@@ -63,8 +63,8 @@ bool secondPhototaken=false;
                   NSLog(@"location %@",placemark.location);
                   //Print the location to console
                   NSLog(@"I am currently at %@",locatedAt);*/
-                  self.locationName1=placemark.locality;
-                  self.locationName2=locatedAt;
+                  self.locationName1=[placemark.addressDictionary valueForKey:@"Name"];
+                  self.locationName2=[placemark.addressDictionary valueForKey:@"State"];
                   self.countryName=placemark.country;
                   [self.nextButton setEnabled:YES];
                   [self.detailTable reloadData];
@@ -246,7 +246,6 @@ bool secondPhototaken=false;
             [self storeData:false];
         }]];
         
-        
         dispatch_async(dispatch_get_main_queue(), ^ {
             [self presentViewController:alertController animated:YES completion:nil];
         });
@@ -327,60 +326,58 @@ bool secondPhototaken=false;
     uploadRequest.contentType = @"image/png";
     uploadRequest.key = [NSString stringWithFormat:@"%.2f,%.2fa",
                          self.currentLocation.coordinate.latitude, self.currentLocation.coordinate.longitude];
-    [[transferManager upload:uploadRequest] continueWithExecutor:[AWSExecutor mainThreadExecutor]
-                                                       withBlock:^id(AWSTask *task) {
-                                                           if (task.error) {
-                                                               if ([task.error.domain isEqualToString:AWSS3TransferManagerErrorDomain]) {
-                                                                   switch (task.error.code) {
-                                                                       case AWSS3TransferManagerErrorCancelled:
-                                                                       case AWSS3TransferManagerErrorPaused:
-                                                                           break;
-                                                                           
-                                                                       default:
-                                                                           NSLog(@"Error: %@", task.error);
-                                                                           break;
-                                                                   }
-                                                               } else {
-                                                                   // Unknown error.
-                                                                   NSLog(@"Error: %@", task.error);
-                                                               }
-                                                           }
-                                                           
-                                                           if (task.result) {
-                                                               AWSS3TransferManagerUploadOutput *uploadOutput = task.result;
-                                                               // The file uploaded successfully.
-                                                           }
-                                                           return nil;
-                                                       }];
+    [[transferManager upload:uploadRequest] continueWithExecutor:[AWSExecutor mainThreadExecutor] withBlock:^id(AWSTask *task) {
+        if (task.error) {
+            if ([task.error.domain isEqualToString:AWSS3TransferManagerErrorDomain]) {
+                switch (task.error.code) {
+                    case AWSS3TransferManagerErrorCancelled:
+                    case AWSS3TransferManagerErrorPaused:
+                        break;
+                        
+                    default:
+                        NSLog(@"Error: %@", task.error);
+                        break;
+                }
+            } else {
+                // Unknown error.
+                NSLog(@"Error: %@", task.error);
+            }
+        }
+        
+        if (task.result) {
+            AWSS3TransferManagerUploadOutput *uploadOutput = task.result;
+            // The file uploaded successfully.
+        }
+        return nil;
+    }];
     if(secondPhototaken)
     {
         uploadRequest.key = [NSString stringWithFormat:@"%.2f,%.2fb",
                              self.currentLocation.coordinate.latitude, self.currentLocation.coordinate.longitude];
-        [[transferManager upload:uploadRequest] continueWithExecutor:[AWSExecutor mainThreadExecutor]
-                                                           withBlock:^id(AWSTask *task) {
-                                                               if (task.error) {
-                                                                   if ([task.error.domain isEqualToString:AWSS3TransferManagerErrorDomain]) {
-                                                                       switch (task.error.code) {
-                                                                           case AWSS3TransferManagerErrorCancelled:
-                                                                           case AWSS3TransferManagerErrorPaused:
-                                                                               break;
-                                                                               
-                                                                           default:
-                                                                               NSLog(@"Error: %@", task.error);
-                                                                               break;
-                                                                       }
-                                                                   } else {
-                                                                       // Unknown error.
-                                                                       NSLog(@"Error: %@", task.error);
-                                                                   }
-                                                               }
-                                                               
-                                                               if (task.result) {
-                                                                   AWSS3TransferManagerUploadOutput *uploadOutput = task.result;
-                                                                   // The file uploaded successfully.
-                                                               }
-                                                               return nil;
-                                                           }];
+        [[transferManager upload:uploadRequest] continueWithExecutor:[AWSExecutor mainThreadExecutor] withBlock:^id(AWSTask *task) {
+            if (task.error) {
+                if ([task.error.domain isEqualToString:AWSS3TransferManagerErrorDomain]) {
+                    switch (task.error.code) {
+                        case AWSS3TransferManagerErrorCancelled:
+                        case AWSS3TransferManagerErrorPaused:
+                            break;
+                            
+                        default:
+                            NSLog(@"Error: %@", task.error);
+                            break;
+                    }
+                } else {
+                    // Unknown error.
+                    NSLog(@"Error: %@", task.error);
+                }
+            }
+            
+            if (task.result) {
+                AWSS3TransferManagerUploadOutput *uploadOutput = task.result;
+                // The file uploaded successfully.
+            }
+            return nil;
+        }];
     }
 }
 -(void)imagePickerController:(UIImagePickerController *)picker didFinishPickingMediaWithInfo:(NSDictionary<NSString *,id> *)info
@@ -409,7 +406,6 @@ bool secondPhototaken=false;
     }
     else
     {
-        
         [self.tabBarController setSelectedIndex:1];
         [self.tabBarController.tabBar setHidden:NO];
         //[self.navigationController popViewControllerAnimated:YES];
