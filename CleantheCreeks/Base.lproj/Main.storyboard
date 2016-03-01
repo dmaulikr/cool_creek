@@ -2114,6 +2114,9 @@
                                                 <state key="normal" title="Canada">
                                                     <color key="titleColor" red="0.56862745098039214" green="0.56862745098039214" blue="0.56862745098039214" alpha="1" colorSpace="calibratedRGB"/>
                                                 </state>
+                                                <variation key="heightClass=regular-widthClass=compact" misplaced="YES">
+                                                    <rect key="frame" x="10" y="8" width="50" height="30"/>
+                                                </variation>
                                             </button>
                                             <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="left" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="Y7M-6U-q4h" userLabel="I">
                                                 <rect key="frame" x="-23" y="-15" width="46" height="30"/>
@@ -2121,6 +2124,9 @@
                                                 <state key="normal" title="BC">
                                                     <color key="titleColor" red="0.56862745100000001" green="0.56862745100000001" blue="0.56862745100000001" alpha="1" colorSpace="calibratedRGB"/>
                                                 </state>
+                                                <variation key="heightClass=regular-widthClass=compact" misplaced="YES">
+                                                    <rect key="frame" x="79" y="8" width="30" height="30"/>
+                                                </variation>
                                             </button>
                                             <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="fBD-GI-BZX">
                                                 <rect key="frame" x="-23" y="-15" width="46" height="30"/>
@@ -2128,6 +2134,9 @@
                                                 <state key="normal" title="Kelowna">
                                                     <color key="titleColor" red="0.56862745100000001" green="0.56862745100000001" blue="0.56862745100000001" alpha="1" colorSpace="calibratedRGB"/>
                                                 </state>
+                                                <variation key="heightClass=regular-widthClass=compact" misplaced="YES">
+                                                    <rect key="frame" x="128" y="8" width="57" height="30"/>
+                                                </variation>
                                             </button>
                                             <imageView userInteractionEnabled="NO" contentMode="center" horizontalHuggingPriority="251" verticalHuggingPriority="251" image="MainVCForwardBtn" translatesAutoresizingMaskIntoConstraints="NO" id="qdc-Oh-d0w">
                                                 <rect key="frame" x="0.0" y="0.0" width="240" height="128"/>
@@ -2141,7 +2150,8 @@
                                                         <exclude reference="cMh-Ke-ypS"/>
                                                     </mask>
                                                 </variation>
-                                                <variation key="heightClass=regular-widthClass=compact">
+                                                <variation key="heightClass=regular-widthClass=compact" misplaced="YES">
+                                                    <rect key="frame" x="66" y="17" width="7" height="12"/>
                                                     <mask key="constraints">
                                                         <include reference="2Ov-3L-ZVq"/>
                                                         <include reference="cMh-Ke-ypS"/>
@@ -2160,7 +2170,8 @@
                                                         <exclude reference="aph-rq-rIt"/>
                                                     </mask>
                                                 </variation>
-                                                <variation key="heightClass=regular-widthClass=compact">
+                                                <variation key="heightClass=regular-widthClass=compact" misplaced="YES">
+                                                    <rect key="frame" x="115" y="17" width="7" height="12"/>
                                                     <mask key="constraints">
                                                         <include reference="TpU-Gx-TrS"/>
                                                         <include reference="aph-rq-rIt"/>
@@ -2283,15 +2294,15 @@
                         <color key="backgroundColor" red="0.95686274509803915" green="0.95686274509803915" blue="0.95686274509803915" alpha="1" colorSpace="calibratedRGB"/>
                         <constraints>
                             <constraint firstItem="e1d-hi-QBL" firstAttribute="leading" secondItem="LAg-nS-5qg" secondAttribute="leading" id="21b-FN-1FB"/>
-                            <constraint firstItem="fAt-EZ-ekW" firstAttribute="top" secondItem="33F-VS-lvl" secondAttribute="bottom" id="2np-Af-lzM"/>
                             <constraint firstItem="KLv-UZ-hgA" firstAttribute="top" secondItem="e1d-hi-QBL" secondAttribute="bottom" id="2xg-oo-zdl"/>
                             <constraint firstItem="33F-VS-lvl" firstAttribute="leading" secondItem="LAg-nS-5qg" secondAttribute="leading" id="B7u-7R-QMe"/>
-                            <constraint firstItem="KLv-UZ-hgA" firstAttribute="top" secondItem="fAt-EZ-ekW" secondAttribute="bottom" id="I2b-rc-0au"/>
                             <constraint firstItem="fAt-EZ-ekW" firstAttribute="leading" secondItem="LAg-nS-5qg" secondAttribute="leading" id="LTP-Eg-4d1"/>
                             <constraint firstItem="33F-VS-lvl" firstAttribute="top" secondItem="LAg-nS-5qg" secondAttribute="top" id="RPi-0k-LF0"/>
                             <constraint firstAttribute="trailing" secondItem="e1d-hi-QBL" secondAttribute="trailing" id="RY7-Fb-3Ks"/>
+                            <constraint firstItem="fAt-EZ-ekW" firstAttribute="top" secondItem="33F-VS-lvl" secondAttribute="bottom" id="SaD-5u-EMt"/>
                             <constraint firstAttribute="trailing" secondItem="33F-VS-lvl" secondAttribute="trailing" id="bvX-iB-pih"/>
                             <constraint firstItem="e1d-hi-QBL" firstAttribute="top" secondItem="33F-VS-lvl" secondAttribute="bottom" id="jzN-0l-9uV"/>
+                            <constraint firstItem="KLv-UZ-hgA" firstAttribute="top" secondItem="fAt-EZ-ekW" secondAttribute="bottom" id="k49-1r-msc"/>
                             <constraint firstAttribute="trailing" secondItem="fAt-EZ-ekW" secondAttribute="trailing" id="pFC-Bj-4Ci"/>
                         </constraints>
                         <variation key="default">
@@ -2301,17 +2312,17 @@
                                 <exclude reference="e1d-hi-QBL"/>
                             </mask>
                             <mask key="constraints">
-                                <exclude reference="2xg-oo-zdl"/>
-                                <exclude reference="I2b-rc-0au"/>
                                 <exclude reference="B7u-7R-QMe"/>
                                 <exclude reference="RPi-0k-LF0"/>
                                 <exclude reference="bvX-iB-pih"/>
                                 <exclude reference="21b-FN-1FB"/>
                                 <exclude reference="RY7-Fb-3Ks"/>
                                 <exclude reference="jzN-0l-9uV"/>
-                                <exclude reference="2np-Af-lzM"/>
                                 <exclude reference="LTP-Eg-4d1"/>
+                                <exclude reference="SaD-5u-EMt"/>
                                 <exclude reference="pFC-Bj-4Ci"/>
+                                <exclude reference="2xg-oo-zdl"/>
+                                <exclude reference="k49-1r-msc"/>
                             </mask>
                         </variation>
                         <variation key="heightClass=regular-widthClass=compact">
@@ -2321,17 +2332,17 @@
                                 <include reference="e1d-hi-QBL"/>
                             </mask>
                             <mask key="constraints">
-                                <include reference="2xg-oo-zdl"/>
-                                <include reference="I2b-rc-0au"/>
                                 <include reference="B7u-7R-QMe"/>
                                 <include reference="RPi-0k-LF0"/>
                                 <include reference="bvX-iB-pih"/>
                                 <include reference="21b-FN-1FB"/>
                                 <include reference="RY7-Fb-3Ks"/>
                                 <include reference="jzN-0l-9uV"/>
-                                <include reference="2np-Af-lzM"/>
                                 <include reference="LTP-Eg-4d1"/>
+                                <include reference="SaD-5u-EMt"/>
                                 <include reference="pFC-Bj-4Ci"/>
+                                <include reference="2xg-oo-zdl"/>
+                                <include reference="k49-1r-msc"/>
                             </mask>
                         </variation>
                     </view>

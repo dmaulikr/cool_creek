@@ -52,7 +52,6 @@
 		E252E6231C6120D70013F1B7 /* libz.tbd in Frameworks */ = {isa = PBXBuildFile; fileRef = E252E6221C6120D70013F1B7 /* libz.tbd */; };
 		E252E6251C6120E10013F1B7 /* SystemConfiguration.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = E252E6241C6120E10013F1B7 /* SystemConfiguration.framework */; };
 		E2656BEC1C5DA885004786EA /* PhotoDetailsVC.m in Sources */ = {isa = PBXBuildFile; fileRef = E2656BEB1C5DA885004786EA /* PhotoDetailsVC.m */; };
-		E27FC5091C69E0BA00489DE3 /* MapView.m in Sources */ = {isa = PBXBuildFile; fileRef = E27FC5081C69E0BA00489DE3 /* MapView.m */; };
 		E27FC50D1C69E31600489DE3 /* Main.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = E27FC50B1C69E31600489DE3 /* Main.storyboard */; };
 		E27FC5101C69E7A300489DE3 /* LocationNav.m in Sources */ = {isa = PBXBuildFile; fileRef = E27FC50F1C69E7A300489DE3 /* LocationNav.m */; };
 		E2960D7A1C6E36D8009425CA /* DetailCell.m in Sources */ = {isa = PBXBuildFile; fileRef = E2960D791C6E36D8009425CA /* DetailCell.m */; };
@@ -160,8 +159,6 @@
 		E252E6241C6120E10013F1B7 /* SystemConfiguration.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = SystemConfiguration.framework; path = System/Library/Frameworks/SystemConfiguration.framework; sourceTree = SDKROOT; };
 		E2656BEA1C5DA885004786EA /* PhotoDetailsVC.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = PhotoDetailsVC.h; sourceTree = "<group>"; };
 		E2656BEB1C5DA885004786EA /* PhotoDetailsVC.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = PhotoDetailsVC.m; sourceTree = "<group>"; };
-		E27FC5071C69E0BA00489DE3 /* MapView.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = MapView.h; sourceTree = "<group>"; };
-		E27FC5081C69E0BA00489DE3 /* MapView.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = MapView.m; sourceTree = "<group>"; };
 		E27FC50C1C69E31600489DE3 /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; name = Base; path = CleantheCreeks/Base.lproj/Main.storyboard; sourceTree = "<group>"; };
 		E27FC50E1C69E7A300489DE3 /* LocationNav.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = LocationNav.h; path = ../LocationNav.h; sourceTree = "<group>"; };
 		E27FC50F1C69E7A300489DE3 /* LocationNav.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = LocationNav.m; path = ../LocationNav.m; sourceTree = "<group>"; };
@@ -431,21 +428,11 @@
 			name = PhotoDetailsVC;
 			sourceTree = "<group>";
 		};
-		E27FC50A1C69E0C200489DE3 /* MapView */ = {
-			isa = PBXGroup;
-			children = (
-				E27FC5071C69E0BA00489DE3 /* MapView.h */,
-				E27FC5081C69E0BA00489DE3 /* MapView.m */,
-			);
-			name = MapView;
-			sourceTree = "<group>";
-		};
 		E27FC5111C69E7BC00489DE3 /* LocationNav */ = {
 			isa = PBXGroup;
 			children = (
 				E27FC50E1C69E7A300489DE3 /* LocationNav.h */,
 				E27FC50F1C69E7A300489DE3 /* LocationNav.m */,
-				E27FC50A1C69E0C200489DE3 /* MapView */,
 				E2FD05791C59E3D0004B2C34 /* LocationVC */,
 			);
 			name = LocationNav;
@@ -828,7 +815,6 @@
 				E2F36ECE1C5AFFE700923DF0 /* IntroControll.m in Sources */,
 				0084F3F41C7AFBD300E111D0 /* CCUtils.swift in Sources */,
 				3CE5EB1F1C84F8310068DF59 /* ProfileViewCell.m in Sources */,
-				E27FC5091C69E0BA00489DE3 /* MapView.m in Sources */,
 				E2D1034F1C6528EB00FD67A0 /* locationCell.m in Sources */,
 				E2FD05771C59E354004B2C34 /* SplashVC.m in Sources */,
 				E2FD01041C77866300DAB3C5 /* LocationOverlayView.m in Sources */,

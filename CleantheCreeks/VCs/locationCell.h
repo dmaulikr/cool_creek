@@ -7,6 +7,7 @@
 //
 
 #import <UIKit/UIKit.h>
+#import "LocationVC.h"
 
 @interface locationCell : UITableViewCell
 @property (weak, nonatomic) IBOutlet UIImageView *image;
@@ -17,7 +18,7 @@
 @property (weak, nonatomic) IBOutlet UIButton *cleanBtn;
 @property (weak, nonatomic) IBOutlet UIButton *viewBtn;
 
-
+@property (weak, nonatomic) LocationVC *delegate;
 - (IBAction)moreBtnTapped:(id)sender;
 
 @end

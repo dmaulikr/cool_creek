@@ -21,7 +21,7 @@
     
     _locationManager.delegate=self;
     _locationManager.desiredAccuracy=kCLLocationAccuracyBest;
-    _locationManager.distanceFilter=500;
+    _locationManager.distanceFilter = 500.f;
     self.locationManager=_locationManager;
     if([CLLocationManager locationServicesEnabled]){
         [self.locationManager startUpdatingLocation];
@@ -72,11 +72,14 @@
         [cell.distance setText:distanceText];
         if(self.mainDelegate.locationData[location.location_id])
             cell.image.image=(UIImage*)(self.mainDelegate.locationData[location.location_id]);
+        
     }
-    //[self.locationArray removeAllObjects];
+
     if(!cell){
         cell=(locationCell*)[[UITableViewCell alloc]init];
     }
+    
+    cell.delegate = self;
     return cell;
 }
 
@@ -187,6 +190,7 @@
     [self.mapView setHidden:NO];
     [self.mapButton setImage:[UIImage imageNamed:@"HeaderMapBtnSelected"] forState:UIControlStateNormal];
     [self.listButton setImage:[UIImage imageNamed:@"HeaderMenuBtnUnselected"] forState:UIControlStateNormal];
+    [self.view bringSubviewToFront:self.mapView];
 }
 
 @end
