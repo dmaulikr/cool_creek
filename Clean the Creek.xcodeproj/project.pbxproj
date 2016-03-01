@@ -36,6 +36,7 @@
 		0084F42E1C7B1C8500E111D0 /* ActivityPhotoDetailsVC.m in Sources */ = {isa = PBXBuildFile; fileRef = 0084F42D1C7B1C8500E111D0 /* ActivityPhotoDetailsVC.m */; };
 		095F77783019A58BBD9134E1 /* libPods.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 4656214352E34CC700C152CD /* libPods.a */; };
 		3CA250EF1C843D32004BB466 /* User.m in Sources */ = {isa = PBXBuildFile; fileRef = 3CA250EE1C843D32004BB466 /* User.m */; };
+		3CE5EB1F1C84F8310068DF59 /* ProfileViewCell.m in Sources */ = {isa = PBXBuildFile; fileRef = 3CE5EB1E1C84F8310068DF59 /* ProfileViewCell.m */; };
 		BD06039F1C595D4700A2C3EC /* main.m in Sources */ = {isa = PBXBuildFile; fileRef = BD06039E1C595D4700A2C3EC /* main.m */; };
 		BD0603A21C595D4700A2C3EC /* AppDelegate.m in Sources */ = {isa = PBXBuildFile; fileRef = BD0603A11C595D4700A2C3EC /* AppDelegate.m */; };
 		BD0603AA1C595D4700A2C3EC /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = BD0603A91C595D4700A2C3EC /* Assets.xcassets */; };
@@ -130,6 +131,8 @@
 		0084F42D1C7B1C8500E111D0 /* ActivityPhotoDetailsVC.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = ActivityPhotoDetailsVC.m; sourceTree = "<group>"; };
 		3CA250EE1C843D32004BB466 /* User.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = User.m; sourceTree = "<group>"; };
 		3CA250F01C843D74004BB466 /* User.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = User.h; sourceTree = "<group>"; };
+		3CE5EB1D1C84F8310068DF59 /* ProfileViewCell.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ProfileViewCell.h; sourceTree = "<group>"; };
+		3CE5EB1E1C84F8310068DF59 /* ProfileViewCell.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = ProfileViewCell.m; sourceTree = "<group>"; };
 		4656214352E34CC700C152CD /* libPods.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; includeInIndex = 0; path = libPods.a; sourceTree = BUILT_PRODUCTS_DIR; };
 		4C6CBB01DE1D421604AC1E1D /* Pods.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = Pods.debug.xcconfig; path = "Pods/Target Support Files/Pods/Pods.debug.xcconfig"; sourceTree = "<group>"; };
 		893EA3F1F71074BC15B9E306 /* Pods.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = Pods.release.xcconfig; path = "Pods/Target Support Files/Pods/Pods.release.xcconfig"; sourceTree = "<group>"; };
@@ -319,6 +322,15 @@
 				893EA3F1F71074BC15B9E306 /* Pods.release.xcconfig */,
 			);
 			name = Pods;
+			sourceTree = "<group>";
+		};
+		3CE5EB201C84F8370068DF59 /* ProfileViewCell */ = {
+			isa = PBXGroup;
+			children = (
+				3CE5EB1D1C84F8310068DF59 /* ProfileViewCell.h */,
+				3CE5EB1E1C84F8310068DF59 /* ProfileViewCell.m */,
+			);
+			name = ProfileViewCell;
 			sourceTree = "<group>";
 		};
 		BD0603911C595D4700A2C3EC = {
@@ -621,6 +633,7 @@
 				000467E01C7C728300946DE8 /* SettingVC.m */,
 				E2FD057D1C59E4B2004B2C34 /* ProfileVC.h */,
 				E2FD057E1C59E4B2004B2C34 /* ProfileVC.m */,
+				3CE5EB201C84F8370068DF59 /* ProfileViewCell */,
 			);
 			name = ProfileVC;
 			sourceTree = "<group>";
@@ -814,6 +827,7 @@
 				E2FD058B1C59E5D8004B2C34 /* MainTabNav.m in Sources */,
 				E2F36ECE1C5AFFE700923DF0 /* IntroControll.m in Sources */,
 				0084F3F41C7AFBD300E111D0 /* CCUtils.swift in Sources */,
+				3CE5EB1F1C84F8310068DF59 /* ProfileViewCell.m in Sources */,
 				E27FC5091C69E0BA00489DE3 /* MapView.m in Sources */,
 				E2D1034F1C6528EB00FD67A0 /* locationCell.m in Sources */,
 				E2FD05771C59E354004B2C34 /* SplashVC.m in Sources */,
@@ -971,7 +985,7 @@
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks";
 				PRODUCT_BUNDLE_IDENTIFIER = com.redcherry.CleantheCreeks;
 				PRODUCT_NAME = "Clean the Creek";
-				PROVISIONING_PROFILE = "8e0ca78b-b0cc-46fc-9cc2-bcc1569a682b";
+				PROVISIONING_PROFILE = "ff704afc-b27d-49d9-a43f-7cea9a95175f";
 				SWIFT_OBJC_BRIDGING_HEADER = "CleantheCreeks/Utils/Clean the Creek-Bridging-Header.h";
 				SWIFT_OPTIMIZATION_LEVEL = "-Onone";
 			};
@@ -993,7 +1007,7 @@
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks";
 				PRODUCT_BUNDLE_IDENTIFIER = com.redcherry.CleantheCreeks;
 				PRODUCT_NAME = "Clean the Creek";
-				PROVISIONING_PROFILE = "8e0ca78b-b0cc-46fc-9cc2-bcc1569a682b";
+				PROVISIONING_PROFILE = "ff704afc-b27d-49d9-a43f-7cea9a95175f";
 				SWIFT_OBJC_BRIDGING_HEADER = "CleantheCreeks/Utils/Clean the Creek-Bridging-Header.h";
 			};
 			name = Release;

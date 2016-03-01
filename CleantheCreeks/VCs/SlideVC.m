@@ -73,18 +73,20 @@ UIImage*secondPicture;
          } else
          {
              NSMutableDictionary* parameters = [NSMutableDictionary dictionary];
-             [parameters setValue:@"id,name,email,location,quotes" forKey:@"fields"];
+             [parameters setValue:@"id,name,email,location,about" forKey:@"fields"];
              [[[FBSDKGraphRequest alloc] initWithGraphPath:@"me" parameters:parameters]
               startWithCompletionHandler:^(FBSDKGraphRequestConnection *connection, id result, NSError *error) {
                   
                   if (!error) {
                       NSLog(@"fetched user:%@  and Email : %@", result,result[@"email"]);
                        NSUserDefaults *loginInfo=[NSUserDefaults standardUserDefaults];
+                      NSString *fbUsername = [[result valueForKey:@"link"] lastPathComponent];
+                      [loginInfo setObject:fbUsername forKey:@"username"];
                       [loginInfo setObject:result[@"id"] forKey:@"user_id"];
                       [loginInfo setObject:result[@"name"] forKey:@"user_name"];
                       [loginInfo setObject:result[@"email"] forKey:@"user_email"];
                       [loginInfo setObject:result[@"location"] forKey:@"user_location"];
-                      [loginInfo setObject:result[@"quotes"] forKey:@"user_quotes"];
+                      [loginInfo setObject:result[@"about"] forKey:@"user_about"];
                       [loginInfo synchronize];
                       User * user_info = [User new];
                       user_info.user_id = result[@"id"];

@@ -277,7 +277,7 @@ bool secondPhototaken=false;
     [dateFormatter setDateFormat:@"MMM dd, yyyy"];
     
     Location *location = [Location new];
-    NSString *location_id = [NSString stringWithFormat:@"%.2f,%.2f",
+    NSString *location_id = [NSString stringWithFormat:@"%f,%f",
                          self.currentLocation.coordinate.latitude, self.currentLocation.coordinate.longitude];
     location.location_id=location_id;
     location.location_name = self.locationName1;
@@ -324,7 +324,7 @@ bool secondPhototaken=false;
     uploadRequest.body = fileUrl;
     uploadRequest.bucket = @"cleanthecreeks";
     uploadRequest.contentType = @"image/png";
-    uploadRequest.key = [NSString stringWithFormat:@"%.2f,%.2fa",
+    uploadRequest.key = [NSString stringWithFormat:@"%f,%fa",
                          self.currentLocation.coordinate.latitude, self.currentLocation.coordinate.longitude];
     [[transferManager upload:uploadRequest] continueWithExecutor:[AWSExecutor mainThreadExecutor] withBlock:^id(AWSTask *task) {
         if (task.error) {
@@ -352,7 +352,7 @@ bool secondPhototaken=false;
     }];
     if(secondPhototaken)
     {
-        uploadRequest.key = [NSString stringWithFormat:@"%.2f,%.2fb",
+        uploadRequest.key = [NSString stringWithFormat:@"%f,%fb",
                              self.currentLocation.coordinate.latitude, self.currentLocation.coordinate.longitude];
         [[transferManager upload:uploadRequest] continueWithExecutor:[AWSExecutor mainThreadExecutor] withBlock:^id(AWSTask *task) {
             if (task.error) {

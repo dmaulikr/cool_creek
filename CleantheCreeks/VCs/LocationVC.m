@@ -70,7 +70,6 @@
         distance=distance/1000.0;
         NSString*distanceText=[[NSString alloc]initWithFormat:@"%.02fKM",distance];
         [cell.distance setText:distanceText];
-        NSString * key=[location.location_id stringByAppendingString:@"a"];
         if(self.mainDelegate.locationData[location.location_id])
             cell.image.image=(UIImage*)(self.mainDelegate.locationData[location.location_id]);
     }
