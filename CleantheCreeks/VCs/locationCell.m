@@ -20,30 +20,27 @@
     // Configure the view for the selected state
 }
 
-- (IBAction)cleanClicked:(id)sender {
+- (IBAction)moreBtnTapped:(id)sender {
+    [self updateBtnsHidden:NO];
+}
+
+- (IBAction)cleanBtnTapped:(id)sender {
+    [self updateBtnsHidden:YES];
     
 }
 
-- (BOOL)tableView:(UITableView *)tableView canEditRowAtIndexPath:(NSIndexPath *)indexPath {
-    return YES;
+- (IBAction)viewBtnTapped:(id)sender {
+    [self updateBtnsHidden:YES];
 }
 
-- (void)tableView:(UITableView *)tableView commitEditingStyle:(UITableViewCellEditingStyle)editingStyle forRowAtIndexPath:(NSIndexPath *)indexPath {
-    if (editingStyle == UITableViewCellEditingStyleDelete) {
-        
-    }
-}
--(NSArray *)tableView:(UITableView *)tableView editActionsForRowAtIndexPath:(NSIndexPath *)indexPath {
-    
-    UITableViewRowAction *editAction = [UITableViewRowAction rowActionWithStyle:UITableViewRowActionStyleNormal title:@"Clone" handler:^(UITableViewRowAction *action, NSIndexPath *indexPath){
-        //insert your editAction here
+- (void)updateBtnsHidden:(BOOL)hidden {
+    [self.cleanBtn setHidden:hidden];
+    [self.viewBtn setHidden:hidden];
+    [UIView animateWithDuration:0.8 animations:^{
+        self.cleanBtn.alpha = hidden ? 0 : 1;
+        self.viewBtn.alpha = hidden ? 0 : 1;
     }];
-    editAction.backgroundColor = [UIColor blueColor];
-    
-    UITableViewRowAction *deleteAction = [UITableViewRowAction rowActionWithStyle:UITableViewRowActionStyleNormal title:@"Delete"  handler:^(UITableViewRowAction *action, NSIndexPath *indexPath){
-        //insert your deleteAction here
-    }];
-    deleteAction.backgroundColor = [UIColor redColor];
-    return @[deleteAction,editAction];
 }
+
+
 @end
