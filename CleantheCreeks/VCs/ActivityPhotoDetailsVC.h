@@ -9,6 +9,7 @@
 #import <UIKit/UIKit.h>
 #import "BaseVC.h"
 
-@interface ActivityPhotoDetailsVC : BaseVC
+@interface ActivityPhotoDetailsVC : BaseVC<UITableViewDataSource, UITableViewDelegate>
+@property (weak, nonatomic) IBOutlet UITableView *tv;
 
 @end

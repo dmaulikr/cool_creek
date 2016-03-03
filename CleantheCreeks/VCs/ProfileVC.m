@@ -57,20 +57,24 @@
          
          return nil;
      }];
+    
     self.profileTable.estimatedRowHeight = 323.f;
     self.profileTable.rowHeight = UITableViewAutomaticDimension;
 
 }
+
 -(void) viewWillAppear:(BOOL)animated
 {
     
 }
+
 - (NSInteger)tableView:(UITableView *)tableView numberOfRowsInSection:(NSInteger)section{
     NSInteger rowCount;
     rowCount=[self.locationArray count]+2;
     return rowCount;
 }
-- (CGFloat)tableView:(UITableView *)tableView heightForRowAtIndexPath:(NSIndexPath *)indexPath
+
+/*- (CGFloat)tableView:(UITableView *)tableView heightForRowAtIndexPath:(NSIndexPath *)indexPath
 {
     int height=223;
     if(indexPath.row==0)
@@ -80,11 +84,13 @@
     else
         height=335;
     return height;
-}
+}*/
+
 - (NSInteger)numberOfSectionsInTableView:(UITableView *)tableView
 {
     return 1;
 }
+
 - (UITableViewCell *)tableView:(UITableView *)tableView cellForRowAtIndexPath:(NSIndexPath *)indexPath{
     
     ProfileViewCell * cell=nil;
@@ -104,6 +110,8 @@
         [cell.user_quotes setText:self.luser_about];
         [cell.user_location setText:self.luser_location];
         [cell.user_email setText:self.luser_email];
+        
+        NSLog(@"%@, %@, %@, %@", self.luser_name, self.luser_about, self.luser_location, self.luser_email);
         
     }
     else if(indexPath.row==1)

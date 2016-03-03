@@ -15,6 +15,8 @@
     [self.profileTopBar setHeaderStyle:NO title:@"GYRO BEACH" rightBtnHidden:YES];
 }
 
+
+
 #pragma ProfileTopBarVCDelegate Implementation
 
 - (void)leftBtnTopBarTapped:(UIButton *)sender topBar:(id)topBar{
