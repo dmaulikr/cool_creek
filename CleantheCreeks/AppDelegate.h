@@ -16,7 +16,5 @@
 @property (strong, nonatomic) CLLocationManager *locationManager;
 @property (strong, nonatomic) NSMutableDictionary * locationData;
 
--(NSString *)getAddressFromLatLon:(double)pdblLatitude:(double)pdblLongitude;
-
 @end
 

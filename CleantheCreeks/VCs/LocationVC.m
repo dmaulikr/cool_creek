@@ -31,17 +31,13 @@
         [self.locationManager requestWhenInUseAuthorization];
     }
     self.locationArray = [[NSMutableArray alloc]init];
-    [self.locationArray removeAllObjects];
+    
     self.mapView.delegate=self;
     self.mainDelegate=(AppDelegate*)[[UIApplication sharedApplication]delegate];
 }
 
 - (void)viewDidLoad{
     [super viewDidLoad];
-     //  [self.mapView addGestureRecognizer:panGesture];
-    
-    [self.mapView setScrollEnabled:YES];
-    [self.mapView setZoomEnabled:YES];
 }
 
 - (void)didReceiveMemoryWarning{
@@ -71,8 +67,11 @@
         NSString*distanceText=[[NSString alloc]initWithFormat:@"%.02fKM",distance];
         [cell.distance setText:distanceText];
         if(self.mainDelegate.locationData[location.location_id])
+        {
+
             cell.image.image=(UIImage*)(self.mainDelegate.locationData[location.location_id]);
-        
+            
+        }
     }
 
     if(!cell){
@@ -93,7 +92,6 @@
     didUpdateToLocation:(CLLocation *)newLocation
            fromLocation:(CLLocation *)oldLocation
 {
-    self.locationArray = [[NSMutableArray alloc]init];
     [self.locationArray removeAllObjects];
     [self.mainDelegate.locationData removeAllObjects];
     MKCoordinateRegion region;
@@ -135,7 +133,8 @@
                  NSURL *downloadingFileURL = [NSURL fileURLWithPath:downloadingFilePath];
                  if(distance<100.0)
                  {
-                     [self.locationArray addObject:location];
+                     if(![self.locationArray containsObject:location])
+                         [self.locationArray addObject:location];
                      AWSS3TransferManagerDownloadRequest *downloadRequest = [AWSS3TransferManagerDownloadRequest new];
                      downloadRequest.bucket = @"cleanthecreeks";
                      NSString * key=[location.location_id stringByAppendingString:@"a"];
@@ -146,30 +145,30 @@
                      
                      annotation.title = location.location_name;
                      annotation.subtitle = location.location_id;
-                     [self.mainDelegate.locationData setValue:annotation forKey:location.location_id];
                      self.mainDelegate.locationData[location.location_id]=[UIImage imageNamed:@"PlaceIcon"];
+                     
                      [[transferManager download:downloadRequest] continueWithExecutor:[AWSExecutor mainThreadExecutor] withBlock:^id(AWSTask *task2) {
                          if (task2.result) {
                              self.imageArray[key]=[UIImage imageWithContentsOfFile:downloadingFilePath];
                              self.mainDelegate.locationData[location.location_id]=[UIImage imageWithContentsOfFile:downloadingFilePath];
-                             [self.mapView addAnnotation:annotation];
-                             
+                             [self.locationTable reloadData];
                          }
+                         dispatch_async(dispatch_get_main_queue(), ^{
+                             [self.mapView addAnnotation:annotation];
+                         });
+                         
                          return nil;
                      }];
                      
                  }
-                 
              }
-             
          }
-        [self.locationTable reloadData];
-
+        dispatch_async(dispatch_get_main_queue(), ^{
+            [self.locationTable reloadData];
+        });
         return nil;
         
      }];
-    
-    [self.locationManager stopUpdatingLocation];
 }
 
 - (MKAnnotationView *)mapView:(MKMapView *)mapView viewForAnnotation:(id<MKAnnotation>)annotation{

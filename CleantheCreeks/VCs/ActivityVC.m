@@ -1,7 +1,7 @@
 #import "ActivityVC.h"
 #import "CleaningCommentCell.h"
 #import "CleaningDoneCell.h"
-
+#import "Location.h"
 @implementation ActivityVC
 
 - (id)init
@@ -15,7 +15,36 @@
 {
     [super viewDidLoad];
 	// Do any additional setup after loading the view.
+    NSUserDefaults *defaults = [NSUserDefaults standardUserDefaults];
+    NSString *user_id = [defaults objectForKey:@"user_id"];
     
+    AWSDynamoDBScanExpression *scanExpression = [AWSDynamoDBScanExpression new];
+    scanExpression.filterExpression = @"cleaner_id = :val";
+    self.dynamoDBObjectMapper = [AWSDynamoDBObjectMapper defaultDynamoDBObjectMapper];
+    scanExpression.expressionAttributeValues = @{@":val":user_id};
+    [[self.dynamoDBObjectMapper scan:[Location class]
+                          expression:scanExpression]
+     continueWithBlock:^id(AWSTask *task) {
+         if (task.error) {
+             NSLog(@"The request failed. Error: [%@]", task.error);
+         }
+         if (task.exception) {
+             NSLog(@"The request failed. Exception: [%@]", task.exception);
+         }
+         if (task.result) {
+             AWSDynamoDBPaginatedOutput *paginatedOutput = task.result;
+             
+             for (Location *location in paginatedOutput.items)
+             {
+                
+             
+             }
+             
+         }
+         
+         return nil;
+     }];
+
     self.tv.estimatedRowHeight = 65.f;
     self.tv.rowHeight = UITableViewAutomaticDimension;
     

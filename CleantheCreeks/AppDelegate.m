@@ -117,13 +117,6 @@
     return image;
 }
 
--(NSString *)getAddressFromLatLon:(double)pdblLatitude:(double)pdblLongitude
-{
-    NSString *urlString = [NSString stringWithFormat:kGeoCodingString,pdblLatitude, pdblLongitude];
-    NSError* error;
-    NSString *locationString = [NSString stringWithContentsOfURL:[NSURL URLWithString:urlString] encoding:NSASCIIStringEncoding error:&error];
-    locationString = [locationString stringByReplacingOccurrencesOfString:@"\"" withString:@""];
-    return locationString;
-}
+
 
 @end

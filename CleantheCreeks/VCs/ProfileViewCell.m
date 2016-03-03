@@ -7,7 +7,8 @@
 //
 
 #import "ProfileViewCell.h"
-
+#import "User.h"
+#import "Location.h"
 @implementation ProfileViewCell
 
 @end

@@ -14,7 +14,7 @@
 @interface User : AWSDynamoDBObjectModel <AWSDynamoDBModeling>
 
 @property (nonatomic, strong) NSString *user_id;
-@property (nonatomic, strong) NSArray *kudos;
+
 @property (nonatomic, strong) NSString *user_name;
 
 @end
