@@ -20,10 +20,10 @@
 @property (nonatomic, strong) NSString *country;
 @property (nonatomic, strong) NSString *founder_id;
 @property (nonatomic, strong) NSString *found_by;
-@property (nonatomic, strong) NSString *found_date;
+@property double found_date;
 @property (nonatomic, strong) NSString *cleaner_id;
 @property (nonatomic, strong) NSString *cleaner_name;
-@property (nonatomic, strong) NSString *cleaned_date;
+@property double cleaned_date;
 @property (nonatomic, strong) NSString *state;
 @property (nonatomic, strong) NSString *isDirty;
 @property (nonatomic, strong) NSArray *kudos;

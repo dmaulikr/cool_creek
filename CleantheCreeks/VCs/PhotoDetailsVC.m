@@ -37,7 +37,6 @@ bool secondPhototaken=false;
         [self.locationManager requestWhenInUseAuthorization];
     }
     [self.nextButton setEnabled:NO];
-    
 }
 
 - (void)locationManager:(CLLocationManager *)manager didUpdateToLocation:(CLLocation *)newLocation fromLocation:(CLLocation *)oldLocation
@@ -80,10 +79,13 @@ bool secondPhototaken=false;
     return NO;
 }
 
--(void) SetSecondPhoto:(bool)set
+-(void) setSecondPhoto:(BOOL)set photo:(UIImage*)photo
 {
     secondPhototaken = set;
-    
+    self.cleanedPhoto = [[UIImage alloc]init];
+    self.cleanedPhoto = photo;
+    self.cleanedDate = [NSDate date];
+    [self.detailTable reloadData];
 }
 
 - (CGFloat)tableView:(UITableView *)tableView heightForRowAtIndexPath:(NSIndexPath *)indexPath
@@ -132,11 +134,7 @@ bool secondPhototaken=false;
         count=2;
     return count;
 }
--(void) setSecondPhoto:(BOOL)set
-{
-    secondPhototaken=set;
-    [self.detailTable reloadData];
-}
+
 // Row display. Implementers should *always* try to reuse cells by setting each cell's reuseIdentifier and querying for available reusable cells with dequeueReusableCellWithIdentifier:
 // Cell gets various attributes set automatically based on table (separators) and data source (accessory views, editing controls)
 
@@ -152,7 +150,7 @@ bool secondPhototaken=false;
         else if(indexPath.row==1)
         {
             cell = (PhotoViewCell*)[tableView dequeueReusableCellWithIdentifier:@"PhotoCell"];
-            [((PhotoViewCell*)cell).firstPhoto setImage:self.firstPicture];
+            [((PhotoViewCell*)cell).firstPhoto setImage:self.dirtyPhoto];
             ((PhotoViewCell*)cell).delegate=self;
         }
     }
@@ -185,7 +183,7 @@ bool secondPhototaken=false;
         {
             cell = (DetailCell*)[tableView dequeueReusableCellWithIdentifier:@"ThirdDetailCell"];
             [((DetailCell*)cell).cleanerName setText:user_name];
-            [((DetailCell*)cell).cleanedDate setText:[dateFormatter stringFromDate:[NSDate date]]];
+            [((DetailCell*)cell).cleanedDate setText:[dateFormatter stringFromDate:self.cleanedDate]];
         }
 
     }
@@ -288,8 +286,8 @@ bool secondPhototaken=false;
     location.founder_id=user_id;
     location.cleaner_id=user_id;
     location.cleaner_name=user_name;
-    location.found_date=[dateFormatter stringFromDate:self.foundDate];
-    location.cleaned_date=[dateFormatter stringFromDate:self.cleanedDate];
+    location.found_date=[self.foundDate timeIntervalSince1970];
+    location.cleaned_date=[self.cleanedDate timeIntervalSince1970];
     location.latitude=self.currentLocation.coordinate.latitude;
     location.longitude=self.currentLocation.coordinate.longitude;
     if(isDirty)
@@ -313,15 +311,19 @@ bool secondPhototaken=false;
      }];
     AWSS3TransferManager *transferManager = [AWSS3TransferManager defaultS3TransferManager];
     NSArray *paths = NSSearchPathForDirectoriesInDomains(NSDocumentDirectory, NSUserDomainMask, YES);
-    NSString *filePath = [[paths objectAtIndex:0] stringByAppendingPathComponent:[NSString stringWithFormat:@"%@.png", location_id]];
-    UIImage *cimage = [PhotoDetailsVC scaleImage:self.firstPicture toSize:CGSizeMake(320.0,320.0)];
-    [UIImagePNGRepresentation(cimage) writeToFile:filePath atomically:YES];
+    NSString *dirtyPath = [[paths objectAtIndex:0] stringByAppendingPathComponent:[NSString stringWithFormat:@"%@a.png", location_id]];
+    NSString *cleanPath = [[paths objectAtIndex:0] stringByAppendingPathComponent:[NSString stringWithFormat:@"%@b.png", location_id]];
+    UIImage *cimage = [PhotoDetailsVC scaleImage:self.dirtyPhoto toSize:CGSizeMake(320.0,320.0)];
+    [UIImagePNGRepresentation(cimage) writeToFile:dirtyPath atomically:YES];
+    NSURL* dirtyURL = [NSURL fileURLWithPath:dirtyPath];
     
-    NSURL* fileUrl = [NSURL fileURLWithPath:filePath];
-    
+    UIImage* cimage2 = [PhotoDetailsVC scaleImage:self.cleanedPhoto toSize:CGSizeMake(320.0,320.0)];
+    [UIImagePNGRepresentation(cimage2) writeToFile:cleanPath atomically:YES];
+    NSURL* cleanURL = [NSURL fileURLWithPath:cleanPath];
+
     //upload the image
     AWSS3TransferManagerUploadRequest *uploadRequest = [AWSS3TransferManagerUploadRequest new];
-    uploadRequest.body = fileUrl;
+    uploadRequest.body = dirtyURL;
     uploadRequest.bucket = @"cleanthecreeks";
     uploadRequest.contentType = @"image/png";
     uploadRequest.key = [NSString stringWithFormat:@"%f,%fa",
@@ -352,9 +354,15 @@ bool secondPhototaken=false;
     }];
     if(secondPhototaken)
     {
-        uploadRequest.key = [NSString stringWithFormat:@"%f,%fb",
+        AWSS3TransferManagerUploadRequest *seconduploadRequest = [AWSS3TransferManagerUploadRequest new];
+        seconduploadRequest.body = dirtyURL;
+        seconduploadRequest.bucket = @"cleanthecreeks";
+        seconduploadRequest.contentType = @"image/png";
+
+        seconduploadRequest.body = cleanURL;
+        seconduploadRequest.key = [NSString stringWithFormat:@"%f,%fb",
                              self.currentLocation.coordinate.latitude, self.currentLocation.coordinate.longitude];
-        [[transferManager upload:uploadRequest] continueWithExecutor:[AWSExecutor mainThreadExecutor] withBlock:^id(AWSTask *task) {
+        [[transferManager upload:seconduploadRequest] continueWithExecutor:[AWSExecutor mainThreadExecutor] withBlock:^id(AWSTask *task) {
             if (task.error) {
                 if ([task.error.domain isEqualToString:AWSS3TransferManagerErrorDomain]) {
                     switch (task.error.code) {
@@ -374,7 +382,7 @@ bool secondPhototaken=false;
             
             if (task.result) {
                 AWSS3TransferManagerUploadOutput *uploadOutput = task.result;
-                // The file uploaded successfully.
+                NSLog(@"second Photo uploaded");
             }
             return nil;
         }];
@@ -391,7 +399,7 @@ bool secondPhototaken=false;
     }
     else
     {
-        self.firstPicture=photo;
+        self.dirtyPhoto=photo;
     }
     [picker dismissViewControllerAnimated:YES completion:NULL];
     [self.detailTable reloadData];

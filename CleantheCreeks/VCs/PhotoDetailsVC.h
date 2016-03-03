@@ -14,15 +14,16 @@
 
 @interface PhotoDetailsVC : UIViewController<UITableViewDataSource,UITableViewDelegate,UITextFieldDelegate,CLLocationManagerDelegate,SetPhotoDelegate,UIImagePickerControllerDelegate>
 
-@property (strong,nonatomic) UIImage*firstPicture;
+@property (strong,nonatomic) UIImage*dirtyPhoto;
+@property (strong,nonatomic) UIImage*cleanedPhoto;
 @property (strong,nonatomic) NSURL*firstPath;
 
 @property (weak, nonatomic) IBOutlet UITableView *detailTable;
 
 @property (strong, nonatomic) CLLocationManager *locationManager;
 @property (retain) CLLocation * currentLocation;
-@property (nonatomic, strong) NSString* foundDate;
-@property (nonatomic, strong) NSString* cleanedDate;
+@property (nonatomic, strong) NSDate* foundDate;
+@property (nonatomic, strong) NSDate* cleanedDate;
 @property (nonatomic,strong) NSString* locationName1;
 - (IBAction)nextPage:(id)sender;
 - (IBAction)prevPage:(id)sender;

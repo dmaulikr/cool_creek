@@ -10,7 +10,7 @@
 
 @protocol SetPhotoDelegate<NSObject>
 @optional
--(void) setSecondPhoto:(BOOL)set;
+-(void) setSecondPhoto:(BOOL)set photo:(UIImage*) photo;
 @end
 @interface PhotoViewCell : UITableViewCell<UIImagePickerControllerDelegate,UITableViewDelegate,UINavigationControllerDelegate>
 @property (weak, nonatomic) IBOutlet UIImageView *firstPhoto;

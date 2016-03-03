@@ -47,7 +47,7 @@
     [picker dismissViewControllerAnimated:YES completion:NULL];
     
     [self.secondPhoto setImage:photo];
-    [self.delegate setSecondPhoto:true];
+    [self.delegate setSecondPhoto:true photo:photo];
     
 }
 - (void)imagePickerControllerDidCancel:(UIImagePickerController *)picker

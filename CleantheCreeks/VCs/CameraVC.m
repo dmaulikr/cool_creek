@@ -63,7 +63,7 @@
     if([segue.identifier isEqual:@"showPhotoDetails"])
     {
         PhotoDetailsVC *photoDetailsVC=(PhotoDetailsVC*)segue.destinationViewController;
-        photoDetailsVC.firstPicture=self.cameraPicture;
+        photoDetailsVC.dirtyPhoto=self.cameraPicture;
         photoDetailsVC.firstPath=self.photoURL;
 
         photoDetailsVC.foundDate=[NSDate date];
