@@ -21,6 +21,7 @@
     [self.secondPhoto setUserInteractionEnabled:YES];
     [self.secondPhoto addGestureRecognizer:singleTap];
 }
+
 -(void) takePhoto
 {
     UIImagePickerController *picker=[[UIImagePickerController alloc] init];
@@ -39,17 +40,17 @@
 -(void)tapDetected{
     NSLog(@"Tapped");
 }
+
 -(void)imagePickerController:(UIImagePickerController *)picker didFinishPickingMediaWithInfo:(NSDictionary<NSString *,id> *)info
 {
     NSLog(@"perform Segue");
     UIImage * photo=[[UIImage alloc]init];
     photo=[info objectForKey:UIImagePickerControllerOriginalImage];
     [picker dismissViewControllerAnimated:YES completion:NULL];
-    
     [self.secondPhoto setImage:photo];
     [self.delegate setSecondPhoto:true photo:photo];
-    
 }
+
 - (void)imagePickerControllerDidCancel:(UIImagePickerController *)picker
 {
     [picker dismissViewControllerAnimated:YES completion:NULL];

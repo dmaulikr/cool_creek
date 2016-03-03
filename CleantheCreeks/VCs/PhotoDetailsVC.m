@@ -309,6 +309,7 @@ bool secondPhototaken=false;
          }
          return nil;
      }];
+    
     AWSS3TransferManager *transferManager = [AWSS3TransferManager defaultS3TransferManager];
     NSArray *paths = NSSearchPathForDirectoriesInDomains(NSDocumentDirectory, NSUserDomainMask, YES);
     NSString *dirtyPath = [[paths objectAtIndex:0] stringByAppendingPathComponent:[NSString stringWithFormat:@"%@a.png", location_id]];
@@ -321,7 +322,6 @@ bool secondPhototaken=false;
     [UIImagePNGRepresentation(cimage2) writeToFile:cleanPath atomically:YES];
     NSURL* cleanURL = [NSURL fileURLWithPath:cleanPath];
 
-    //upload the image
     AWSS3TransferManagerUploadRequest *uploadRequest = [AWSS3TransferManagerUploadRequest new];
     uploadRequest.body = dirtyURL;
     uploadRequest.bucket = @"cleanthecreeks";
@@ -346,9 +346,9 @@ bool secondPhototaken=false;
             }
         }
         
-        if (task.result) {
-            AWSS3TransferManagerUploadOutput *uploadOutput = task.result;
-            // The file uploaded successfully.
+        if (task.result)
+        {
+            NSLog(@"First photo uploaded");
         }
         return nil;
     }];
@@ -358,7 +358,6 @@ bool secondPhototaken=false;
         seconduploadRequest.body = dirtyURL;
         seconduploadRequest.bucket = @"cleanthecreeks";
         seconduploadRequest.contentType = @"image/png";
-
         seconduploadRequest.body = cleanURL;
         seconduploadRequest.key = [NSString stringWithFormat:@"%f,%fb",
                              self.currentLocation.coordinate.latitude, self.currentLocation.coordinate.longitude];
@@ -381,13 +380,13 @@ bool secondPhototaken=false;
             }
             
             if (task.result) {
-                AWSS3TransferManagerUploadOutput *uploadOutput = task.result;
-                NSLog(@"second Photo uploaded");
+                NSLog(@"Second photo uploaded");
             }
             return nil;
         }];
     }
 }
+
 -(void)imagePickerController:(UIImagePickerController *)picker didFinishPickingMediaWithInfo:(NSDictionary<NSString *,id> *)info
 {
     NSLog(@"perform Segue");
@@ -404,6 +403,7 @@ bool secondPhototaken=false;
     [picker dismissViewControllerAnimated:YES completion:NULL];
     [self.detailTable reloadData];
 }
+
 - (void)imagePickerControllerDidCancel:(UIImagePickerController *)picker
 {
     [picker dismissViewControllerAnimated:YES completion:NULL];
@@ -419,7 +419,6 @@ bool secondPhototaken=false;
         //[self.navigationController popViewControllerAnimated:YES];
     }
 }
-
 
 +(UIImage *)scaleImage:(UIImage *)image toSize:(CGSize)newSize
 {

@@ -44,7 +44,6 @@
             <string>Lato-Regular</string>
             <string>Lato-Regular</string>
             <string>Lato-Regular</string>
-            <string>Lato-Regular</string>
         </mutableArray>
         <mutableArray key="Lato-Semibold.ttf">
             <string>Lato-Semibold</string>
@@ -4843,15 +4842,18 @@ you</string>
                                                     </mask>
                                                 </variation>
                                             </view>
-                                            <switch opaque="NO" contentMode="scaleToFill" horizontalHuggingPriority="750" verticalHuggingPriority="750" contentHorizontalAlignment="center" contentVerticalAlignment="center" on="YES" translatesAutoresizingMaskIntoConstraints="NO" id="Kw1-JA-mB4">
-                                                <rect key="frame" x="-25" y="-15" width="51" height="31"/>
-                                            </switch>
                                             <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="Comments on my posts" textAlignment="natural" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="8Qi-bf-HVd">
                                                 <rect key="frame" x="-42" y="-21" width="42" height="21"/>
                                                 <fontDescription key="fontDescription" name="Lato-Regular" family="Lato" pointSize="15"/>
                                                 <color key="textColor" red="0.56862745098039214" green="0.56862745098039214" blue="0.56862745098039214" alpha="1" colorSpace="calibratedRGB"/>
                                                 <nil key="highlightedColor"/>
                                             </label>
+                                            <switch opaque="NO" contentMode="scaleToFill" horizontalHuggingPriority="750" verticalHuggingPriority="750" contentHorizontalAlignment="center" contentVerticalAlignment="center" on="YES" translatesAutoresizingMaskIntoConstraints="NO" id="Kw1-JA-mB4">
+                                                <rect key="frame" x="-25" y="-15" width="51" height="31"/>
+                                                <connections>
+                                                    <action selector="switchCommentUpdate:" destination="jRD-Ng-xtc" eventType="valueChanged" id="dT5-aW-G4G"/>
+                                                </connections>
+                                            </switch>
                                         </subviews>
                                         <color key="backgroundColor" white="1" alpha="1" colorSpace="calibratedWhite"/>
                                         <constraints>
@@ -4867,8 +4869,8 @@ you</string>
                                         <variation key="default">
                                             <mask key="subviews">
                                                 <exclude reference="qKy-vx-v0u"/>
-                                                <exclude reference="Kw1-JA-mB4"/>
                                                 <exclude reference="8Qi-bf-HVd"/>
+                                                <exclude reference="Kw1-JA-mB4"/>
                                             </mask>
                                             <mask key="constraints">
                                                 <exclude reference="XvY-y4-iRS"/>
@@ -4884,8 +4886,8 @@ you</string>
                                         <variation key="heightClass=regular-widthClass=compact">
                                             <mask key="subviews">
                                                 <include reference="qKy-vx-v0u"/>
-                                                <include reference="Kw1-JA-mB4"/>
                                                 <include reference="8Qi-bf-HVd"/>
+                                                <include reference="Kw1-JA-mB4"/>
                                             </mask>
                                             <mask key="constraints">
                                                 <include reference="XvY-y4-iRS"/>
@@ -4919,15 +4921,18 @@ you</string>
                                                     </mask>
                                                 </variation>
                                             </view>
-                                            <switch opaque="NO" contentMode="scaleToFill" horizontalHuggingPriority="750" verticalHuggingPriority="750" contentHorizontalAlignment="center" contentVerticalAlignment="center" on="YES" translatesAutoresizingMaskIntoConstraints="NO" id="bD9-oE-WDe">
-                                                <rect key="frame" x="-25" y="-15" width="51" height="31"/>
-                                            </switch>
                                             <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="Someone give you Kudos" textAlignment="natural" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="fkN-7I-LaA">
                                                 <rect key="frame" x="-42" y="-21" width="42" height="21"/>
                                                 <fontDescription key="fontDescription" name="Lato-Regular" family="Lato" pointSize="15"/>
                                                 <color key="textColor" red="0.56862745100000001" green="0.56862745100000001" blue="0.56862745100000001" alpha="1" colorSpace="calibratedRGB"/>
                                                 <nil key="highlightedColor"/>
                                             </label>
+                                            <switch opaque="NO" contentMode="scaleToFill" horizontalHuggingPriority="750" verticalHuggingPriority="750" contentHorizontalAlignment="center" contentVerticalAlignment="center" on="YES" translatesAutoresizingMaskIntoConstraints="NO" id="bD9-oE-WDe">
+                                                <rect key="frame" x="-25" y="-15" width="51" height="31"/>
+                                                <connections>
+                                                    <action selector="switchKudoUpdated:" destination="jRD-Ng-xtc" eventType="valueChanged" id="Wgx-MZ-Thl"/>
+                                                </connections>
+                                            </switch>
                                         </subviews>
                                         <color key="backgroundColor" white="1" alpha="1" colorSpace="calibratedWhite"/>
                                         <constraints>
@@ -4943,8 +4948,8 @@ you</string>
                                         <variation key="default">
                                             <mask key="subviews">
                                                 <exclude reference="6rz-oG-L91"/>
-                                                <exclude reference="bD9-oE-WDe"/>
                                                 <exclude reference="fkN-7I-LaA"/>
+                                                <exclude reference="bD9-oE-WDe"/>
                                             </mask>
                                             <mask key="constraints">
                                                 <exclude reference="DB7-sO-QJh"/>
@@ -4960,8 +4965,8 @@ you</string>
                                         <variation key="heightClass=regular-widthClass=compact">
                                             <mask key="subviews">
                                                 <include reference="6rz-oG-L91"/>
-                                                <include reference="bD9-oE-WDe"/>
                                                 <include reference="fkN-7I-LaA"/>
+                                                <include reference="bD9-oE-WDe"/>
                                             </mask>
                                             <mask key="constraints">
                                                 <include reference="DB7-sO-QJh"/>
@@ -4995,15 +5000,18 @@ you</string>
                                                     </mask>
                                                 </variation>
                                             </view>
-                                            <switch opaque="NO" contentMode="scaleToFill" horizontalHuggingPriority="750" verticalHuggingPriority="750" contentHorizontalAlignment="center" contentVerticalAlignment="center" on="YES" translatesAutoresizingMaskIntoConstraints="NO" id="NVi-Nl-q9g">
-                                                <rect key="frame" x="-25" y="-15" width="51" height="31"/>
-                                            </switch>
                                             <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="Someone follows you" textAlignment="natural" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="5al-QA-tNj">
                                                 <rect key="frame" x="-42" y="-21" width="42" height="21"/>
                                                 <fontDescription key="fontDescription" name="Lato-Regular" family="Lato" pointSize="15"/>
                                                 <color key="textColor" red="0.56862745100000001" green="0.56862745100000001" blue="0.56862745100000001" alpha="1" colorSpace="calibratedRGB"/>
                                                 <nil key="highlightedColor"/>
                                             </label>
+                                            <switch opaque="NO" contentMode="scaleToFill" horizontalHuggingPriority="750" verticalHuggingPriority="750" contentHorizontalAlignment="center" contentVerticalAlignment="center" on="YES" translatesAutoresizingMaskIntoConstraints="NO" id="NVi-Nl-q9g">
+                                                <rect key="frame" x="-25" y="-15" width="51" height="31"/>
+                                                <connections>
+                                                    <action selector="switchFollowUpdate:" destination="jRD-Ng-xtc" eventType="valueChanged" id="KrY-o3-SXV"/>
+                                                </connections>
+                                            </switch>
                                         </subviews>
                                         <color key="backgroundColor" white="1" alpha="1" colorSpace="calibratedWhite"/>
                                         <constraints>
@@ -5019,8 +5027,8 @@ you</string>
                                         <variation key="default">
                                             <mask key="subviews">
                                                 <exclude reference="jBF-lu-RDm"/>
-                                                <exclude reference="NVi-Nl-q9g"/>
                                                 <exclude reference="5al-QA-tNj"/>
+                                                <exclude reference="NVi-Nl-q9g"/>
                                             </mask>
                                             <mask key="constraints">
                                                 <exclude reference="5Fa-g5-HVB"/>
@@ -5036,8 +5044,8 @@ you</string>
                                         <variation key="heightClass=regular-widthClass=compact">
                                             <mask key="subviews">
                                                 <include reference="jBF-lu-RDm"/>
-                                                <include reference="NVi-Nl-q9g"/>
                                                 <include reference="5al-QA-tNj"/>
+                                                <include reference="NVi-Nl-q9g"/>
                                             </mask>
                                             <mask key="constraints">
                                                 <include reference="5Fa-g5-HVB"/>
@@ -5071,15 +5079,18 @@ you</string>
                                                     </mask>
                                                 </variation>
                                             </view>
-                                            <switch opaque="NO" contentMode="scaleToFill" horizontalHuggingPriority="750" verticalHuggingPriority="750" contentHorizontalAlignment="center" contentVerticalAlignment="center" on="YES" translatesAutoresizingMaskIntoConstraints="NO" id="Ooc-Hp-bVp">
-                                                <rect key="frame" x="-25" y="-15" width="51" height="31"/>
-                                            </switch>
                                             <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="Someone tags you" textAlignment="natural" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="9oU-cl-PK7">
                                                 <rect key="frame" x="-42" y="-21" width="42" height="21"/>
                                                 <fontDescription key="fontDescription" name="Lato-Regular" family="Lato" pointSize="15"/>
                                                 <color key="textColor" red="0.56862745100000001" green="0.56862745100000001" blue="0.56862745100000001" alpha="1" colorSpace="calibratedRGB"/>
                                                 <nil key="highlightedColor"/>
                                             </label>
+                                            <switch opaque="NO" contentMode="scaleToFill" horizontalHuggingPriority="750" verticalHuggingPriority="750" contentHorizontalAlignment="center" contentVerticalAlignment="center" on="YES" translatesAutoresizingMaskIntoConstraints="NO" id="Ooc-Hp-bVp">
+                                                <rect key="frame" x="-25" y="-15" width="51" height="31"/>
+                                                <connections>
+                                                    <action selector="switchTagUpdated:" destination="jRD-Ng-xtc" eventType="valueChanged" id="sOW-eh-6bj"/>
+                                                </connections>
+                                            </switch>
                                         </subviews>
                                         <color key="backgroundColor" white="1" alpha="1" colorSpace="calibratedWhite"/>
                                         <constraints>
@@ -5095,8 +5106,8 @@ you</string>
                                         <variation key="default">
                                             <mask key="subviews">
                                                 <exclude reference="Ugc-5i-NQr"/>
-                                                <exclude reference="Ooc-Hp-bVp"/>
                                                 <exclude reference="9oU-cl-PK7"/>
+                                                <exclude reference="Ooc-Hp-bVp"/>
                                             </mask>
                                             <mask key="constraints">
                                                 <exclude reference="6tP-PR-qfm"/>
@@ -5112,8 +5123,8 @@ you</string>
                                         <variation key="heightClass=regular-widthClass=compact">
                                             <mask key="subviews">
                                                 <include reference="Ugc-5i-NQr"/>
-                                                <include reference="Ooc-Hp-bVp"/>
                                                 <include reference="9oU-cl-PK7"/>
+                                                <include reference="Ooc-Hp-bVp"/>
                                             </mask>
                                             <mask key="constraints">
                                                 <include reference="6tP-PR-qfm"/>
@@ -5147,15 +5158,18 @@ you</string>
                                                     </mask>
                                                 </variation>
                                             </view>
-                                            <switch opaque="NO" contentMode="scaleToFill" horizontalHuggingPriority="750" verticalHuggingPriority="750" contentHorizontalAlignment="center" contentVerticalAlignment="center" on="YES" translatesAutoresizingMaskIntoConstraints="NO" id="kJB-Qf-LnV">
-                                                <rect key="frame" x="-25" y="-15" width="51" height="31"/>
-                                            </switch>
                                             <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="New Dirty location near you" textAlignment="natural" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="QYY-E7-fbg">
                                                 <rect key="frame" x="-42" y="-21" width="42" height="21"/>
                                                 <fontDescription key="fontDescription" name="Lato-Regular" family="Lato" pointSize="15"/>
                                                 <color key="textColor" red="0.56862745100000001" green="0.56862745100000001" blue="0.56862745100000001" alpha="1" colorSpace="calibratedRGB"/>
                                                 <nil key="highlightedColor"/>
                                             </label>
+                                            <switch opaque="NO" contentMode="scaleToFill" horizontalHuggingPriority="750" verticalHuggingPriority="750" contentHorizontalAlignment="center" contentVerticalAlignment="center" on="YES" translatesAutoresizingMaskIntoConstraints="NO" id="kJB-Qf-LnV">
+                                                <rect key="frame" x="-25" y="-15" width="51" height="31"/>
+                                                <connections>
+                                                    <action selector="switchLocationUpdate:" destination="jRD-Ng-xtc" eventType="valueChanged" id="QY9-21-7Ds"/>
+                                                </connections>
+                                            </switch>
                                         </subviews>
                                         <color key="backgroundColor" white="1" alpha="1" colorSpace="calibratedWhite"/>
                                         <constraints>
@@ -5171,8 +5185,8 @@ you</string>
                                         <variation key="default">
                                             <mask key="subviews">
                                                 <exclude reference="J7c-UV-yCD"/>
-                                                <exclude reference="kJB-Qf-LnV"/>
                                                 <exclude reference="QYY-E7-fbg"/>
+                                                <exclude reference="kJB-Qf-LnV"/>
                                             </mask>
                                             <mask key="constraints">
                                                 <exclude reference="Y4G-th-l1n"/>
@@ -5188,8 +5202,8 @@ you</string>
                                         <variation key="heightClass=regular-widthClass=compact">
                                             <mask key="subviews">
                                                 <include reference="J7c-UV-yCD"/>
-                                                <include reference="kJB-Qf-LnV"/>
                                                 <include reference="QYY-E7-fbg"/>
+                                                <include reference="kJB-Qf-LnV"/>
                                             </mask>
                                             <mask key="constraints">
                                                 <include reference="Y4G-th-l1n"/>
@@ -5339,75 +5353,75 @@ you</string>
                                                     </mask>
                                                 </variation>
                                             </view>
-                                            <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="Metrics" textAlignment="right" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="Bof-vY-xLP">
-                                                <rect key="frame" x="-42" y="-21" width="42" height="21"/>
-                                                <constraints>
-                                                    <constraint firstAttribute="width" constant="99" id="h9l-de-XaG"/>
-                                                </constraints>
-                                                <fontDescription key="fontDescription" name="Lato-Regular" family="Lato" pointSize="15"/>
-                                                <color key="textColor" red="0.0039215686269999999" green="0.47843137250000001" blue="1" alpha="1" colorSpace="calibratedRGB"/>
-                                                <nil key="highlightedColor"/>
-                                                <variation key="default">
-                                                    <mask key="constraints">
-                                                        <exclude reference="h9l-de-XaG"/>
-                                                    </mask>
-                                                </variation>
-                                                <variation key="heightClass=regular-widthClass=compact">
-                                                    <mask key="constraints">
-                                                        <include reference="h9l-de-XaG"/>
-                                                    </mask>
-                                                </variation>
-                                            </label>
                                             <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="Measurements" textAlignment="natural" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="c3c-XO-og8">
                                                 <rect key="frame" x="-42" y="-21" width="42" height="21"/>
                                                 <fontDescription key="fontDescription" name="Lato-Regular" family="Lato" pointSize="15"/>
                                                 <color key="textColor" red="0.56862745100000001" green="0.56862745100000001" blue="0.56862745100000001" alpha="1" colorSpace="calibratedRGB"/>
                                                 <nil key="highlightedColor"/>
+                                                <variation key="heightClass=regular-widthClass=compact" misplaced="YES">
+                                                    <rect key="frame" x="8" y="15" width="102" height="18"/>
+                                                </variation>
                                             </label>
+                                            <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="iUK-o7-e6F">
+                                                <rect key="frame" x="-23" y="-15" width="46" height="30"/>
+                                                <state key="normal" title="Metric"/>
+                                                <variation key="heightClass=regular-widthClass=compact" misplaced="YES">
+                                                    <rect key="frame" x="296" y="9" width="46" height="30"/>
+                                                </variation>
+                                                <connections>
+                                                    <action selector="measurementUpdate:" destination="jRD-Ng-xtc" eventType="touchUpInside" id="U4w-AL-9Ea"/>
+                                                </connections>
+                                            </button>
                                         </subviews>
                                         <color key="backgroundColor" white="1" alpha="1" colorSpace="calibratedWhite"/>
                                         <constraints>
+                                            <constraint firstItem="iUK-o7-e6F" firstAttribute="centerY" secondItem="c3c-XO-og8" secondAttribute="centerY" id="4pD-Xk-1Ug"/>
                                             <constraint firstItem="ZlE-xY-GW1" firstAttribute="leading" secondItem="6g4-5A-LDC" secondAttribute="leading" constant="8" id="CPD-1L-eei"/>
-                                            <constraint firstItem="Bof-vY-xLP" firstAttribute="centerY" secondItem="6g4-5A-LDC" secondAttribute="centerY" id="ZC7-38-63E"/>
+                                            <constraint firstItem="iUK-o7-e6F" firstAttribute="leading" secondItem="c3c-XO-og8" secondAttribute="trailing" constant="186" id="QgB-2m-uvf"/>
+                                            <constraint firstAttribute="trailing" secondItem="iUK-o7-e6F" secondAttribute="trailing" constant="8" id="YOi-FU-5z0"/>
                                             <constraint firstItem="c3c-XO-og8" firstAttribute="centerY" secondItem="6g4-5A-LDC" secondAttribute="centerY" id="aU3-BW-rd9"/>
-                                            <constraint firstAttribute="trailing" secondItem="Bof-vY-xLP" secondAttribute="trailing" constant="13" id="dB0-1g-W1h"/>
+                                            <constraint firstAttribute="trailing" secondItem="iUK-o7-e6F" secondAttribute="trailing" constant="8" id="b2Q-3q-JEH"/>
                                             <constraint firstAttribute="bottom" secondItem="ZlE-xY-GW1" secondAttribute="bottom" constant="1" id="gXt-6Y-SIP"/>
                                             <constraint firstAttribute="trailing" secondItem="ZlE-xY-GW1" secondAttribute="trailing" constant="8" id="obu-ty-hqa"/>
-                                            <constraint firstItem="Bof-vY-xLP" firstAttribute="leading" secondItem="c3c-XO-og8" secondAttribute="trailing" constant="15" id="tds-fL-O4k"/>
+                                            <constraint firstItem="iUK-o7-e6F" firstAttribute="leading" secondItem="ZlE-xY-GW1" secondAttribute="leading" id="uTi-07-SPi"/>
                                             <constraint firstItem="c3c-XO-og8" firstAttribute="leading" secondItem="6g4-5A-LDC" secondAttribute="leading" constant="13" id="xVY-UB-0No"/>
                                         </constraints>
                                         <variation key="default">
                                             <mask key="subviews">
                                                 <exclude reference="ZlE-xY-GW1"/>
-                                                <exclude reference="Bof-vY-xLP"/>
                                                 <exclude reference="c3c-XO-og8"/>
+                                                <exclude reference="iUK-o7-e6F"/>
                                             </mask>
                                             <mask key="constraints">
-                                                <exclude reference="ZC7-38-63E"/>
-                                                <exclude reference="dB0-1g-W1h"/>
-                                                <exclude reference="tds-fL-O4k"/>
                                                 <exclude reference="aU3-BW-rd9"/>
                                                 <exclude reference="xVY-UB-0No"/>
                                                 <exclude reference="CPD-1L-eei"/>
                                                 <exclude reference="gXt-6Y-SIP"/>
                                                 <exclude reference="obu-ty-hqa"/>
+                                                <exclude reference="4pD-Xk-1Ug"/>
+                                                <exclude reference="QgB-2m-uvf"/>
+                                                <exclude reference="YOi-FU-5z0"/>
+                                                <exclude reference="b2Q-3q-JEH"/>
+                                                <exclude reference="uTi-07-SPi"/>
                                             </mask>
                                         </variation>
                                         <variation key="heightClass=regular-widthClass=compact">
                                             <mask key="subviews">
                                                 <include reference="ZlE-xY-GW1"/>
-                                                <include reference="Bof-vY-xLP"/>
                                                 <include reference="c3c-XO-og8"/>
+                                                <include reference="iUK-o7-e6F"/>
                                             </mask>
                                             <mask key="constraints">
-                                                <include reference="ZC7-38-63E"/>
-                                                <include reference="dB0-1g-W1h"/>
-                                                <include reference="tds-fL-O4k"/>
                                                 <include reference="aU3-BW-rd9"/>
                                                 <include reference="xVY-UB-0No"/>
                                                 <include reference="CPD-1L-eei"/>
                                                 <include reference="gXt-6Y-SIP"/>
                                                 <include reference="obu-ty-hqa"/>
+                                                <include reference="4pD-Xk-1Ug"/>
+                                                <exclude reference="QgB-2m-uvf"/>
+                                                <include reference="YOi-FU-5z0"/>
+                                                <exclude reference="b2Q-3q-JEH"/>
+                                                <exclude reference="uTi-07-SPi"/>
                                             </mask>
                                         </variation>
                                     </view>
@@ -5418,7 +5432,9 @@ you</string>
                                     <constraint firstItem="6g4-5A-LDC" firstAttribute="leading" secondItem="o6T-eu-uJz" secondAttribute="leading" id="5HA-KG-MIe"/>
                                     <constraint firstAttribute="height" constant="48" id="8fZ-Mo-AoA"/>
                                     <constraint firstAttribute="bottom" secondItem="6g4-5A-LDC" secondAttribute="bottom" id="UJb-Zj-MmT"/>
+                                    <constraint firstAttribute="trailing" secondItem="iUK-o7-e6F" secondAttribute="leading" constant="8" id="elX-fm-LUQ"/>
                                     <constraint firstItem="6g4-5A-LDC" firstAttribute="top" secondItem="o6T-eu-uJz" secondAttribute="top" id="lMx-WT-CSm"/>
+                                    <constraint firstAttribute="trailing" secondItem="iUK-o7-e6F" secondAttribute="trailing" constant="8" id="pfW-JH-x1z"/>
                                 </constraints>
                                 <variation key="default">
                                     <mask key="subviews">
@@ -5430,6 +5446,8 @@ you</string>
                                         <exclude reference="5HA-KG-MIe"/>
                                         <exclude reference="UJb-Zj-MmT"/>
                                         <exclude reference="lMx-WT-CSm"/>
+                                        <exclude reference="elX-fm-LUQ"/>
+                                        <exclude reference="pfW-JH-x1z"/>
                                     </mask>
                                 </variation>
                                 <variation key="heightClass=regular-widthClass=compact">
@@ -5442,6 +5460,8 @@ you</string>
                                         <include reference="5HA-KG-MIe"/>
                                         <include reference="UJb-Zj-MmT"/>
                                         <include reference="lMx-WT-CSm"/>
+                                        <exclude reference="elX-fm-LUQ"/>
+                                        <exclude reference="pfW-JH-x1z"/>
                                     </mask>
                                 </variation>
                             </view>
@@ -5454,6 +5474,7 @@ you</string>
                             <constraint firstAttribute="trailing" secondItem="o6T-eu-uJz" secondAttribute="trailing" constant="13" id="Egr-ch-Mez"/>
                             <constraint firstItem="cUJ-YP-IDB" firstAttribute="top" secondItem="emD-W2-zQX" secondAttribute="bottom" constant="8" id="GOu-3t-NgT"/>
                             <constraint firstAttribute="trailing" secondItem="cUJ-YP-IDB" secondAttribute="trailing" constant="13" id="H7U-J0-ehw"/>
+                            <constraint firstItem="iUK-o7-e6F" firstAttribute="trailing" secondItem="kJB-Qf-LnV" secondAttribute="trailing" id="KNf-Lo-Izw"/>
                             <constraint firstItem="dHU-OR-BKp" firstAttribute="top" secondItem="CZK-Mw-8rn" secondAttribute="bottom" constant="8" id="MiX-k4-Hdg"/>
                             <constraint firstItem="CZK-Mw-8rn" firstAttribute="leading" secondItem="Jmt-mR-KzK" secondAttribute="leading" constant="12" id="Syl-Rr-upd"/>
                             <constraint firstItem="kOg-fH-A3g" firstAttribute="top" secondItem="dHU-OR-BKp" secondAttribute="bottom" id="Wfh-oH-9Nr"/>
@@ -5481,27 +5502,28 @@ you</string>
                                 <exclude reference="o6T-eu-uJz"/>
                             </mask>
                             <mask key="constraints">
-                                <exclude reference="6iY-x9-aI8"/>
-                                <exclude reference="Syl-Rr-upd"/>
-                                <exclude reference="ycT-OV-yDZ"/>
-                                <exclude reference="4Yp-kR-9lE"/>
-                                <exclude reference="8IN-9t-uFO"/>
-                                <exclude reference="guU-0H-J8z"/>
                                 <exclude reference="eq3-L3-fTr"/>
                                 <exclude reference="yTF-Ys-pad"/>
                                 <exclude reference="zRH-fd-FuH"/>
-                                <exclude reference="GOu-3t-NgT"/>
-                                <exclude reference="H7U-J0-ehw"/>
-                                <exclude reference="xWa-yE-67M"/>
+                                <exclude reference="6iY-x9-aI8"/>
+                                <exclude reference="Syl-Rr-upd"/>
+                                <exclude reference="ycT-OV-yDZ"/>
                                 <exclude reference="MiX-k4-Hdg"/>
                                 <exclude reference="fa5-WO-pIE"/>
                                 <exclude reference="rqg-gJ-9lO"/>
                                 <exclude reference="Wfh-oH-9Nr"/>
                                 <exclude reference="nGs-JK-XDD"/>
                                 <exclude reference="ut4-n5-Pau"/>
+                                <exclude reference="4Yp-kR-9lE"/>
+                                <exclude reference="8IN-9t-uFO"/>
+                                <exclude reference="guU-0H-J8z"/>
+                                <exclude reference="GOu-3t-NgT"/>
+                                <exclude reference="H7U-J0-ehw"/>
+                                <exclude reference="xWa-yE-67M"/>
                                 <exclude reference="Egr-ch-Mez"/>
                                 <exclude reference="neE-vT-Kem"/>
                                 <exclude reference="x5u-0v-TaG"/>
+                                <exclude reference="KNf-Lo-Izw"/>
                             </mask>
                         </variation>
                         <variation key="heightClass=regular-widthClass=compact">
@@ -5515,30 +5537,39 @@ you</string>
                                 <include reference="o6T-eu-uJz"/>
                             </mask>
                             <mask key="constraints">
-                                <include reference="6iY-x9-aI8"/>
-                                <include reference="Syl-Rr-upd"/>
-                                <include reference="ycT-OV-yDZ"/>
-                                <include reference="4Yp-kR-9lE"/>
-                                <include reference="8IN-9t-uFO"/>
-                                <include reference="guU-0H-J8z"/>
                                 <include reference="eq3-L3-fTr"/>
                                 <include reference="yTF-Ys-pad"/>
                                 <include reference="zRH-fd-FuH"/>
-                                <include reference="GOu-3t-NgT"/>
-                                <include reference="H7U-J0-ehw"/>
-                                <include reference="xWa-yE-67M"/>
+                                <include reference="6iY-x9-aI8"/>
+                                <include reference="Syl-Rr-upd"/>
+                                <include reference="ycT-OV-yDZ"/>
                                 <include reference="MiX-k4-Hdg"/>
                                 <include reference="fa5-WO-pIE"/>
                                 <include reference="rqg-gJ-9lO"/>
                                 <include reference="Wfh-oH-9Nr"/>
                                 <include reference="nGs-JK-XDD"/>
                                 <include reference="ut4-n5-Pau"/>
+                                <include reference="4Yp-kR-9lE"/>
+                                <include reference="8IN-9t-uFO"/>
+                                <include reference="guU-0H-J8z"/>
+                                <include reference="GOu-3t-NgT"/>
+                                <include reference="H7U-J0-ehw"/>
+                                <include reference="xWa-yE-67M"/>
                                 <include reference="Egr-ch-Mez"/>
                                 <include reference="neE-vT-Kem"/>
                                 <include reference="x5u-0v-TaG"/>
+                                <exclude reference="KNf-Lo-Izw"/>
                             </mask>
                         </variation>
                     </view>
+                    <connections>
+                        <outlet property="measurementButton" destination="iUK-o7-e6F" id="uGs-oN-qeM"/>
+                        <outlet property="switchComments" destination="Kw1-JA-mB4" id="a50-5m-vUl"/>
+                        <outlet property="switchFollows" destination="NVi-Nl-q9g" id="OTh-YI-y4L"/>
+                        <outlet property="switchKudos" destination="bD9-oE-WDe" id="Min-wC-n14"/>
+                        <outlet property="switchNewLocation" destination="kJB-Qf-LnV" id="LdS-5v-ZLe"/>
+                        <outlet property="switchTag" destination="Ooc-Hp-bVp" id="lmK-Ta-nXa"/>
+                    </connections>
                 </viewController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="8oO-jb-WBj" userLabel="First Responder" sceneMemberID="firstResponder"/>
             </objects>
@@ -6271,7 +6302,8 @@ you</string>
                                         <exclude reference="Ooq-xO-6Do"/>
                                     </mask>
                                 </variation>
-                                <variation key="heightClass=regular-widthClass=compact">
+                                <variation key="heightClass=regular-widthClass=compact" misplaced="YES">
+                                    <rect key="frame" x="75" y="270" width="225" height="197"/>
                                     <mask key="constraints">
                                         <exclude reference="6vs-eC-cDv"/>
                                         <exclude reference="MFO-Ww-01m"/>
@@ -6313,6 +6345,9 @@ you</string>
                                         </fragment>
                                     </attributedString>
                                 </state>
+                                <variation key="heightClass=regular-widthClass=compact" misplaced="YES">
+                                    <rect key="frame" x="19" y="512" width="337" height="53"/>
+                                </variation>
                                 <connections>
                                     <action selector="showFBPost:" destination="bXz-fE-HI5" eventType="touchUpInside" id="VsH-vP-3Bo"/>
                                 </connections>
@@ -6437,9 +6472,9 @@ you</string>
     </resources>
     <inferredMetricsTieBreakers>
         <segue reference="Mvo-Q1-5eE"/>
-        <segue reference="8Ye-xX-bgE"/>
         <segue reference="BTd-do-kiK"/>
         <segue reference="SjQ-6n-yq4"/>
         <segue reference="6im-k6-zNW"/>
+        <segue reference="4o4-Js-9Xl"/>
     </inferredMetricsTieBreakers>
 </document>

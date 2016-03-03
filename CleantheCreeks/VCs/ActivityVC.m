@@ -15,21 +15,20 @@
 {
     [super viewDidLoad];
 	// Do any additional setup after loading the view.
-   /*( NSUserDefaults *defaults = [NSUserDefaults standardUserDefaults];
+    NSUserDefaults *defaults = [NSUserDefaults standardUserDefaults];
     NSString *user_id = [defaults objectForKey:@"user_id"];
     
     AWSDynamoDBObjectMapper *dynamoDBObjectMapper = [AWSDynamoDBObjectMapper defaultDynamoDBObjectMapper];
     AWSDynamoDBScanExpression *scanExpression = [AWSDynamoDBScanExpression new];
     AWSS3TransferManager *transferManager = [AWSS3TransferManager defaultS3TransferManager];
     
-    [[dynamoDBObjectMapper scan:[Location class] expression:scanExpression] continueWithBlock:^id(AWSTask *task) {
+   /* [[dynamoDBObjectMapper scan:[Location class] expression:scanExpression] continueWithBlock:^id(AWSTask *task) {
         if (task.result) {
             AWSDynamoDBPaginatedOutput *paginatedOutput = task.result;
             for (Location *location in paginatedOutput.items) {
                 NSString *downloadingFilePath = [NSTemporaryDirectory() stringByAppendingPathComponent:location.location_id];
                 NSURL *downloadingFileURL = [NSURL fileURLWithPath:downloadingFilePath];
-                if(distance<100.0)
-                {
+                
                     if(![self.locationArray containsObject:location])
                         [self.locationArray addObject:location];
                     AWSS3TransferManagerDownloadRequest *downloadRequest = [AWSS3TransferManagerDownloadRequest new];
@@ -57,7 +56,7 @@
                         return nil;
                     }];
                     
-                }
+                
             }
         }
         dispatch_async(dispatch_get_main_queue(), ^{
@@ -66,8 +65,8 @@
         return nil;
         
     }];
+    */
 
-*/
     self.tv.estimatedRowHeight = 65.f;
     self.tv.rowHeight = UITableViewAutomaticDimension;
     

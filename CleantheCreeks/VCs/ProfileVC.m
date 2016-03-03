@@ -151,11 +151,8 @@
     else
     {
         cell = (ProfileViewCell*)[tableView dequeueReusableCellWithIdentifier:@"activityCell"];
-        
         Location * location=[self.locationArray objectAtIndex:indexPath.row-2];
-        
         NSMutableAttributedString * string = [[NSMutableAttributedString alloc] initWithString:@""];
-        
         UIColor * color1 = [UIColor blackColor];
         UIColor * color2= [UIColor colorWithRed:(145/255.0) green:(145/255.0) blue:(145/255.0) alpha:1.0];
         NSDictionary * attributes1 = [NSDictionary dictionaryWithObject:color1 forKey:NSForegroundColorAttributeName];
@@ -174,16 +171,14 @@
         [dateFormatter setDateFormat:@"MMM dd, yyyy"];
         [cell.date setText:[dateFormatter stringFromDate:[NSDate dateWithTimeIntervalSince1970:location.cleaned_date]]];
         [cell.kudoCount setText:[[NSString alloc]initWithFormat:@"%ld",(long)location.kudos.count]];
-        //[cell.kudoCount setText:kudoCount];
+        
         AWSS3TransferManagerDownloadRequest *downloadRequest = [AWSS3TransferManagerDownloadRequest new];
         downloadRequest.bucket = @"cleanthecreeks";
         NSString * key=[location.location_id stringByAppendingString:@"a"];
         NSString *downloadingFilePath = [NSTemporaryDirectory() stringByAppendingPathComponent:key];
         NSURL *downloadingFileURL = [NSURL fileURLWithPath:downloadingFilePath];
-        
         downloadRequest.key = key;
         downloadRequest.downloadingFileURL = downloadingFileURL;
-        
         AWSS3TransferManager *transferManager = [AWSS3TransferManager defaultS3TransferManager];
         [[transferManager download:downloadRequest] continueWithExecutor:[AWSExecutor mainThreadExecutor] withBlock:^id(AWSTask *task2) {
             if (task2.result) {
@@ -201,7 +196,6 @@
         afterdownloadRequest.bucket = @"cleanthecreeks";
         afterdownloadRequest.key = afterkey;
         afterdownloadRequest.downloadingFileURL = afterurl;
-        
         AWSS3TransferManager *aftertransferManager = [AWSS3TransferManager defaultS3TransferManager];
         [[aftertransferManager download:afterdownloadRequest] continueWithExecutor:[AWSExecutor mainThreadExecutor] withBlock:^id(AWSTask *task2) {
             if (task2.result) {
@@ -220,13 +214,11 @@
     return cell;
 }
 
-
 - (void)didReceiveMemoryWarning
 {
     [super didReceiveMemoryWarning];
     // Dispose of any resources that can be recreated.
 }
-
 
 #pragma ProfileTopBarVCDelegate Implementation
 
