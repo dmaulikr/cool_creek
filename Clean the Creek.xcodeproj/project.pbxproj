@@ -35,6 +35,8 @@
 		0084F42B1C7B17D800E111D0 /* KudosCell.m in Sources */ = {isa = PBXBuildFile; fileRef = 0084F42A1C7B17D800E111D0 /* KudosCell.m */; };
 		0084F42E1C7B1C8500E111D0 /* ActivityPhotoDetailsVC.m in Sources */ = {isa = PBXBuildFile; fileRef = 0084F42D1C7B1C8500E111D0 /* ActivityPhotoDetailsVC.m */; };
 		095F77783019A58BBD9134E1 /* libPods.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 4656214352E34CC700C152CD /* libPods.a */; };
+		3C2874B01C88E2E200725B40 /* Activity.m in Sources */ = {isa = PBXBuildFile; fileRef = 3C2874AF1C88E2E200725B40 /* Activity.m */; };
+		3C2874B31C88EC9800725B40 /* FollowVC.m in Sources */ = {isa = PBXBuildFile; fileRef = 3C2874B21C88EC9800725B40 /* FollowVC.m */; };
 		3CA250EF1C843D32004BB466 /* User.m in Sources */ = {isa = PBXBuildFile; fileRef = 3CA250EE1C843D32004BB466 /* User.m */; };
 		3CE5EB1F1C84F8310068DF59 /* ProfileViewCell.m in Sources */ = {isa = PBXBuildFile; fileRef = 3CE5EB1E1C84F8310068DF59 /* ProfileViewCell.m */; };
 		BD06039F1C595D4700A2C3EC /* main.m in Sources */ = {isa = PBXBuildFile; fileRef = BD06039E1C595D4700A2C3EC /* main.m */; };
@@ -128,6 +130,10 @@
 		0084F42A1C7B17D800E111D0 /* KudosCell.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = KudosCell.m; sourceTree = "<group>"; };
 		0084F42C1C7B1C8500E111D0 /* ActivityPhotoDetailsVC.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ActivityPhotoDetailsVC.h; sourceTree = "<group>"; };
 		0084F42D1C7B1C8500E111D0 /* ActivityPhotoDetailsVC.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = ActivityPhotoDetailsVC.m; sourceTree = "<group>"; };
+		3C2874AE1C88E26B00725B40 /* Activity.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = Activity.h; sourceTree = "<group>"; };
+		3C2874AF1C88E2E200725B40 /* Activity.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = Activity.m; sourceTree = "<group>"; };
+		3C2874B11C88EC9800725B40 /* FollowVC.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = FollowVC.h; sourceTree = "<group>"; };
+		3C2874B21C88EC9800725B40 /* FollowVC.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = FollowVC.m; sourceTree = "<group>"; };
 		3CA250EE1C843D32004BB466 /* User.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = User.m; sourceTree = "<group>"; };
 		3CA250F01C843D74004BB466 /* User.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = User.h; sourceTree = "<group>"; };
 		3CE5EB1D1C84F8310068DF59 /* ProfileViewCell.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ProfileViewCell.h; sourceTree = "<group>"; };
@@ -321,6 +327,15 @@
 			name = Pods;
 			sourceTree = "<group>";
 		};
+		3C2874B41C88EC9D00725B40 /* FollowVC */ = {
+			isa = PBXGroup;
+			children = (
+				3C2874B11C88EC9800725B40 /* FollowVC.h */,
+				3C2874B21C88EC9800725B40 /* FollowVC.m */,
+			);
+			name = FollowVC;
+			sourceTree = "<group>";
+		};
 		3CE5EB201C84F8370068DF59 /* ProfileViewCell */ = {
 			isa = PBXGroup;
 			children = (
@@ -510,6 +525,8 @@
 				E252E5F81C611ECB0013F1B7 /* Location.m */,
 				3CA250EE1C843D32004BB466 /* User.m */,
 				3CA250F01C843D74004BB466 /* User.h */,
+				3C2874AE1C88E26B00725B40 /* Activity.h */,
+				3C2874AF1C88E2E200725B40 /* Activity.m */,
 			);
 			path = ApiHandler;
 			sourceTree = "<group>";
@@ -547,6 +564,7 @@
 				E2149DF71C7577C70005D50A /* FacebookPostVC */,
 				0044B7CA1C7D9C6B000BB837 /* BaseVC.h */,
 				0044B7CB1C7D9C6B000BB837 /* BaseVC.m */,
+				3C2874B41C88EC9D00725B40 /* FollowVC */,
 			);
 			path = VCs;
 			sourceTree = "<group>";
@@ -801,6 +819,7 @@
 			buildActionMask = 2147483647;
 			files = (
 				E2F36ECF1C5AFFE700923DF0 /* IntroModel.m in Sources */,
+				3C2874B31C88EC9800725B40 /* FollowVC.m in Sources */,
 				E2F36EDB1C5B103400923DF0 /* LastPageView.m in Sources */,
 				E2F36ED01C5AFFE700923DF0 /* IntroView.m in Sources */,
 				E2FD05881C59E579004B2C34 /* LocationVC.m in Sources */,
@@ -819,6 +838,7 @@
 				E2D1034F1C6528EB00FD67A0 /* locationCell.m in Sources */,
 				E2FD05771C59E354004B2C34 /* SplashVC.m in Sources */,
 				E2FD01041C77866300DAB3C5 /* LocationOverlayView.m in Sources */,
+				3C2874B01C88E2E200725B40 /* Activity.m in Sources */,
 				E2FD05821C59E4FD004B2C34 /* CameraVC.m in Sources */,
 				E2FD05721C59CA42004B2C34 /* SlideVC.m in Sources */,
 				E22A79A61C77A77100CE66E5 /* LocationAnnotation.m in Sources */,

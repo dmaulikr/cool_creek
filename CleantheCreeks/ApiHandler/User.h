@@ -17,6 +17,10 @@
 
 @property (nonatomic, strong) NSString *user_name;
 
+@property (nonatomic, strong) NSMutableArray *followings;
+
+@property (nonatomic, strong) NSMutableArray *followers;
+
 @end
 
 #endif /* User_h */

@@ -26,7 +26,7 @@
 @property double cleaned_date;
 @property (nonatomic, strong) NSString *state;
 @property (nonatomic, strong) NSString *isDirty;
-@property (nonatomic, strong) NSArray *kudos;
+@property (nonatomic, strong) NSMutableArray *kudos;
 @property  double latitude;
 @property  double longitude;
 
