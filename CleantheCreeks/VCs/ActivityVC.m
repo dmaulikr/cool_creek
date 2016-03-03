@@ -57,6 +57,8 @@
     // Dispose of any resources that can be recreated.
 }
 
+#pragma UITableView Delegate Implementation
+
 - (NSInteger)tableView:(UITableView *)tableView numberOfRowsInSection:(NSInteger)section{
     return 4;
 }
@@ -80,6 +82,10 @@
     }
     
     return cell;
+}
+
+- (void)tableView:(UITableView *)tableView didSelectRowAtIndexPath:(NSIndexPath *)indexPath{
+    [self performSegueWithIdentifier:@"ActivityVC2ActivityPhotoDetailVC" sender:nil];
 }
 
 #pragma ProfileTopBarVCDelegate Implementation
