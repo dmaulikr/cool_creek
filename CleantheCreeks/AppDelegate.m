@@ -11,6 +11,7 @@
 #import <FBSDKLoginKit/FBSDKLoginKit.h>
 #import <AWSCore/AWSCore.h>
 #import <AWSCognito/AWSCognito.h>
+#import "User.h"
 #define kGeoCodingString @"http://maps.google.com/maps/geo?q=%f,%f&output=csv"
 @interface AppDelegate ()
 
@@ -25,6 +26,9 @@
     // Override point for customization after application launch.
     UIColor *backgroundColor = [UIColor whiteColor];
     _locationData=[[NSMutableDictionary alloc]init];
+    _followingArray=[[NSMutableArray alloc]init];
+    _followersArray=[[NSMutableArray alloc]init];
+    _userArray=[[NSMutableDictionary alloc]init];
     // set the bar background color
     [[UITabBar appearance] setBackgroundImage:[AppDelegate imageFromColor:backgroundColor forSize:CGSizeMake(320, 49) withCornerRadius:0]];
     
@@ -58,8 +62,6 @@
         // Your handler code here
         return nil;
     }];
-    
-  
     
     return YES;
 }
@@ -117,6 +119,17 @@
     return image;
 }
 
-
++(BOOL) isFollowing:(User*) user
+{
+    NSUserDefaults *defaults = [NSUserDefaults standardUserDefaults];
+    NSString *user_id = [defaults objectForKey:@"user_id"];
+    for(NSDictionary * iterator in user.followers)
+    {
+        NSString * target=[iterator objectForKey:@"id"];
+        if([user_id isEqualToString:target])
+            return YES;
+    }
+    return FALSE;
+}
 
 @end

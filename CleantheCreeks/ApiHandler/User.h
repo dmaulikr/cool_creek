@@ -16,7 +16,9 @@
 @property (nonatomic, strong) NSString *user_id;
 
 @property (nonatomic, strong) NSString *user_name;
-
+@property (nonatomic, strong) NSString *location;
+@property (nonatomic, strong) NSString *state;
+@property (nonatomic, strong) NSString *country;
 @property (nonatomic, strong) NSMutableArray *followings;
 
 @property (nonatomic, strong) NSMutableArray *followers;

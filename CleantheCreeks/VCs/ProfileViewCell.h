@@ -28,5 +28,7 @@
 @property (weak, nonatomic) IBOutlet UIButton *user_cleans;
 @property (weak, nonatomic) IBOutlet UIButton *user_spotsfound;
 @property (weak, nonatomic) IBOutlet UIButton *user_kudos;
+@property (weak, nonatomic) IBOutlet UILabel *followingLabel;
+@property (weak, nonatomic) IBOutlet UILabel *followersLabel;
 
 @end

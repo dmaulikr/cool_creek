@@ -4,6 +4,7 @@
 #import <AWSDynamoDB/AWSDynamoDB.h>
 #import <MBProgressHUD/MBProgressHUD.h>
 #import <AWSS3/AWSS3.h>
+#import "AppDelegate.h"
 @interface ProfileVC : BaseVC<UITableViewDataSource, UITableViewDelegate>
 
 
@@ -20,4 +21,6 @@
 @property (strong,nonatomic) NSString *formattedCleansCount;
 @property (strong,nonatomic) AWSDynamoDBObjectMapper *dynamoDBObjectMapper;
 @property  NSInteger kudoCount;
+
+@property (strong, nonatomic) AppDelegate * appDelegate;
 @end

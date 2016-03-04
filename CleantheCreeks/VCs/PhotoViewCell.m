@@ -16,7 +16,7 @@
 
 - (void)setSelected:(BOOL)selected animated:(BOOL)animated {
     [super setSelected:selected animated:animated];
-       UITapGestureRecognizer *singleTap=[[UITapGestureRecognizer alloc]initWithTarget:self action:@selector(takePhoto)];
+    UITapGestureRecognizer *singleTap=[[UITapGestureRecognizer alloc]initWithTarget:self action:@selector(takePhoto)];
     singleTap.numberOfTapsRequired=1;
     [self.secondPhoto setUserInteractionEnabled:YES];
     [self.secondPhoto addGestureRecognizer:singleTap];

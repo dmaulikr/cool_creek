@@ -30,7 +30,6 @@
             for (Location *location in paginatedOutput.items) {
                if(location.cleaner_id==user_id || location.founder_id ==user_id)
                {
-                
                     
                }
                 

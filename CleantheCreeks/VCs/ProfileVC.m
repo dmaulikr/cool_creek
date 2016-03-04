@@ -5,6 +5,8 @@
 #import "User.h"
 #import "Location.h"
 #import "ProfileViewCell.h"
+#import "FollowVC.h"
+#import "AppDelegate.h"
 @implementation ProfileVC
 
 - (id)init
@@ -26,11 +28,13 @@
     self.luser_location = [defaults objectForKey:@"user_location"];
     self.luser_about = [defaults objectForKey:@"user_about"];
     self.fb_username = [defaults objectForKey:@"username"];
+   
     [self.profileTopBar setHeaderStyle:YES title:self.luser_name rightBtnHidden:NO];
     AWSDynamoDBScanExpression *scanExpression = [AWSDynamoDBScanExpression new];
     scanExpression.filterExpression = @"cleaner_id = :val";
     self.dynamoDBObjectMapper = [AWSDynamoDBObjectMapper defaultDynamoDBObjectMapper];
     scanExpression.expressionAttributeValues = @{@":val":self.luser_id};
+    self.appDelegate=(AppDelegate*)[[UIApplication sharedApplication]delegate];
     [[self.dynamoDBObjectMapper scan:[Location class]
                      expression:scanExpression]
      continueWithBlock:^id(AWSTask *task) {
@@ -57,7 +61,7 @@
          
          return nil;
      }];
-    
+   
     self.profileTable.estimatedRowHeight = 323.f;
     self.profileTable.rowHeight = UITableViewAutomaticDimension;
 
@@ -65,7 +69,7 @@
 
 -(void) viewWillAppear:(BOOL)animated
 {
-    
+    [self.tabBarController.tabBar setHidden:NO];
 }
 
 - (NSInteger)tableView:(UITableView *)tableView numberOfRowsInSection:(NSInteger)section{
@@ -85,6 +89,39 @@
         height=335;
     return height;
 }*/
+
+-(void) loadData
+{
+    NSUserDefaults *defaults = [NSUserDefaults standardUserDefaults];
+    NSString *user_id = [defaults objectForKey:@"user_id"];
+    AWSDynamoDBObjectMapper *dynamoDBObjectMapper = [AWSDynamoDBObjectMapper defaultDynamoDBObjectMapper];
+    AWSDynamoDBScanExpression *scanExpression = [AWSDynamoDBScanExpression new];
+    [[dynamoDBObjectMapper scan:[User class] expression:scanExpression]
+     continueWithBlock:^id(AWSTask *task) {
+         if (task.error) {
+             NSLog(@"The request failed. Error: [%@]", task.error);
+         }
+         if (task.exception) {
+             NSLog(@"The request failed. Exception: [%@]", task.exception);
+         }
+         if (task.result) {
+             AWSDynamoDBPaginatedOutput *paginatedOutput = task.result;
+             
+             for (User *user in paginatedOutput.items)
+             {
+                 [self.appDelegate.userArray setObject:user forKey:user.user_id];
+                 if([user.user_id isEqualToString:user_id])
+                 {
+                     self.appDelegate.followingArray=user.followings;
+                     self.appDelegate.followersArray=user.followers;
+                 }
+             }
+             
+             
+         }
+         return nil;
+     }];
+}
 
 - (NSInteger)numberOfSectionsInTableView:(UITableView *)tableView
 {
@@ -106,11 +143,27 @@
             // WARNING: is the cell still using the same data by this point??
             [cell.userPhoto setImage:[UIImage imageWithData: data]];
         });
+        
         [cell.user_name setText:self.luser_name ];
         [cell.user_quotes setText:self.luser_about];
         [cell.user_location setText:self.luser_location];
         [cell.user_email setText:self.luser_email];
+        UITapGestureRecognizer *followingTap=[[UITapGestureRecognizer alloc]initWithTarget:self action:@selector(showFollowing)];
+        followingTap.numberOfTapsRequired=1;
+    
+        UITapGestureRecognizer *followersTap=[[UITapGestureRecognizer alloc]initWithTarget:self action:@selector(showFollower)];
+        followersTap.numberOfTapsRequired=1;
         
+        [cell.user_following addGestureRecognizer:followingTap];
+        [cell.followingLabel addGestureRecognizer:followingTap];
+        [cell.user_follows addGestureRecognizer:followersTap];
+        [cell.followersLabel addGestureRecognizer:followersTap];
+        dispatch_async(dispatch_get_main_queue(), ^{
+            [self loadData];
+            [cell.user_following setText:[NSString stringWithFormat:@"%d",[self.appDelegate.followingArray count]]];
+            [cell.user_follows setText:[NSString stringWithFormat:@"%d",[self.appDelegate.followersArray count]]];
+            
+        });
         NSLog(@"%@, %@, %@, %@", self.luser_name, self.luser_about, self.luser_location, self.luser_email);
         
     }
@@ -228,6 +281,33 @@
 
 - (void)rightBtnTopBarTapped:(UIButton *)sender topBar:(id)topBar{
     [self performSegueWithIdentifier:@"ProfileVC2SettingVC" sender:nil];
+}
+
+-(void)showFollowing
+{
+    [self performSegueWithIdentifier:@"showFollowing" sender:self];
+}
+
+-(void)showFollower
+{
+    [self performSegueWithIdentifier:@"showFollowers" sender:self];
+}
+
+
+- (void)prepareForSegue:(UIStoryboardSegue *)segue sender:(id)sender {
+    [super prepareForSegue:segue sender:sender];
+    FollowVC *followVC=(FollowVC*)segue.destinationViewController;
+       if([segue.identifier isEqual:@"showFollowing"])
+    {
+        followVC.displayIndex=0;
+        
+        [followVC.followSegment setSelectedSegmentIndex:0];
+    }
+    else if([segue.identifier isEqual:@"showFollowers"])
+    {
+        followVC.displayIndex=1;
+        [followVC.followSegment setSelectedSegmentIndex:1];
+    }
 }
 
 

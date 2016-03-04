@@ -9,5 +9,9 @@
 #import <UIKit/UIKit.h>
 
 @interface KudosCell : UITableViewCell
+@property (weak, nonatomic) IBOutlet UIImageView *user_photo;
+@property (weak, nonatomic) IBOutlet UILabel *user_name;
+@property (weak, nonatomic) IBOutlet UILabel *user_location;
+@property (weak, nonatomic) IBOutlet UIButton *likeButton;
 
 @end

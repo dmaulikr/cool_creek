@@ -8,6 +8,7 @@
 
 #import <UIKit/UIKit.h>
 #import <CoreLocation/CoreLocation.h>
+#import "User.h"
 @interface AppDelegate : UIResponder <UIApplicationDelegate>
 
 @property (strong, nonatomic) UIWindow *window;
@@ -15,6 +16,9 @@
 //Add a location manager property to this app delegate
 @property (strong, nonatomic) CLLocationManager *locationManager;
 @property (strong, nonatomic) NSMutableDictionary * locationData;
-
+@property (strong, nonatomic) NSMutableArray *followersArray;
+@property (strong, nonatomic) NSMutableArray *followingArray;
+@property (strong, nonatomic) NSMutableDictionary *userArray;
++(BOOL) isFollowing:(User*) user;
 @end
 
