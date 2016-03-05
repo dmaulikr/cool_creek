@@ -76,7 +76,6 @@
     return cell;
 }
 
-
 - (IBAction)followingChange:(id)sender {
     if(self.followSegment.selectedSegmentIndex==0)
         self.displayArray=self.appDelegate.followingArray;

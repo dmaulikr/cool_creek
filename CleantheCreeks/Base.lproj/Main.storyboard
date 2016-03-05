@@ -559,12 +559,18 @@
                                                     <fontDescription key="fontDescription" type="system" pointSize="17"/>
                                                     <color key="textColor" red="0.56862745100000001" green="0.56862745100000001" blue="0.56862745100000001" alpha="1" colorSpace="calibratedRGB"/>
                                                     <nil key="highlightedColor"/>
+                                                    <variation key="heightClass=regular-widthClass=compact" misplaced="YES">
+                                                        <rect key="frame" x="162" y="8" width="38" height="21"/>
+                                                    </variation>
                                                 </label>
                                                 <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="Before" textAlignment="natural" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="uTJ-g0-JIo">
                                                     <rect key="frame" x="-42" y="-21" width="42" height="21"/>
                                                     <fontDescription key="fontDescription" type="system" pointSize="17"/>
                                                     <color key="textColor" red="0.56862745100000001" green="0.56862745100000001" blue="0.56862745100000001" alpha="1" colorSpace="calibratedRGB"/>
                                                     <nil key="highlightedColor"/>
+                                                    <variation key="heightClass=regular-widthClass=compact" misplaced="YES">
+                                                        <rect key="frame" x="-18" y="8" width="51" height="21"/>
+                                                    </variation>
                                                 </label>
                                                 <imageView userInteractionEnabled="NO" contentMode="scaleToFill" horizontalHuggingPriority="251" verticalHuggingPriority="251" image="EmptyPhoto" translatesAutoresizingMaskIntoConstraints="NO" id="dhV-Wc-QOS">
                                                     <rect key="frame" x="0.0" y="0.0" width="240" height="128"/>
@@ -576,7 +582,8 @@
                                                             <exclude reference="Mf0-Gd-9Ir"/>
                                                         </mask>
                                                     </variation>
-                                                    <variation key="heightClass=regular-widthClass=compact">
+                                                    <variation key="heightClass=regular-widthClass=compact" misplaced="YES">
+                                                        <rect key="frame" x="162" y="46" width="96" height="96"/>
                                                         <mask key="constraints">
                                                             <include reference="Mf0-Gd-9Ir"/>
                                                         </mask>
@@ -592,7 +599,8 @@
                                                             <exclude reference="rKs-v1-LA1"/>
                                                         </mask>
                                                     </variation>
-                                                    <variation key="heightClass=regular-widthClass=compact">
+                                                    <variation key="heightClass=regular-widthClass=compact" misplaced="YES">
+                                                        <rect key="frame" x="-18" y="46" width="96" height="96"/>
                                                         <mask key="constraints">
                                                             <include reference="rKs-v1-LA1"/>
                                                         </mask>
@@ -2456,12 +2464,18 @@
                                                                     <fontDescription key="fontDescription" name="Lato-Bold" family="Lato" pointSize="20"/>
                                                                     <color key="textColor" red="0.0" green="0.0" blue="0.0" alpha="1" colorSpace="calibratedRGB"/>
                                                                     <nil key="highlightedColor"/>
+                                                                    <variation key="heightClass=regular-widthClass=compact" misplaced="YES">
+                                                                        <rect key="frame" x="85" y="5" width="99" height="47"/>
+                                                                    </variation>
                                                                 </label>
                                                                 <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="2.7 KM" textAlignment="natural" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="lBi-eU-wwh">
                                                                     <rect key="frame" x="-42" y="-21" width="42" height="21"/>
                                                                     <fontDescription key="fontDescription" name="Lato-Bold" family="Lato" pointSize="14.979999542236328"/>
                                                                     <color key="textColor" red="0.52549019610000003" green="0.77647058820000003" blue="0.12549019610000001" alpha="1" colorSpace="calibratedRGB"/>
                                                                     <nil key="highlightedColor"/>
+                                                                    <variation key="heightClass=regular-widthClass=compact" misplaced="YES">
+                                                                        <rect key="frame" x="85" y="60" width="99" height="18"/>
+                                                                    </variation>
                                                                 </label>
                                                                 <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="1mp-Bz-eaP">
                                                                     <rect key="frame" x="-23" y="-15" width="46" height="30"/>
@@ -2490,6 +2504,9 @@
                                                                 <button hidden="YES" opaque="NO" alpha="0.0" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="Gj4-uL-akR">
                                                                     <rect key="frame" x="-23" y="-15" width="46" height="30"/>
                                                                     <state key="normal" image="IconListView"/>
+                                                                    <variation key="heightClass=regular-widthClass=compact" misplaced="YES">
+                                                                        <rect key="frame" x="153" y="2" width="87" height="81"/>
+                                                                    </variation>
                                                                     <connections>
                                                                         <action selector="viewBtnTapped:" destination="h8Q-Kd-G0E" eventType="touchUpInside" id="otW-No-OSK"/>
                                                                     </connections>
@@ -2497,6 +2514,9 @@
                                                                 <button hidden="YES" opaque="NO" alpha="0.0" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="mWM-E2-mKj">
                                                                     <rect key="frame" x="-23" y="-15" width="46" height="30"/>
                                                                     <state key="normal" image="IconListClean"/>
+                                                                    <variation key="heightClass=regular-widthClass=compact" misplaced="YES">
+                                                                        <rect key="frame" x="66" y="2" width="87" height="81"/>
+                                                                    </variation>
                                                                     <connections>
                                                                         <action selector="cleanBtnTapped:" destination="h8Q-Kd-G0E" eventType="touchUpInside" id="LGM-tS-4f4"/>
                                                                     </connections>
@@ -2547,7 +2567,8 @@
                                                                     <exclude reference="ShL-km-NNV"/>
                                                                 </mask>
                                                             </variation>
-                                                            <variation key="heightClass=regular-widthClass=compact">
+                                                            <variation key="heightClass=regular-widthClass=compact" misplaced="YES">
+                                                                <rect key="frame" x="0.0" y="0.0" width="240" height="85"/>
                                                                 <mask key="subviews">
                                                                     <include reference="eH6-1N-HMv"/>
                                                                     <include reference="ht4-SM-hpc"/>
@@ -2843,7 +2864,7 @@
                                                                 </mask>
                                                             </variation>
                                                             <variation key="heightClass=regular-widthClass=compact" misplaced="YES">
-                                                                <rect key="frame" x="82" y="49" width="150" height="20"/>
+                                                                <rect key="frame" x="82" y="50" width="150" height="20"/>
                                                                 <mask key="constraints">
                                                                     <include reference="vNr-jG-tuz"/>
                                                                 </mask>
@@ -3468,26 +3489,6 @@
                                                                 </mask>
                                                             </variation>
                                                         </imageView>
-                                                        <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="2 hrs" textAlignment="natural" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="Rsc-zc-Ocg">
-                                                            <rect key="frame" x="-42" y="-21" width="42" height="21"/>
-                                                            <constraints>
-                                                                <constraint firstAttribute="height" constant="20" id="ocN-dD-Rqu"/>
-                                                            </constraints>
-                                                            <fontDescription key="fontDescription" type="system" pointSize="16"/>
-                                                            <color key="textColor" red="0.52549019610000003" green="0.77647058820000003" blue="0.12549019610000001" alpha="1" colorSpace="calibratedRGB"/>
-                                                            <nil key="highlightedColor"/>
-                                                            <variation key="default">
-                                                                <mask key="constraints">
-                                                                    <exclude reference="ocN-dD-Rqu"/>
-                                                                </mask>
-                                                            </variation>
-                                                            <variation key="heightClass=regular-widthClass=compact" misplaced="YES">
-                                                                <rect key="frame" x="82" y="48" width="78" height="20"/>
-                                                                <mask key="constraints">
-                                                                    <include reference="ocN-dD-Rqu"/>
-                                                                </mask>
-                                                            </variation>
-                                                        </label>
                                                         <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="XYt-BU-GLn">
                                                             <rect key="frame" x="-23" y="-15" width="46" height="30"/>
                                                             <constraints>
@@ -3520,6 +3521,26 @@ you</string>
                                                                 <rect key="frame" x="82" y="8" width="78" height="37"/>
                                                             </variation>
                                                         </label>
+                                                        <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="2 hrs" textAlignment="natural" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="Rsc-zc-Ocg">
+                                                            <rect key="frame" x="-42" y="-21" width="42" height="21"/>
+                                                            <constraints>
+                                                                <constraint firstAttribute="height" constant="20" id="ocN-dD-Rqu"/>
+                                                            </constraints>
+                                                            <fontDescription key="fontDescription" type="system" pointSize="16"/>
+                                                            <color key="textColor" red="0.52549019610000003" green="0.77647058820000003" blue="0.12549019610000001" alpha="1" colorSpace="calibratedRGB"/>
+                                                            <nil key="highlightedColor"/>
+                                                            <variation key="default">
+                                                                <mask key="constraints">
+                                                                    <exclude reference="ocN-dD-Rqu"/>
+                                                                </mask>
+                                                            </variation>
+                                                            <variation key="heightClass=regular-widthClass=compact" misplaced="YES">
+                                                                <rect key="frame" x="82" y="48" width="78" height="20"/>
+                                                                <mask key="constraints">
+                                                                    <include reference="ocN-dD-Rqu"/>
+                                                                </mask>
+                                                            </variation>
+                                                        </label>
                                                     </subviews>
                                                     <color key="backgroundColor" white="1" alpha="1" colorSpace="calibratedWhite"/>
                                                     <constraints>
@@ -3538,9 +3559,9 @@ you</string>
                                                     <variation key="default">
                                                         <mask key="subviews">
                                                             <exclude reference="5cY-jC-80S"/>
-                                                            <exclude reference="Rsc-zc-Ocg"/>
                                                             <exclude reference="XYt-BU-GLn"/>
                                                             <exclude reference="d9N-pA-Hvr"/>
+                                                            <exclude reference="Rsc-zc-Ocg"/>
                                                         </mask>
                                                         <mask key="constraints">
                                                             <exclude reference="5uG-Cp-ONI"/>
@@ -3560,9 +3581,9 @@ you</string>
                                                         <rect key="frame" x="0.0" y="0.0" width="240" height="77"/>
                                                         <mask key="subviews">
                                                             <include reference="5cY-jC-80S"/>
-                                                            <include reference="Rsc-zc-Ocg"/>
                                                             <include reference="XYt-BU-GLn"/>
                                                             <include reference="d9N-pA-Hvr"/>
+                                                            <include reference="Rsc-zc-Ocg"/>
                                                         </mask>
                                                         <mask key="constraints">
                                                             <include reference="5uG-Cp-ONI"/>
@@ -6599,7 +6620,7 @@ you</string>
                                                                 </mask>
                                                             </variation>
                                                         </button>
-                                                        <imageView userInteractionEnabled="NO" contentMode="scaleToFill" horizontalHuggingPriority="251" verticalHuggingPriority="251" translatesAutoresizingMaskIntoConstraints="NO" id="rmF-S1-Koe">
+                                                        <imageView userInteractionEnabled="NO" contentMode="scaleToFill" horizontalHuggingPriority="251" verticalHuggingPriority="251" image="EmptyPhoto" translatesAutoresizingMaskIntoConstraints="NO" id="rmF-S1-Koe">
                                                             <rect key="frame" x="0.0" y="0.0" width="240" height="128"/>
                                                             <constraints>
                                                                 <constraint firstAttribute="height" constant="60" id="0WR-DZ-94R"/>
@@ -6878,11 +6899,11 @@ you</string>
         <image name="btnKudoUnselect" width="59" height="59"/>
     </resources>
     <inferredMetricsTieBreakers>
+        <segue reference="m8v-6I-Pen"/>
         <segue reference="Mvo-Q1-5eE"/>
         <segue reference="BTd-do-kiK"/>
-        <segue reference="SjQ-6n-yq4"/>
-        <segue reference="m8v-6I-Pen"/>
-        <segue reference="jfO-z4-KNN"/>
+        <segue reference="gkF-qH-WQp"/>
         <segue reference="yox-nr-2ui"/>
+        <segue reference="SjQ-6n-yq4"/>
     </inferredMetricsTieBreakers>
 </document>

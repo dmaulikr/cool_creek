@@ -118,6 +118,38 @@
     UIGraphicsEndImageContext();
     return image;
 }
+-(void) loadData
+{
+    NSUserDefaults *defaults = [NSUserDefaults standardUserDefaults];
+    NSString *user_id = [defaults objectForKey:@"user_id"];
+    AWSDynamoDBObjectMapper *dynamoDBObjectMapper = [AWSDynamoDBObjectMapper defaultDynamoDBObjectMapper];
+    AWSDynamoDBScanExpression *scanExpression = [AWSDynamoDBScanExpression new];
+    [[dynamoDBObjectMapper scan:[User class] expression:scanExpression]
+     continueWithBlock:^id(AWSTask *task) {
+         if (task.error) {
+             NSLog(@"The request failed. Error: [%@]", task.error);
+         }
+         if (task.exception) {
+             NSLog(@"The request failed. Exception: [%@]", task.exception);
+         }
+         if (task.result) {
+             AWSDynamoDBPaginatedOutput *paginatedOutput = task.result;
+             
+             for (User *user in paginatedOutput.items)
+             {
+                 [self.userArray setObject:user forKey:user.user_id];
+                 if([user.user_id isEqualToString:user_id])
+                 {
+                     self.followingArray=user.followings;
+                     self.followersArray=user.followers;
+                 }
+             }
+             
+             
+         }
+         return nil;
+     }];
+}
 
 +(BOOL) isFollowing:(User*) user
 {

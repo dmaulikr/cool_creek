@@ -16,7 +16,7 @@
 
 @property (nonatomic, strong) NSString *location_id;
 @property (nonatomic, strong) NSString *location_name;
-@property (nonatomic, strong) NSString *comments;
+@property (nonatomic, strong) NSMutableArray *comments;
 @property (nonatomic, strong) NSString *country;
 @property (nonatomic, strong) NSString *founder_id;
 @property (nonatomic, strong) NSString *found_by;

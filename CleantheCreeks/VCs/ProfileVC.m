@@ -78,51 +78,6 @@
     return rowCount;
 }
 
-/*- (CGFloat)tableView:(UITableView *)tableView heightForRowAtIndexPath:(NSIndexPath *)indexPath
-{
-    int height=223;
-    if(indexPath.row==0)
-        height=230;
-    else if (indexPath.row==1)
-        height=65;
-    else
-        height=335;
-    return height;
-}*/
-
--(void) loadData
-{
-    NSUserDefaults *defaults = [NSUserDefaults standardUserDefaults];
-    NSString *user_id = [defaults objectForKey:@"user_id"];
-    AWSDynamoDBObjectMapper *dynamoDBObjectMapper = [AWSDynamoDBObjectMapper defaultDynamoDBObjectMapper];
-    AWSDynamoDBScanExpression *scanExpression = [AWSDynamoDBScanExpression new];
-    [[dynamoDBObjectMapper scan:[User class] expression:scanExpression]
-     continueWithBlock:^id(AWSTask *task) {
-         if (task.error) {
-             NSLog(@"The request failed. Error: [%@]", task.error);
-         }
-         if (task.exception) {
-             NSLog(@"The request failed. Exception: [%@]", task.exception);
-         }
-         if (task.result) {
-             AWSDynamoDBPaginatedOutput *paginatedOutput = task.result;
-             
-             for (User *user in paginatedOutput.items)
-             {
-                 [self.appDelegate.userArray setObject:user forKey:user.user_id];
-                 if([user.user_id isEqualToString:user_id])
-                 {
-                     self.appDelegate.followingArray=user.followings;
-                     self.appDelegate.followersArray=user.followers;
-                 }
-             }
-             
-             
-         }
-         return nil;
-     }];
-}
-
 - (NSInteger)numberOfSectionsInTableView:(UITableView *)tableView
 {
     return 1;
@@ -158,8 +113,9 @@
         [cell.followingLabel addGestureRecognizer:followingTap];
         [cell.user_follows addGestureRecognizer:followersTap];
         [cell.followersLabel addGestureRecognizer:followersTap];
+       
         dispatch_async(dispatch_get_main_queue(), ^{
-            [self loadData];
+            [self.appDelegate loadData];
             [cell.user_following setText:[NSString stringWithFormat:@"%d",[self.appDelegate.followingArray count]]];
             [cell.user_follows setText:[NSString stringWithFormat:@"%d",[self.appDelegate.followersArray count]]];
             
@@ -170,10 +126,10 @@
     else if(indexPath.row==1)
     {
         cell = (ProfileViewCell*)[tableView dequeueReusableCellWithIdentifier:@"kudoCell"];
-        dispatch_async(dispatch_get_main_queue(), ^{
+        //dispatch_async(dispatch_get_main_queue(), ^{
             [cell.user_cleans setTitle:self.formattedCleansCount forState:UIControlStateNormal];
             
-        });
+     //   });
         
         [cell.user_kudos setTitle:[NSString stringWithFormat:@"%lu", (long)self.kudoCount] forState:UIControlStateNormal];
         AWSDynamoDBScanExpression *scanExpression = [AWSDynamoDBScanExpression new];
@@ -192,14 +148,13 @@
              if (task.result) {
                  AWSDynamoDBPaginatedOutput *paginatedOutput = task.result;
                  NSString *formattedFindsCount = [NSString stringWithFormat:@"%lu",(unsigned long)paginatedOutput.items.count];
-                 dispatch_async(dispatch_get_main_queue(), ^{
+                 //dispatch_async(dispatch_get_main_queue(), ^{
                      [cell.user_spotsfound setTitle:formattedFindsCount forState:UIControlStateNormal];
-                 });
+                // });
              }
              return nil;
          }];
         
-
     }
     else
     {
@@ -210,14 +165,20 @@
         UIColor * color2= [UIColor colorWithRed:(145/255.0) green:(145/255.0) blue:(145/255.0) alpha:1.0];
         NSDictionary * attributes1 = [NSDictionary dictionaryWithObject:color1 forKey:NSForegroundColorAttributeName];
         NSDictionary * attributes2 = [NSDictionary dictionaryWithObject:color2 forKey:NSForegroundColorAttributeName];
+        if(self.luser_name!=nil)
+        {
+            NSAttributedString * nameStr = [[NSAttributedString alloc] initWithString:self.luser_name attributes:attributes1];
+            [string appendAttributedString:nameStr];
+        }
         
-        NSAttributedString * nameStr = [[NSAttributedString alloc] initWithString:self.luser_name attributes:attributes1];
-        [string appendAttributedString:nameStr];
         NSAttributedString * middleStr = [[NSAttributedString alloc] initWithString:@" finished cleaning " attributes:attributes2];
         [string appendAttributedString:middleStr];
-        NSAttributedString * locationStr = [[NSAttributedString alloc] initWithString:location.location_name attributes:attributes1];
-        [string appendAttributedString:locationStr];
         
+        if(location.location_name!=nil)
+        {
+            NSAttributedString * locationStr = [[NSAttributedString alloc] initWithString:location.location_name attributes:attributes1];
+            [string appendAttributedString:locationStr];
+        }
         [cell.comment setAttributedText:string];
         [cell.location setText: location.location_name];
         NSDateFormatter *dateFormatter=[[NSDateFormatter alloc] init];
@@ -292,7 +253,6 @@
 {
     [self performSegueWithIdentifier:@"showFollowers" sender:self];
 }
-
 
 - (void)prepareForSegue:(UIStoryboardSegue *)segue sender:(id)sender {
     [super prepareForSegue:segue sender:sender];

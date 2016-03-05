@@ -20,5 +20,6 @@
 @property (strong, nonatomic) NSMutableArray *followingArray;
 @property (strong, nonatomic) NSMutableDictionary *userArray;
 +(BOOL) isFollowing:(User*) user;
+-(void) loadData;
 @end
 
