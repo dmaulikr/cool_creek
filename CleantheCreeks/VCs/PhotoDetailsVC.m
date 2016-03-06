@@ -51,7 +51,7 @@ bool secondPhototaken=false;
                   NSString *locatedAt = [[placemark.addressDictionary valueForKey:@"FormattedAddressLines"] componentsJoinedByString:@", "];
                   NSLog(@"addressDictionary %@", placemark.addressDictionary);
                   
-                  /*NSLog(@"region %@",placemark.region);
+                  NSLog(@"region %@",placemark.region);
                   NSLog(@"country %@",placemark.country);  // Give Country Name
                   NSLog(@"locality %@",placemark.locality); // Extract the city name
                   NSLog(@"name %@",placemark.name);
@@ -61,10 +61,11 @@ bool secondPhototaken=false;
                   
                   NSLog(@"location %@",placemark.location);
                   //Print the location to console
-                  NSLog(@"I am currently at %@",locatedAt);*/
+                  NSLog(@"I am currently at %@",locatedAt);
                   self.locationName1=[placemark.addressDictionary valueForKey:@"Name"];
-                  self.locationName2=[placemark.addressDictionary valueForKey:@"State"];
+                  self.locationName2=placemark.locality;
                   self.countryName=placemark.country;
+                  self.stateName=[placemark.addressDictionary valueForKey:@"State"];
                   [self.nextButton setEnabled:YES];
                   [self.detailTable reloadData];
               }
@@ -169,7 +170,8 @@ bool secondPhototaken=false;
             cell = (DetailCell*)[tableView dequeueReusableCellWithIdentifier:@"FirstDetailCell"];
             
             [((DetailCell*)cell).locationName1 setText:self.locationName1];
-            [((DetailCell*)cell).locationName2 setText:self.locationName2];
+            NSString * subLocation = [[NSString alloc]initWithFormat:@"%@, %@, %@",self.locationName2, self.stateName, self.countryName];
+            [((DetailCell*)cell).locationName2 setText:subLocation];
             
         }
         else if(indexPath.row==2)
@@ -279,7 +281,8 @@ bool secondPhototaken=false;
                          self.currentLocation.coordinate.latitude, self.currentLocation.coordinate.longitude];
     location.location_id=location_id;
     location.location_name = self.locationName1;
-    location.state=self.locationName2;
+    location.locality = self.locationName2;
+    location.state=self.stateName;
     location.comments=self.commentText;
     location.country=self.countryName;
     location.found_by=user_name;

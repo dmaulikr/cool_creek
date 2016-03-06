@@ -10,6 +10,8 @@
 #import "locationCell.h"
 #import "LocationOverlayView.h"
 #import "LocationAnnotation.h"
+#import "ActivityPhotoDetailsVC.h"
+#import "CameraVC.h"
 @implementation LocationVC
 
 - (void)viewWillAppear:(BOOL)animated{
@@ -31,7 +33,7 @@
         [self.locationManager requestWhenInUseAuthorization];
     }
     self.locationArray = [[NSMutableArray alloc]init];
-    
+    [self.locationArray removeAllObjects];
     self.mapView.delegate=self;
     self.mainDelegate=(AppDelegate*)[[UIApplication sharedApplication]delegate];
 }
@@ -68,10 +70,13 @@
         [cell.distance setText:distanceText];
         if(self.mainDelegate.locationData[location.location_id])
         {
-
             cell.image.image=(UIImage*)(self.mainDelegate.locationData[location.location_id]);
-            
         }
+        cell.viewBtn.tag = indexPath.row;
+        cell.moreBtn.tag = indexPath.row;
+        
+        [cell.viewBtn addTarget:self action:@selector(viewBtnClicked:) forControlEvents:UIControlEventTouchUpInside];
+        [cell.cleanBtn addTarget:self action:@selector(cleanBtnClicked:) forControlEvents:UIControlEventTouchUpInside];
     }
 
     if(!cell){
@@ -82,10 +87,39 @@
     return cell;
 }
 
+-(void)viewBtnClicked:(UIButton*)sender
+{
+    [self performSegueWithIdentifier:@"showLocationDetails" sender:self];
+}
+
+-(void)cleanBtnClicked:(UIButton*)sender
+{
+    [self performSegueWithIdentifier:@"cleanLocation" sender:self];
+}
 - (void)tableView:(UITableView *)tableView didSelectRowAtIndexPath:(NSIndexPath *)indexPath{
     
 }
-
+- (void) prepareForSegue:(UIStoryboardSegue *)segue sender:(id)sender
+{
+    NSIndexPath * selectedPath=[self.locationTable indexPathForSelectedRow];
+    if([self.locationArray count]>0)
+    {
+    if([segue.identifier isEqualToString:@"showLocationDetails"])
+    {
+        ActivityPhotoDetailsVC* vc = (ActivityPhotoDetailsVC*)segue.destinationViewController;
+        vc.location=[Location class];
+        
+        vc.location = [self.locationArray objectAtIndex:selectedPath];
+        vc.cleaned=NO;
+    }
+    else if([segue.identifier isEqualToString:@"cleanLocation"])
+    {
+        CameraVC* vc = (CameraVC*)segue.destinationViewController;
+        vc.location=[Location class];
+        vc.location = [self.locationArray objectAtIndex:selectedPath];
+    }
+}
+}
 #pragma CLLocationDelegate
 
 - (void)locationManager:(CLLocationManager *)manager
@@ -104,17 +138,14 @@
     region.span = span;
     region.center = cLocation;
     [self.mapView setRegion:region animated:YES];
-    
     self.currentLocation=newLocation;
-
     CLGeocoder *ceo = [[CLGeocoder alloc]init];
-    
     [ceo reverseGeocodeLocation:self.currentLocation
               completionHandler:^(NSArray *placemarks, NSError *error) {
                   CLPlacemark *placemark = [placemarks objectAtIndex:0];
                   [self.btnCountry setTitle:placemark.country forState:UIControlStateNormal];
                   [self.btnState setTitle:[placemark.addressDictionary valueForKey:@"State"] forState:UIControlStateNormal];
-                  [self.btnLocal setTitle:[placemark.addressDictionary valueForKey:@"Name"] forState:UIControlStateNormal];
+                  [self.btnLocal setTitle:placemark.locality forState:UIControlStateNormal];
               }
      ];
     

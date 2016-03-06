@@ -28,7 +28,7 @@
     self.luser_location = [defaults objectForKey:@"user_location"];
     self.luser_about = [defaults objectForKey:@"user_about"];
     self.fb_username = [defaults objectForKey:@"username"];
-   
+    
     [self.profileTopBar setHeaderStyle:YES title:self.luser_name rightBtnHidden:NO];
     AWSDynamoDBScanExpression *scanExpression = [AWSDynamoDBScanExpression new];
     scanExpression.filterExpression = @"cleaner_id = :val";
@@ -36,7 +36,7 @@
     scanExpression.expressionAttributeValues = @{@":val":self.luser_id};
     self.appDelegate=(AppDelegate*)[[UIApplication sharedApplication]delegate];
     [[self.dynamoDBObjectMapper scan:[Location class]
-                     expression:scanExpression]
+                          expression:scanExpression]
      continueWithBlock:^id(AWSTask *task) {
          if (task.error) {
              NSLog(@"The request failed. Error: [%@]", task.error);
@@ -61,10 +61,9 @@
          
          return nil;
      }];
-   
+    
     self.profileTable.estimatedRowHeight = 323.f;
     self.profileTable.rowHeight = UITableViewAutomaticDimension;
-
 }
 
 -(void) viewWillAppear:(BOOL)animated
@@ -73,9 +72,9 @@
 }
 
 - (NSInteger)tableView:(UITableView *)tableView numberOfRowsInSection:(NSInteger)section{
-    NSInteger rowCount;
-    rowCount=[self.locationArray count]+2;
-    return rowCount;
+    if(self.locationArray!=nil)
+        return [self.locationArray count]+2;
+    return 0;
 }
 
 - (NSInteger)numberOfSectionsInTableView:(UITableView *)tableView
@@ -105,7 +104,7 @@
         [cell.user_email setText:self.luser_email];
         UITapGestureRecognizer *followingTap=[[UITapGestureRecognizer alloc]initWithTarget:self action:@selector(showFollowing)];
         followingTap.numberOfTapsRequired=1;
-    
+        
         UITapGestureRecognizer *followersTap=[[UITapGestureRecognizer alloc]initWithTarget:self action:@selector(showFollower)];
         followersTap.numberOfTapsRequired=1;
         
@@ -113,11 +112,11 @@
         [cell.followingLabel addGestureRecognizer:followingTap];
         [cell.user_follows addGestureRecognizer:followersTap];
         [cell.followersLabel addGestureRecognizer:followersTap];
-       
+        
         dispatch_async(dispatch_get_main_queue(), ^{
             [self.appDelegate loadData];
-            [cell.user_following setText:[NSString stringWithFormat:@"%d",[self.appDelegate.followingArray count]]];
-            [cell.user_follows setText:[NSString stringWithFormat:@"%d",[self.appDelegate.followersArray count]]];
+            [cell.user_following setText:[NSString stringWithFormat:@"%lu",(unsigned long)[self.appDelegate.followingArray count]]];
+            [cell.user_follows setText:[NSString stringWithFormat:@"%lu",(unsigned long)[self.appDelegate.followersArray count]]];
             
         });
         NSLog(@"%@, %@, %@, %@", self.luser_name, self.luser_about, self.luser_location, self.luser_email);
@@ -126,10 +125,7 @@
     else if(indexPath.row==1)
     {
         cell = (ProfileViewCell*)[tableView dequeueReusableCellWithIdentifier:@"kudoCell"];
-        //dispatch_async(dispatch_get_main_queue(), ^{
-            [cell.user_cleans setTitle:self.formattedCleansCount forState:UIControlStateNormal];
-            
-     //   });
+        [cell.user_cleans setTitle:self.formattedCleansCount forState:UIControlStateNormal];
         
         [cell.user_kudos setTitle:[NSString stringWithFormat:@"%lu", (long)self.kudoCount] forState:UIControlStateNormal];
         AWSDynamoDBScanExpression *scanExpression = [AWSDynamoDBScanExpression new];
@@ -149,8 +145,8 @@
                  AWSDynamoDBPaginatedOutput *paginatedOutput = task.result;
                  NSString *formattedFindsCount = [NSString stringWithFormat:@"%lu",(unsigned long)paginatedOutput.items.count];
                  //dispatch_async(dispatch_get_main_queue(), ^{
-                     [cell.user_spotsfound setTitle:formattedFindsCount forState:UIControlStateNormal];
-                // });
+                 [cell.user_spotsfound setTitle:formattedFindsCount forState:UIControlStateNormal];
+                 // });
              }
              return nil;
          }];
@@ -194,14 +190,15 @@
         downloadRequest.key = key;
         downloadRequest.downloadingFileURL = downloadingFileURL;
         AWSS3TransferManager *transferManager = [AWSS3TransferManager defaultS3TransferManager];
-        [[transferManager download:downloadRequest] continueWithExecutor:[AWSExecutor mainThreadExecutor] withBlock:^id(AWSTask *task2) {
-            if (task2.result) {
-                dispatch_async(dispatch_get_main_queue(), ^{
+        dispatch_async(dispatch_get_global_queue(0,0), ^{
+            [[transferManager download:downloadRequest] continueWithExecutor:[AWSExecutor mainThreadExecutor] withBlock:^id(AWSTask *task2) {
+                if (task2.result) {
+                    
                     [cell.beforePhoto setImage:[UIImage imageWithContentsOfFile:downloadingFilePath]];
-                });
-            }
-            return nil;
-        }];
+                }
+                return nil;
+            }];
+        });
         
         NSString * afterkey=[location.location_id stringByAppendingString:@"b"];
         NSString * afterPath = [NSTemporaryDirectory() stringByAppendingPathComponent:afterkey];
@@ -211,15 +208,15 @@
         afterdownloadRequest.key = afterkey;
         afterdownloadRequest.downloadingFileURL = afterurl;
         AWSS3TransferManager *aftertransferManager = [AWSS3TransferManager defaultS3TransferManager];
-        [[aftertransferManager download:afterdownloadRequest] continueWithExecutor:[AWSExecutor mainThreadExecutor] withBlock:^id(AWSTask *task2) {
-            if (task2.result) {
-                dispatch_async(dispatch_get_main_queue(), ^{
+        dispatch_async(dispatch_get_global_queue(0,0), ^{
+            [[aftertransferManager download:afterdownloadRequest] continueWithExecutor:[AWSExecutor mainThreadExecutor] withBlock:^id(AWSTask *task2) {
+                if (task2.result) {
                     [cell.afterPhoto setImage:[UIImage imageWithContentsOfFile:afterPath]];
-                });
-                
-            }
-            return nil;
-        }];
+                    
+                }
+                return nil;
+            }];
+        });
         
     }
     if(!cell){
@@ -257,7 +254,7 @@
 - (void)prepareForSegue:(UIStoryboardSegue *)segue sender:(id)sender {
     [super prepareForSegue:segue sender:sender];
     FollowVC *followVC=(FollowVC*)segue.destinationViewController;
-       if([segue.identifier isEqual:@"showFollowing"])
+    if([segue.identifier isEqual:@"showFollowing"])
     {
         followVC.displayIndex=0;
         

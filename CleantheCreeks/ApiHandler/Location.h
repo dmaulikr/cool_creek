@@ -25,6 +25,7 @@
 @property (nonatomic, strong) NSString *cleaner_name;
 @property double cleaned_date;
 @property (nonatomic, strong) NSString *state;
+@property (nonatomic, strong) NSString *locality;
 @property (nonatomic, strong) NSString *isDirty;
 @property (nonatomic, strong) NSMutableArray *kudos;
 @property  double latitude;

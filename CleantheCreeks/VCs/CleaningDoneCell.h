@@ -12,5 +12,7 @@
 @property (weak, nonatomic) IBOutlet UIImageView *profileAvatar;
 @property (weak, nonatomic) IBOutlet UILabel *activityHours;
 @property (weak, nonatomic) IBOutlet UILabel *lblContent;
+@property (weak, nonatomic) IBOutlet UIButton *kudoCounter;
+@property (weak, nonatomic) IBOutlet UIButton *giveKudos;
 
 @end

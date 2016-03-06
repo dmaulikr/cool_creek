@@ -12,6 +12,5 @@
 @property (strong,nonatomic) NSMutableArray * activityArray;
 @property (strong,nonatomic) AppDelegate * appDelegate;
 @property (strong,nonatomic) NSMutableDictionary * userArray;
-@property (strong,nonatomic) NSString * user_location;
 
 @end

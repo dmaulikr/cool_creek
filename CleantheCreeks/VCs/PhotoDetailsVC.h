@@ -30,6 +30,7 @@
 @property (weak, nonatomic) IBOutlet UIButton *nextButton;
 
 @property(nonatomic, strong) NSString* locationName2;
+@property(nonatomic, strong) NSString* stateName;
 @property(nonatomic, strong) NSString* countryName;
 @property(nonatomic, strong) NSString* commentText;
 +(UIImage *)scaleImage:(UIImage *)image toSize:(CGSize)newSize;
