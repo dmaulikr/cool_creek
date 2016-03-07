@@ -11,13 +11,14 @@
 #import <Foundation/Foundation.h>
 #import <UIKit/UIKit.h>
 #import <CoreLocation/CoreLocation.h>
+#import "Location.h"
 @interface Activity :NSObject
 
 @property (nonatomic, strong) NSString * activity_id;
 @property (nonatomic) double activity_time;
 
 @property (nonatomic, strong) NSString * activity_type;
-@property (nonatomic, strong) NSString * activity_location;
+@property (nonatomic, strong) Location * activity_location;
 @property (nonatomic, strong) UIImage* activity_image;
 @property(nonatomic) int kudo_count;
 

@@ -11,10 +11,15 @@
 #import "PhotoViewCell.h"
 #import <CoreLocation/CoreLocation.h>
 #import "Location.h"
-
-@interface PhotoDetailsVC : UIViewController<UITableViewDataSource,UITableViewDelegate,UITextFieldDelegate,CLLocationManagerDelegate,SetPhotoDelegate,UIImagePickerControllerDelegate>
-
-@property (strong,nonatomic) UIImage*dirtyPhoto;
+#import "BaseVC.h"
+#import "AppDelegate.h"
+@protocol CameraRefreshDelegate<NSObject>
+@optional
+-(void) cameraRefresh:(BOOL)set;
+@end
+@interface PhotoDetailsVC : BaseVC<UITableViewDataSource,UITableViewDelegate,UITextFieldDelegate,CLLocationManagerDelegate,SetPhotoDelegate,UIImagePickerControllerDelegate>
+@property(nonatomic, strong) Location* location;
+@property (strong,nonatomic) UIImage*takenPhoto;
 @property (strong,nonatomic) UIImage*cleanedPhoto;
 @property (strong,nonatomic) NSURL*firstPath;
 
@@ -22,8 +27,8 @@
 
 @property (strong, nonatomic) CLLocationManager *locationManager;
 @property (retain) CLLocation * currentLocation;
-@property (nonatomic, strong) NSDate* foundDate;
-@property (nonatomic, strong) NSDate* cleanedDate;
+@property (nonatomic) double foundDate;
+@property (nonatomic) double cleanedDate;
 @property (nonatomic,strong) NSString* locationName1;
 - (IBAction)nextPage:(id)sender;
 - (IBAction)prevPage:(id)sender;
@@ -34,5 +39,9 @@
 @property(nonatomic, strong) NSString* countryName;
 @property(nonatomic, strong) NSString* commentText;
 +(UIImage *)scaleImage:(UIImage *)image toSize:(CGSize)newSize;
+@property (strong,nonatomic )AppDelegate * mainDelegate;
+-(void) setSecondPhoto:(BOOL)set;
+
+@property(nonatomic, retain) id<CameraRefreshDelegate> delegate;
 @end
 

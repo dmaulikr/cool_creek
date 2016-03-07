@@ -11,7 +11,7 @@
 #import "Location.h"
 @interface ActivityPhotoDetailsVC : BaseVC<UITableViewDataSource, UITableViewDelegate>
 @property (weak, nonatomic) IBOutlet UITableView *tv;
-@property (weak, nonatomic) Location * location;
+@property (strong, nonatomic) Location * location;
 @property (nonatomic) BOOL cleaned;
-@property (weak, nonatomic) UIImage * beforePhoto, *afterPhoto;
+@property (strong, nonatomic) UIImage * beforePhoto, *afterPhoto;
 @end

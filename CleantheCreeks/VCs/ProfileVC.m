@@ -15,7 +15,6 @@
     return self;
 }
 
-
 - (void)viewDidLoad
 {
     [super viewDidLoad];
@@ -49,8 +48,12 @@
              self.formattedCleansCount = [NSString stringWithFormat:@"%lu",(unsigned long)paginatedOutput.items.count];
              for (Location *location in paginatedOutput.items)
              {
-                 [self.locationArray addObject:location];
-                 self.kudoCount+=location.kudos.count;
+                 if([location.isDirty isEqualToString:@"false"])
+                 {
+                     [self.locationArray addObject:location];
+                     self.kudoCount+=location.kudos.count;
+                 }
+                 
              }
              dispatch_async(dispatch_get_main_queue(), ^{
                  [self.profileTable reloadData];

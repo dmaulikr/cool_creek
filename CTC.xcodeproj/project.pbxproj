@@ -38,6 +38,8 @@
 		3C2874B01C88E2E200725B40 /* Activity.m in Sources */ = {isa = PBXBuildFile; fileRef = 3C2874AF1C88E2E200725B40 /* Activity.m */; };
 		3C2874B31C88EC9800725B40 /* FollowVC.m in Sources */ = {isa = PBXBuildFile; fileRef = 3C2874B21C88EC9800725B40 /* FollowVC.m */; };
 		3CA250EF1C843D32004BB466 /* User.m in Sources */ = {isa = PBXBuildFile; fileRef = 3CA250EE1C843D32004BB466 /* User.m */; };
+		3CA8D7D61C8CA60A00838FDC /* LocationPhotoCell.m in Sources */ = {isa = PBXBuildFile; fileRef = 3CA8D7D51C8CA60A00838FDC /* LocationPhotoCell.m */; };
+		3CA8D7DA1C8D0D5900838FDC /* FBSuccessVC.m in Sources */ = {isa = PBXBuildFile; fileRef = 3CA8D7D91C8D0D5800838FDC /* FBSuccessVC.m */; };
 		3CE5EB1F1C84F8310068DF59 /* ProfileViewCell.m in Sources */ = {isa = PBXBuildFile; fileRef = 3CE5EB1E1C84F8310068DF59 /* ProfileViewCell.m */; };
 		BD06039F1C595D4700A2C3EC /* main.m in Sources */ = {isa = PBXBuildFile; fileRef = BD06039E1C595D4700A2C3EC /* main.m */; };
 		BD0603A21C595D4700A2C3EC /* AppDelegate.m in Sources */ = {isa = PBXBuildFile; fileRef = BD0603A11C595D4700A2C3EC /* AppDelegate.m */; };
@@ -136,6 +138,10 @@
 		3C2874B21C88EC9800725B40 /* FollowVC.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = FollowVC.m; sourceTree = "<group>"; };
 		3CA250EE1C843D32004BB466 /* User.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = User.m; sourceTree = "<group>"; };
 		3CA250F01C843D74004BB466 /* User.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = User.h; sourceTree = "<group>"; };
+		3CA8D7D41C8CA60A00838FDC /* LocationPhotoCell.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = LocationPhotoCell.h; sourceTree = "<group>"; };
+		3CA8D7D51C8CA60A00838FDC /* LocationPhotoCell.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = LocationPhotoCell.m; sourceTree = "<group>"; };
+		3CA8D7D81C8D0D5800838FDC /* FBSuccessVC.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = FBSuccessVC.h; sourceTree = "<group>"; };
+		3CA8D7D91C8D0D5800838FDC /* FBSuccessVC.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = FBSuccessVC.m; sourceTree = "<group>"; };
 		3CE5EB1D1C84F8310068DF59 /* ProfileViewCell.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ProfileViewCell.h; sourceTree = "<group>"; };
 		3CE5EB1E1C84F8310068DF59 /* ProfileViewCell.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = ProfileViewCell.m; sourceTree = "<group>"; };
 		4656214352E34CC700C152CD /* libPods.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; includeInIndex = 0; path = libPods.a; sourceTree = BUILT_PRODUCTS_DIR; };
@@ -334,6 +340,34 @@
 				3C2874B21C88EC9800725B40 /* FollowVC.m */,
 			);
 			name = FollowVC;
+			sourceTree = "<group>";
+		};
+		3CA8D7D31C8CA5CB00838FDC /* ActivityPhotoDetails */ = {
+			isa = PBXGroup;
+			children = (
+				0084F42C1C7B1C8500E111D0 /* ActivityPhotoDetailsVC.h */,
+				0084F42D1C7B1C8500E111D0 /* ActivityPhotoDetailsVC.m */,
+				3CA8D7D71C8CA61800838FDC /* LocationPhotoCell */,
+			);
+			name = ActivityPhotoDetails;
+			sourceTree = "<group>";
+		};
+		3CA8D7D71C8CA61800838FDC /* LocationPhotoCell */ = {
+			isa = PBXGroup;
+			children = (
+				3CA8D7D41C8CA60A00838FDC /* LocationPhotoCell.h */,
+				3CA8D7D51C8CA60A00838FDC /* LocationPhotoCell.m */,
+			);
+			name = LocationPhotoCell;
+			sourceTree = "<group>";
+		};
+		3CA8D7DB1C8D0E1C00838FDC /* FBSuccess */ = {
+			isa = PBXGroup;
+			children = (
+				3CA8D7D81C8D0D5800838FDC /* FBSuccessVC.h */,
+				3CA8D7D91C8D0D5800838FDC /* FBSuccessVC.m */,
+			);
+			name = FBSuccess;
 			sourceTree = "<group>";
 		};
 		3CE5EB201C84F8370068DF59 /* ProfileViewCell */ = {
@@ -552,6 +586,7 @@
 		E2FD056D1C59CA16004B2C34 /* VCs */ = {
 			isa = PBXGroup;
 			children = (
+				3CA8D7DB1C8D0E1C00838FDC /* FBSuccess */,
 				000467E21C7CB51700946DE8 /* TopBarVCs */,
 				E27FC5111C69E7BC00489DE3 /* LocationNav */,
 				E2656BED1C5DA8AF004786EA /* PhotoDetailsVC */,
@@ -616,8 +651,7 @@
 				E2FD05841C59E548004B2C34 /* ActivityVC.m */,
 				0084F4251C7B14A600E111D0 /* KudosVC.h */,
 				0084F4261C7B14A600E111D0 /* KudosVC.m */,
-				0084F42C1C7B1C8500E111D0 /* ActivityPhotoDetailsVC.h */,
-				0084F42D1C7B1C8500E111D0 /* ActivityPhotoDetailsVC.m */,
+				3CA8D7D31C8CA5CB00838FDC /* ActivityPhotoDetails */,
 			);
 			name = ActivityVC;
 			sourceTree = "<group>";
@@ -820,6 +854,7 @@
 			files = (
 				E2F36ECF1C5AFFE700923DF0 /* IntroModel.m in Sources */,
 				3C2874B31C88EC9800725B40 /* FollowVC.m in Sources */,
+				3CA8D7DA1C8D0D5900838FDC /* FBSuccessVC.m in Sources */,
 				E2F36EDB1C5B103400923DF0 /* LastPageView.m in Sources */,
 				E2F36ED01C5AFFE700923DF0 /* IntroView.m in Sources */,
 				E2FD05881C59E579004B2C34 /* LocationVC.m in Sources */,
@@ -850,6 +885,7 @@
 				E2F36ECD1C5AFFE700923DF0 /* FirstPageView.m in Sources */,
 				E2960D7A1C6E36D8009425CA /* DetailCell.m in Sources */,
 				E252E5F91C611ECB0013F1B7 /* Location.m in Sources */,
+				3CA8D7D61C8CA60A00838FDC /* LocationPhotoCell.m in Sources */,
 				0084F3ED1C7ABA8800E111D0 /* CleaningDoneCell.m in Sources */,
 				000467E11C7C728300946DE8 /* SettingVC.m in Sources */,
 				E2D1034B1C64D06900FD67A0 /* PhotoViewCell.m in Sources */,

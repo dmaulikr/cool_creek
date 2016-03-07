@@ -12,7 +12,7 @@
 #import <FBSDKLoginKit/FBSDKLoginKit.h>
 #import <AWSCore/AWSCore.h>
 #import <AWSDynamoDB/AWSDynamoDB.h>
-#import <MBProgressHUD/MBProgressHUD.h>
+
 #import <AWSS3/AWSS3.h>
 #import "User.h"
 #import "Location.h"

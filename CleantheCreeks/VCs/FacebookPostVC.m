@@ -11,12 +11,13 @@
 @implementation FacebookPostVC
 -(void)viewDidLoad
 {
-    [self.profileTopBar setHeaderStyle:NO title:@"LOCATION DETAILS" rightBtnHidden:NO];
+    [self.profileTopBar setHeaderStyle:YES title:@"LOCATION DETAILS" rightBtnHidden:YES];
     [self.tabBarController.tabBar setHidden:YES];
 }
 - (IBAction)skip:(id)sender {
-    [self.tabBarController setSelectedIndex:1];
     [self.tabBarController.tabBar setHidden:NO];
+    [self.tabBarController setSelectedIndex:1];
+    [self.navigationController popToRootViewControllerAnimated:YES];
 }
 
 - (IBAction)FBPost:(id)sender {

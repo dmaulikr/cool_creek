@@ -11,6 +11,7 @@
 #import <AWSCore/AWSCore.h>
 #import <AWSDynamoDB/AWSDynamoDB.h>
 #import <AWSS3/AWSS3.h>
+
 @implementation PhotoDetailsVC
 
 bool secondPhototaken=false;
@@ -18,25 +19,58 @@ bool secondPhototaken=false;
 -(void)viewDidLoad
 {
     [super viewDidLoad];
+    [self.delegate cameraRefresh:NO];
     [self.tabBarController.tabBar setHidden:YES];
     _locationManager=[[CLLocationManager alloc] init];
-    if([CLLocationManager authorizationStatus]==kCLAuthorizationStatusNotDetermined)
-        [_locationManager requestWhenInUseAuthorization];
-    
-    _locationManager.delegate=self;
-    _locationManager.desiredAccuracy=kCLLocationAccuracyBest;
-    _locationManager.distanceFilter=500;
-    self.locationManager=_locationManager;
-    
-    if([CLLocationManager locationServicesEnabled]){
+    self.mainDelegate=(AppDelegate*)[[UIApplication sharedApplication]delegate];
+    if(self.location==nil)
+    {
+        if([CLLocationManager authorizationStatus]==kCLAuthorizationStatusNotDetermined)
+            [_locationManager requestWhenInUseAuthorization];
         
-        [self.locationManager startUpdatingLocation];
+        _locationManager.delegate=self;
+        _locationManager.desiredAccuracy=kCLLocationAccuracyBest;
+        _locationManager.distanceFilter=500;
+        self.locationManager=_locationManager;
+        
+        if([CLLocationManager locationServicesEnabled]){
+            
+            [self.locationManager startUpdatingLocation];
+        }
+        else
+        {
+            [self.locationManager requestWhenInUseAuthorization];
+        }
+        [self.nextButton setEnabled:NO];
     }
     else
     {
-        [self.locationManager requestWhenInUseAuthorization];
+        AWSS3TransferManager *transferManager = [AWSS3TransferManager defaultS3TransferManager];
+        
+        AWSS3TransferManagerDownloadRequest *firstRequest = [AWSS3TransferManagerDownloadRequest new];
+        firstRequest.bucket = @"cleanthecreeks";
+        NSString *downloadingFilePath = [NSTemporaryDirectory() stringByAppendingPathComponent:[self.location.location_id stringByAppendingString:@"a"]];
+        NSURL *downloadingFileURL = [NSURL fileURLWithPath:downloadingFilePath];
+        NSString * beforeKey=[self.location.location_id stringByAppendingString:@"a"];
+        firstRequest.key = beforeKey;
+        firstRequest.downloadingFileURL = downloadingFileURL;
+        [[transferManager download:firstRequest] continueWithExecutor:[AWSExecutor mainThreadExecutor] withBlock:^id(AWSTask *task2) {
+            if (task2.result) {
+                self.takenPhoto =[[UIImage alloc]init];
+                self.takenPhoto = [UIImage imageWithContentsOfFile:downloadingFilePath];
+                dispatch_async(dispatch_get_main_queue(), ^{
+                    [self.detailTable reloadData];
+                });
+            }
+            return nil;
+        }];
+
+        secondPhototaken=true;
+        [self.nextButton setEnabled:YES];
+        
     }
-    [self.nextButton setEnabled:NO];
+    [self.detailTable reloadData];
+    
 }
 
 - (void)locationManager:(CLLocationManager *)manager didUpdateToLocation:(CLLocation *)newLocation fromLocation:(CLLocation *)oldLocation
@@ -77,7 +111,7 @@ bool secondPhototaken=false;
 -(BOOL) textFieldShouldReturn:(UITextField *)textField{
     
     [textField resignFirstResponder];
-    return NO;
+    return YES;
 }
 
 -(void) setSecondPhoto:(BOOL)set photo:(UIImage*)photo
@@ -85,7 +119,7 @@ bool secondPhototaken=false;
     secondPhototaken = set;
     self.cleanedPhoto = [[UIImage alloc]init];
     self.cleanedPhoto = photo;
-    self.cleanedDate = [NSDate date];
+    self.cleanedDate = [[NSDate date] timeIntervalSince1970];
     [self.detailTable reloadData];
 }
 
@@ -151,7 +185,12 @@ bool secondPhototaken=false;
         else if(indexPath.row==1)
         {
             cell = (PhotoViewCell*)[tableView dequeueReusableCellWithIdentifier:@"PhotoCell"];
-            [((PhotoViewCell*)cell).firstPhoto setImage:self.dirtyPhoto];
+             [((PhotoViewCell*)cell).firstPhoto setImage:self.takenPhoto];
+            if(self.location!=nil)
+            {
+                [((PhotoViewCell*)cell).secondPhoto setImage:self.cleanedPhoto];
+               
+            }
             ((PhotoViewCell*)cell).delegate=self;
         }
     }
@@ -168,24 +207,35 @@ bool secondPhototaken=false;
         else if(indexPath.row==1)
         {
             cell = (DetailCell*)[tableView dequeueReusableCellWithIdentifier:@"FirstDetailCell"];
-            
-            [((DetailCell*)cell).locationName1 setText:self.locationName1];
-            NSString * subLocation = [[NSString alloc]initWithFormat:@"%@, %@, %@",self.locationName2, self.stateName, self.countryName];
-            [((DetailCell*)cell).locationName2 setText:subLocation];
+            if(self.location==nil)
+            {
+                [((DetailCell*)cell).locationName1 setText:self.locationName1];
+                NSString * subLocation = [[NSString alloc]initWithFormat:@"%@, %@, %@",self.locationName2, self.stateName, self.countryName];
+                [((DetailCell*)cell).locationName2 setText:subLocation];
+            }
+            else
+            {
+                [((DetailCell*)cell).locationName1 setText:self.location.location_name];
+                NSString * subLocation = [[NSString alloc]initWithFormat:@"%@, %@, %@",self.location.locality, self.location.state, self.location.country];
+                [((DetailCell*)cell).locationName2 setText:subLocation];
+            }
             
         }
         else if(indexPath.row==2)
         {
             cell = (DetailCell*)[tableView dequeueReusableCellWithIdentifier:@"SecondDetailCell"];
             [((DetailCell*)cell).finderName setText:user_name];
-            [((DetailCell*)cell).foundDate setText:[dateFormatter stringFromDate:self.foundDate]];
+            NSDate* founddate=[[NSDate alloc]initWithTimeIntervalSince1970:self.foundDate];
+            [((DetailCell*)cell).foundDate setText:[dateFormatter stringFromDate:founddate]];
+           
             
         }
         else if(indexPath.row==3)
         {
             cell = (DetailCell*)[tableView dequeueReusableCellWithIdentifier:@"ThirdDetailCell"];
             [((DetailCell*)cell).cleanerName setText:user_name];
-            [((DetailCell*)cell).cleanedDate setText:[dateFormatter stringFromDate:self.cleanedDate]];
+            NSDate* cleanDate=[[NSDate alloc]initWithTimeIntervalSince1970:self.cleanedDate];
+            [((DetailCell*)cell).cleanedDate setText:[dateFormatter stringFromDate:cleanDate]];
         }
 
     }
@@ -228,6 +278,7 @@ bool secondPhototaken=false;
     return YES;
 }
 - (IBAction)nextPage:(id)sender {
+    
     if(secondPhototaken)
     {
         [self storeData:false];
@@ -276,30 +327,35 @@ bool secondPhototaken=false;
     NSDateFormatter *dateFormatter=[[NSDateFormatter alloc] init];
     [dateFormatter setDateFormat:@"MMM dd, yyyy"];
     
-    Location *location = [Location new];
-    NSString *location_id = [NSString stringWithFormat:@"%f,%f",
-                         self.currentLocation.coordinate.latitude, self.currentLocation.coordinate.longitude];
-    location.location_id=location_id;
-    location.location_name = self.locationName1;
-    location.locality = self.locationName2;
-    location.state=self.stateName;
-    location.comments=self.commentText;
-    location.country=self.countryName;
-    location.found_by=user_name;
-    location.founder_id=user_id;
-    location.cleaner_id=user_id;
-    location.cleaner_name=user_name;
-    location.found_date=[self.foundDate timeIntervalSince1970];
-    location.cleaned_date=[self.cleanedDate timeIntervalSince1970];
-    location.latitude=self.currentLocation.coordinate.latitude;
-    location.longitude=self.currentLocation.coordinate.longitude;
+    
+    if(self.location==nil)
+    {
+        self.location = [Location new];
+        NSString *location_id = [NSString stringWithFormat:@"%f,%f",
+        self.currentLocation.coordinate.latitude, self.currentLocation.coordinate.longitude];
+        self.location.location_id=location_id;
+        self.location.location_name = self.locationName1;
+        self.location.locality = self.locationName2;
+        self.location.state=self.stateName;
+        self.location.comments=self.commentText;
+        self.location.country=self.countryName;
+        self.location.found_by=user_name;
+        self.location.founder_id=user_id;
+        self.location.cleaner_id=user_id;
+        self.location.cleaner_name=user_name;
+        self.location.found_date=self.foundDate;
+        self.location.cleaned_date=self.cleanedDate;
+        self.location.latitude=self.currentLocation.coordinate.latitude;
+        self.location.longitude=self.currentLocation.coordinate.longitude;
+        
+    }
     if(isDirty)
-        location.isDirty=@"true";
+        self.location.isDirty=@"true";
     else
-        location.isDirty=@"false";
+        self.location.isDirty=@"false";
     AWSDynamoDBObjectMapper *dynamoDBObjectMapper = [AWSDynamoDBObjectMapper defaultDynamoDBObjectMapper];
     
-    [[dynamoDBObjectMapper save:location]
+    [[dynamoDBObjectMapper save:self.location]
      continueWithBlock:^id(AWSTask *task) {
          if (task.error) {
              NSLog(@"The request failed. Error: [%@]", task.error);
@@ -315,9 +371,9 @@ bool secondPhototaken=false;
     
     AWSS3TransferManager *transferManager = [AWSS3TransferManager defaultS3TransferManager];
     NSArray *paths = NSSearchPathForDirectoriesInDomains(NSDocumentDirectory, NSUserDomainMask, YES);
-    NSString *dirtyPath = [[paths objectAtIndex:0] stringByAppendingPathComponent:[NSString stringWithFormat:@"%@a.png", location_id]];
-    NSString *cleanPath = [[paths objectAtIndex:0] stringByAppendingPathComponent:[NSString stringWithFormat:@"%@b.png", location_id]];
-    UIImage *cimage = [PhotoDetailsVC scaleImage:self.dirtyPhoto toSize:CGSizeMake(320.0,320.0)];
+    NSString *dirtyPath = [[paths objectAtIndex:0] stringByAppendingPathComponent:[NSString stringWithFormat:@"%@a.png", self.location.location_id]];
+    NSString *cleanPath = [[paths objectAtIndex:0] stringByAppendingPathComponent:[NSString stringWithFormat:@"%@b.png", self.location.location_id]];
+    UIImage *cimage = [PhotoDetailsVC scaleImage:self.takenPhoto toSize:CGSizeMake(320.0,320.0)];
     [UIImagePNGRepresentation(cimage) writeToFile:dirtyPath atomically:YES];
     NSURL* dirtyURL = [NSURL fileURLWithPath:dirtyPath];
     
@@ -397,11 +453,11 @@ bool secondPhototaken=false;
     photo=[info objectForKey:UIImagePickerControllerOriginalImage];
     if(secondPhototaken)
     {
-        secondPhototaken=false;
+        self.cleanedPhoto=photo;
     }
     else
     {
-        self.dirtyPhoto=photo;
+        self.takenPhoto=photo;
     }
     [picker dismissViewControllerAnimated:YES completion:NULL];
     [self.detailTable reloadData];
@@ -410,16 +466,24 @@ bool secondPhototaken=false;
 - (void)imagePickerControllerDidCancel:(UIImagePickerController *)picker
 {
     [picker dismissViewControllerAnimated:YES completion:NULL];
-    if(secondPhototaken)
+    
+    if(secondPhototaken) //do not remove the item when it's clean mode from location view
     {
-        secondPhototaken=false;
+        if(self.location==nil)
+            secondPhototaken=false;
+        else
+        {
+            [self.tabBarController setSelectedIndex:1];
+            [self.tabBarController.tabBar setHidden:NO];
+            [self.navigationController popToRootViewControllerAnimated:YES];
+        }
         
     }
     else
     {
         [self.tabBarController setSelectedIndex:1];
         [self.tabBarController.tabBar setHidden:NO];
-        //[self.navigationController popViewControllerAnimated:YES];
+        [self dismissVC];
     }
 }
 

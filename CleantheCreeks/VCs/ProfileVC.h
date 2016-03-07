@@ -2,7 +2,7 @@
 #import "BaseVC.h"
 #import <AWSCore/AWSCore.h>
 #import <AWSDynamoDB/AWSDynamoDB.h>
-#import <MBProgressHUD/MBProgressHUD.h>
+
 #import <AWSS3/AWSS3.h>
 #import "AppDelegate.h"
 @interface ProfileVC : BaseVC<UITableViewDataSource, UITableViewDelegate>

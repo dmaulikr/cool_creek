@@ -20,6 +20,7 @@
 @property (strong,nonatomic) NSMutableArray * locationArray;
 @property (strong,nonatomic) NSMutableDictionary * imageArray;
 @property (strong,nonatomic )AppDelegate * mainDelegate;
+@property (nonatomic) NSInteger selectedIndex;
 - (IBAction)listButtonTapped:(id)sender;
 - (IBAction)mapButtonTapped:(id)sender;
 

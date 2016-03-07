@@ -4,20 +4,16 @@
 #import "Location.h"
 #import "User.h"
 #import "Activity.h"
+#import "ActivityPhotoDetailsVC.h"
 #import <CoreLocation/CoreLocation.h>
 @implementation ActivityVC
 
-- (id)init
-{
-    self = [super initWithNibName:nil bundle:nil];
-    return self;
-}
-
-
 - (void)viewDidLoad
 {
-    
+    [super viewDidLoad];
+    [self.profileTopBar setHeaderStyle:YES title:@"ACTIVITY" rightBtnHidden:YES];
 }
+
 -(void) viewWillAppear:(BOOL)animated
 {
     [super viewWillAppear:animated];
@@ -70,7 +66,7 @@
                                  activity.activity_id = location.founder_id;
                                  activity.activity_time=location.found_date;
                                  activity.activity_type = @"find";
-                                 activity.activity_location = location.location_name;
+                                 activity.activity_location = location;
                                 
                                  [self.activityArray addObject:activity];
                              }
@@ -82,7 +78,7 @@
                                  activity.activity_id = person_id;
                                  activity.activity_time=location.cleaned_date;
                                  activity.activity_type = @"clean";
-                                 activity.activity_location = location.location_name;
+                                 activity.activity_location = location;
                                  activity.kudo_count=[location.kudos count];
                                 [self.activityArray addObject:activity];
                              }
@@ -98,7 +94,7 @@
                                  activity.activity_id=commenter_id;
                                  activity.activity_time = [comment_date doubleValue];
                                  activity.activity_type = @"clean";
-                                 activity.activity_location = location.location_name;
+                                 activity.activity_location = location;
                                                                  [self.activityArray addObject:activity];
                              }
                              
@@ -144,7 +140,7 @@
     self.tv.estimatedRowHeight = 65.f;
     self.tv.rowHeight = UITableViewAutomaticDimension;
     
-    [self.profileTopBar setHeaderStyle:YES title:@"ACTIVITY" rightBtnHidden:YES];
+    
 }
 
 
@@ -177,7 +173,7 @@
         {
             cell = (CleaningDoneCell*)[tableView dequeueReusableCellWithIdentifier:@"CleaningDoneCell" forIndexPath:indexPath];
             
-            [((CleaningDoneCell*)cell).lblContent setAttributedText:[self generateString:user.user_name content:@" has finished cleaning " location:activity.activity_location]];
+            [((CleaningDoneCell*)cell).lblContent setAttributedText:[self generateString:user.user_name content:@" has finished cleaning " location:activity.activity_location.location_name]];
             [((CleaningDoneCell*)cell).activityHours setText:[self timeDifference:activity.activity_time]];
             [((CleaningDoneCell*)cell).kudoCounter setTitle:[[NSString alloc] initWithFormat:@"%d Kudos",activity.kudo_count] forState:UIControlStateNormal];
             dispatch_async(dispatch_get_global_queue(0,0), ^{
@@ -196,11 +192,11 @@
             cell = (CleaningCommentCell*)[tableView dequeueReusableCellWithIdentifier:@"CleaningCommentCell" forIndexPath:indexPath];
             if([activity.activity_type isEqualToString: @"find"])
             {
-                [((CleaningDoneCell*)cell).lblContent setAttributedText:[self generateString:user.user_name content:@" found a new dirty spot " location:activity.activity_location]];
+                [((CleaningDoneCell*)cell).lblContent setAttributedText:[self generateString:user.user_name content:@" found a new dirty spot " location:activity.activity_location.location_name]];
             }
             else if([activity.activity_type isEqualToString: @"comment"])
             {
-                [((CleaningDoneCell*)cell).lblContent setAttributedText:[self generateString:user.user_name content:@" commented on your clean up location" location:@""]];
+                [((CleaningDoneCell*)cell).lblContent setAttributedText:[self generateString:user.user_name content:@" commented on your clean up location " location:@""]];
             }
             else if([activity.activity_type isEqualToString: @"kudo"])
             {
@@ -230,7 +226,40 @@
 }
 
 - (void)tableView:(UITableView *)tableView didSelectRowAtIndexPath:(NSIndexPath *)indexPath{
-    [self performSegueWithIdentifier:@"ActivityVC2ActivityPhotoDetailVC" sender:nil];
+    if([self.activityArray count]>0)
+    {
+        Activity * activity = [self.activityArray objectAtIndex:indexPath.row];
+        if([activity.activity_type isEqualToString: @"clean"] || [activity.activity_type isEqualToString: @"find"] || [activity.activity_type isEqualToString: @"comment"])
+        {
+            [self performSegueWithIdentifier:@"ActivityVC2ActivityPhotoDetailVC" sender:nil];
+        
+        }
+    }
+    
+}
+
+- (void) prepareForSegue:(UIStoryboardSegue *)segue sender:(id)sender
+{
+    [super prepareForSegue:segue sender:sender];
+    if([self.activityArray count]>0)
+    {
+        NSIndexPath * selectedPath= [self.tv indexPathForSelectedRow];
+        Activity * activity=[self.activityArray objectAtIndex:selectedPath.row];
+        
+        if([segue.identifier isEqualToString:@"ActivityVC2ActivityPhotoDetailVC"])
+        {
+            ActivityPhotoDetailsVC* vc = (ActivityPhotoDetailsVC*)segue.destinationViewController;
+            vc.location = [[Location alloc]init];
+            vc.location = activity.activity_location;
+            vc.cleaned=NO;
+            if([activity.activity_type isEqualToString: @"clean"])
+            {
+                vc.cleaned=YES;
+            }
+        
+        }
+        
+    }
 }
 
 #pragma ProfileTopBarVCDelegate Implementation
@@ -242,6 +271,7 @@
 - (void)rightBtnTopBarTapped:(UIButton *)sender topBar:(id)topBar{
     
 }
+
 - (NSMutableAttributedString *)generateString:(NSString*)name content:(NSString*)content location:(NSString*) location
 {
     NSMutableAttributedString * string = [[NSMutableAttributedString alloc] initWithString:@""];
@@ -269,13 +299,28 @@
 
 -(NSString *) timeDifference: (double)activityDate
 {
-    NSTimeInterval currentTime=[[NSDate date] timeIntervalSince1970];
-    NSDate *date=[[NSDate alloc] initWithTimeIntervalSince1970:currentTime-activityDate];
-    
-    NSDateFormatter *dateFormatter = [[NSDateFormatter alloc] init];
-    [dateFormatter setDateFormat:@"dd HH"];
-    NSString *localDateString = [dateFormatter stringFromDate:date];
-    return localDateString;
+    NSDate *date =[[NSDate alloc]initWithTimeIntervalSince1970:activityDate];
+    NSTimeInterval secondsBetween = [[NSDate date] timeIntervalSinceDate:date];
+    NSString * timedifference=[[NSString alloc]init];
+    int numberOfDays = secondsBetween / 86400;
+    if (numberOfDays == 0)
+    {
+        int numberOfHours=secondsBetween/3600;
+        timedifference=[[NSString alloc]initWithFormat:@"%d hours ago", numberOfHours];
+    }
+    else if(numberOfDays>30)
+    {
+        timedifference=@"More than 1 month ago";
+    }
+    else if(numberOfDays==1)
+    {
+        timedifference=[[NSString alloc]initWithFormat:@"%d day ago", numberOfDays];
+    }
+    else
+    {
+        timedifference=[[NSString alloc]initWithFormat:@"%d days ago", numberOfDays];
+    }
+    return timedifference;
 }
 
 @end

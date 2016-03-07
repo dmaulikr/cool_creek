@@ -38,6 +38,7 @@ CLLocationManager * locationManager;
 {
     if(tabBarController.selectedIndex==0)
     {
+        NSLog(@"selected 1st");
          self.selectedViewController=[self.viewControllers objectAtIndex:1];
     }
 }
