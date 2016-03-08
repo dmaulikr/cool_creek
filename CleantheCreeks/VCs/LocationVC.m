@@ -12,6 +12,7 @@
 #import "LocationAnnotation.h"
 #import "ActivityPhotoDetailsVC.h"
 #import "CameraVC.h"
+#import "Clean the Creek-Bridging-Header.h"
 @implementation LocationVC
 
 - (void)viewWillAppear:(BOOL)animated{
@@ -85,6 +86,24 @@
     
     cell.delegate = self;
     return cell;
+}
+
+- (UIView *)tableView:(UITableView *)tableView viewForFooterInSection:(NSInteger)section{
+    _spinner = [[UIActivityIndicatorView alloc] initWithActivityIndicatorStyle:UIActivityIndicatorViewStyleGray];
+    CGFloat screenHeight = [UIScreen mainScreen].bounds.size.height;
+    UIView* footerView = [[UIView alloc] initWithFrame:CGRectMake(0, 0, (40/667) * screenHeight, (40/667) * screenHeight)];
+    [footerView addSubview:_spinner];
+    
+    return footerView;
+}
+
+- (void)tableView:(UITableView *)tableView willDisplayCell:(UITableViewCell *)cell forRowAtIndexPath:(NSIndexPath *)indexPath{
+    if (_spinner.superview != nil) {
+        CGRect frm = _spinner.superview.frame;
+        _spinner.center = CGPointMake(frm.size.width / 2, frm.size.height / 2);
+    }
+    [_spinner startAnimating];
+    //loadDataonTableView()
 }
 
 -(void)viewBtnClicked:(UIButton*)sender

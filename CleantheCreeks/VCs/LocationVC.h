@@ -15,6 +15,7 @@
 @property (weak, nonatomic) IBOutlet UIButton *btnState;
 @property (weak, nonatomic) IBOutlet UIButton *btnLocal;
 
+@property (strong, nonatomic) UIActivityIndicatorView* spinner;
 @property (strong, nonatomic) CLLocationManager *locationManager;
 @property (retain) CLLocation * currentLocation;
 @property (strong,nonatomic) NSMutableArray * locationArray;

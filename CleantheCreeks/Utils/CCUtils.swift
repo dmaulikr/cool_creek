@@ -32,7 +32,7 @@ extension UIImage {
     }
 }
 
-class GMUtils {
+class CCUtils {
     
     /******* Just Get Color ********/
     static func getGMAquaColor() -> UIColor {

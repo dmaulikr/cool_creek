@@ -337,7 +337,6 @@ bool secondPhototaken=false;
         self.location.location_name = self.locationName1;
         self.location.locality = self.locationName2;
         self.location.state=self.stateName;
-        self.location.comments=self.commentText;
         self.location.country=self.countryName;
         self.location.found_by=user_name;
         self.location.founder_id=user_id;
