@@ -8,6 +8,7 @@
 
 #import "PhotoDetailsVC.h"
 #import "DetailCell.h"
+#import "CommentCell.h"
 #import <AWSCore/AWSCore.h>
 #import <AWSDynamoDB/AWSDynamoDB.h>
 #import <AWSS3/AWSS3.h>
@@ -43,6 +44,9 @@
     }
     else
     {
+        dispatch_async(dispatch_get_main_queue(), ^{
+            [self.mainDelegate loadData];
+        });
         AWSS3TransferManager *transferManager = [AWSS3TransferManager defaultS3TransferManager];
         
         AWSS3TransferManagerDownloadRequest *firstRequest = [AWSS3TransferManagerDownloadRequest new];
@@ -62,9 +66,6 @@
             }
             return nil;
         }];
-        
-        
-        
     }
     if(self.secondPhototaken)
         [self.nextButton setEnabled:YES];
@@ -171,9 +172,14 @@
         else
             return 3;
     }
-    
     else if(section==2)
-        count=2;
+    {
+        if(self.location==nil)
+            return 2;
+        else
+            return [self.location.comments count]+1;
+    }
+    
     return count;
 }
 
@@ -248,14 +254,53 @@
     {
         if(indexPath.row==0)
             cell = [tableView dequeueReusableCellWithIdentifier:@"ThirdBar"];
-        else if(indexPath.row==1)
-            cell = [tableView dequeueReusableCellWithIdentifier:@"FourthDetailCell"];
+        else
+        {
+            if(self.location!=nil)
+            {
+                cell = (CommentCell*)[tableView dequeueReusableCellWithIdentifier:@"CommentCell"];
+                NSMutableDictionary *commentItem=[self.location.comments objectAtIndex:indexPath.row-1];
+                User * commentUser=[self.mainDelegate.userArray objectForKey:[commentItem objectForKey:@"id"]];
+                NSString *commentUserName=commentUser.user_name;
+                NSString *commentText=[commentItem objectForKey:@"message"];
+                [((CommentCell*)cell).commentLabel setAttributedText:[self generateCommentString:commentUserName content:commentText]];
+            }
+            else
+                cell = (DetailCell*)[tableView dequeueReusableCellWithIdentifier:@"FourthDetailCell"];
+        }
+        
     }
     if(!cell){
         cell = nil;
         
     }
     return cell;
+}
+
+- (NSMutableAttributedString *)generateCommentString:(NSString*)name content:(NSString*)content
+{
+    NSMutableAttributedString * string = [[NSMutableAttributedString alloc] initWithString:@""];
+    UIColor * color1 = [UIColor colorWithRed:(1/255.0) green:(122/255.0) blue:(255/255.0) alpha:1.0];
+    UIColor * color2= [UIColor colorWithRed:(51/255.0) green:(51/255.0) blue:(51/255.0) alpha:1.0];
+    
+    NSDictionary * attributes1 = [NSDictionary dictionaryWithObject:color1 forKey:NSForegroundColorAttributeName];
+   
+    NSDictionary * attributes2 = [NSDictionary dictionaryWithObject:color2 forKey:NSForegroundColorAttributeName];
+    if(name!=nil)
+    {
+        NSAttributedString * nameStr = [[NSAttributedString alloc] initWithString:name attributes:attributes1];
+        [string appendAttributedString:nameStr];
+
+    }
+    NSAttributedString * space = [[NSAttributedString alloc] initWithString:@" " attributes:attributes2];
+    [string appendAttributedString:space];
+    if(content!=nil)
+    {
+        NSAttributedString * middleStr = [[NSAttributedString alloc] initWithString:content attributes:attributes2];
+        [string appendAttributedString:middleStr];
+    }
+   
+    return string;
 }
 
 - (NSInteger)numberOfSectionsInTableView:(UITableView *)tableView
@@ -293,6 +338,18 @@
         
         [alertController addAction:[UIAlertAction actionWithTitle:@"Wrap this up" style:UIAlertActionStyleDefault handler:^(UIAlertAction *action) {
             
+            UIImagePickerController *picker=[[UIImagePickerController alloc] init];
+            if([UIImagePickerController isSourceTypeAvailable:UIImagePickerControllerSourceTypeCamera]==NO)
+            {
+                picker.sourceType=UIImagePickerControllerSourceTypePhotoLibrary;
+            }
+            else
+            {
+                picker.sourceType=UIImagePickerControllerSourceTypeCamera;
+            }
+            picker.delegate=self;
+            [self presentViewController:picker animated:YES completion:nil];
+            self.secondPhototaken=YES;
         }]];
         
         dispatch_async(dispatch_get_main_queue(), ^ {
@@ -324,7 +381,6 @@
     
     NSDateFormatter *dateFormatter=[[NSDateFormatter alloc] init];
     [dateFormatter setDateFormat:@"MMM dd, yyyy"];
-    
     
     if(self.location==nil)
     {
@@ -448,12 +504,13 @@
 
 -(void)imagePickerController:(UIImagePickerController *)picker didFinishPickingMediaWithInfo:(NSDictionary<NSString *,id> *)info
 {
-    NSLog(@"perform Segue");
+    NSLog(@"Photo taken");
     UIImage * photo=[[UIImage alloc]init];
     photo=[info objectForKey:UIImagePickerControllerOriginalImage];
     if(self.secondPhototaken)
     {
-        self.cleanedPhoto=photo;
+        
+        [self setSecondPhoto:YES photo:photo];
     }
     else
     {

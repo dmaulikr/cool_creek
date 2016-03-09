@@ -16,5 +16,6 @@
 @property (weak, nonatomic) IBOutlet UILabel *cleanedDate;
 @property (weak, nonatomic) IBOutlet UILabel *foundDate;
 
+@property (weak, nonatomic) IBOutlet UITextView *commentText;
 @property (weak, nonatomic) IBOutlet UILabel *locationName2;
 @end

@@ -37,6 +37,7 @@
 		095F77783019A58BBD9134E1 /* libPods.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 4656214352E34CC700C152CD /* libPods.a */; };
 		3C2874B01C88E2E200725B40 /* Activity.m in Sources */ = {isa = PBXBuildFile; fileRef = 3C2874AF1C88E2E200725B40 /* Activity.m */; };
 		3C2874B31C88EC9800725B40 /* FollowVC.m in Sources */ = {isa = PBXBuildFile; fileRef = 3C2874B21C88EC9800725B40 /* FollowVC.m */; };
+		3C75ACA11C9063750054AA3F /* CommentCell.m in Sources */ = {isa = PBXBuildFile; fileRef = 3C75ACA01C9063750054AA3F /* CommentCell.m */; };
 		3CA250EF1C843D32004BB466 /* User.m in Sources */ = {isa = PBXBuildFile; fileRef = 3CA250EE1C843D32004BB466 /* User.m */; };
 		3CA8D7D61C8CA60A00838FDC /* LocationPhotoCell.m in Sources */ = {isa = PBXBuildFile; fileRef = 3CA8D7D51C8CA60A00838FDC /* LocationPhotoCell.m */; };
 		3CA8D7DA1C8D0D5900838FDC /* FBSuccessVC.m in Sources */ = {isa = PBXBuildFile; fileRef = 3CA8D7D91C8D0D5800838FDC /* FBSuccessVC.m */; };
@@ -136,6 +137,8 @@
 		3C2874AF1C88E2E200725B40 /* Activity.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = Activity.m; sourceTree = "<group>"; };
 		3C2874B11C88EC9800725B40 /* FollowVC.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = FollowVC.h; sourceTree = "<group>"; };
 		3C2874B21C88EC9800725B40 /* FollowVC.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = FollowVC.m; sourceTree = "<group>"; };
+		3C75AC9F1C9063750054AA3F /* CommentCell.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = CommentCell.h; sourceTree = "<group>"; };
+		3C75ACA01C9063750054AA3F /* CommentCell.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = CommentCell.m; sourceTree = "<group>"; };
 		3CA250EE1C843D32004BB466 /* User.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = User.m; sourceTree = "<group>"; };
 		3CA250F01C843D74004BB466 /* User.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = User.h; sourceTree = "<group>"; };
 		3CA8D7D41C8CA60A00838FDC /* LocationPhotoCell.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = LocationPhotoCell.h; sourceTree = "<group>"; };
@@ -342,6 +345,15 @@
 			name = FollowVC;
 			sourceTree = "<group>";
 		};
+		3C75ACA21C90637C0054AA3F /* CommentCell */ = {
+			isa = PBXGroup;
+			children = (
+				3C75AC9F1C9063750054AA3F /* CommentCell.h */,
+				3C75ACA01C9063750054AA3F /* CommentCell.m */,
+			);
+			name = CommentCell;
+			sourceTree = "<group>";
+		};
 		3CA8D7D31C8CA5CB00838FDC /* ActivityPhotoDetails */ = {
 			isa = PBXGroup;
 			children = (
@@ -473,6 +485,7 @@
 				E2656BEB1C5DA885004786EA /* PhotoDetailsVC.m */,
 				E2D1034C1C64D06D00FD67A0 /* PhotoViewCell */,
 				E2960D7C1C6E36DF009425CA /* DetailCell */,
+				3C75ACA21C90637C0054AA3F /* CommentCell */,
 			);
 			name = PhotoDetailsVC;
 			sourceTree = "<group>";
@@ -853,6 +866,7 @@
 			buildActionMask = 2147483647;
 			files = (
 				E2F36ECF1C5AFFE700923DF0 /* IntroModel.m in Sources */,
+				3C75ACA11C9063750054AA3F /* CommentCell.m in Sources */,
 				3C2874B31C88EC9800725B40 /* FollowVC.m in Sources */,
 				3CA8D7DA1C8D0D5900838FDC /* FBSuccessVC.m in Sources */,
 				E2F36EDB1C5B103400923DF0 /* LastPageView.m in Sources */,
