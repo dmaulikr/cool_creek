@@ -22,11 +22,9 @@
     if(!self.photoTaken)
     {
         [self takePhoto];
-        [self dismissVC];
         self.photoTaken=YES;
     }
 }
-
 
 -(void) takePhoto
 {
@@ -39,7 +37,6 @@
     {
         picker.sourceType=UIImagePickerControllerSourceTypeCamera;
     }
-    
     picker.delegate=self;
     [self presentViewController:picker animated:YES completion:nil];
 }
@@ -70,10 +67,12 @@
     [super didReceiveMemoryWarning];
     // Dispose of any resources that can be recreated.
 }
+
 -(void) cameraRefresh:(BOOL)set
 {
     self.photoTaken=set;
 }
+
 - (void)prepareForSegue:(UIStoryboardSegue *)segue sender:(id)sender {
     // Get the new view controller using [segue destinationViewController].
     // Pass the selected object to the new view controller.
@@ -81,21 +80,23 @@
     {
         PhotoDetailsVC *photoDetailsVC=(PhotoDetailsVC*)segue.destinationViewController;
         photoDetailsVC.delegate=self;
-        photoDetailsVC.takenPhoto=self.cameraPicture;
+        
         if(self.location!=nil)
         {
-            
             photoDetailsVC.location=self.location;
             photoDetailsVC.foundDate=self.location.found_date;
             photoDetailsVC.cleanedDate=[[NSDate date] timeIntervalSince1970];
+            photoDetailsVC.takenPhoto=self.dirtyPhoto;
             photoDetailsVC.cleanedPhoto=self.cameraPicture;
-            
+            photoDetailsVC.secondPhototaken = YES;
         }
         else
         {
+            photoDetailsVC.location=nil;
+            photoDetailsVC.takenPhoto=self.cameraPicture;
             photoDetailsVC.foundDate=[[NSDate date] timeIntervalSince1970];
+            photoDetailsVC.secondPhototaken = NO;
         }
-        
     }
 }
 

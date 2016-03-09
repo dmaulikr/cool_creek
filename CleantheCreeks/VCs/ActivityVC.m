@@ -306,7 +306,13 @@
     if (numberOfDays == 0)
     {
         int numberOfHours=secondsBetween/3600;
-        timedifference=[[NSString alloc]initWithFormat:@"%d hours ago", numberOfHours];
+        if(numberOfHours>0)
+            timedifference=[[NSString alloc]initWithFormat:@"%d hours ago", numberOfHours];
+        else
+        {
+            int numberOfMins=secondsBetween/60;
+            timedifference=[[NSString alloc]initWithFormat:@"%d mins ago", numberOfMins];
+        }
     }
     else if(numberOfDays>30)
     {

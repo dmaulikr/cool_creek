@@ -56,9 +56,7 @@
                     [self.tv reloadData];
                     
                 });
-                
             }
-            
             return nil;
         }];
         
@@ -133,7 +131,12 @@
     if(section==0)
         count=2;
     else if(section==1)
-        count=4;
+    {
+        if(self.cleaned)
+            count=4;
+        else
+            count=3;
+    }
     else if(section==2)
         count=2;
     return count;
@@ -155,7 +158,6 @@
             [((LocationPhotoCell*)cell).firstPhoto setImage:self.beforePhoto];
             if(self.cleaned)
                 [((LocationPhotoCell*)cell).secondPhoto setImage:self.afterPhoto];
-            
         }
 
         else if(indexPath.row==1)

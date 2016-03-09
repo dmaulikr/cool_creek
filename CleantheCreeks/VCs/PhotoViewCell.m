@@ -43,7 +43,6 @@
 
 -(void)imagePickerController:(UIImagePickerController *)picker didFinishPickingMediaWithInfo:(NSDictionary<NSString *,id> *)info
 {
-    NSLog(@"perform Segue");
     UIImage * photo=[[UIImage alloc]init];
     photo=[info objectForKey:UIImagePickerControllerOriginalImage];
     [picker dismissViewControllerAnimated:YES completion:NULL];

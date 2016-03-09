@@ -43,5 +43,7 @@
 -(void) setSecondPhoto:(BOOL)set;
 
 @property(nonatomic, retain) id<CameraRefreshDelegate> delegate;
+
+@property(nonatomic) bool secondPhototaken;
 @end
 

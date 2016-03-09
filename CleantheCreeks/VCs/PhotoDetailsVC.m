@@ -14,15 +14,14 @@
 
 @implementation PhotoDetailsVC
 
-bool secondPhototaken=false;
-
--(void)viewDidLoad
+-(void)viewWillAppear:(BOOL)animated
 {
-    [super viewDidLoad];
+    [super viewWillAppear:animated];
     [self.delegate cameraRefresh:NO];
     [self.tabBarController.tabBar setHidden:YES];
     _locationManager=[[CLLocationManager alloc] init];
     self.mainDelegate=(AppDelegate*)[[UIApplication sharedApplication]delegate];
+    
     if(self.location==nil)
     {
         if([CLLocationManager authorizationStatus]==kCLAuthorizationStatusNotDetermined)
@@ -41,7 +40,6 @@ bool secondPhototaken=false;
         {
             [self.locationManager requestWhenInUseAuthorization];
         }
-        [self.nextButton setEnabled:NO];
     }
     else
     {
@@ -64,11 +62,14 @@ bool secondPhototaken=false;
             }
             return nil;
         }];
-
-        secondPhototaken=true;
-        [self.nextButton setEnabled:YES];
+        
+        
         
     }
+    if(self.secondPhototaken)
+        [self.nextButton setEnabled:YES];
+    else
+        [self.nextButton setEnabled:NO];
     [self.detailTable reloadData];
     
 }
@@ -116,7 +117,7 @@ bool secondPhototaken=false;
 
 -(void) setSecondPhoto:(BOOL)set photo:(UIImage*)photo
 {
-    secondPhototaken = set;
+    self.secondPhototaken = set;
     self.cleanedPhoto = [[UIImage alloc]init];
     self.cleanedPhoto = photo;
     self.cleanedDate = [[NSDate date] timeIntervalSince1970];
@@ -139,7 +140,7 @@ bool secondPhototaken=false;
             height=5;
         else if(indexPath.row==3)
         {
-            if(secondPhototaken)
+            if(self.secondPhototaken)
                 height=self.view.frame.size.height*0.13;
             else
                 height=0;
@@ -164,7 +165,13 @@ bool secondPhototaken=false;
     if(section==0)
         count=2;
     else if(section==1)
-        count=4;
+    {
+        if(self.secondPhototaken)
+            return 4;
+        else
+            return 3;
+    }
+    
     else if(section==2)
         count=2;
     return count;
@@ -185,12 +192,10 @@ bool secondPhototaken=false;
         else if(indexPath.row==1)
         {
             cell = (PhotoViewCell*)[tableView dequeueReusableCellWithIdentifier:@"PhotoCell"];
-             [((PhotoViewCell*)cell).firstPhoto setImage:self.takenPhoto];
-            if(self.location!=nil)
-            {
-                [((PhotoViewCell*)cell).secondPhoto setImage:self.cleanedPhoto];
-               
-            }
+            [((PhotoViewCell*)cell).firstPhoto setImage:self.takenPhoto];
+                if(self.secondPhototaken)
+                    [((PhotoViewCell*)cell).secondPhoto setImage:self.cleanedPhoto];
+                
             ((PhotoViewCell*)cell).delegate=self;
         }
     }
@@ -270,16 +275,9 @@ bool secondPhototaken=false;
     return title;
 }
 
-- (BOOL)textField:(UITextField *)textField shouldChangeCharactersInRange:(NSRange)range replacementString:(NSString *)string
-{
-    NSString *stringToSave = [textField.text stringByReplacingCharactersInRange:range withString:string];
-    self.commentText=stringToSave;
-    
-    return YES;
-}
 - (IBAction)nextPage:(id)sender {
     
-    if(secondPhototaken)
+    if(self.secondPhototaken)
     {
         [self storeData:false];
         [self performSegueWithIdentifier:@"cleanedFBPost" sender:self];
@@ -294,7 +292,7 @@ bool secondPhototaken=false;
         }]];
         
         [alertController addAction:[UIAlertAction actionWithTitle:@"Wrap this up" style:UIAlertActionStyleDefault handler:^(UIAlertAction *action) {
-            [self storeData:false];
+            
         }]];
         
         dispatch_async(dispatch_get_main_queue(), ^ {
@@ -340,18 +338,21 @@ bool secondPhototaken=false;
         self.location.country=self.countryName;
         self.location.found_by=user_name;
         self.location.founder_id=user_id;
-        self.location.cleaner_id=user_id;
-        self.location.cleaner_name=user_name;
+       
         self.location.found_date=self.foundDate;
-        self.location.cleaned_date=self.cleanedDate;
         self.location.latitude=self.currentLocation.coordinate.latitude;
         self.location.longitude=self.currentLocation.coordinate.longitude;
-        
     }
-    if(isDirty)
-        self.location.isDirty=@"true";
-    else
+    if(!isDirty)
+    {
         self.location.isDirty=@"false";
+        self.location.cleaner_id=user_id;
+        self.location.cleaner_name=user_name;
+        self.location.cleaned_date=self.cleanedDate;
+    }
+    else
+        self.location.isDirty=@"true";
+    
     AWSDynamoDBObjectMapper *dynamoDBObjectMapper = [AWSDynamoDBObjectMapper defaultDynamoDBObjectMapper];
     
     [[dynamoDBObjectMapper save:self.location]
@@ -410,7 +411,7 @@ bool secondPhototaken=false;
         }
         return nil;
     }];
-    if(secondPhototaken)
+    if(self.secondPhototaken)
     {
         AWSS3TransferManagerUploadRequest *seconduploadRequest = [AWSS3TransferManagerUploadRequest new];
         seconduploadRequest.body = dirtyURL;
@@ -450,13 +451,14 @@ bool secondPhototaken=false;
     NSLog(@"perform Segue");
     UIImage * photo=[[UIImage alloc]init];
     photo=[info objectForKey:UIImagePickerControllerOriginalImage];
-    if(secondPhototaken)
+    if(self.secondPhototaken)
     {
         self.cleanedPhoto=photo;
     }
     else
     {
         self.takenPhoto=photo;
+        self.secondPhototaken=YES;
     }
     [picker dismissViewControllerAnimated:YES completion:NULL];
     [self.detailTable reloadData];
@@ -466,10 +468,10 @@ bool secondPhototaken=false;
 {
     [picker dismissViewControllerAnimated:YES completion:NULL];
     
-    if(secondPhototaken) //do not remove the item when it's clean mode from location view
+    if(self.secondPhototaken) //do not remove the item when it's clean mode from location view
     {
         if(self.location==nil)
-            secondPhototaken=false;
+            self.secondPhototaken=NO;
         else
         {
             [self.tabBarController setSelectedIndex:1];
@@ -480,8 +482,10 @@ bool secondPhototaken=false;
     }
     else
     {
-        [self.tabBarController setSelectedIndex:1];
         [self.tabBarController.tabBar setHidden:NO];
+        [self.navigationController popToRootViewControllerAnimated:YES];
+        [self.tabBarController setSelectedIndex:1];
+        
         [self dismissVC];
     }
 }

@@ -132,17 +132,18 @@
         if([segue.identifier isEqualToString:@"showLocationDetails"])
         {
             ActivityPhotoDetailsVC* vc = (ActivityPhotoDetailsVC*)segue.destinationViewController;
-            vc.location = [Location class];
-            NSLog(@"%d",selectedPath);
+            vc.location = [[Location alloc]init];
+            NSLog(@"Item %d is selected",selectedPath);
             vc.location = location;
-            
             vc.beforePhoto=(UIImage*)(self.mainDelegate.locationData[location.location_id]);
             vc.cleaned=NO;
         }
         else if([segue.identifier isEqualToString:@"cleanLocation"])
         {
             CameraVC* vc = (CameraVC*)segue.destinationViewController;
-            vc.location = [Location class];
+            vc.photoTaken = NO;
+            vc.dirtyPhoto=(UIImage*)(self.mainDelegate.locationData[location.location_id]);
+            vc.location = [[Location alloc]init];
             vc.location = location;
             
         }
