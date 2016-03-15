@@ -9,8 +9,8 @@
 #import <UIKit/UIKit.h>
 #import <Social/Social.h>
 #import <Accounts/Accounts.h>
-
-@interface FBSuccessVC : UIViewController
+#import "BaseVC.h"
+@interface FBSuccessVC : BaseVC
 - (IBAction)showFBPost:(id)sender;
 
 @end

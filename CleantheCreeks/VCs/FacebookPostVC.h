@@ -10,8 +10,12 @@
 #import <Social/Social.h>
 #import <Accounts/Accounts.h>
 #import "BaseVC.h"
-@interface FacebookPostVC : BaseVC
-@property (weak, nonatomic) IBOutlet UIImageView *fbPostImg;
+@interface FacebookPostVC : BaseVC<UITabBarControllerDelegate>
+@property (strong, nonatomic) UIImage * firstPhoto;
+@property (strong, nonatomic) UIImage * secondPhoto;
+@property (weak, nonatomic) IBOutlet UIImageView *fbFirstImg;
+@property (weak, nonatomic) IBOutlet UIImageView *fbLastImage;
+
 @property (weak, nonatomic) IBOutlet UIImageView *fbTopImage;
 - (IBAction)skip:(id)sender;
 @property(strong,nonatomic)SLComposeViewController *mySLComposerSheet;

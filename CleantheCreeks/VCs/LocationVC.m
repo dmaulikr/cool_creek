@@ -13,10 +13,15 @@
 #import "ActivityPhotoDetailsVC.h"
 #import "CameraVC.h"
 #import "Clean the Creek-Bridging-Header.h"
+
+@interface LocationVC()
+@property (nonatomic,strong) UIRefreshControl * refreshControl;
+@end
+
 @implementation LocationVC
 
-- (void)viewWillAppear:(BOOL)animated{
-    [super viewWillAppear:YES];
+- (void)viewDidLoad{
+    [super viewDidLoad];
     [_locationManager requestWhenInUseAuthorization];
     _locationManager=[[CLLocationManager alloc] init];
     if([CLLocationManager authorizationStatus]==kCLAuthorizationStatusNotDetermined)
@@ -37,11 +42,19 @@
     [self.locationArray removeAllObjects];
     self.mapView.delegate=self;
     self.mainDelegate=(AppDelegate*)[[UIApplication sharedApplication]delegate];
+    self.refreshControl = [[UIRefreshControl alloc]init];
+    [self.locationTable addSubview:self.refreshControl];
+    self.displayItemCount=10;
+    [self updateData];
+    self.locationTable.autoresizingMask =UIViewAutoresizingFlexibleBottomMargin| UIViewAutoresizingFlexibleTopMargin | UIViewAutoresizingFlexibleHeight;
+    [self.refreshControl addTarget:self action:@selector(updateData) forControlEvents:UIControlEventValueChanged];
+    
+}
+-(void) viewDidAppear:(BOOL)animated
+{
+    [super viewDidAppear:animated];
 }
 
-- (void)viewDidLoad{
-    [super viewDidLoad];
-}
 
 - (void)didReceiveMemoryWarning{
     [super didReceiveMemoryWarning];
@@ -58,7 +71,7 @@
 
 - (UITableViewCell *)tableView:(UITableView *)tableView cellForRowAtIndexPath:(NSIndexPath *)indexPath{
     
-    locationCell * cell=nil;
+    locationCell * cell = nil;
     cell = (locationCell*)[tableView dequeueReusableCellWithIdentifier:@"locationCell"];
     if([self.locationArray count]>0 && indexPath.row <= [self.locationArray count]-1)
     {
@@ -98,12 +111,26 @@
 }
 
 - (void)tableView:(UITableView *)tableView willDisplayCell:(UITableViewCell *)cell forRowAtIndexPath:(NSIndexPath *)indexPath{
-    if (_spinner.superview != nil) {
-        CGRect frm = _spinner.superview.frame;
-        _spinner.center = CGPointMake(frm.size.width / 2, frm.size.height / 2);
+    if(indexPath.section==2)
+    {
+        self.displayItemCount+=5;
+        if (_spinner.superview != nil) {
+            CGRect frm = _spinner.superview.frame;
+            _spinner.center = CGPointMake(frm.size.width / 2, frm.size.height / 2);
+        }
+        [_spinner startAnimating];
+        [self updateData];
     }
-    [_spinner startAnimating];
-    //loadDataonTableView()
+    
+}
+- (void)scrollViewDidScroll:(UIScrollView *)scrollView_
+{
+    CGFloat actualPosition = scrollView_.contentOffset.y;
+    CGFloat contentHeight = scrollView_.contentSize.height - 10;
+    if (actualPosition >= contentHeight) {
+        [self updateData];
+        [self.locationTable reloadData];
+    }
 }
 
 -(void)viewBtnClicked:(UIButton*)sender
@@ -119,9 +146,11 @@
     [self performSegueWithIdentifier:@"cleanLocation" sender:self];
     
 }
+
 - (void)tableView:(UITableView *)tableView didSelectRowAtIndexPath:(NSIndexPath *)indexPath{
     
 }
+
 - (void) prepareForSegue:(UIStoryboardSegue *)segue sender:(id)sender
 {
     [super prepareForSegue:segue sender:sender];
@@ -149,14 +178,75 @@
         }
     }
 }
-#pragma CLLocationDelegate
 
+#pragma CLLocationDelegate
+- (void) updateData
+{
+    [self.locationArray removeAllObjects];
+    [self.mainDelegate.locationData removeAllObjects];
+    AWSDynamoDBObjectMapper *dynamoDBObjectMapper = [AWSDynamoDBObjectMapper defaultDynamoDBObjectMapper];
+    AWSDynamoDBScanExpression *scanExpression = [AWSDynamoDBScanExpression new];
+    scanExpression.filterExpression = @"isDirty = :val";
+    AWSS3TransferManager *transferManager = [AWSS3TransferManager defaultS3TransferManager];
+    scanExpression.expressionAttributeValues = @{@":val":@"true"};
+    [[dynamoDBObjectMapper scan:[Location class] expression:scanExpression] continueWithBlock:^id(AWSTask *task) {
+        if (task.result) {
+            AWSDynamoDBPaginatedOutput *paginatedOutput = task.result;
+            
+            int maxCount = self.displayItemCount;
+            if(maxCount>paginatedOutput.items.count)
+                maxCount = paginatedOutput.items.count;
+            for (int i=0;i<maxCount;i++) {
+                Location * location= [paginatedOutput.items objectAtIndex:i];
+                CLLocation*exitingLocation=[[CLLocation alloc]initWithLatitude:location.latitude longitude:location.longitude];
+                CLLocationDistance distance=[exitingLocation distanceFromLocation:self.currentLocation];
+                distance=distance/1000.0;
+                NSString *downloadingFilePath = [NSTemporaryDirectory() stringByAppendingPathComponent:location.location_id];
+                NSURL *downloadingFileURL = [NSURL fileURLWithPath:downloadingFilePath];
+               
+                if(![self.locationArray containsObject:location])
+                    [self.locationArray addObject:location];
+                AWSS3TransferManagerDownloadRequest *downloadRequest = [AWSS3TransferManagerDownloadRequest new];
+                downloadRequest.bucket = @"cleanthecreeks";
+                NSString * key=[location.location_id stringByAppendingString:@"a"];
+                downloadRequest.key = key;
+                downloadRequest.downloadingFileURL = downloadingFileURL;
+                LocationAnnotation *annotation=[[LocationAnnotation alloc]init];
+                annotation.coordinate = CLLocationCoordinate2DMake(location.latitude, location.longitude);
+                
+                annotation.title = location.location_name;
+                annotation.subtitle = location.location_id;
+                self.mainDelegate.locationData[location.location_id]=[UIImage imageNamed:@"EmptyPhoto"];
+                [[transferManager download:downloadRequest] continueWithExecutor:[AWSExecutor mainThreadExecutor] withBlock:^id(AWSTask *task2) {
+                    if (task2.result) {
+                        self.imageArray[key]=[UIImage imageWithContentsOfFile:downloadingFilePath];
+                        self.mainDelegate.locationData[location.location_id]=[UIImage imageWithContentsOfFile:downloadingFilePath];
+                        [self.locationTable reloadData];
+                        [self.mapView addAnnotation:annotation];
+                    }
+                    return nil;
+                }];
+                
+            }
+            dispatch_async(dispatch_get_main_queue(), ^{
+                
+                [self.locationTable reloadData];
+                [self.refreshControl endRefreshing];
+                [self.spinner stopAnimating];
+            });
+            
+
+        }
+        return nil;
+        
+    }];
+
+}
 - (void)locationManager:(CLLocationManager *)manager
     didUpdateToLocation:(CLLocation *)newLocation
            fromLocation:(CLLocation *)oldLocation
 {
-    [self.locationArray removeAllObjects];
-    [self.mainDelegate.locationData removeAllObjects];
+   
     MKCoordinateRegion region;
     MKCoordinateSpan span;
     span.latitudeDelta = 0.2;
@@ -177,58 +267,6 @@
                   [self.btnLocal setTitle:placemark.locality forState:UIControlStateNormal];
               }
      ];
-    
-    AWSDynamoDBObjectMapper *dynamoDBObjectMapper = [AWSDynamoDBObjectMapper defaultDynamoDBObjectMapper];
-    AWSDynamoDBScanExpression *scanExpression = [AWSDynamoDBScanExpression new];
-    AWSS3TransferManager *transferManager = [AWSS3TransferManager defaultS3TransferManager];
-    
-    [[dynamoDBObjectMapper scan:[Location class] expression:scanExpression] continueWithBlock:^id(AWSTask *task) {
-        if (task.result) {
-            AWSDynamoDBPaginatedOutput *paginatedOutput = task.result;
-            for (Location *location in paginatedOutput.items) {
-                CLLocation*exitingLocation=[[CLLocation alloc]initWithLatitude:location.latitude longitude:location.longitude];
-                CLLocationDistance distance=[exitingLocation distanceFromLocation:self.currentLocation];
-                distance=distance/1000.0;
-                NSString *downloadingFilePath = [NSTemporaryDirectory() stringByAppendingPathComponent:location.location_id];
-                NSURL *downloadingFileURL = [NSURL fileURLWithPath:downloadingFilePath];
-                if(distance<100.0 && [location.isDirty isEqualToString:@"true"])
-                {
-                    if(![self.locationArray containsObject:location])
-                        [self.locationArray addObject:location];
-                    AWSS3TransferManagerDownloadRequest *downloadRequest = [AWSS3TransferManagerDownloadRequest new];
-                    downloadRequest.bucket = @"cleanthecreeks";
-                    NSString * key=[location.location_id stringByAppendingString:@"a"];
-                    downloadRequest.key = key;
-                    downloadRequest.downloadingFileURL = downloadingFileURL;
-                    LocationAnnotation *annotation=[[LocationAnnotation alloc]init];
-                    annotation.coordinate = CLLocationCoordinate2DMake(location.latitude, location.longitude);
-                    
-                    annotation.title = location.location_name;
-                    annotation.subtitle = location.location_id;
-                    self.mainDelegate.locationData[location.location_id]=[UIImage imageNamed:@"PlaceIcon"];
-                    
-                    [[transferManager download:downloadRequest] continueWithExecutor:[AWSExecutor mainThreadExecutor] withBlock:^id(AWSTask *task2) {
-                        if (task2.result) {
-                            self.imageArray[key]=[UIImage imageWithContentsOfFile:downloadingFilePath];
-                            self.mainDelegate.locationData[location.location_id]=[UIImage imageWithContentsOfFile:downloadingFilePath];
-                            [self.locationTable reloadData];
-                        }
-                        dispatch_async(dispatch_get_main_queue(), ^{
-                            [self.mapView addAnnotation:annotation];
-                        });
-                        
-                        return nil;
-                    }];
-                    
-                }
-            }
-        }
-        dispatch_async(dispatch_get_main_queue(), ^{
-            [self.locationTable reloadData];
-        });
-        return nil;
-        
-    }];
 }
 
 - (MKAnnotationView *)mapView:(MKMapView *)mapView viewForAnnotation:(id<MKAnnotation>)annotation{

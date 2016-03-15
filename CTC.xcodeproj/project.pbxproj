@@ -697,8 +697,8 @@
 			isa = PBXNativeTarget;
 			buildConfigurationList = BD0603BC1C595D4700A2C3EC /* Build configuration list for PBXNativeTarget "CTC" */;
 			buildPhases = (
-				F014797FAA42CD4BD11E2E1B /* Check Pods Manifest.lock */,
 				BD0603961C595D4700A2C3EC /* Sources */,
+				F014797FAA42CD4BD11E2E1B /* Check Pods Manifest.lock */,
 				BD0603981C595D4700A2C3EC /* Resources */,
 				BD0603971C595D4700A2C3EC /* Frameworks */,
 				993B031DFA96827DF8D70BC4 /* Embed Pods Frameworks */,
@@ -1036,8 +1036,8 @@
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				CLANG_ENABLE_MODULES = YES;
-				CODE_SIGN_IDENTITY = "iPhone Developer: Eiji Kimura (VG6XFZ6ZNQ)";
-				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "iPhone Developer: Eiji Kimura (VG6XFZ6ZNQ)";
+				CODE_SIGN_IDENTITY = "iPhone Developer: Dan Carter (ZGN82PD75F)";
+				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "iPhone Developer: Dan Carter (ZGN82PD75F)";
 				FRAMEWORK_SEARCH_PATHS = (
 					"$(inherited)",
 					"$(PROJECT_DIR)",
@@ -1046,7 +1046,7 @@
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks";
 				PRODUCT_BUNDLE_IDENTIFIER = com.redcherry.CleantheCreeks;
 				PRODUCT_NAME = CTC;
-				PROVISIONING_PROFILE = "1f64d388-ea2b-48b7-b070-6e7958429a03";
+				PROVISIONING_PROFILE = "8e0ca78b-b0cc-46fc-9cc2-bcc1569a682b";
 				SWIFT_OBJC_BRIDGING_HEADER = "CleantheCreeks/Utils/Clean the Creek-Bridging-Header.h";
 				SWIFT_OPTIMIZATION_LEVEL = "-Onone";
 			};
@@ -1058,8 +1058,8 @@
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				CLANG_ENABLE_MODULES = YES;
-				CODE_SIGN_IDENTITY = "iPhone Developer: Eiji Kimura (VG6XFZ6ZNQ)";
-				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "iPhone Developer: Eiji Kimura (VG6XFZ6ZNQ)";
+				CODE_SIGN_IDENTITY = "iPhone Developer: Dan Carter (ZGN82PD75F)";
+				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "iPhone Developer: Dan Carter (ZGN82PD75F)";
 				FRAMEWORK_SEARCH_PATHS = (
 					"$(inherited)",
 					"$(PROJECT_DIR)",
@@ -1068,7 +1068,7 @@
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks";
 				PRODUCT_BUNDLE_IDENTIFIER = com.redcherry.CleantheCreeks;
 				PRODUCT_NAME = CTC;
-				PROVISIONING_PROFILE = "1f64d388-ea2b-48b7-b070-6e7958429a03";
+				PROVISIONING_PROFILE = "8e0ca78b-b0cc-46fc-9cc2-bcc1569a682b";
 				SWIFT_OBJC_BRIDGING_HEADER = "CleantheCreeks/Utils/Clean the Creek-Bridging-Header.h";
 			};
 			name = Release;

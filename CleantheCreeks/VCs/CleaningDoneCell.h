@@ -14,5 +14,7 @@
 @property (weak, nonatomic) IBOutlet UILabel *lblContent;
 @property (weak, nonatomic) IBOutlet UIButton *kudoCounter;
 @property (weak, nonatomic) IBOutlet UIButton *giveKudos;
+@property (weak, nonatomic) IBOutlet UIButton *btnKudos;
+@property (weak, nonatomic) IBOutlet UIButton *btnKudoCount;
 
 @end

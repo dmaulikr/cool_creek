@@ -12,7 +12,7 @@
 #import <AWSCore/AWSCore.h>
 #import <AWSDynamoDB/AWSDynamoDB.h>
 #import <AWSS3/AWSS3.h>
-
+#import "FacebookPostVC.h"
 @implementation PhotoDetailsVC
 
 -(void)viewWillAppear:(BOOL)animated
@@ -75,6 +75,13 @@
     
 }
 
+-(void) viewDidLoad
+{
+    [super viewDidLoad];
+    self.detailTable.estimatedRowHeight = 5.f;
+    self.detailTable.rowHeight = UITableViewAutomaticDimension;
+}
+
 - (void)locationManager:(CLLocationManager *)manager didUpdateToLocation:(CLLocation *)newLocation fromLocation:(CLLocation *)oldLocation
 {
     self.currentLocation=newLocation;
@@ -116,6 +123,21 @@
     return YES;
 }
 
+- (UITableViewCell*)parentCellFor:(UIView*)view
+{
+    if (!view)
+        return nil;
+    if ([view isMemberOfClass:[UITableViewCell class]])
+        return (UITableViewCell*)view;
+    return [self parentCellFor:view.superview];
+}
+
+-(void)textViewDidEndEditing:(UITextView *)textView
+{
+    [textView resignFirstResponder];
+    self.commentText=[textView text];
+}
+
 -(void) setSecondPhoto:(BOOL)set photo:(UIImage*)photo
 {
     self.secondPhototaken = set;
@@ -125,7 +147,8 @@
     [self.detailTable reloadData];
 }
 
-- (CGFloat)tableView:(UITableView *)tableView heightForRowAtIndexPath:(NSIndexPath *)indexPath
+
+- (CGFloat)tableView:(UITableView *)tableView estimatedHeightForRowAtIndexPath:(NSIndexPath *)indexPath
 {
     int height=0;
     if(indexPath.section==0)
@@ -154,30 +177,34 @@
         if(indexPath.row==0)
             height=5;
         else
-            height=self.view.frame.size.height*0.4;
+            height=50.f;
     }
     
     return height;
-}
 
+}
 - (NSInteger)tableView:(UITableView *)tableView numberOfRowsInSection:(NSInteger)section
 {
-    int count=0;
+    NSInteger count=0;
     if(section==0)
         count=2;
     else if(section==1)
     {
         if(self.secondPhototaken)
-            return 4;
+            count = 4;
         else
-            return 3;
+            count = 3;
     }
     else if(section==2)
     {
         if(self.location==nil)
-            return 2;
+            count = 2;
         else
-            return [self.location.comments count]+1;
+        {
+            count = 0;
+            if(self.location.comments!=nil)
+                count = [self.location.comments count]+1;
+        }
     }
     
     return count;
@@ -266,7 +293,10 @@
                 [((CommentCell*)cell).commentLabel setAttributedText:[self generateCommentString:commentUserName content:commentText]];
             }
             else
+            {
                 cell = (DetailCell*)[tableView dequeueReusableCellWithIdentifier:@"FourthDetailCell"];
+                ((DetailCell*)cell).commentText.delegate=self;
+            }
         }
         
     }
@@ -358,6 +388,27 @@
 
     }
 
+}
+
+- (void) prepareForSegue:(UIStoryboardSegue *)segue sender:(id)sender
+{
+    [super prepareForSegue:segue sender:sender];
+    FacebookPostVC* vc = (FacebookPostVC*)segue.destinationViewController;
+    if([segue.identifier isEqualToString:@"foundFBPost"])
+    {
+        vc.firstPhoto=[[UIImage alloc]init];
+        vc.firstPhoto=self.takenPhoto;
+        vc.secondPhoto=[[UIImage alloc]init];
+        vc.secondPhoto=[UIImage imageNamed:@"CleanMe"];
+    }
+    else if([segue.identifier isEqualToString:@"cleanedFBPost"])
+    {
+        vc.firstPhoto=[[UIImage alloc]init];
+        vc.firstPhoto=self.takenPhoto;
+        vc.secondPhoto=[[UIImage alloc]init];
+        vc.secondPhoto=self.cleanedPhoto;
+    }
+    
 }
 
 - (IBAction)prevPage:(id)sender {

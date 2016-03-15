@@ -2,12 +2,12 @@
   "images" : [
     {
       "idiom" : "universal",
-      "filename" : "facebook.png",
+      "filename" : "CleanMe.png",
       "scale" : "1x"
     },
     {
       "idiom" : "universal",
-      "filename" : "facebook-1.png",
+      "filename" : "CleanMe@2x.png",
       "scale" : "2x"
     },
     {

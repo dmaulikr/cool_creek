@@ -7,6 +7,10 @@
 #import "ProfileViewCell.h"
 #import "FollowVC.h"
 #import "AppDelegate.h"
+
+@interface ProfileVC()
+@property (nonatomic,strong) UIRefreshControl * refreshControl;
+@end
 @implementation ProfileVC
 
 - (id)init
@@ -27,8 +31,24 @@
     self.luser_location = [defaults objectForKey:@"user_location"];
     self.luser_about = [defaults objectForKey:@"user_about"];
     self.fb_username = [defaults objectForKey:@"username"];
-    
+    self.refreshControl = [[UIRefreshControl alloc]init];
+    [self.profileTable addSubview:self.refreshControl];
+    self.firstArray=[[NSMutableDictionary alloc] init];
+    self.secondArray=[[NSMutableDictionary alloc] init];
+    [self updateData];
+    [self.refreshControl addTarget:self action:@selector(updateData) forControlEvents:UIControlEventValueChanged];
     [self.profileTopBar setHeaderStyle:YES title:self.luser_name rightBtnHidden:NO];
+    
+    self.profileTable.estimatedRowHeight = 323.f;
+    self.profileTable.rowHeight = UITableViewAutomaticDimension;
+}
+
+-(void) viewWillAppear:(BOOL)animated
+{
+    [self.tabBarController.tabBar setHidden:NO];
+}
+-(void) updateData
+{
     AWSDynamoDBScanExpression *scanExpression = [AWSDynamoDBScanExpression new];
     scanExpression.filterExpression = @"cleaner_id = :val";
     self.dynamoDBObjectMapper = [AWSDynamoDBObjectMapper defaultDynamoDBObjectMapper];
@@ -51,29 +71,44 @@
                  if([location.isDirty isEqualToString:@"false"])
                  {
                      [self.locationArray addObject:location];
+                     NSString * url=[location.location_id stringByReplacingOccurrencesOfString:@"," withString:@"%2C"];
+                     NSString *firstPicture = [NSString stringWithFormat:@"https://s3-ap-northeast-1.amazonaws.com/cleanthecreeks/%@a", url];
+                     NSString *secondPicture = [NSString stringWithFormat:@"https://s3-ap-northeast-1.amazonaws.com/cleanthecreeks/%@b", url];
+                     NSLog(@"%@", firstPicture);
+                     dispatch_async(dispatch_get_global_queue(0,0), ^{
+                         NSData * data = [[NSData alloc] initWithContentsOfURL: [NSURL URLWithString: firstPicture]];
+                         if ( data !=nil )
+                         {                          // WARNING: is the cell still using the same data by this point??
+                             [self.firstArray setObject:[UIImage imageWithData: data] forKey:location.location_id];
+                             [self.profileTable reloadData];
+                         }
+                         
+                         
+                     });
+                     dispatch_async(dispatch_get_global_queue(0,0), ^{
+                         NSData * data2 = [[NSData alloc] initWithContentsOfURL: [NSURL URLWithString: secondPicture]];
+                         if ( data2 != nil )
+                         {
+                             // WARNING: is the cell still using the same data by this point??
+                             [self.secondArray setObject:[UIImage imageWithData: data2] forKey:location.location_id];
+                             [self.profileTable reloadData];
+                         }
+                     });
                      self.kudoCount+=location.kudos.count;
                  }
                  
              }
              dispatch_async(dispatch_get_main_queue(), ^{
                  [self.profileTable reloadData];
-                 
+                 [self.refreshControl endRefreshing];
              });
              
          }
          
          return nil;
      }];
-    
-    self.profileTable.estimatedRowHeight = 323.f;
-    self.profileTable.rowHeight = UITableViewAutomaticDimension;
-}
 
--(void) viewWillAppear:(BOOL)animated
-{
-    [self.tabBarController.tabBar setHidden:NO];
 }
-
 - (NSInteger)tableView:(UITableView *)tableView numberOfRowsInSection:(NSInteger)section{
     if(self.locationArray!=nil)
         return [self.locationArray count]+2;
@@ -117,7 +152,7 @@
         [cell.followersLabel addGestureRecognizer:followersTap];
         
         dispatch_async(dispatch_get_main_queue(), ^{
-            [self.appDelegate loadData];
+            
             [cell.user_following setText:[NSString stringWithFormat:@"%lu",(unsigned long)[self.appDelegate.followingArray count]]];
             [cell.user_follows setText:[NSString stringWithFormat:@"%lu",(unsigned long)[self.appDelegate.followersArray count]]];
             
@@ -184,42 +219,8 @@
         [dateFormatter setDateFormat:@"MMM dd, yyyy"];
         [cell.date setText:[dateFormatter stringFromDate:[NSDate dateWithTimeIntervalSince1970:location.cleaned_date]]];
         [cell.kudoCount setText:[[NSString alloc]initWithFormat:@"%ld",(long)location.kudos.count]];
-        
-        AWSS3TransferManagerDownloadRequest *downloadRequest = [AWSS3TransferManagerDownloadRequest new];
-        downloadRequest.bucket = @"cleanthecreeks";
-        NSString * key=[location.location_id stringByAppendingString:@"a"];
-        NSString *downloadingFilePath = [NSTemporaryDirectory() stringByAppendingPathComponent:key];
-        NSURL *downloadingFileURL = [NSURL fileURLWithPath:downloadingFilePath];
-        downloadRequest.key = key;
-        downloadRequest.downloadingFileURL = downloadingFileURL;
-        AWSS3TransferManager *transferManager = [AWSS3TransferManager defaultS3TransferManager];
-        dispatch_async(dispatch_get_global_queue(0,0), ^{
-            [[transferManager download:downloadRequest] continueWithExecutor:[AWSExecutor mainThreadExecutor] withBlock:^id(AWSTask *task2) {
-                if (task2.result) {
-                    
-                    [cell.beforePhoto setImage:[UIImage imageWithContentsOfFile:downloadingFilePath]];
-                }
-                return nil;
-            }];
-        });
-        
-        NSString * afterkey=[location.location_id stringByAppendingString:@"b"];
-        NSString * afterPath = [NSTemporaryDirectory() stringByAppendingPathComponent:afterkey];
-        NSURL * afterurl = [NSURL fileURLWithPath:afterPath];
-        AWSS3TransferManagerDownloadRequest *afterdownloadRequest = [AWSS3TransferManagerDownloadRequest new];
-        afterdownloadRequest.bucket = @"cleanthecreeks";
-        afterdownloadRequest.key = afterkey;
-        afterdownloadRequest.downloadingFileURL = afterurl;
-        AWSS3TransferManager *aftertransferManager = [AWSS3TransferManager defaultS3TransferManager];
-        dispatch_async(dispatch_get_global_queue(0,0), ^{
-            [[aftertransferManager download:afterdownloadRequest] continueWithExecutor:[AWSExecutor mainThreadExecutor] withBlock:^id(AWSTask *task2) {
-                if (task2.result) {
-                    [cell.afterPhoto setImage:[UIImage imageWithContentsOfFile:afterPath]];
-                    
-                }
-                return nil;
-            }];
-        });
+        [cell.beforePhoto setImage:[self.firstArray objectForKey:location.location_id]];
+        [cell.afterPhoto setImage:[self.secondArray objectForKey:location.location_id]];
         
     }
     if(!cell){

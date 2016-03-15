@@ -19,7 +19,7 @@
 
 @property (nonatomic, strong) NSString * activity_type;
 @property (nonatomic, strong) Location * activity_location;
-@property (nonatomic, strong) UIImage* activity_image;
+
 @property(nonatomic) int kudo_count;
 
 @end

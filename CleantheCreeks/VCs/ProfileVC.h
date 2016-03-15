@@ -22,6 +22,6 @@
 @property (strong,nonatomic) NSString *formattedCleansCount;
 @property (strong,nonatomic) AWSDynamoDBObjectMapper *dynamoDBObjectMapper;
 @property  NSInteger kudoCount;
-
+@property (strong,nonatomic) NSMutableDictionary*firstArray, *secondArray;
 @property (strong, nonatomic) AppDelegate * appDelegate;
 @end

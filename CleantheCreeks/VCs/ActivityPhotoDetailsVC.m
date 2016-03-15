@@ -68,6 +68,9 @@
 }
 - (void) viewDidLoad{
     [super viewDidLoad];
+    self.tv.estimatedRowHeight = 65.f;
+    self.tv.rowHeight = UITableViewAutomaticDimension;
+
     
 }
 

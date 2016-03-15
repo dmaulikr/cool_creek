@@ -6,18 +6,49 @@
 #import "Activity.h"
 #import "ActivityPhotoDetailsVC.h"
 #import <CoreLocation/CoreLocation.h>
+
+@interface ActivityVC()
+@property (nonatomic,strong) UIRefreshControl * refreshControl;
+@end
+
 @implementation ActivityVC
 
-- (void)viewDidLoad
+-(void) viewDidLoad
 {
     [super viewDidLoad];
+     self.displayItemCount=10;
     [self.profileTopBar setHeaderStyle:YES title:@"ACTIVITY" rightBtnHidden:YES];
+    // Do any additional setup after loading the view.
+    self.refreshControl = [[UIRefreshControl alloc]init];
+    [self.tv addSubview:self.refreshControl];
+    [self.refreshControl addTarget:self action:@selector(updateData) forControlEvents:UIControlEventValueChanged];
+    self.imageArray=[[NSMutableDictionary alloc]init];
+    [self updateData];
+    
+    
+    self.tv.estimatedRowHeight = 65.f;
+    self.tv.rowHeight = UITableViewAutomaticDimension;
 }
 
--(void) viewWillAppear:(BOOL)animated
+- (void)didReceiveMemoryWarning
 {
-    [super viewWillAppear:animated];
-    // Do any additional setup after loading the view.
+    [super didReceiveMemoryWarning];
+    // Dispose of any resources that can be recreated.
+}
+- (void) loadImage:(NSString*)activty
+{
+    NSString *userImageURL = [NSString stringWithFormat:@"https://graph.facebook.com/%@/picture?type=large", activty];
+    
+    NSData * data = [[NSData alloc] initWithContentsOfURL: [NSURL URLWithString: userImageURL]];
+    if ( data == nil )
+        return;
+    [self.imageArray setObject:[UIImage imageWithData: data] forKey:activty];
+    [self.tv reloadData];
+    
+}
+#pragma UITableView Delegate Implementation
+-(void) updateData
+{
     NSUserDefaults *defaults = [NSUserDefaults standardUserDefaults];
     NSString *user_id = [defaults objectForKey:@"user_id"];
     self.userArray=[[NSMutableDictionary alloc]init];
@@ -35,6 +66,10 @@
              for (User *user in paginatedOutput.items)
              {
                  [self.userArray setObject:user forKey:user.user_id];
+                 dispatch_async(dispatch_get_global_queue(0,0), ^{
+                 [self loadImage:user.user_id];
+                     
+                 });
                  
              }
              User * current_user = [self.userArray objectForKey:user_id];
@@ -43,6 +78,7 @@
              [[dynamoDBObjectMapper2 scan:[Location class] expression:scanExpression2] continueWithBlock:^id(AWSTask *task) {
                  if (task.result) {
                      AWSDynamoDBPaginatedOutput *paginatedOutput = task.result;
+                     
                      for(NSDictionary * item in current_user.followers)
                      {
                          NSString * follower_id=[item objectForKey:@"id"];
@@ -52,7 +88,7 @@
                          activity.activity_id = follower_id;
                          activity.activity_time=[following_date doubleValue];
                          activity.activity_type = @"follow";
-                        [self.activityArray addObject:activity];
+                         [self.activityArray addObject:activity];
                      }
                      for (Location *location in paginatedOutput.items) {
                          for(NSDictionary * iterator in current_user.followings)
@@ -67,7 +103,7 @@
                                  activity.activity_time=location.found_date;
                                  activity.activity_type = @"find";
                                  activity.activity_location = location;
-                                
+                                 
                                  [self.activityArray addObject:activity];
                              }
                              
@@ -80,7 +116,8 @@
                                  activity.activity_type = @"clean";
                                  activity.activity_location = location;
                                  activity.kudo_count=[location.kudos count];
-                                [self.activityArray addObject:activity];
+                                
+                                 [self.activityArray addObject:activity];
                              }
                          }
                          if([location.founder_id isEqualToString:user_id])
@@ -95,7 +132,9 @@
                                  activity.activity_time = [comment_date doubleValue];
                                  activity.activity_type = @"clean";
                                  activity.activity_location = location;
-                                                                 [self.activityArray addObject:activity];
+                                 
+                                 [self.activityArray addObject:activity];
+
                              }
                              
                          }
@@ -111,12 +150,12 @@
                                  activity.activity_id = kudo_person_id;
                                  activity.activity_time=[kudo_date doubleValue];
                                  activity.activity_type = @"kudo";
-                                
+                             
                                  [self.activityArray addObject:activity];
+
                              }
                          }
                          // Adding followings
-                         
                          
                      }
                      dispatch_async(dispatch_get_main_queue(), ^{
@@ -126,6 +165,8 @@
                              return first<second;
                          }];
                          [self.tv reloadData];
+                         [self.refreshControl endRefreshing];
+                         
                      });
                  }
                  
@@ -136,25 +177,13 @@
          }
          return nil;
      }];
-    
-    self.tv.estimatedRowHeight = 65.f;
-    self.tv.rowHeight = UITableViewAutomaticDimension;
-    
-    
+
 }
-
-
-- (void)didReceiveMemoryWarning
-{
-    [super didReceiveMemoryWarning];
-    // Dispose of any resources that can be recreated.
-}
-
-#pragma UITableView Delegate Implementation
-
 - (NSInteger)tableView:(UITableView *)tableView numberOfRowsInSection:(NSInteger)section{
     if(self.activityArray!=nil)
-        return [self.activityArray count];
+    {
+        return self.displayItemCount;
+    }   //return [self.activityArray count];
     return 0;
 }
 
@@ -167,7 +196,7 @@
         Activity * activity = [self.activityArray objectAtIndex:row];
         
         User * user=[self.userArray objectForKey:activity.activity_id];
-        NSString *userImageURL = [NSString stringWithFormat:@"https://graph.facebook.com/%@/picture?type=large", activity.activity_id];
+        
         
         if([activity.activity_type isEqualToString: @"clean"])
         {
@@ -176,47 +205,32 @@
             [((CleaningDoneCell*)cell).lblContent setAttributedText:[self generateString:user.user_name content:@" has finished cleaning " location:activity.activity_location.location_name]];
             [((CleaningDoneCell*)cell).activityHours setText:[self timeDifference:activity.activity_time]];
             [((CleaningDoneCell*)cell).kudoCounter setTitle:[[NSString alloc] initWithFormat:@"%d Kudos",activity.kudo_count] forState:UIControlStateNormal];
-            dispatch_async(dispatch_get_global_queue(0,0), ^{
-                NSData * data = [[NSData alloc] initWithContentsOfURL: [NSURL URLWithString: userImageURL]];
-                if ( data == nil )
-                    return;
-                // WARNING: is the cell still using the same data by this point??
-                
-                [((CleaningDoneCell*)cell).profileAvatar setImage: [UIImage imageWithData: data]];
-                
-            });
-            
+            [((CleaningDoneCell*)cell).profileAvatar setImage: [self.imageArray objectForKey:activity.activity_id]];
+            [((CleaningDoneCell*)cell).btnKudos addTarget:self action:@selector(kudoBtnClicked:) forControlEvents:UIControlEventTouchUpInside];
+              
         }
         else
         {
             cell = (CleaningCommentCell*)[tableView dequeueReusableCellWithIdentifier:@"CleaningCommentCell" forIndexPath:indexPath];
             if([activity.activity_type isEqualToString: @"find"])
             {
-                [((CleaningDoneCell*)cell).lblContent setAttributedText:[self generateString:user.user_name content:@" found a new dirty spot " location:activity.activity_location.location_name]];
+                [((CleaningCommentCell*)cell).lblContent setAttributedText:[self generateString:user.user_name content:@" found a new dirty spot " location:activity.activity_location.location_name]];
             }
             else if([activity.activity_type isEqualToString: @"comment"])
             {
-                [((CleaningDoneCell*)cell).lblContent setAttributedText:[self generateString:user.user_name content:@" commented on your clean up location " location:@""]];
+                [((CleaningCommentCell*)cell).lblContent setAttributedText:[self generateString:user.user_name content:@" commented on your clean up location " location:@""]];
             }
             else if([activity.activity_type isEqualToString: @"kudo"])
             {
-                [((CleaningDoneCell*)cell).lblContent setAttributedText:[self generateString:user.user_name content:@" gave you Kudos" location:@""]];
+                [((CleaningCommentCell*)cell).lblContent setAttributedText:[self generateString:user.user_name content:@" gave you Kudos" location:@""]];
             }
             else if([activity.activity_type isEqualToString: @"follow"])
             {
-                [((CleaningDoneCell*)cell).lblContent setAttributedText:[self generateString:user.user_name content:@" started follwing you" location:@""]];
+                [((CleaningCommentCell*)cell).lblContent setAttributedText:[self generateString:user.user_name content:@" started follwing you" location:@""]];
             }
             
-            [((CleaningDoneCell*)cell).activityHours setText:[self timeDifference:activity.activity_time]];
-            dispatch_async(dispatch_get_global_queue(0,0), ^{
-                NSData * data = [[NSData alloc] initWithContentsOfURL: [NSURL URLWithString: userImageURL]];
-                if ( data == nil )
-                    return;
-                // WARNING: is the cell still using the same data by this point??
-                
-                [((CleaningCommentCell*)cell).profileAvatar setImage: [UIImage imageWithData: data]];
-                
-            });
+            [((CleaningCommentCell*)cell).activityHours setText:[self timeDifference:activity.activity_time]];
+            [((CleaningCommentCell*)cell).profileAvatar setImage: [self.imageArray objectForKey:activity.activity_id]];
         }
     }
     if (cell == nil){
@@ -225,6 +239,29 @@
     return cell;
 }
 
+-(void)kudoBtnClicked:(UIButton*)sender
+{
+    self.selectedIndex=sender.tag;
+    Activity * activity=[self.activityArray objectAtIndex:_selectedIndex];
+    AWSDynamoDBObjectMapper *dynamoDBObjectMapper = [AWSDynamoDBObjectMapper defaultDynamoDBObjectMapper];
+    
+    [[dynamoDBObjectMapper save:self.location]
+     continueWithBlock:^id(AWSTask *task) {
+         if (task.error) {
+             NSLog(@"The request failed. Error: [%@]", task.error);
+         }
+         if (task.exception) {
+             NSLog(@"The request failed. Exception: [%@]", task.exception);
+         }
+         if (task.result) {
+             //Do something with the result.
+         }
+         return nil;
+     }];
+
+                  
+}
+              
 - (void)tableView:(UITableView *)tableView didSelectRowAtIndexPath:(NSIndexPath *)indexPath{
     if([self.activityArray count]>0)
     {

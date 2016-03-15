@@ -11,6 +11,8 @@
 @implementation FBSuccessVC
 -(void)viewDidLoad
 {
+    [super viewDidLoad];
+    [self.profileTopBar setHeaderStyle:YES title:@"LOCATION DETAILS" rightBtnHidden:YES];
     [self.tabBarController.tabBar setHidden:NO];
 }
 - (IBAction)showFBPost:(id)sender {
