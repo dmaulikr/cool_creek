@@ -44,9 +44,9 @@
     self.mainDelegate=(AppDelegate*)[[UIApplication sharedApplication]delegate];
     self.refreshControl = [[UIRefreshControl alloc]init];
     [self.locationTable addSubview:self.refreshControl];
-    self.displayItemCount=10;
+    self.displayItemCount=20;
     [self updateData];
-    self.locationTable.autoresizingMask =UIViewAutoresizingFlexibleBottomMargin| UIViewAutoresizingFlexibleTopMargin | UIViewAutoresizingFlexibleHeight;
+    //self.locationTable.autoresizingMask =UIViewAutoresizingFlexibleBottomMargin| UIViewAutoresizingFlexibleTopMargin | UIViewAutoresizingFlexibleHeight;
     [self.refreshControl addTarget:self action:@selector(updateData) forControlEvents:UIControlEventValueChanged];
     
 }
@@ -87,7 +87,7 @@
             cell.image.image=(UIImage*)(self.mainDelegate.locationData[location.location_id]);
         }
         cell.viewBtn.tag = indexPath.row;
-        cell.moreBtn.tag = indexPath.row;
+        cell.cleanBtn.tag = indexPath.row;
         
         [cell.viewBtn addTarget:self action:@selector(viewBtnClicked:) forControlEvents:UIControlEventTouchUpInside];
         [cell.cleanBtn addTarget:self action:@selector(cleanBtnClicked:) forControlEvents:UIControlEventTouchUpInside];
@@ -156,13 +156,13 @@
     [super prepareForSegue:segue sender:sender];
     if([self.locationArray count]>0)
     {
-        NSInteger * selectedPath = self.selectedIndex;
-        Location * location=[self.locationArray objectAtIndex:selectedPath];
+        
+        Location * location=[self.locationArray objectAtIndex:self.selectedIndex];
         if([segue.identifier isEqualToString:@"showLocationDetails"])
         {
             ActivityPhotoDetailsVC* vc = (ActivityPhotoDetailsVC*)segue.destinationViewController;
             vc.location = [[Location alloc]init];
-            NSLog(@"Item %d is selected",selectedPath);
+            
             vc.location = location;
             vc.beforePhoto=(UIImage*)(self.mainDelegate.locationData[location.location_id]);
             vc.cleaned=NO;

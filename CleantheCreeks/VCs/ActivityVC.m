@@ -22,7 +22,7 @@
     self.refreshControl = [[UIRefreshControl alloc]init];
     [self.tv addSubview:self.refreshControl];
     [self.refreshControl addTarget:self action:@selector(updateData) forControlEvents:UIControlEventValueChanged];
-    self.imageArray=[[NSMutableDictionary alloc]init];
+   
     [self updateData];
     
     
@@ -35,6 +35,8 @@
     [super didReceiveMemoryWarning];
     // Dispose of any resources that can be recreated.
 }
+
+
 - (void) loadImage:(NSString*)activty
 {
     NSString *userImageURL = [NSString stringWithFormat:@"https://graph.facebook.com/%@/picture?type=large", activty];
@@ -43,17 +45,20 @@
     if ( data == nil )
         return;
     [self.imageArray setObject:[UIImage imageWithData: data] forKey:activty];
+    CGPoint offset = CGPointMake(self.tv.contentOffset.x,self.tv.contentOffset.y);
     [self.tv reloadData];
+    [self.tv setContentOffset:offset];
     
 }
 #pragma UITableView Delegate Implementation
 -(void) updateData
 {
     NSUserDefaults *defaults = [NSUserDefaults standardUserDefaults];
-    NSString *user_id = [defaults objectForKey:@"user_id"];
+    NSString *user_id = [defaults objectForKey:@"user_id"]; //Current logged in user
     self.userArray=[[NSMutableDictionary alloc]init];
     
     self.activityArray=[[NSMutableArray alloc]init];
+    self.imageArray=[[NSMutableDictionary alloc]init];
     [self.userArray removeAllObjects];
     [self.activityArray removeAllObjects];
     AWSDynamoDBObjectMapper *dynamoDBObjectMapper = [AWSDynamoDBObjectMapper defaultDynamoDBObjectMapper];
@@ -67,11 +72,13 @@
              {
                  [self.userArray setObject:user forKey:user.user_id];
                  dispatch_async(dispatch_get_global_queue(0,0), ^{
-                 [self loadImage:user.user_id];
+                     [self loadImage:user.user_id];
+                     
                      
                  });
-                 
              }
+             if([self.userArray count]>0)
+             {
              User * current_user = [self.userArray objectForKey:user_id];
              AWSDynamoDBObjectMapper *dynamoDBObjectMapper2 = [AWSDynamoDBObjectMapper defaultDynamoDBObjectMapper];
              AWSDynamoDBScanExpression *scanExpression2 = [AWSDynamoDBScanExpression new];
@@ -107,19 +114,51 @@
                                  [self.activityArray addObject:activity];
                              }
                              
-                             //Adding clearners to the activity array
+                             //Adding following cleaners to the activity array
                              if([location.cleaner_id isEqualToString:person_id])
                              {
                                  Activity *activity=[[Activity alloc]init];
-                                 activity.activity_id = person_id;
+                                 activity.activity_id = location.cleaner_id;
                                  activity.activity_time=location.cleaned_date;
                                  activity.activity_type = @"clean";
                                  activity.activity_location = location;
                                  activity.kudo_count=[location.kudos count];
-                                
+                                 if(location.kudos!=nil)
+                                 {
+                                     for(NSDictionary *kudo_gaver in location.kudos)
+                                     {
+                                         if([[kudo_gaver objectForKey:@"id"] isEqualToString:user_id])
+                                         {
+                                             activity.kudo_assigned=YES;
+                                             break;
+                                         }
+                                     }
+                                 }
                                  [self.activityArray addObject:activity];
                              }
                          }
+                         if([location.founder_id isEqualToString:user_id])
+                         {
+                             Activity *activity=[[Activity alloc]init];
+                             activity.activity_id = location.cleaner_id;
+                             activity.activity_time=location.cleaned_date;
+                             activity.activity_type = @"clean";
+                             activity.activity_location = location;
+                             activity.kudo_count=[location.kudos count];
+                             if(location.kudos!=nil)
+                             {
+                                 for(NSDictionary *kudo_gaver in location.kudos)
+                                 {
+                                     if([[kudo_gaver objectForKey:@"id"] isEqualToString:user_id])
+                                     {
+                                         activity.kudo_assigned=YES;
+                                         break;
+                                     }
+                                 }
+                             }
+                             [self.activityArray addObject:activity];
+                         }
+
                          if([location.founder_id isEqualToString:user_id])
                          {
                              // Adding commenters
@@ -132,9 +171,7 @@
                                  activity.activity_time = [comment_date doubleValue];
                                  activity.activity_type = @"clean";
                                  activity.activity_location = location;
-                                 
                                  [self.activityArray addObject:activity];
-
                              }
                              
                          }
@@ -164,7 +201,9 @@
                              double second = ((Activity*)b).activity_time;
                              return first<second;
                          }];
+                         CGPoint offset = CGPointMake(self.tv.contentOffset.x,self.tv.contentOffset.y);
                          [self.tv reloadData];
+                         [self.tv setContentOffset:offset];
                          [self.refreshControl endRefreshing];
                          
                      });
@@ -172,7 +211,7 @@
                  
                  return nil;
              }];
-             
+             }
              
          }
          return nil;
@@ -182,8 +221,8 @@
 - (NSInteger)tableView:(UITableView *)tableView numberOfRowsInSection:(NSInteger)section{
     if(self.activityArray!=nil)
     {
-        return self.displayItemCount;
-    }   //return [self.activityArray count];
+        return [self.activityArray count];
+    }
     return 0;
 }
 
@@ -191,6 +230,7 @@
     
     NSInteger row = indexPath.row;
     UITableViewCell *cell;
+    
     if([self.activityArray count]>0)
     {
         Activity * activity = [self.activityArray objectAtIndex:row];
@@ -205,7 +245,13 @@
             [((CleaningDoneCell*)cell).lblContent setAttributedText:[self generateString:user.user_name content:@" has finished cleaning " location:activity.activity_location.location_name]];
             [((CleaningDoneCell*)cell).activityHours setText:[self timeDifference:activity.activity_time]];
             [((CleaningDoneCell*)cell).kudoCounter setTitle:[[NSString alloc] initWithFormat:@"%d Kudos",activity.kudo_count] forState:UIControlStateNormal];
-            [((CleaningDoneCell*)cell).profileAvatar setImage: [self.imageArray objectForKey:activity.activity_id]];
+            if([self.imageArray objectForKey:activity.activity_id]!=nil)
+                [((CleaningDoneCell*)cell).profileAvatar setImage: [self.imageArray objectForKey:activity.activity_id]];
+            if(activity.kudo_assigned)
+               [((CleaningDoneCell*)cell).btnKudos setTitle:@"You Gave Kudos" forState:UIControlStateNormal];
+            else
+                [((CleaningDoneCell*)cell).btnKudos setTitle:@"Give Kudos" forState:UIControlStateNormal];
+            ((CleaningDoneCell*)cell).btnKudos.tag = indexPath.row;
             [((CleaningDoneCell*)cell).btnKudos addTarget:self action:@selector(kudoBtnClicked:) forControlEvents:UIControlEventTouchUpInside];
               
         }
@@ -222,7 +268,7 @@
             }
             else if([activity.activity_type isEqualToString: @"kudo"])
             {
-                [((CleaningCommentCell*)cell).lblContent setAttributedText:[self generateString:user.user_name content:@" gave you Kudos" location:@""]];
+                [((CleaningCommentCell*)cell).lblContent setAttributedText:[self generateString:user.user_name content:@" gave you Kudos \n" location:@""]];
             }
             else if([activity.activity_type isEqualToString: @"follow"])
             {
@@ -230,7 +276,8 @@
             }
             
             [((CleaningCommentCell*)cell).activityHours setText:[self timeDifference:activity.activity_time]];
-            [((CleaningCommentCell*)cell).profileAvatar setImage: [self.imageArray objectForKey:activity.activity_id]];
+            if([self.imageArray objectForKey:activity.activity_id]!=nil)
+                [((CleaningCommentCell*)cell).profileAvatar setImage: [self.imageArray objectForKey:user.user_id]];
         }
     }
     if (cell == nil){
@@ -241,11 +288,52 @@
 
 -(void)kudoBtnClicked:(UIButton*)sender
 {
-    self.selectedIndex=sender.tag;
-    Activity * activity=[self.activityArray objectAtIndex:_selectedIndex];
-    AWSDynamoDBObjectMapper *dynamoDBObjectMapper = [AWSDynamoDBObjectMapper defaultDynamoDBObjectMapper];
+    NSUserDefaults *defaults = [NSUserDefaults standardUserDefaults];
+    NSString *user_id = [defaults objectForKey:@"user_id"];
+
+    if([self.activityArray count]>0)
+    {
+    Activity * activity=[self.activityArray objectAtIndex:sender.tag];
+    //Activity * newActivity=activity;
+    Location * location=activity.activity_location;
     
-    [[dynamoDBObjectMapper save:self.location]
+    NSMutableArray * kudoArray=[[NSMutableArray alloc] init];
+    if(location.kudos!=nil)
+        kudoArray=location.kudos;
+    NSMutableDictionary *kudoItem=[[NSMutableDictionary alloc]init];
+    [kudoItem setObject:user_id forKey:@"id"];
+    double date =[[NSDate date]timeIntervalSince1970];
+    NSString *dateString=[NSString stringWithFormat:@"%f",date];
+    [kudoItem setObject:dateString forKey:@"time"];
+
+    if(!activity.kudo_assigned)
+    {
+        [kudoArray addObject:kudoItem];
+    }
+    else
+    {
+        if(kudoArray!=nil)
+        {
+            for(NSDictionary *kudo_gaver in kudoArray)
+            {
+                if([[kudo_gaver objectForKey:@"id"] isEqualToString:user_id])
+                {
+                    [kudoArray removeObject:kudo_gaver];
+                    
+                }
+            }
+        }
+    }
+    if([kudoArray count]!=0)
+        location.kudos=[[NSMutableArray alloc] initWithArray:kudoArray];
+    else
+        location.kudos=nil;
+    //[self.activityArray replaceObjectAtIndex:_selectedIndex withObject:newActivity];
+    AWSDynamoDBObjectMapper *dynamoDBObjectMapper = [AWSDynamoDBObjectMapper defaultDynamoDBObjectMapper];
+    AWSDynamoDBObjectMapperConfiguration *updateMapperConfig = [AWSDynamoDBObjectMapperConfiguration new];
+    updateMapperConfig.saveBehavior = AWSDynamoDBObjectMapperSaveBehaviorUpdate;
+    
+    [[dynamoDBObjectMapper save:location configuration:updateMapperConfig]
      continueWithBlock:^id(AWSTask *task) {
          if (task.error) {
              NSLog(@"The request failed. Error: [%@]", task.error);
@@ -254,14 +342,14 @@
              NSLog(@"The request failed. Exception: [%@]", task.exception);
          }
          if (task.result) {
-             //Do something with the result.
+             [self updateData];
          }
          return nil;
      }];
-
-                  
+    }
+    
 }
-              
+
 - (void)tableView:(UITableView *)tableView didSelectRowAtIndexPath:(NSIndexPath *)indexPath{
     if([self.activityArray count]>0)
     {

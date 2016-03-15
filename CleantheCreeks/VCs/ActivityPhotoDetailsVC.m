@@ -189,7 +189,10 @@
         else if(indexPath.row==2)
         {
             cell = (DetailCell*)[tableView dequeueReusableCellWithIdentifier:@"SecondDetailCell"];
-            [((DetailCell*)cell).finderName setText:user_name];
+            if(self.location!=nil)
+                [((DetailCell*)cell).finderName setText:self.location.found_by];
+            else
+                [((DetailCell*)cell).finderName setText:user_name];
             NSDate* founddate=[[NSDate alloc]initWithTimeIntervalSince1970:self.location.found_date];
             [((DetailCell*)cell).foundDate setText:[dateFormatter stringFromDate:founddate]];
             
@@ -197,7 +200,10 @@
         else if(indexPath.row==3)
         {
             cell = (DetailCell*)[tableView dequeueReusableCellWithIdentifier:@"ThirdDetailCell"];
-            [((DetailCell*)cell).cleanerName setText:user_name];
+            if(self.cleaned)
+                [((DetailCell*)cell).cleanerName setText:self.location.cleaner_name];
+            else
+                [((DetailCell*)cell).cleanerName setText:user_name];
             NSDate* founddate=[[NSDate alloc]initWithTimeIntervalSince1970:self.location.cleaned_date];
             [((DetailCell*)cell).foundDate setText:[dateFormatter stringFromDate:founddate]];
 

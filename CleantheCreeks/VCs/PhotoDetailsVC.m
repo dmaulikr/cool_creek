@@ -262,7 +262,10 @@
         else if(indexPath.row==2)
         {
             cell = (DetailCell*)[tableView dequeueReusableCellWithIdentifier:@"SecondDetailCell"];
-            [((DetailCell*)cell).finderName setText:user_name];
+            if(self.location!=nil)
+                [((DetailCell*)cell).finderName setText:self.location.found_by];
+            else
+                [((DetailCell*)cell).finderName setText:user_name];
             NSDate* founddate=[[NSDate alloc]initWithTimeIntervalSince1970:self.foundDate];
             [((DetailCell*)cell).foundDate setText:[dateFormatter stringFromDate:founddate]];
            
@@ -492,8 +495,13 @@
     uploadRequest.body = dirtyURL;
     uploadRequest.bucket = @"cleanthecreeks";
     uploadRequest.contentType = @"image/png";
-    uploadRequest.key = [NSString stringWithFormat:@"%f,%fa",
+    if(self.location==nil)
+         uploadRequest.key = [NSString stringWithFormat:@"%f,%fa",
                          self.currentLocation.coordinate.latitude, self.currentLocation.coordinate.longitude];
+    else
+        uploadRequest.key = [NSString stringWithFormat:@"%f,%fa",
+                             self.location.latitude, self.location.longitude];
+
     [[transferManager upload:uploadRequest] continueWithExecutor:[AWSExecutor mainThreadExecutor] withBlock:^id(AWSTask *task) {
         if (task.error) {
             if ([task.error.domain isEqualToString:AWSS3TransferManagerErrorDomain]) {
@@ -521,12 +529,15 @@
     if(self.secondPhototaken)
     {
         AWSS3TransferManagerUploadRequest *seconduploadRequest = [AWSS3TransferManagerUploadRequest new];
-        seconduploadRequest.body = dirtyURL;
         seconduploadRequest.bucket = @"cleanthecreeks";
         seconduploadRequest.contentType = @"image/png";
         seconduploadRequest.body = cleanURL;
-        seconduploadRequest.key = [NSString stringWithFormat:@"%f,%fb",
-                             self.currentLocation.coordinate.latitude, self.currentLocation.coordinate.longitude];
+        if(self.location==nil)
+            seconduploadRequest.key = [NSString stringWithFormat:@"%f,%fb",
+                                 self.currentLocation.coordinate.latitude, self.currentLocation.coordinate.longitude];
+        else
+            seconduploadRequest.key = [NSString stringWithFormat:@"%f,%fb",
+                                 self.location.latitude, self.location.longitude];
         [[transferManager upload:seconduploadRequest] continueWithExecutor:[AWSExecutor mainThreadExecutor] withBlock:^id(AWSTask *task) {
             if (task.error) {
                 if ([task.error.domain isEqualToString:AWSS3TransferManagerErrorDomain]) {

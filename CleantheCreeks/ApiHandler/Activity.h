@@ -21,6 +21,6 @@
 @property (nonatomic, strong) Location * activity_location;
 
 @property(nonatomic) int kudo_count;
-
+@property(nonatomic) bool kudo_assigned;
 @end
 #endif /* Activity_h */
