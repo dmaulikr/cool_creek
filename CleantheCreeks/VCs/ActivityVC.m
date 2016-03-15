@@ -22,9 +22,7 @@
     self.refreshControl = [[UIRefreshControl alloc]init];
     [self.tv addSubview:self.refreshControl];
     [self.refreshControl addTarget:self action:@selector(updateData) forControlEvents:UIControlEventValueChanged];
-   
     [self updateData];
-    
     
     self.tv.estimatedRowHeight = 65.f;
     self.tv.rowHeight = UITableViewAutomaticDimension;

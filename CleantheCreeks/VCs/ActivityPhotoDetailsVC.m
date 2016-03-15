@@ -204,8 +204,8 @@
                 [((DetailCell*)cell).cleanerName setText:self.location.cleaner_name];
             else
                 [((DetailCell*)cell).cleanerName setText:user_name];
-            NSDate* founddate=[[NSDate alloc]initWithTimeIntervalSince1970:self.location.cleaned_date];
-            [((DetailCell*)cell).foundDate setText:[dateFormatter stringFromDate:founddate]];
+            NSDate* cleanedDate=[[NSDate alloc]initWithTimeIntervalSince1970:self.location.cleaned_date];
+            [((DetailCell*)cell).cleanedDate setText:[dateFormatter stringFromDate:cleanedDate]];
 
         }
         
