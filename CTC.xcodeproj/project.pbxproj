@@ -37,6 +37,7 @@
 		095F77783019A58BBD9134E1 /* libPods.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 4656214352E34CC700C152CD /* libPods.a */; };
 		3C2874B01C88E2E200725B40 /* Activity.m in Sources */ = {isa = PBXBuildFile; fileRef = 3C2874AF1C88E2E200725B40 /* Activity.m */; };
 		3C2874B31C88EC9800725B40 /* FollowVC.m in Sources */ = {isa = PBXBuildFile; fileRef = 3C2874B21C88EC9800725B40 /* FollowVC.m */; };
+		3C324E561C9C8E2400EFBEC4 /* LocationBarCell.m in Sources */ = {isa = PBXBuildFile; fileRef = 3C324E551C9C8E2400EFBEC4 /* LocationBarCell.m */; };
 		3C75ACA11C9063750054AA3F /* CommentCell.m in Sources */ = {isa = PBXBuildFile; fileRef = 3C75ACA01C9063750054AA3F /* CommentCell.m */; };
 		3CA250EF1C843D32004BB466 /* User.m in Sources */ = {isa = PBXBuildFile; fileRef = 3CA250EE1C843D32004BB466 /* User.m */; };
 		3CA8D7D61C8CA60A00838FDC /* LocationPhotoCell.m in Sources */ = {isa = PBXBuildFile; fileRef = 3CA8D7D51C8CA60A00838FDC /* LocationPhotoCell.m */; };
@@ -137,6 +138,8 @@
 		3C2874AF1C88E2E200725B40 /* Activity.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = Activity.m; sourceTree = "<group>"; };
 		3C2874B11C88EC9800725B40 /* FollowVC.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = FollowVC.h; sourceTree = "<group>"; };
 		3C2874B21C88EC9800725B40 /* FollowVC.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = FollowVC.m; sourceTree = "<group>"; };
+		3C324E541C9C8E2400EFBEC4 /* LocationBarCell.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = LocationBarCell.h; sourceTree = "<group>"; };
+		3C324E551C9C8E2400EFBEC4 /* LocationBarCell.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = LocationBarCell.m; sourceTree = "<group>"; };
 		3C75AC9F1C9063750054AA3F /* CommentCell.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = CommentCell.h; sourceTree = "<group>"; };
 		3C75ACA01C9063750054AA3F /* CommentCell.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = CommentCell.m; sourceTree = "<group>"; };
 		3CA250EE1C843D32004BB466 /* User.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = User.m; sourceTree = "<group>"; };
@@ -345,6 +348,24 @@
 			name = FollowVC;
 			sourceTree = "<group>";
 		};
+		3C324E531C9C665500EFBEC4 /* BaseVC */ = {
+			isa = PBXGroup;
+			children = (
+				0044B7CA1C7D9C6B000BB837 /* BaseVC.h */,
+				0044B7CB1C7D9C6B000BB837 /* BaseVC.m */,
+			);
+			name = BaseVC;
+			sourceTree = "<group>";
+		};
+		3C324E571C9C8E2B00EFBEC4 /* LocationBarCell */ = {
+			isa = PBXGroup;
+			children = (
+				3C324E541C9C8E2400EFBEC4 /* LocationBarCell.h */,
+				3C324E551C9C8E2400EFBEC4 /* LocationBarCell.m */,
+			);
+			name = LocationBarCell;
+			sourceTree = "<group>";
+		};
 		3C75ACA21C90637C0054AA3F /* CommentCell */ = {
 			isa = PBXGroup;
 			children = (
@@ -354,12 +375,22 @@
 			name = CommentCell;
 			sourceTree = "<group>";
 		};
+		3C8CA2401C9FEA2C004D7B48 /* KudosVC */ = {
+			isa = PBXGroup;
+			children = (
+				0084F4251C7B14A600E111D0 /* KudosVC.h */,
+				0084F4261C7B14A600E111D0 /* KudosVC.m */,
+			);
+			name = KudosVC;
+			sourceTree = "<group>";
+		};
 		3CA8D7D31C8CA5CB00838FDC /* ActivityPhotoDetails */ = {
 			isa = PBXGroup;
 			children = (
 				0084F42C1C7B1C8500E111D0 /* ActivityPhotoDetailsVC.h */,
 				0084F42D1C7B1C8500E111D0 /* ActivityPhotoDetailsVC.m */,
 				3CA8D7D71C8CA61800838FDC /* LocationPhotoCell */,
+				3C324E571C9C8E2B00EFBEC4 /* LocationBarCell */,
 			);
 			name = ActivityPhotoDetails;
 			sourceTree = "<group>";
@@ -610,8 +641,7 @@
 				E2FD05741C59E277004B2C34 /* SplashVC */,
 				E2FD05731C59E269004B2C34 /* SlideVC */,
 				E2149DF71C7577C70005D50A /* FacebookPostVC */,
-				0044B7CA1C7D9C6B000BB837 /* BaseVC.h */,
-				0044B7CB1C7D9C6B000BB837 /* BaseVC.m */,
+				3C324E531C9C665500EFBEC4 /* BaseVC */,
 				3C2874B41C88EC9D00725B40 /* FollowVC */,
 			);
 			path = VCs;
@@ -662,8 +692,7 @@
 				0084F3E61C7AB95B00E111D0 /* CleaningCommentCell */,
 				E2FD05831C59E548004B2C34 /* ActivityVC.h */,
 				E2FD05841C59E548004B2C34 /* ActivityVC.m */,
-				0084F4251C7B14A600E111D0 /* KudosVC.h */,
-				0084F4261C7B14A600E111D0 /* KudosVC.m */,
+				3C8CA2401C9FEA2C004D7B48 /* KudosVC */,
 				3CA8D7D31C8CA5CB00838FDC /* ActivityPhotoDetails */,
 			);
 			name = ActivityVC;
@@ -883,6 +912,7 @@
 				E2FD058B1C59E5D8004B2C34 /* MainTabNav.m in Sources */,
 				E2F36ECE1C5AFFE700923DF0 /* IntroControll.m in Sources */,
 				0084F3F41C7AFBD300E111D0 /* CCUtils.swift in Sources */,
+				3C324E561C9C8E2400EFBEC4 /* LocationBarCell.m in Sources */,
 				3CE5EB1F1C84F8310068DF59 /* ProfileViewCell.m in Sources */,
 				E2D1034F1C6528EB00FD67A0 /* locationCell.m in Sources */,
 				E2FD05771C59E354004B2C34 /* SplashVC.m in Sources */,

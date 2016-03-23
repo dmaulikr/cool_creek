@@ -10,6 +10,7 @@ PODS:
     - AWSCore (= 2.3.5)
   - AWSSNS (2.3.5):
     - AWSCore (= 2.3.5)
+  - SlackTextViewController (1.9.1)
 
 DEPENDENCIES:
   - AWSCognito
@@ -18,6 +19,7 @@ DEPENDENCIES:
   - AWSMobileAnalytics
   - AWSS3
   - AWSSNS
+  - SlackTextViewController
 
 SPEC CHECKSUMS:
   AWSCognito: f12700b4781897b2913544b36d6283f04ae72a44
@@ -26,5 +28,6 @@ SPEC CHECKSUMS:
   AWSMobileAnalytics: 6bfd7ef10008c936746ca1a96d0b72e9a543e166
   AWSS3: 967f4ad3c91f1ed2c9dca09a9dcf905111232a87
   AWSSNS: d95b17f039776ec0dd9cd9237313779d174b0215
+  SlackTextViewController: 6b0d1030c53937226fc5358f217af2a34fc211cf
 
 COCOAPODS: 0.39.0

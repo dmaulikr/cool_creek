@@ -16,8 +16,6 @@
     self = [super initWithAnnotation:annotation reuseIdentifier:reuseIdentifier];
     AppDelegate *mainDelegate = (AppDelegate *)[[UIApplication sharedApplication]delegate];
     if (self) {
-        LocationAnnotation *locAnnotation = self.annotation;
-        
          if([mainDelegate.locationData objectForKey:annotation.subtitle])
              self.image = [PhotoDetailsVC scaleImage:mainDelegate.locationData[annotation.subtitle] toSize:CGSizeMake(50.0,50.0)];
     }

@@ -14,7 +14,6 @@
     
     NSUserDefaults *defaults = [NSUserDefaults standardUserDefaults];
     NSString *user_id = [defaults objectForKey:@"user_id"];
-    NSString *user_name = [defaults objectForKey:@"user_name"];
     if(user_id!=nil)
     {
         [NSTimer scheduledTimerWithTimeInterval:3 target:self selector:@selector(moveToMainNav) userInfo:nil repeats:false];

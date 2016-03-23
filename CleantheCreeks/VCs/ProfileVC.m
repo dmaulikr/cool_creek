@@ -35,6 +35,7 @@
     [self.profileTable addSubview:self.refreshControl];
     self.firstArray=[[NSMutableDictionary alloc] init];
     self.secondArray=[[NSMutableDictionary alloc] init];
+    [self.refreshControl beginRefreshing];
     [self updateData];
     [self.refreshControl addTarget:self action:@selector(updateData) forControlEvents:UIControlEventValueChanged];
     [self.profileTopBar setHeaderStyle:YES title:self.luser_name rightBtnHidden:NO];
@@ -74,12 +75,13 @@
                      NSString * url=[location.location_id stringByReplacingOccurrencesOfString:@"," withString:@"%2C"];
                      NSString *firstPicture = [NSString stringWithFormat:@"https://s3-ap-northeast-1.amazonaws.com/cleanthecreeks/%@a", url];
                      NSString *secondPicture = [NSString stringWithFormat:@"https://s3-ap-northeast-1.amazonaws.com/cleanthecreeks/%@b", url];
-                     NSLog(@"%@", firstPicture);
+                    
                      dispatch_async(dispatch_get_global_queue(0,0), ^{
                          NSData * data = [[NSData alloc] initWithContentsOfURL: [NSURL URLWithString: firstPicture]];
                          if ( data !=nil )
                          {                          // WARNING: is the cell still using the same data by this point??
                              [self.firstArray setObject:[UIImage imageWithData: data] forKey:location.location_id];
+                             
                              [self.profileTable reloadData];
                          }
                          
@@ -132,7 +134,6 @@
             NSData * data = [[NSData alloc] initWithContentsOfURL: [NSURL URLWithString: userImageURL]];
             if ( data == nil )
                 return;
-            // WARNING: is the cell still using the same data by this point??
             [cell.userPhoto setImage:[UIImage imageWithData: data]];
         });
         
@@ -152,13 +153,11 @@
         [cell.followersLabel addGestureRecognizer:followersTap];
         
         dispatch_async(dispatch_get_main_queue(), ^{
-            
+            [self.appDelegate loadData];
             [cell.user_following setText:[NSString stringWithFormat:@"%lu",(unsigned long)[self.appDelegate.followingArray count]]];
             [cell.user_follows setText:[NSString stringWithFormat:@"%lu",(unsigned long)[self.appDelegate.followersArray count]]];
             
         });
-        NSLog(@"%@, %@, %@, %@", self.luser_name, self.luser_about, self.luser_location, self.luser_email);
-        
     }
     else if(indexPath.row==1)
     {
@@ -261,7 +260,6 @@
     if([segue.identifier isEqual:@"showFollowing"])
     {
         followVC.displayIndex=0;
-        
         [followVC.followSegment setSelectedSegmentIndex:0];
     }
     else if([segue.identifier isEqual:@"showFollowers"])

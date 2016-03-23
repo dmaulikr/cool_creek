@@ -5,4 +5,4 @@ pod 'AWSMobileAnalytics'
 pod 'AWSS3'
 pod 'AWSSNS'
 pod 'AWSCognito'
-
+pod "SlackTextViewController"

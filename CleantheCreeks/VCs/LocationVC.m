@@ -45,6 +45,7 @@
     self.refreshControl = [[UIRefreshControl alloc]init];
     [self.locationTable addSubview:self.refreshControl];
     self.displayItemCount=20;
+    [self.refreshControl beginRefreshing];
     [self updateData];
     //self.locationTable.autoresizingMask =UIViewAutoresizingFlexibleBottomMargin| UIViewAutoresizingFlexibleTopMargin | UIViewAutoresizingFlexibleHeight;
     [self.refreshControl addTarget:self action:@selector(updateData) forControlEvents:UIControlEventValueChanged];
@@ -182,8 +183,8 @@
 #pragma CLLocationDelegate
 - (void) updateData
 {
-    [self.locationArray removeAllObjects];
-    [self.mainDelegate.locationData removeAllObjects];
+    self.locationArray=[[NSMutableArray alloc]init];
+    self.mainDelegate.locationData=[[NSMutableDictionary alloc] init];
     AWSDynamoDBObjectMapper *dynamoDBObjectMapper = [AWSDynamoDBObjectMapper defaultDynamoDBObjectMapper];
     AWSDynamoDBScanExpression *scanExpression = [AWSDynamoDBScanExpression new];
     scanExpression.filterExpression = @"isDirty = :val";
@@ -229,7 +230,15 @@
                 
             }
             dispatch_async(dispatch_get_main_queue(), ^{
-                
+            
+                    self.locationArray = (NSMutableArray*)[self.locationArray sortedArrayUsingComparator:^NSComparisonResult(id a, id b) {
+                        CLLocation*locationA=[[CLLocation alloc]initWithLatitude:((Location*)a).latitude longitude:((Location*)a).longitude];
+                        CLLocationDistance distanceA=[locationA distanceFromLocation:self.currentLocation];
+                        
+                        CLLocation*locationB=[[CLLocation alloc]initWithLatitude:((Location*)b).latitude longitude:((Location*)b).longitude];
+                        CLLocationDistance distanceB=[locationB distanceFromLocation:self.currentLocation];
+                        return distanceA>distanceB;
+                    }];
                 [self.locationTable reloadData];
                 [self.refreshControl endRefreshing];
                 [self.spinner stopAnimating];

@@ -59,7 +59,6 @@
         [mapLabel setAttributedTitle:commentString forState:UIControlStateNormal];
         mapLabel.frame=CGRectMake(0, 0, frame.size.width*0.8, frame.size.width*0.15);
 
-        CGSize s3 = mapLabel.frame.size;
         [mapLabel setCenter:CGPointMake(frame.size.width/2,frame.size.height*0.8)];
         [self addSubview:mapLabel];
     }

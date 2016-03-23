@@ -50,9 +50,6 @@
     CGFloat firstHeight = CGImageGetHeight(firstImageRef);
     
     // get size of the second image
-    CGImageRef secondImageRef = second.CGImage;
-    CGFloat secondWidth = CGImageGetWidth(secondImageRef);
-    CGFloat secondHeight = CGImageGetHeight(secondImageRef);
     
     CGFloat size=MIN(firstWidth, firstHeight);
     // build merged size
@@ -90,8 +87,7 @@
      
      // Apply supplied opacity if applicable
      [image drawInRect:CGRectMake(0,0,newSize.width,newSize.height) blendMode:kCGBlendModeNormal alpha:0.8];*/
-    UIImage *newImage = UIGraphicsGetImageFromCurrentImageContext();
-    UIGraphicsEndImageContext();
+
     
     if([SLComposeViewController isAvailableForServiceType:SLServiceTypeFacebook]) //check if Facebook Account is linked
     {

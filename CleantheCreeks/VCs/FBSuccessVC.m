@@ -16,10 +16,10 @@
     [self.tabBarController.tabBar setHidden:NO];
 }
 - (IBAction)showFBPost:(id)sender {
-    NSUserDefaults *defaults = [NSUserDefaults standardUserDefaults];
-    NSString *user_id = [defaults objectForKey:@"user_id"];
+   // NSUserDefaults *defaults = [NSUserDefaults standardUserDefaults];
+    //NSString *user_id = [defaults objectForKey:@"user_id"];
     NSString *fb_base = @"fb://profile/";
-    NSString *fb_url = [fb_base stringByAppendingString:user_id];
+    //NSString *fb_url = [fb_base stringByAppendingString:user_id];
     NSURL *url = [NSURL URLWithString:fb_base];
     [[UIApplication sharedApplication] openURL:url];
 }

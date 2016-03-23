@@ -16,5 +16,6 @@
 @property (nonatomic) int displayIndex;
 @property (strong, nonatomic) AppDelegate * appDelegate;
 - (IBAction)followingChange:(id)sender;
-
+@property (strong,nonatomic) NSUserDefaults *defaults;
+@property (strong, nonatomic) NSString * current_user_id;
 @end

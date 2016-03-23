@@ -14,5 +14,5 @@
 @property (nonatomic, weak) ProfileTopBarVC* profileTopBar;
 
 - (void)dismissVC;
-
+@property(strong,nonatomic) NSString * current_user_id;
 @end

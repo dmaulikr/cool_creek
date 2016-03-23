@@ -14,6 +14,7 @@
 #import <AWSS3/AWSS3.h>
 #import "DetailCell.h"
 #import "LocationPhotoCell.h"
+#import "LocationBarCell.h"
 @implementation ActivityPhotoDetailsVC
 
 -(void) viewWillAppear:(BOOL)animated
@@ -48,7 +49,7 @@
         secondRequest.key = beforeKey;
         secondRequest.downloadingFileURL = downloadingFileURL;
         [[transferManager download:secondRequest] continueWithExecutor:[AWSExecutor mainThreadExecutor] withBlock:^id(AWSTask *task2) {
-        
+            
             if (task2.result) {
                 self.afterPhoto =[[UIImage alloc]init];
                 self.afterPhoto = [UIImage imageWithContentsOfFile:downloadingFilePath];
@@ -66,28 +67,20 @@
     });
     [self.profileTopBar setHeaderStyle:NO title:self.location.location_name rightBtnHidden:YES];
 }
+
 - (void) viewDidLoad{
     [super viewDidLoad];
     self.tv.estimatedRowHeight = 65.f;
     self.tv.rowHeight = UITableViewAutomaticDimension;
-
-    
 }
 
 - (void)leftBtnTopBarTapped:(UIButton *)sender topBar:(id)topBar{
-   [self dismissVC];
+    [self dismissVC];
 }
 
 - (void)rightBtnTopBarTapped:(UIButton *)sender topBar:(id)topBar{
     
 }
-
--(BOOL) textFieldShouldReturn:(UITextField *)textField{
-    
-    [textField resignFirstResponder];
-    return NO;
-}
-
 
 - (CGFloat)tableView:(UITableView *)tableView heightForRowAtIndexPath:(NSIndexPath *)indexPath
 {
@@ -128,6 +121,7 @@
 {
     return 3;
 }
+
 - (NSInteger)tableView:(UITableView *)tableView numberOfRowsInSection:(NSInteger)section
 {
     int count=0;
@@ -162,10 +156,24 @@
             if(self.cleaned)
                 [((LocationPhotoCell*)cell).secondPhoto setImage:self.afterPhoto];
         }
-
+        
         else if(indexPath.row==1)
         {
-            cell = (LocationPhotoCell*)[tableView dequeueReusableCellWithIdentifier:@"BarCell"];
+            cell = (LocationBarCell*)[tableView dequeueReusableCellWithIdentifier:@"BarCell"];
+            if(self.cleaned)
+            {
+                [((LocationBarCell*)cell).btnLike setImage:[UIImage imageNamed:@"IconKudos4"] forState:UIControlStateNormal];
+                [((LocationBarCell*)cell).btnLike setImage:[UIImage imageNamed:@"IconKudos5"] forState:UIControlStateSelected];
+                ((LocationBarCell*)cell).btnLike.selected=self.isKudoed;
+                [((LocationBarCell*)cell).btnLike addTarget:self action:@selector(kudoButtonClicked:) forControlEvents:UIControlEventTouchUpInside];
+            }
+            else
+            {
+                ((LocationBarCell*)cell).btnLike.hidden=YES;
+                ((LocationBarCell*)cell).kudoLeadingConst.constant = 0;
+                ((LocationBarCell*)cell).commentLeadingConst.constant = 0;
+                
+            }
         }
     }
     else if(indexPath.section==1)
@@ -177,7 +185,9 @@
         [dateFormatter setDateFormat:@"MMM dd, yyyy"];
         
         if(indexPath.row==0)
+        {
             cell = [tableView dequeueReusableCellWithIdentifier:@"FirstBar"];
+        }
         else if(indexPath.row==1)
         {
             cell = (DetailCell*)[tableView dequeueReusableCellWithIdentifier:@"FirstDetailCell"];
@@ -206,7 +216,7 @@
                 [((DetailCell*)cell).cleanerName setText:user_name];
             NSDate* cleanedDate=[[NSDate alloc]initWithTimeIntervalSince1970:self.location.cleaned_date];
             [((DetailCell*)cell).cleanedDate setText:[dateFormatter stringFromDate:cleanedDate]];
-
+            
         }
         
     }
@@ -234,11 +244,9 @@
     return title;
 }
 
-- (BOOL)textField:(UITextField *)textField shouldChangeCharactersInRange:(NSRange)range replacementString:(NSString *)string
+-(void) kudoButtonClicked:(UIButton*)sender
 {
-    NSString *stringToSave = [textField.text stringByReplacingCharactersInRange:range withString:string];
-  //  self./commentText=stringToSave;
-    
-    return YES;
+    sender.selected=!sender.selected;
+    [self.delegate giveKudoWithLocation:self.location assigned:sender.selected];
 }
 @end
