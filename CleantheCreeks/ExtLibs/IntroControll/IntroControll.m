@@ -11,15 +11,15 @@
         //Initial Background images
         
         self.backgroundColor = [UIColor blackColor];
-        backgroundImage1 = [[UIImageView alloc] initWithFrame:frame];
-        [backgroundImage1 setContentMode:UIViewContentModeScaleAspectFill];
-        [backgroundImage1 setAutoresizingMask:UIViewAutoresizingFlexibleHeight | UIViewAutoresizingFlexibleWidth];
-        [self addSubview:backgroundImage1];
+        self.backgroundImage1 = [[UIImageView alloc] initWithFrame:frame];
+        [_backgroundImage1 setContentMode:UIViewContentModeScaleAspectFill];
+        [_backgroundImage1 setAutoresizingMask:UIViewAutoresizingFlexibleHeight | UIViewAutoresizingFlexibleWidth];
+        [self addSubview:_backgroundImage1];
 
-        backgroundImage2 = [[UIImageView alloc] initWithFrame:frame];
-        [backgroundImage2 setContentMode:UIViewContentModeScaleAspectFill];
-        [backgroundImage2 setAutoresizingMask:UIViewAutoresizingFlexibleHeight | UIViewAutoresizingFlexibleWidth];
-        [self addSubview:backgroundImage2];
+        _backgroundImage2 = [[UIImageView alloc] initWithFrame:frame];
+        [_backgroundImage2 setContentMode:UIViewContentModeScaleAspectFill];
+        [_backgroundImage2 setAutoresizingMask:UIViewAutoresizingFlexibleHeight | UIViewAutoresizingFlexibleWidth];
+        [self addSubview:_backgroundImage2];
         
         //Initial shadow
         UIImageView *shadowImageView = [[UIImageView alloc] initWithImage:[UIImage imageNamed:@"shadow.png"]];
@@ -28,42 +28,42 @@
         //[self addSubview:shadowImageView];
         
         //Initial ScrollView
-        scrollView = [[UIScrollView alloc] initWithFrame:self.frame];
-        scrollView.backgroundColor = [UIColor clearColor];
-        scrollView.pagingEnabled = YES;
-        scrollView.showsHorizontalScrollIndicator = NO;
-        scrollView.showsVerticalScrollIndicator = NO;
-        scrollView.delegate = self;
-        [self addSubview:scrollView];
+        self.scrollView = [[UIScrollView alloc] initWithFrame:self.frame];
+        self.scrollView.backgroundColor = [UIColor clearColor];
+        self.scrollView.pagingEnabled = YES;
+        self.scrollView.showsHorizontalScrollIndicator = NO;
+        self.scrollView.showsVerticalScrollIndicator = NO;
+        self.scrollView.delegate = self;
+        [self addSubview:self.scrollView];
         
         //Initial PageView
-        pageControl = [[UIPageControl alloc] init];
-        pageControl.numberOfPages = pagesArray.count;
-        pageControl.pageIndicatorTintColor=[UIColor whiteColor];
-        pageControl.currentPageIndicatorTintColor=[UIColor clearColor];
+        self.pageControl = [[UIPageControl alloc] init];
+        _pageControl.numberOfPages = pagesArray.count;
+        _pageControl.pageIndicatorTintColor=[UIColor whiteColor];
+        _pageControl.currentPageIndicatorTintColor=[UIColor clearColor];
         
-        [pageControl sizeToFit];
-        [pageControl setCenter:CGPointMake(frame.size.width/2.0, frame.size.height/23*22)];
-        [self addSubview:pageControl];
+        [_pageControl sizeToFit];
+        [_pageControl setCenter:CGPointMake(frame.size.width/2.0, frame.size.height/23*22)];
+        [self addSubview:_pageControl];
         
         //Create pages
-        pages = pagesArray;
+        _pages = pagesArray;
         
-        scrollView.contentSize = CGSizeMake(pages.count * frame.size.width, frame.size.height);
-        currentPhotoNum = -1;
+        _scrollView.contentSize = CGSizeMake(_pages.count * frame.size.width, frame.size.height);
+        _currentPhotoNum = -1;
         
         //Adding views into scroll view.
-        FirstPageView * firstPage=[[FirstPageView alloc] initWithFrame:frame model:[pages objectAtIndex:0]];
+        FirstPageView * firstPage=[[FirstPageView alloc] initWithFrame:frame model:[_pages objectAtIndex:0]];
         firstPage.frame=CGRectOffset(firstPage.frame, 0, 0);
-        [scrollView addSubview:firstPage];
-        for(int i = 1; i <  pages.count-1; i++) {
-            IntroView *view = [[IntroView alloc] initWithFrame:frame model:[pages objectAtIndex:i]];
+        [_scrollView addSubview:firstPage];
+        for(int i = 1; i <  _pages.count-1; i++) {
+            IntroView *view = [[IntroView alloc] initWithFrame:frame model:[_pages objectAtIndex:i]];
             view.frame = CGRectOffset(view.frame, i*frame.size.width, 0);
-            [scrollView addSubview:view];
+            [_scrollView addSubview:view];
         }
-        LastPageView * lastPage=[[LastPageView alloc] initWithFrame:frame model:[pages objectAtIndex:pages.count-1]];
-        lastPage.frame=CGRectOffset(lastPage.frame, (pages.count-1)*frame.size.width, 0);
-        [scrollView addSubview:lastPage];
+        LastPageView * lastPage=[[LastPageView alloc] initWithFrame:frame model:[_pages objectAtIndex:_pages.count-1]];
+        lastPage.frame=CGRectOffset(lastPage.frame, (_pages.count-1)*frame.size.width, 0);
+        [_scrollView addSubview:lastPage];
         
         [self initShow];
     }
@@ -72,50 +72,51 @@
 }
 
 - (void) tick {
-    [scrollView setContentOffset:CGPointMake((currentPhotoNum+1 == pages.count ? 0 : currentPhotoNum+1)*self.frame.size.width, 0) animated:YES];
+    
+    [_scrollView setContentOffset:CGPointMake((_currentPhotoNum+1 == _pages.count ? 0 : _currentPhotoNum+1)*self.frame.size.width, 0) animated:YES];
 }
 
 - (void) initShow {
-    int scrollPhotoNumber = MAX(0, MIN(pages.count-1, (int)(scrollView.contentOffset.x / self.frame.size.width)));
+    int scrollPhotoNumber = MAX(0, MIN(_pages.count-1, (int)(_scrollView.contentOffset.x / self.frame.size.width)));
     
-    if(scrollPhotoNumber != currentPhotoNum) {
-        currentPhotoNum = scrollPhotoNumber;
+    if(scrollPhotoNumber != _currentPhotoNum) {
+        _currentPhotoNum = scrollPhotoNumber;
         
         //backgroundImage1.image = currentPhotoNum != 0 ? [(IntroModel*)[pages objectAtIndex:currentPhotoNum-1] image] : nil;
-        backgroundImage1.image = [(IntroModel*)[pages objectAtIndex:currentPhotoNum] image];
-        backgroundImage2.image = currentPhotoNum+1 != [pages count] ? [(IntroModel*)[pages objectAtIndex:currentPhotoNum+1] image] : nil;
+        _backgroundImage1.image = [(IntroModel*)[_pages objectAtIndex:_currentPhotoNum] image];
+        _backgroundImage2.image = _currentPhotoNum+1 != [_pages count] ? [(IntroModel*)[_pages objectAtIndex:_currentPhotoNum+1] image] : nil;
     }
     
-    float offset =  scrollView.contentOffset.x - (currentPhotoNum * self.frame.size.width);
+    float offset =  _scrollView.contentOffset.x - (_currentPhotoNum * self.frame.size.width);
     
 
     //left
     if(offset < 0) {
-        pageControl.currentPage = 0;
+        _pageControl.currentPage = 0;
         
         offset = self.frame.size.width - MIN(-offset, self.frame.size.width);
-        backgroundImage2.alpha = 0;
-        backgroundImage1.alpha = (offset / self.frame.size.width);
+        _backgroundImage2.alpha = 0;
+        _backgroundImage1.alpha = (offset / self.frame.size.width);
     
     //other
     } else if(offset != 0) {
         //last
-        if(scrollPhotoNumber == pages.count-1) {
-            pageControl.currentPage = pages.count-1;
+        if(scrollPhotoNumber == _pages.count-1) {
+            _pageControl.currentPage = _pages.count-1;
             
-            backgroundImage1.alpha = 1.0 - (offset / self.frame.size.width);
+            _backgroundImage1.alpha = 1.0 - (offset / self.frame.size.width);
         } else {
             
-            pageControl.currentPage = (offset > self.frame.size.width/2) ? currentPhotoNum+1 : currentPhotoNum;
+            _pageControl.currentPage = (offset > self.frame.size.width/2) ? _currentPhotoNum+1 : _currentPhotoNum;
             
-            backgroundImage2.alpha = offset / self.frame.size.width;
-            backgroundImage1.alpha = 1.0 - backgroundImage2.alpha;
+            _backgroundImage2.alpha = offset / self.frame.size.width;
+            _backgroundImage1.alpha = 1.0 - _backgroundImage2.alpha;
         }
     //stable
     } else {
-        pageControl.currentPage = currentPhotoNum;
-        backgroundImage1.alpha = 1;
-        backgroundImage2.alpha = 0;
+        _pageControl.currentPage = _currentPhotoNum;
+        _backgroundImage1.alpha = 1;
+        _backgroundImage2.alpha = 0;
     }
 }
 

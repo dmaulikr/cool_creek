@@ -23,4 +23,8 @@
 
 -(void) giveKudoWithIndex:(int) index assigned:(bool)assigned;
 -(void) updateCell;
+
+@property(strong, nonatomic) NSUserDefaults *defaults;
+
+
 @end

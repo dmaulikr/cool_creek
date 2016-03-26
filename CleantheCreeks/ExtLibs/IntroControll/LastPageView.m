@@ -50,18 +50,20 @@
         orLabel.frame = CGRectMake((self.frame.size.width-s2.width)/2, frame.size.height*0.73,s2.width, s2.height);
         [self addSubview:orLabel];
         
-        UIButton *mapLabel = [[UIButton alloc] init];
+        _mapLabel = [[UIButton alloc] init];
         //[mapLabel setTitle:@"VIEW AROUND ME" forState:UIControlStateNormal];
-        [mapLabel setFont:[UIFont systemFontOfSize:20]];
-        [mapLabel setTitleColor:[UIColor whiteColor] forState:UIControlStateNormal];
+        [_mapLabel setFont:[UIFont systemFontOfSize:20]];
+        [_mapLabel setTitleColor:[UIColor whiteColor] forState:UIControlStateNormal];
+        
         NSMutableAttributedString *commentString = [[NSMutableAttributedString alloc] initWithString:@"VIEW AROUND ME"];
          [commentString setAttributes:@{NSForegroundColorAttributeName:[UIColor whiteColor],NSUnderlineStyleAttributeName:[NSNumber numberWithInteger:NSUnderlineStyleSingle]} range:NSMakeRange(0,[commentString length])];
-        [mapLabel setAttributedTitle:commentString forState:UIControlStateNormal];
-        mapLabel.frame=CGRectMake(0, 0, frame.size.width*0.8, frame.size.width*0.15);
+        [_mapLabel setAttributedTitle:commentString forState:UIControlStateNormal];
+        _mapLabel.frame=CGRectMake(0, 0, frame.size.width*0.8, frame.size.width*0.15);
 
-        [mapLabel setCenter:CGPointMake(frame.size.width/2,frame.size.height*0.8)];
-        [self addSubview:mapLabel];
+        [_mapLabel setCenter:CGPointMake(frame.size.width/2,frame.size.height*0.8)];
+        [self addSubview:_mapLabel];
     }
     return self;
 }
+
 @end

@@ -24,8 +24,8 @@
     [self.refreshControl addTarget:self action:@selector(updateData) forControlEvents:UIControlEventValueChanged];
     [self.refreshControl beginRefreshing];
     [self updateData];
-    NSUserDefaults *defaults = [NSUserDefaults standardUserDefaults];
-    self.current_user_id = [defaults objectForKey:@"user_id"];
+    self.defaults = [NSUserDefaults standardUserDefaults];
+    self.current_user_id = [self.defaults objectForKey:@"user_id"];
     self.tv.estimatedRowHeight = 65.f;
     self.tv.rowHeight = UITableViewAutomaticDimension;
     
@@ -82,7 +82,7 @@
                      for(NSDictionary * item in current_user.followers)
                      {
                          NSString * follower_id=[item objectForKey:@"id"];
-                         NSString * following_date=[item objectForKey:@"time"];
+                         NSNumber *following_date=[item objectForKey:@"time"];
                          // Adding finders to the activity array
                          Activity *activity=[[Activity alloc]init];
                          activity.activity_id = follower_id;
@@ -494,7 +494,14 @@
          if (task.result) {
              [self updateCell];
              if(assigned)
+             {
+                 self.appDelegate=(AppDelegate*)[[UIApplication sharedApplication]delegate];
+                 NSString * user_name = [self.defaults objectForKey:@"user_name"];
+                 NSMutableAttributedString * attributedString=[self generateString:user_name content:@" gave you kudos" location:@""];
+                 
+                 [self.appDelegate send_notification:location.cleaner_id message:attributedString.string];
                  NSLog(@"assigned");
+             }
              else
                  NSLog(@"unassigned");
          }
@@ -502,6 +509,7 @@
      }];
 
 }
+
 
 - (void)tableView:(UITableView *)tableView didSelectRowAtIndexPath:(NSIndexPath *)indexPath{
     if([self.activityArray count]>0)

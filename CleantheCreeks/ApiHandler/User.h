@@ -20,7 +20,7 @@
 @property (nonatomic, strong) NSString *state;
 @property (nonatomic, strong) NSString *country;
 @property (nonatomic, strong) NSMutableArray *followings;
-
+@property (nonatomic, strong) NSString* device_token;
 @property (nonatomic, strong) NSMutableArray *followers;
 
 @end

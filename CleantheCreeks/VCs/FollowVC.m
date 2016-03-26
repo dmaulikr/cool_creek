@@ -112,21 +112,26 @@
     
     if(currentuser.followings!=nil)
         followingArray=currentuser.followings;
+    
     NSMutableDictionary *followerItem=[[NSMutableDictionary alloc]init];
     [followerItem setObject:self.current_user_id forKey:@"id"];
     double date =[[NSDate date]timeIntervalSince1970];
-    NSString *dateString=[NSString stringWithFormat:@"%f",date];
-    [followerItem setObject:dateString forKey:@"time"];
+    NSNumber *dateObj = [[NSNumber alloc] initWithDouble:date];
+    //NSString *dateString=[NSString stringWithFormat:@"%f",date];
+    [followerItem setObject:dateObj forKey:@"time"];
 
     NSMutableDictionary *followingItem=[[NSMutableDictionary alloc]init];
     [followingItem setObject:target_id forKey:@"id"];
-    [followingItem setObject:dateString forKey:@"time"];
+    [followingItem setObject:dateObj forKey:@"time"];
 
     bool selected=!sender.selected;
     
     //Updating current user followings
     if(selected)
+    {
         [followingArray addObject:followingItem];
+        
+    }
     else
     {
         if(followingArray!=nil)
@@ -136,18 +141,18 @@
                 if([[following objectForKey:@"id"] isEqualToString:target_id])
                 {
                     [followingArray removeObject:following];
+                    
                     break;
                 }
             }
         }
+        
     }
     if([followingArray count]!=0)
         currentuser.followings=[[NSMutableArray alloc] initWithArray:followingArray];
     else
         currentuser.followings=nil;
-   
     sender.enabled=NO;
-    
     AWSDynamoDBObjectMapper *dynamoDBObjectMapper = [AWSDynamoDBObjectMapper defaultDynamoDBObjectMapper];
     AWSDynamoDBObjectMapperConfiguration *updateMapperConfig = [AWSDynamoDBObjectMapperConfiguration new];
     updateMapperConfig.saveBehavior = AWSDynamoDBObjectMapperSaveBehaviorUpdate;
@@ -180,7 +185,7 @@
                      targetuser.followers=[[NSMutableArray alloc] initWithArray:followerArray];
                  else
                      targetuser.followers=nil;
-                 sender.enabled=NO;
+                 
                  
                  [[dynamoDBObjectMapper save:targetuser configuration:updateMapperConfig]
                   continueWithBlock:^id(AWSTask *task) {

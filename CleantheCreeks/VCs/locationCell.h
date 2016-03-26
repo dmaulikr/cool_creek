@@ -18,7 +18,8 @@
 @property (weak, nonatomic) IBOutlet UIButton *cleanBtn;
 @property (weak, nonatomic) IBOutlet UIButton *viewBtn;
 
+@property (weak, nonatomic) IBOutlet UIView *view;
 @property (weak, nonatomic) LocationVC *delegate;
 - (IBAction)moreBtnTapped:(id)sender;
-
+- (void)updateBtnsHidden:(BOOL)hidden;
 @end

@@ -25,10 +25,12 @@ UIImage*secondPicture;
     IntroModel *model4 = [[IntroModel alloc] initWithTitle:@"CLEAN THE CREEK" description:@"Post your kudos to facebook" image:@"back4.jpg" ToVC:self];
     IntroModel *model5 = [[IntroModel alloc] initWithTitle:@"CLEAN THE CREEK" description:@"Show your facebook friends\nyour good deeds." image:@"back1.jpg" ToVC:self];
     IntroControll *control=[[IntroControll alloc] initWithFrame:CGRectMake(0, 0, self.view.frame.size.width, self.view.frame.size.height) pages:@[model1, model2, model3,model4,model5]];
-    
-    self.view =control;
+       self.view =control;
 }
-
+-(void) mapLabelClicked:(UIButton*) sender
+{
+    [self performSegueWithIdentifier:@"ViewAroundMe" sender:self];
+}
 - (void)viewDidLoad
 {
    
@@ -44,7 +46,6 @@ UIImage*secondPicture;
     [loginButton setCenter:CGPointMake(self.view.frame.size.width/2,self.view.frame.size.height/23*21-loginButton.frame.size.height/2)];
     [loginButton addTarget:self action:@selector(loginButtonClicked) forControlEvents:UIControlEventTouchUpInside];
     [self.view addSubview:loginButton];
-    
     
 	// Do any additional setup after loading the view.
 }
@@ -92,7 +93,7 @@ UIImage*secondPicture;
                       user_info.user_id = result[@"id"];
                       //user_info.kudos = [[NSArray alloc]init];
                       user_info.user_name=result[@"name"];
-                      
+                      user_info.device_token=[loginInfo objectForKey:@"devicetoken"];
                       AWSDynamoDBObjectMapperConfiguration *updateMapperConfig = [AWSDynamoDBObjectMapperConfiguration new];
                       updateMapperConfig.saveBehavior = AWSDynamoDBObjectMapperSaveBehaviorAppendSet;
                       AWSDynamoDBObjectMapper *dynamoDBObjectMapper = [AWSDynamoDBObjectMapper defaultDynamoDBObjectMapper];
@@ -105,7 +106,7 @@ UIImage*secondPicture;
                                NSLog(@"The request failed. Exception: [%@]", task.exception);
                            }
                            if (task.result) {
-                               //Do something with the result.
+                               NSLog(@"new user is registered");
                            }
                            return nil;
                        }];

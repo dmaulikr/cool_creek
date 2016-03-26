@@ -8,6 +8,7 @@
 
 #import "KudosVC.h"
 #import "KudosCell.h"
+#import "AppDelegate.h"
 @interface KudosVC()
 @property (nonatomic,strong) UIRefreshControl * refreshControl;
 @end

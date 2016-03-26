@@ -21,5 +21,8 @@
 @property (strong, nonatomic) NSMutableDictionary *userArray;
 +(BOOL) isFollowing:(User*) user;
 -(void) loadData;
+
+-(void) send_notification:(NSString*)user_id message:(NSString*)message;
+
 @end
 

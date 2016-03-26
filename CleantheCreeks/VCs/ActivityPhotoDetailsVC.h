@@ -9,14 +9,26 @@
 #import <UIKit/UIKit.h>
 #import "BaseVC.h"
 #import "Location.h"
+#import "CommentView.h"
+#import "AppDelegate.h"
 @protocol KudoDelegate<NSObject>
 @optional
 -(void) giveKudoWithLocation:(Location*)location assigned:(bool) assigned;
 @end
-@interface ActivityPhotoDetailsVC : BaseVC<UITableViewDataSource, UITableViewDelegate>
+
+@interface ActivityPhotoDetailsVC : BaseVC<UITableViewDataSource, UITableViewDelegate,UITextFieldDelegate>
 @property (weak, nonatomic) IBOutlet UITableView *tv;
 @property (strong, nonatomic) Location * location;
 @property (nonatomic) BOOL cleaned,isKudoed;
 @property (strong, nonatomic) UIImage * beforePhoto, *afterPhoto;
+@property (weak, nonatomic) IBOutlet CommentView *commentView;
+@property (weak, nonatomic) IBOutlet UIButton *sendComment;
+@property (weak, nonatomic) IBOutlet UIButton *closeComment;
+@property (weak, nonatomic) IBOutlet UITextField *textComment;
+- (IBAction)closeBtnClicked:(id)sender;
+- (IBAction)sendButtonClicked:(id)sender;
+@property (nonatomic) bool commentVisible;
 @property(nonatomic, retain) id<KudoDelegate> delegate;
+@property (strong,nonatomic )AppDelegate * mainDelegate;
+
 @end

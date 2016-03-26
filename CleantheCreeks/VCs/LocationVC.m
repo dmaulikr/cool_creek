@@ -16,7 +16,9 @@
 
 @interface LocationVC()
 @property (nonatomic,strong) UIRefreshControl * refreshControl;
+@property(strong,nonatomic) Location * annotationLocation;
 @end
+
 
 @implementation LocationVC
 
@@ -47,10 +49,13 @@
     self.displayItemCount=20;
     [self.refreshControl beginRefreshing];
     [self updateData];
-    //self.locationTable.autoresizingMask =UIViewAutoresizingFlexibleBottomMargin| UIViewAutoresizingFlexibleTopMargin | UIViewAutoresizingFlexibleHeight;
+    
     [self.refreshControl addTarget:self action:@selector(updateData) forControlEvents:UIControlEventValueChanged];
     
 }
+
+
+
 -(void) viewDidAppear:(BOOL)animated
 {
     [super viewDidAppear:animated];
@@ -73,7 +78,7 @@
 - (UITableViewCell *)tableView:(UITableView *)tableView cellForRowAtIndexPath:(NSIndexPath *)indexPath{
     
     locationCell * cell = nil;
-    cell = (locationCell*)[tableView dequeueReusableCellWithIdentifier:@"locationCell"];
+    cell = (locationCell*)[tableView dequeueReusableCellWithIdentifier:@"locationCell" forIndexPath:indexPath];
     if([self.locationArray count]>0 && indexPath.row <= [self.locationArray count]-1)
     {
         Location * location=[self.locationArray objectAtIndex:indexPath.row];
@@ -130,9 +135,10 @@
     CGFloat contentHeight = scrollView_.contentSize.height - 10;
     if (actualPosition >= contentHeight) {
         [self updateData];
-        [self.locationTable reloadData];
+        
     }
 }
+
 
 -(void)viewBtnClicked:(UIButton*)sender
 {
@@ -145,10 +151,6 @@
 {
     self.selectedIndex=sender.tag;
     [self performSegueWithIdentifier:@"cleanLocation" sender:self];
-    
-}
-
-- (void)tableView:(UITableView *)tableView didSelectRowAtIndexPath:(NSIndexPath *)indexPath{
     
 }
 
@@ -168,6 +170,12 @@
             vc.beforePhoto=(UIImage*)(self.mainDelegate.locationData[location.location_id]);
             vc.cleaned=NO;
         }
+        else if([segue.identifier isEqualToString:@"showMapDetails"])
+        {
+            ActivityPhotoDetailsVC* vc = (ActivityPhotoDetailsVC*)segue.destinationViewController;
+            vc.location = self.annotationLocation;
+        }
+
         else if([segue.identifier isEqualToString:@"cleanLocation"])
         {
             CameraVC* vc = (CameraVC*)segue.destinationViewController;
@@ -282,6 +290,23 @@
     LocationOverlayView *annotationView = [[LocationOverlayView alloc] initWithAnnotation:annotation reuseIdentifier:@"Attraction"];
     annotationView.canShowCallout = YES;
     return annotationView;
+}
+
+- (void)mapView:(MKMapView *)mapView didSelectAnnotationView:(MKAnnotationView *)view
+{
+    CLLocationCoordinate2D coordinate=[view.annotation coordinate];
+    NSString * location_id=[NSString stringWithFormat:@"%f,%f",coordinate.latitude,coordinate.longitude];
+    self.annotationLocation=[Location class];
+    for(Location * loc in self.locationArray)
+    {
+        if([loc.location_id isEqualToString:location_id])
+        {
+            self.annotationLocation=loc;
+            break;
+        }
+    }
+    [self performSegueWithIdentifier:@"showMapDetails" sender:self];
+    NSLog(@"selected annotation");
 }
 
 - (IBAction)listButtonTapped:(id)sender{

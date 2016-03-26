@@ -17,7 +17,7 @@
 @optional
 -(void) cameraRefresh:(BOOL)set;
 @end
-@interface PhotoDetailsVC : BaseVC<UITableViewDataSource,UITableViewDelegate,UITextViewDelegate,CLLocationManagerDelegate,SetPhotoDelegate,UIImagePickerControllerDelegate>
+@interface PhotoDetailsVC : BaseVC<UITableViewDataSource,UITableViewDelegate,CLLocationManagerDelegate,SetPhotoDelegate,UIImagePickerControllerDelegate>
 @property(nonatomic, strong) Location* location;
 @property (strong,nonatomic) UIImage*takenPhoto;
 @property (strong,nonatomic) UIImage*cleanedPhoto;

@@ -3,4 +3,5 @@
 
 @interface LastPageView : UIView
 - (id)initWithFrame:(CGRect)frame model:(IntroModel*)model;
+@property(nonatomic,strong) UIButton* mapLabel;
 @end

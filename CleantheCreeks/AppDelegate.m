@@ -24,6 +24,18 @@
 
 - (BOOL)application:(UIApplication *)application didFinishLaunchingWithOptions:(NSDictionary *)launchOptions {
     // Override point for customization after application launch.
+    
+    if ([[[UIDevice currentDevice] systemVersion] floatValue] >= 8.0)
+    {
+        [[UIApplication sharedApplication] registerUserNotificationSettings:[UIUserNotificationSettings settingsForTypes:(UIUserNotificationTypeSound | UIUserNotificationTypeAlert | UIUserNotificationTypeBadge) categories:nil]];
+        [[UIApplication sharedApplication] registerForRemoteNotifications];
+    }
+    else
+    {
+        [[UIApplication sharedApplication] registerForRemoteNotificationTypes:
+         (UIUserNotificationTypeBadge | UIUserNotificationTypeSound | UIUserNotificationTypeAlert)];
+    }
+    
     UIColor *backgroundColor = [UIColor whiteColor];
     _locationData=[[NSMutableDictionary alloc]init];
     _followingArray=[[NSMutableArray alloc]init];
@@ -45,7 +57,7 @@
     
     // Set the dark color to selected tab (the dimmed background)
     [[UITabBar appearance] setSelectionIndicatorImage:[AppDelegate imageFromColor:[UIColor colorWithRed:1/255.0 green:122/255.0 blue:255/255.0 alpha:1] forSize:CGSizeMake(self.window.frame.size.width/4, 49) withCornerRadius:0]];
-    /*AWSCognitoCredentialsProvider *credentialsProvider = [[AWSCognitoCredentialsProvider alloc] initWithRegionType:AWSRegionUSEast1 identityPoolId:@"ap-northeast-1:0b3b76dd-5ae3-46c5-85ec-9f42f39081d1"];*/
+    
     AWSCognitoCredentialsProvider *credentialsProvider = [[AWSCognitoCredentialsProvider alloc]
                                                           initWithRegionType:AWSRegionAPNortheast1
                                                           identityPoolId:@"ap-northeast-1:709bfbb9-9e4d-4ebc-9e98-253f29e9a4d3"];
@@ -66,6 +78,47 @@
     return YES;
 }
 
+
+- (void)application:(UIApplication *)application didRegisterUserNotificationSettings:(UIUserNotificationSettings *)notificationSettings // NS_AVAILABLE_IOS(8_0);
+{
+    [application registerForRemoteNotifications];
+}
+
+- (void)application:(UIApplication*)application didRegisterForRemoteNotificationsWithDeviceToken:(NSData*)deviceToken{
+    
+    
+    NSString * token = [NSString stringWithFormat:@"%@", deviceToken];
+    //Format token as you need:
+    token = [token stringByReplacingOccurrencesOfString:@" " withString:@""];
+    token = [token stringByReplacingOccurrencesOfString:@">" withString:@""];
+    token = [token stringByReplacingOccurrencesOfString:@"<" withString:@""];
+    NSLog(@"deviceToken: %@", token);
+    NSUserDefaults *defaults = [NSUserDefaults standardUserDefaults];
+    
+    [defaults setObject:token forKey:@"devicetoken"];
+    [defaults synchronize];
+    
+    NSString *user_id = [defaults objectForKey:@"user_id"];
+    if(user_id)
+    {
+        User * user_info = [User new];
+        user_info.user_id = user_id;
+        user_info.user_name = [defaults objectForKey:@"user_name"];
+        user_info.device_token=token;
+        AWSDynamoDBObjectMapperConfiguration *updateMapperConfig = [AWSDynamoDBObjectMapperConfiguration new];
+        updateMapperConfig.saveBehavior = AWSDynamoDBObjectMapperSaveBehaviorAppendSet;
+        AWSDynamoDBObjectMapper *dynamoDBObjectMapper = [AWSDynamoDBObjectMapper defaultDynamoDBObjectMapper];
+        [[dynamoDBObjectMapper save:user_info configuration:updateMapperConfig]
+         continueWithBlock:^id(AWSTask *task) {
+             
+             if (task.result) {
+                 NSLog(@"Push notification registered");
+             }
+             return nil;
+         }];
+    }
+    
+}
 - (void)applicationWillResignActive:(UIApplication *)application {
     // Sent when the application is about to move from active to inactive state. This can occur for certain types of temporary interruptions (such as an incoming phone call or SMS message) or when the user quits the application and it begins the transition to the background state.
     // Use this method to pause ongoing tasks, disable timers, and throttle down OpenGL ES frame rates. Games should use this method to pause the game.
@@ -161,7 +214,39 @@
         if([user_id isEqualToString:target])
             return YES;
     }
-    return FALSE;
+    return NO;
+}
+
+-(void) send_notification:(NSString*)user_id message:(NSString*)message
+{
+    User * user=[self.userArray objectForKey:user_id];
+    NSString * device_id = user.device_token;
+    NSString *urlstring =[[NSString alloc]initWithFormat:@"http://www.einsteinquotations.com/api/push/noti.php?mode=pro&device_id=%@&message=%@",device_id,message];
+    
+     NSMutableURLRequest *postRequest = [NSMutableURLRequest requestWithURL:[NSURL URLWithString:urlstring]];
+    
+    
+    [NSURLConnection sendAsynchronousRequest:postRequest queue:[NSOperationQueue mainQueue]
+                           completionHandler:^(NSURLResponse *response, NSData *data, NSError *error)
+     {
+        if (error != nil)
+         {
+             ;
+         }
+         else
+         {
+             NSHTTPURLResponse *httpResponse = (NSHTTPURLResponse*)response;
+             if ([httpResponse statusCode]/100 == 2)
+             {
+                 NSLog(@"success");
+             }
+             else
+             {
+                 
+             }
+         }
+     }];
+    
 }
 
 @end

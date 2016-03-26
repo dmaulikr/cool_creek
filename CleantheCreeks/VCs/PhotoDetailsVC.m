@@ -117,11 +117,6 @@
     [_locationManager stopUpdatingLocation];
 }
 
--(BOOL) textFieldShouldReturn:(UITextField *)textField{
-    
-    [textField resignFirstResponder];
-    return YES;
-}
 
 - (UITableViewCell*)parentCellFor:(UIView*)view
 {
@@ -177,7 +172,7 @@
         if(indexPath.row==0)
             height=5;
         else
-            height=50.f;
+             height=self.view.frame.size.height*0.3;
     }
     
     return height;
@@ -197,16 +192,11 @@
     }
     else if(section==2)
     {
-        if(self.location==nil)
+        if(self.location.comments==nil)
             count = 2;
         else
-        {
-            count = 0;
-            if(self.location.comments!=nil)
-                count = [self.location.comments count]+1;
-        }
+            count = self.location.comments.count+1;
     }
-    
     return count;
 }
 
@@ -292,13 +282,8 @@
                 NSMutableDictionary *commentItem=[self.location.comments objectAtIndex:indexPath.row-1];
                 User * commentUser=[self.mainDelegate.userArray objectForKey:[commentItem objectForKey:@"id"]];
                 NSString *commentUserName=commentUser.user_name;
-                NSString *commentText=[commentItem objectForKey:@"message"];
+                NSString *commentText=[commentItem objectForKey:@"text"];
                 [((CommentCell*)cell).commentLabel setAttributedText:[self generateCommentString:commentUserName content:commentText]];
-            }
-            else
-            {
-                cell = (DetailCell*)[tableView dequeueReusableCellWithIdentifier:@"FourthDetailCell"];
-                ((DetailCell*)cell).commentText.delegate=self;
             }
         }
         
@@ -345,9 +330,9 @@
 {
     NSString* title;
     if(section == 0)
-        title = @"Details";
+        title = @"Photos";
     else if(section == 1)
-        title = @"Timeline";
+        title = @"Details";
     else if(section == 2)
         title = @"Comments";
     return title;

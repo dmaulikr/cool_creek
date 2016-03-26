@@ -15,7 +15,63 @@
 #import "DetailCell.h"
 #import "LocationPhotoCell.h"
 #import "LocationBarCell.h"
+#import "CommentCell.h"
+#import "User.h"
 @implementation ActivityPhotoDetailsVC
+
+- (void)registerForKeyboardNotifications
+{
+    
+    [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(keyboardWasShown:) name:UIKeyboardDidShowNotification object:nil];
+    
+    [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(keyboardWillBeHidden:) name:UIKeyboardWillHideNotification object:nil];
+}
+
+// Called when the UIKeyboardDidShowNotification is sent.
+
+- (void)keyboardWasShown:(NSNotification*)aNotification
+
+{
+    NSDictionary* info = [aNotification userInfo];
+    CGSize kbSize = [[info objectForKey:UIKeyboardFrameBeginUserInfoKey] CGRectValue].size;
+    UIEdgeInsets contentInsets = UIEdgeInsetsMake(0.0, 0.0, kbSize.height, 0.0);
+    self.tv.contentInset = contentInsets;
+    self.tv.scrollIndicatorInsets = contentInsets;
+    
+    // If active text field is hidden by keyboard, scroll it so it's visible
+    
+    // Your app might not need or want this behavior.
+    
+    CGRect aRect = self.view.frame;
+    
+    aRect.size.height -= kbSize.height;
+    
+    if (!CGRectContainsPoint(aRect, self.commentView.frame.origin) ) {
+        
+        [self.tv scrollRectToVisible:self.commentView.frame animated:YES];
+        CGRect commentFrame=self.commentView.frame;
+        commentFrame.origin.y-=kbSize.height;
+        [self.commentView setFrame:commentFrame];
+    }
+    NSLog(@"keyboard was showen");
+}
+// Called when the UIKeyboardWillHideNotification is sent
+
+- (void)keyboardWillBeHidden:(NSNotification*)aNotification
+{
+    
+    UIEdgeInsets contentInsets = UIEdgeInsetsZero;
+    self.tv.contentInset = contentInsets;
+    self.tv.scrollIndicatorInsets = contentInsets;
+    NSLog(@"keyboard hidden");
+}
+
+- (BOOL)textFieldShouldEndEditing:(UITextField *)textField
+
+{
+    [textField resignFirstResponder];
+    return YES;
+}
 
 -(void) viewWillAppear:(BOOL)animated
 {
@@ -70,8 +126,25 @@
 
 - (void) viewDidLoad{
     [super viewDidLoad];
+    self.textComment.delegate=self;
+    self.commentVisible=NO;
+    [self.commentView setHidden:!self.commentVisible];
+    UITapGestureRecognizer *tap = [[UITapGestureRecognizer alloc]
+                                   initWithTarget:self
+                                   action:@selector(dismissKeyboard)];
+    
+    [self.view addGestureRecognizer:tap];
+    self.mainDelegate=(AppDelegate*)[[UIApplication sharedApplication]delegate];
+    [self.mainDelegate loadData];
+    [self registerForKeyboardNotifications];
     self.tv.estimatedRowHeight = 65.f;
     self.tv.rowHeight = UITableViewAutomaticDimension;
+}
+
+-(void)dismissKeyboard {
+    [self.textComment resignFirstResponder];
+    [self.tv reloadData];
+    
 }
 
 - (void)leftBtnTopBarTapped:(UIButton *)sender topBar:(id)topBar{
@@ -111,7 +184,7 @@
         if(indexPath.row==0)
             height=5;
         else
-            height=self.view.frame.size.height*0.4;
+            height=self.view.frame.size.height*0.13;
     }
     
     return height;
@@ -124,7 +197,7 @@
 
 - (NSInteger)tableView:(UITableView *)tableView numberOfRowsInSection:(NSInteger)section
 {
-    int count=0;
+    NSInteger count=0;
     if(section==0)
         count=2;
     else if(section==1)
@@ -135,7 +208,12 @@
             count=3;
     }
     else if(section==2)
-        count=2;
+    {
+        if(self.location.comments!=nil)
+            count=self.location.comments.count+1;
+        else
+            count=2;
+    }
     return count;
 }
 
@@ -160,6 +238,10 @@
         else if(indexPath.row==1)
         {
             cell = (LocationBarCell*)[tableView dequeueReusableCellWithIdentifier:@"BarCell"];
+            [((LocationBarCell*)cell).btnComment setImage:[UIImage imageNamed:@"IconQuote"] forState:UIControlStateNormal];
+            
+            [((LocationBarCell*)cell).btnComment setImage:[UIImage imageNamed:@"IconComment"] forState:UIControlStateSelected];
+            ((LocationBarCell*)cell).btnComment.selected=self.commentVisible;
             if(self.cleaned)
             {
                 [((LocationBarCell*)cell).btnLike setImage:[UIImage imageNamed:@"IconKudos4"] forState:UIControlStateNormal];
@@ -174,6 +256,7 @@
                 ((LocationBarCell*)cell).commentLeadingConst.constant = 0;
                 
             }
+            [((LocationBarCell*)cell).btnComment addTarget:self action:@selector(commentButtonClicked:) forControlEvents:UIControlEventTouchUpInside];
         }
     }
     else if(indexPath.section==1)
@@ -224,8 +307,23 @@
     {
         if(indexPath.row==0)
             cell = [tableView dequeueReusableCellWithIdentifier:@"SecondBar"];
-        else if(indexPath.row==1)
-            cell = [tableView dequeueReusableCellWithIdentifier:@"FourthDetailCell"];
+       
+        else
+        {
+            if(self.location!=nil)
+            {
+                
+                cell = (CommentCell*)[tableView dequeueReusableCellWithIdentifier:@"CommentCell"];
+                NSMutableDictionary *commentItem=[self.location.comments objectAtIndex:indexPath.row-1];
+                
+                User * commentUser=[self.mainDelegate.userArray objectForKey:[commentItem objectForKey:@"id"]];
+                NSString *commentUserName=commentUser.user_name;
+                NSString *commentText=[commentItem objectForKey:@"text"];
+                [((CommentCell*)cell).commentLabel setAttributedText:[self generateCommentString:commentUserName content:commentText]];
+            }
+
+        }
+        
     }
     if(!cell){
         cell = nil;
@@ -247,6 +345,91 @@
 -(void) kudoButtonClicked:(UIButton*)sender
 {
     sender.selected=!sender.selected;
+
     [self.delegate giveKudoWithLocation:self.location assigned:sender.selected];
+}
+
+-(void)commentButtonClicked:(UIButton*) sender
+{
+    self.commentVisible=!self.commentVisible;
+    [self.commentView setHidden:!self.commentVisible];
+    sender.selected=self.commentVisible;
+
+}
+
+- (IBAction)closeBtnClicked:(id)sender {
+    self.commentVisible=NO;
+    [self.commentView setHidden:YES];
+    [self.tv reloadData];
+}
+
+- (IBAction)sendButtonClicked:(id)sender {
+    self.commentVisible=NO;
+    [self.commentView setHidden:YES];
+    
+    NSMutableArray * commentArray=[[NSMutableArray alloc] init];
+    if(self.location.comments!=nil)
+        commentArray=self.location.comments;
+    NSMutableDictionary *commentItem=[[NSMutableDictionary alloc]init];
+    NSUserDefaults *defaults = [NSUserDefaults standardUserDefaults];
+    self.current_user_id = [defaults objectForKey:@"user_id"];
+    [commentItem setObject:self.current_user_id forKey:@"id"];
+    [commentItem setObject:self.textComment.text forKey:@"text"];
+    double date =[[NSDate date]timeIntervalSince1970];
+    NSString *dateString=[NSString stringWithFormat:@"%f",date];
+    [commentItem setObject:dateString forKey:@"time"];
+    
+    
+    [commentArray addObject:commentItem];
+   
+    self.location.comments=[[NSMutableArray alloc] initWithArray:commentArray];
+    
+    AWSDynamoDBObjectMapper *dynamoDBObjectMapper = [AWSDynamoDBObjectMapper defaultDynamoDBObjectMapper];
+    AWSDynamoDBObjectMapperConfiguration *updateMapperConfig = [AWSDynamoDBObjectMapperConfiguration new];
+    updateMapperConfig.saveBehavior = AWSDynamoDBObjectMapperSaveBehaviorUpdate;
+    [self.textComment resignFirstResponder];
+    [[dynamoDBObjectMapper save:self.location configuration:updateMapperConfig]
+     continueWithBlock:^id(AWSTask *task) {
+         if (task.error) {
+             NSLog(@"The request failed. Error: [%@]", task.error);
+         }
+         if (task.exception) {
+             NSLog(@"The request failed. Exception: [%@]", task.exception);
+         }
+         if (task.result) {
+             [self.textComment setText:@""];
+             
+             [self.tv reloadData];
+             NSLog(@"Updated Comment");
+         }
+         return nil;
+     }];
+
+}
+
+- (NSMutableAttributedString *)generateCommentString:(NSString*)name content:(NSString*)content
+{
+    NSMutableAttributedString * string = [[NSMutableAttributedString alloc] initWithString:@""];
+    UIColor * color1 = [UIColor colorWithRed:(1/255.0) green:(122/255.0) blue:(255/255.0) alpha:1.0];
+    UIColor * color2= [UIColor colorWithRed:(51/255.0) green:(51/255.0) blue:(51/255.0) alpha:1.0];
+    
+    NSDictionary * attributes1 = [NSDictionary dictionaryWithObject:color1 forKey:NSForegroundColorAttributeName];
+    
+    NSDictionary * attributes2 = [NSDictionary dictionaryWithObject:color2 forKey:NSForegroundColorAttributeName];
+    if(name!=nil)
+    {
+        NSAttributedString * nameStr = [[NSAttributedString alloc] initWithString:name attributes:attributes1];
+        [string appendAttributedString:nameStr];
+        
+    }
+    NSAttributedString * space = [[NSAttributedString alloc] initWithString:@" " attributes:attributes2];
+    [string appendAttributedString:space];
+    if(content!=nil)
+    {
+        NSAttributedString * middleStr = [[NSAttributedString alloc] initWithString:content attributes:attributes2];
+        [string appendAttributedString:middleStr];
+    }
+    
+    return string;
 }
 @end
