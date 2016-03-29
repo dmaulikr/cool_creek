@@ -105,12 +105,14 @@
             _pageControl.currentPage = _pages.count-1;
             
             _backgroundImage1.alpha = 1.0 - (offset / self.frame.size.width);
+            
         } else {
             
             _pageControl.currentPage = (offset > self.frame.size.width/2) ? _currentPhotoNum+1 : _currentPhotoNum;
             
             _backgroundImage2.alpha = offset / self.frame.size.width;
             _backgroundImage1.alpha = 1.0 - _backgroundImage2.alpha;
+           
         }
     //stable
     } else {
@@ -121,7 +123,13 @@
 }
 
 - (void)scrollViewDidScroll:(UIScrollView *)scroll {
+    int scrollPhotoNumber = MAX(0, MIN(_pages.count-1, (int)(_scrollView.contentOffset.x / self.frame.size.width)));
+    if(scrollPhotoNumber == _pages.count-1)
+        [self.delegate lastPage:YES];
+    else
+        [self.delegate lastPage:NO];
     [self initShow];
+
 }
 
 - (void) scrollViewDidEndDecelerating:(UIScrollView *)scroll {

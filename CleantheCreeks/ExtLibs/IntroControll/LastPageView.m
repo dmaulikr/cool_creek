@@ -62,6 +62,7 @@
 
         [_mapLabel setCenter:CGPointMake(frame.size.width/2,frame.size.height*0.8)];
         [self addSubview:_mapLabel];
+        _mapLabel.tag=15;
     }
     return self;
 }

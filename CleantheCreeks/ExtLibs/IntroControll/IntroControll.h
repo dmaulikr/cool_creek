@@ -2,6 +2,12 @@
 #import "IntroView.h"
 #import "FirstPageView.h"
 #import "LastPageView.h"
+
+@protocol LastPageShowDelegate<NSObject>
+@optional
+-(void) lastPage:(bool)show;
+@end
+
 @interface IntroControll : UIView<UIScrollViewDelegate>
 
 @property (nonatomic, strong) NSArray*pages;
@@ -12,5 +18,6 @@
 @property (nonatomic, strong)NSTimer *timer;
 @property (nonatomic)int currentPhotoNum;
 - (id)initWithFrame:(CGRect)frame pages:(NSArray*)pages;
+@property(nonatomic, retain) id<LastPageShowDelegate> delegate;
 
 @end

@@ -1,5 +1,7 @@
 #import <UIKit/UIKit.h>
+#import "IntroControll.h"
+@interface SlideVC : UIViewController<LastPageShowDelegate>
 
-@interface SlideVC : UIViewController
+@property(strong,nonatomic)UIButton *loginButton;
 
 @end

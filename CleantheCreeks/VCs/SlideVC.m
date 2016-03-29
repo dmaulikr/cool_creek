@@ -1,13 +1,14 @@
 #import "SlideVC.h"
-#import "IntroControll.h"
 #import "LocationVC.h"
 #import <FBSDKCoreKit/FBSDKCoreKit.h>
 #import <FBSDKLoginKit/FBSDKLoginKit.h>
 #import "User.h"
-@implementation SlideVC
-UIImage*firstPicture;
-UIImage*secondPicture;
+#import "LocationVC.h"
 
+@implementation SlideVC
+UIImage *firstPicture;
+UIImage *secondPicture;
+UIButton *loginButton;
 - (id)init
 {
     self = [super initWithNibName:nil bundle:nil];
@@ -26,27 +27,35 @@ UIImage*secondPicture;
     IntroModel *model5 = [[IntroModel alloc] initWithTitle:@"CLEAN THE CREEK" description:@"Show your facebook friends\nyour good deeds." image:@"back1.jpg" ToVC:self];
     IntroControll *control=[[IntroControll alloc] initWithFrame:CGRectMake(0, 0, self.view.frame.size.width, self.view.frame.size.height) pages:@[model1, model2, model3,model4,model5]];
        self.view =control;
-}
--(void) mapLabelClicked:(UIButton*) sender
-{
-    [self performSegueWithIdentifier:@"ViewAroundMe" sender:self];
-}
-- (void)viewDidLoad
-{
-   
-    [super viewDidLoad];
-    UIButton *loginButton = [[UIButton alloc] initWithFrame:CGRectMake(0,0,0,0)];
+    control.delegate=self;
+    
+    UITapGestureRecognizer *dtapGestureRecognize = [[UITapGestureRecognizer alloc] initWithTarget:self action:@selector(mapLabelClicked)];
+    dtapGestureRecognize.delegate = self;
+    dtapGestureRecognize.numberOfTapsRequired = 1;
+    UIButton *mapButton=[self.view viewWithTag:15];
+    [mapButton addGestureRecognizer:dtapGestureRecognize];
+    
+    
+    loginButton = [[UIButton alloc] initWithFrame:CGRectMake(0,0,0,0)];
     loginButton = [UIButton buttonWithType:UIButtonTypeCustom];
     [loginButton setTitleColor:[UIColor whiteColor] forState:UIControlStateNormal];
     [loginButton setTitle:@"SIGN IN WITH FACEBOOK" forState:UIControlStateNormal];
     [loginButton setTitleShadowColor:[UIColor blackColor] forState:UIControlStateHighlighted];
     loginButton.backgroundColor = [UIColor colorWithRed:(1/255.0) green:(122/255.0) blue:(255/255.0) alpha:1.0];
     loginButton.layer.cornerRadius = 4.0f;
-    loginButton.frame=CGRectMake(0, 0, self.view.frame.size.width*0.8, self.view.frame.size.width*0.15);
+    loginButton.frame = CGRectMake(0, 0, self.view.frame.size.width*0.8, self.view.frame.size.width*0.15);
     [loginButton setCenter:CGPointMake(self.view.frame.size.width/2,self.view.frame.size.height/23*21-loginButton.frame.size.height/2)];
     [loginButton addTarget:self action:@selector(loginButtonClicked) forControlEvents:UIControlEventTouchUpInside];
     [self.view addSubview:loginButton];
-    
+
+}
+-(void) mapLabelClicked
+{
+    [self performSegueWithIdentifier:@"viewAroundMe" sender:self];
+}
+- (void)viewDidLoad
+{
+    [super viewDidLoad];
 	// Do any additional setup after loading the view.
 }
 
@@ -58,6 +67,14 @@ UIImage*secondPicture;
 
 - (void)moveToMainNav {
     [self performSegueWithIdentifier:@"Slide2MainTabNav" sender:self];
+}
+
+-(void) prepareForSegue:(UIStoryboardSegue *)segue sender:(id)sender{
+    if([segue.identifier isEqualToString:@"viewAroundMe"])
+    {
+        LocationVC* vc = (LocationVC*)segue.destinationViewController;
+        vc.fromSlider=YES;
+    }
 }
 
 -(void)loginButtonClicked
@@ -80,7 +97,7 @@ UIImage*secondPicture;
                   
                   if (!error) {
                       NSLog(@"fetched user:%@  and Email : %@", result,result[@"email"]);
-                       NSUserDefaults *loginInfo=[NSUserDefaults standardUserDefaults];
+                       NSUserDefaults *loginInfo = [NSUserDefaults standardUserDefaults];
                       NSString *fbUsername = [[result valueForKey:@"link"] lastPathComponent];
                       [loginInfo setObject:fbUsername forKey:@"username"];
                       [loginInfo setObject:result[@"id"] forKey:@"user_id"];
@@ -92,8 +109,8 @@ UIImage*secondPicture;
                       User * user_info = [User new];
                       user_info.user_id = result[@"id"];
                       //user_info.kudos = [[NSArray alloc]init];
-                      user_info.user_name=result[@"name"];
-                      user_info.device_token=[loginInfo objectForKey:@"devicetoken"];
+                      user_info.user_name = result[@"name"];
+                      user_info.device_token = [loginInfo objectForKey:@"devicetoken"];
                       AWSDynamoDBObjectMapperConfiguration *updateMapperConfig = [AWSDynamoDBObjectMapperConfiguration new];
                       updateMapperConfig.saveBehavior = AWSDynamoDBObjectMapperSaveBehaviorAppendSet;
                       AWSDynamoDBObjectMapper *dynamoDBObjectMapper = [AWSDynamoDBObjectMapper defaultDynamoDBObjectMapper];
@@ -119,4 +136,12 @@ UIImage*secondPicture;
      }];
 }
 
+-(void) lastPage:(bool)show
+{
+    if(show)
+        [loginButton setCenter:CGPointMake(self.view.frame.size.width/2,self.view.frame.size.height/67*42-loginButton.frame.size.height/2)];
+    else
+        [loginButton setCenter:CGPointMake(self.view.frame.size.width/2,self.view.frame.size.height/23*21-loginButton.frame.size.height/2)];
+        
+}
 @end

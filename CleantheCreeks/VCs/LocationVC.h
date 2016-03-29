@@ -2,7 +2,8 @@
 #import <MapKit/MapKit.h>
 #import <CoreLocation/CoreLocation.h>
 #import "AppDelegate.h"
-@interface LocationVC : UIViewController<UITableViewDelegate, UITableViewDataSource, MKMapViewDelegate, CLLocationManagerDelegate>
+#import "BaseVC.h"
+@interface LocationVC : BaseVC<UITableViewDelegate, UITableViewDataSource, MKMapViewDelegate, CLLocationManagerDelegate>
 
 @property (weak, nonatomic) IBOutlet UITableView *locationTable;
 
@@ -25,6 +26,7 @@
 @property (nonatomic) NSInteger displayItemCount;
 - (IBAction)listButtonTapped:(id)sender;
 - (IBAction)mapButtonTapped:(id)sender;
-
+@property (nonatomic) bool fromSlider;
+@property (weak, nonatomic) IBOutlet UIButton *backBtn;
 
 @end

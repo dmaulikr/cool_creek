@@ -9,7 +9,7 @@
 - (id) initWithTitle:(NSString*)title description:(NSString*)desc image:(NSString*)imageText ToVC:(UIViewController*)vc{
     self = [super init];
     if(self != nil) {
-        self.delegate = (SlideVC*)vc;
+  //      self.delegate = (SlideVC*)vc;
         titleText = title;
         descriptionText = desc;
         image = [UIImage imageNamed:imageText];

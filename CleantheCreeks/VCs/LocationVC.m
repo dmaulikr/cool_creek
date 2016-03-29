@@ -43,6 +43,7 @@
     self.locationArray = [[NSMutableArray alloc]init];
     [self.locationArray removeAllObjects];
     self.mapView.delegate=self;
+    self.mapView.showsUserLocation=YES;
     self.mainDelegate=(AppDelegate*)[[UIApplication sharedApplication]delegate];
     self.refreshControl = [[UIRefreshControl alloc]init];
     [self.locationTable addSubview:self.refreshControl];
@@ -54,11 +55,15 @@
     
 }
 
+- (IBAction)backBtnClicked:(id)sender {
+    [self dismissVC];
+}
 
 
--(void) viewDidAppear:(BOOL)animated
+-(void) viewWillAppear:(BOOL)animated
 {
-    [super viewDidAppear:animated];
+    [super viewWillAppear:animated];
+    self.backBtn.hidden = !self.fromSlider;
 }
 
 
@@ -273,7 +278,9 @@
     cLocation.longitude = newLocation.coordinate.longitude;
     region.span = span;
     region.center = cLocation;
+   
     [self.mapView setRegion:region animated:YES];
+    [self.mapView setShowsUserLocation:YES];
     self.currentLocation=newLocation;
     CLGeocoder *ceo = [[CLGeocoder alloc]init];
     [ceo reverseGeocodeLocation:self.currentLocation
@@ -287,9 +294,32 @@
 }
 
 - (MKAnnotationView *)mapView:(MKMapView *)mapView viewForAnnotation:(id<MKAnnotation>)annotation{
-    LocationOverlayView *annotationView = [[LocationOverlayView alloc] initWithAnnotation:annotation reuseIdentifier:@"Attraction"];
-    annotationView.canShowCallout = YES;
-    return annotationView;
+    if(annotation == mapView.userLocation)
+    {
+        MKAnnotationView *pin = (MKAnnotationView *) [self.mapView dequeueReusableAnnotationViewWithIdentifier: @"VoteSpotPin"];
+        if (pin == nil)
+        {
+            
+            pin = [[MKAnnotationView alloc] initWithAnnotation: annotation reuseIdentifier: @"CurrentPin"] ;
+        }
+        else
+        {
+            pin.annotation = annotation;
+        }
+        
+        [pin setImage:[UIImage imageNamed:@"Dot"]];
+        pin.canShowCallout = YES;
+        pin.rightCalloutAccessoryView = [UIButton buttonWithType:UIButtonTypeDetailDisclosure];
+        return pin;
+
+    }
+    else
+    {
+        LocationOverlayView *annotationView = [[LocationOverlayView alloc] initWithAnnotation:annotation reuseIdentifier:@"Attraction"];
+        annotationView.canShowCallout = YES;
+        return annotationView;
+
+    }
 }
 
 - (void)mapView:(MKMapView *)mapView didSelectAnnotationView:(MKAnnotationView *)view
