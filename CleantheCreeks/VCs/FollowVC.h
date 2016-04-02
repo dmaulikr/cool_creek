@@ -18,4 +18,6 @@
 - (IBAction)followingChange:(id)sender;
 @property (strong,nonatomic) NSUserDefaults *defaults;
 @property (strong, nonatomic) NSString * current_user_id;
+@property (strong ,nonatomic) NSMutableDictionary* imageArray;
+@property (strong, nonatomic) NSMutableArray * userArray;
 @end

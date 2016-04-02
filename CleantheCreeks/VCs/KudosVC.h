@@ -18,4 +18,5 @@
 @property(strong, nonatomic) NSMutableDictionary *imageArray,*kudoAssignedArray;
 @property(strong, nonatomic) NSMutableArray *userArray;
 @property (strong,nonatomic) AppDelegate * appDelegate;
+
 @end

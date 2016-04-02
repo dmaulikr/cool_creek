@@ -85,8 +85,7 @@
 }
 
 - (void)application:(UIApplication*)application didRegisterForRemoteNotificationsWithDeviceToken:(NSData*)deviceToken{
-    
-    
+
     NSString * token = [NSString stringWithFormat:@"%@", deviceToken];
     //Format token as you need:
     token = [token stringByReplacingOccurrencesOfString:@" " withString:@""];
@@ -140,6 +139,7 @@
 - (void)applicationWillTerminate:(UIApplication *)application {
     // Called when the application is about to terminate. Save data if appropriate. See also applicationDidEnterBackground:.
 }
+
 - (BOOL)application:(UIApplication *)application
             openURL:(NSURL *)url
   sourceApplication:(NSString *)sourceApplication
@@ -149,6 +149,7 @@
                                                 sourceApplication:sourceApplication
                                                        annotation:annotation];
 }
+
 + (UIImage *)imageFromColor:(UIColor *)color forSize:(CGSize)size withCornerRadius:(CGFloat)radius
 {
     CGRect rect = CGRectMake(0, 0, size.width, size.height);
@@ -171,34 +172,24 @@
     UIGraphicsEndImageContext();
     return image;
 }
+
 -(void) loadData
 {
     NSUserDefaults *defaults = [NSUserDefaults standardUserDefaults];
     NSString *user_id = [defaults objectForKey:@"user_id"];
     AWSDynamoDBObjectMapper *dynamoDBObjectMapper = [AWSDynamoDBObjectMapper defaultDynamoDBObjectMapper];
-    AWSDynamoDBScanExpression *scanExpression = [AWSDynamoDBScanExpression new];
-    [[dynamoDBObjectMapper scan:[User class] expression:scanExpression]
+    
+    [[dynamoDBObjectMapper load:[User class] hashKey:user_id rangeKey:nil]
      continueWithBlock:^id(AWSTask *task) {
-         if (task.error) {
-             NSLog(@"The request failed. Error: [%@]", task.error);
-         }
-         if (task.exception) {
-             NSLog(@"The request failed. Exception: [%@]", task.exception);
-         }
          if (task.result) {
-             AWSDynamoDBPaginatedOutput *paginatedOutput = task.result;
+             User *user=task.result;
              
-             for (User *user in paginatedOutput.items)
+             [self.userArray setObject:user forKey:user.user_id];
+             if([user.user_id isEqualToString:user_id])
              {
-                 [self.userArray setObject:user forKey:user.user_id];
-                 if([user.user_id isEqualToString:user_id])
-                 {
-                     self.followingArray=user.followings;
-                     self.followersArray=user.followers;
-                 }
+                 self.followingArray=user.followings;
+                 self.followersArray=user.followers;
              }
-             
-             
          }
          return nil;
      }];
@@ -223,13 +214,12 @@
     NSString * device_id = user.device_token;
     NSString *urlstring =[[NSString alloc]initWithFormat:@"http://www.einsteinquotations.com/api/push/noti.php?mode=pro&device_id=%@&message=%@",device_id,message];
     
-     NSMutableURLRequest *postRequest = [NSMutableURLRequest requestWithURL:[NSURL URLWithString:urlstring]];
-    
+    NSMutableURLRequest *postRequest = [NSMutableURLRequest requestWithURL:[NSURL URLWithString:urlstring]];
     
     [NSURLConnection sendAsynchronousRequest:postRequest queue:[NSOperationQueue mainQueue]
                            completionHandler:^(NSURLResponse *response, NSData *data, NSError *error)
      {
-        if (error != nil)
+         if (error != nil)
          {
              ;
          }

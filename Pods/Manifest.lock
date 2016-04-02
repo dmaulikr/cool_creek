@@ -8,6 +8,7 @@ PODS:
     - AWSCore (= 2.3.5)
   - AWSSNS (2.3.5):
     - AWSCore (= 2.3.5)
+  - UIScrollView-InfiniteScroll (0.7.3)
 
 DEPENDENCIES:
   - AWSCognito
@@ -15,6 +16,7 @@ DEPENDENCIES:
   - AWSDynamoDB
   - AWSS3
   - AWSSNS
+  - UIScrollView-InfiniteScroll
 
 SPEC CHECKSUMS:
   AWSCognito: f12700b4781897b2913544b36d6283f04ae72a44
@@ -22,5 +24,6 @@ SPEC CHECKSUMS:
   AWSDynamoDB: 00123cb4cc540768dc4aef89f41b36a474de9363
   AWSS3: 967f4ad3c91f1ed2c9dca09a9dcf905111232a87
   AWSSNS: d95b17f039776ec0dd9cd9237313779d174b0215
+  UIScrollView-InfiniteScroll: b6c7d6d155dca7f9c5dd43813ecffeb301b3d50c
 
 COCOAPODS: 0.39.0

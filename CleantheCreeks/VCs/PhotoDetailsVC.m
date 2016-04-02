@@ -30,7 +30,7 @@
         
         _locationManager.delegate=self;
         _locationManager.desiredAccuracy=kCLLocationAccuracyBest;
-        _locationManager.distanceFilter=500;
+        _locationManager.distanceFilter=100;
         self.locationManager=_locationManager;
         
         if([CLLocationManager locationServicesEnabled]){
@@ -466,10 +466,11 @@
     
     AWSS3TransferManager *transferManager = [AWSS3TransferManager defaultS3TransferManager];
     NSArray *paths = NSSearchPathForDirectoriesInDomains(NSDocumentDirectory, NSUserDomainMask, YES);
-    NSString *dirtyPath = [[paths objectAtIndex:0] stringByAppendingPathComponent:[NSString stringWithFormat:@"%@a.png", self.location.location_id]];
-    NSString *cleanPath = [[paths objectAtIndex:0] stringByAppendingPathComponent:[NSString stringWithFormat:@"%@b.png", self.location.location_id]];
+    NSString *dirtyPath = [[paths objectAtIndex:0] stringByAppendingPathComponent:[NSString stringWithFormat:@"%@a.jpg", self.location.location_id]];
+    NSString *cleanPath = [[paths objectAtIndex:0] stringByAppendingPathComponent:[NSString stringWithFormat:@"%@b.jpg", self.location.location_id]];
     UIImage *cimage = [PhotoDetailsVC scaleImage:self.takenPhoto toSize:CGSizeMake(320.0,320.0)];
-    [UIImagePNGRepresentation(cimage) writeToFile:dirtyPath atomically:YES];
+    [UIImageJPEGRepresentation(cimage, 0.8) writeToFile:dirtyPath atomically:YES];
+ //   [UIImagePNGRepresentation(cimage) writeToFile:dirtyPath atomically:YES];
     NSURL* dirtyURL = [NSURL fileURLWithPath:dirtyPath];
     
     UIImage* cimage2 = [PhotoDetailsVC scaleImage:self.cleanedPhoto toSize:CGSizeMake(320.0,320.0)];
@@ -479,7 +480,7 @@
     AWSS3TransferManagerUploadRequest *uploadRequest = [AWSS3TransferManagerUploadRequest new];
     uploadRequest.body = dirtyURL;
     uploadRequest.bucket = @"cleanthecreeks";
-    uploadRequest.contentType = @"image/png";
+    uploadRequest.contentType = @"image/jpg";
     if(self.location==nil)
          uploadRequest.key = [NSString stringWithFormat:@"%f,%fa",
                          self.currentLocation.coordinate.latitude, self.currentLocation.coordinate.longitude];

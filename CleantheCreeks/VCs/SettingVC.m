@@ -103,4 +103,29 @@
         [self.measurementButton setTitle:@"Metric" forState:UIControlStateNormal];
     }
 }
+- (IBAction)signOut:(id)sender {
+    UIAlertController *alertController = [UIAlertController alertControllerWithTitle:@"Sign Out" message:@"Are you sure to sign out?" preferredStyle:UIAlertControllerStyleAlert];
+    
+    [alertController addAction:[UIAlertAction actionWithTitle:@"YES" style:UIAlertActionStyleDefault handler:^(UIAlertAction *action) {
+        [self.tabBarController.tabBar setHidden:NO];
+        NSUserDefaults * defs = [NSUserDefaults standardUserDefaults];
+        NSDictionary * dict = [defs dictionaryRepresentation];
+        for (id key in dict) {
+            [defs removeObjectForKey:key];
+        }
+        [defs synchronize];
+        [self.navigationController popToRootViewControllerAnimated:NO];
+        
+        [self performSegueWithIdentifier:@"signOut" sender:self];
+
+    }]];
+    
+    [alertController addAction:[UIAlertAction actionWithTitle:@"NO" style:UIAlertActionStyleDefault handler:^(UIAlertAction *action) {
+        
+        [alertController dismissViewControllerAnimated:YES completion:nil];
+    }]];
+    dispatch_async(dispatch_get_main_queue(), ^ {
+        [self presentViewController:alertController animated:YES completion:nil];
+    });
+}
 @end

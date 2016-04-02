@@ -38,7 +38,18 @@
         
         [self addSubview:descriptionLabel];
         
-        //[dummybutton addTarget:model.delegate action:@selector(moveToMainNav) forControlEvents:UIControlEventTouchUpInside];
+        _loginButton = [[UIButton alloc] initWithFrame:CGRectMake(0,0,0,0)];
+        _loginButton = [UIButton buttonWithType:UIButtonTypeCustom];
+        [_loginButton setTitleColor:[UIColor whiteColor] forState:UIControlStateNormal];
+        [_loginButton setTitle:@"SIGN IN WITH FACEBOOK" forState:UIControlStateNormal];
+        [_loginButton setTitleShadowColor:[UIColor blackColor] forState:UIControlStateHighlighted];
+        _loginButton.backgroundColor = [UIColor colorWithRed:(1/255.0) green:(122/255.0) blue:(255/255.0) alpha:1.0];
+        _loginButton.layer.cornerRadius = 4.0f;
+        _loginButton.frame = CGRectMake(0, 0, self.frame.size.width*0.8, self.frame.size.width*0.15);
+        [_loginButton setCenter:CGPointMake(self.frame.size.width/2,self.frame.size.height/23*21-_loginButton.frame.size.height/2)];
+        [self addSubview:_loginButton];
+        
+
         
     }
     return self;

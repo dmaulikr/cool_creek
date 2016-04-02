@@ -38,6 +38,8 @@
 		3C2874B01C88E2E200725B40 /* Activity.m in Sources */ = {isa = PBXBuildFile; fileRef = 3C2874AF1C88E2E200725B40 /* Activity.m */; };
 		3C2874B31C88EC9800725B40 /* FollowVC.m in Sources */ = {isa = PBXBuildFile; fileRef = 3C2874B21C88EC9800725B40 /* FollowVC.m */; };
 		3C324E561C9C8E2400EFBEC4 /* LocationBarCell.m in Sources */ = {isa = PBXBuildFile; fileRef = 3C324E551C9C8E2400EFBEC4 /* LocationBarCell.m */; };
+		3C59EC7D1CAE78FD00AE696D /* AsyncImageView.m in Sources */ = {isa = PBXBuildFile; fileRef = 3C59EC7C1CAE78FD00AE696D /* AsyncImageView.m */; };
+		3C59EC811CAF04FB00AE696D /* CustomInfiniteIndicator.m in Sources */ = {isa = PBXBuildFile; fileRef = 3C59EC801CAF04FB00AE696D /* CustomInfiniteIndicator.m */; };
 		3C75ACA11C9063750054AA3F /* CommentCell.m in Sources */ = {isa = PBXBuildFile; fileRef = 3C75ACA01C9063750054AA3F /* CommentCell.m */; };
 		3C9482EF1CA3F1EA007C4B79 /* CommentView.m in Sources */ = {isa = PBXBuildFile; fileRef = 3C9482EE1CA3F1EA007C4B79 /* CommentView.m */; };
 		3CA250EF1C843D32004BB466 /* User.m in Sources */ = {isa = PBXBuildFile; fileRef = 3CA250EE1C843D32004BB466 /* User.m */; };
@@ -141,6 +143,10 @@
 		3C2874B21C88EC9800725B40 /* FollowVC.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = FollowVC.m; sourceTree = "<group>"; };
 		3C324E541C9C8E2400EFBEC4 /* LocationBarCell.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = LocationBarCell.h; sourceTree = "<group>"; };
 		3C324E551C9C8E2400EFBEC4 /* LocationBarCell.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = LocationBarCell.m; sourceTree = "<group>"; };
+		3C59EC7B1CAE78FD00AE696D /* AsyncImageView.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = AsyncImageView.h; sourceTree = "<group>"; };
+		3C59EC7C1CAE78FD00AE696D /* AsyncImageView.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = AsyncImageView.m; sourceTree = "<group>"; };
+		3C59EC7F1CAF04FB00AE696D /* CustomInfiniteIndicator.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = CustomInfiniteIndicator.h; sourceTree = "<group>"; };
+		3C59EC801CAF04FB00AE696D /* CustomInfiniteIndicator.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = CustomInfiniteIndicator.m; sourceTree = "<group>"; };
 		3C75AC9F1C9063750054AA3F /* CommentCell.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = CommentCell.h; sourceTree = "<group>"; };
 		3C75ACA01C9063750054AA3F /* CommentCell.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = CommentCell.m; sourceTree = "<group>"; };
 		3C9482ED1CA3F1E9007C4B79 /* CommentView.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = CommentView.h; sourceTree = "<group>"; };
@@ -367,6 +373,15 @@
 				3C324E551C9C8E2400EFBEC4 /* LocationBarCell.m */,
 			);
 			name = LocationBarCell;
+			sourceTree = "<group>";
+		};
+		3C59EC7E1CAE790500AE696D /* AsyncImageView */ = {
+			isa = PBXGroup;
+			children = (
+				3C59EC7B1CAE78FD00AE696D /* AsyncImageView.h */,
+				3C59EC7C1CAE78FD00AE696D /* AsyncImageView.m */,
+			);
+			name = AsyncImageView;
 			sourceTree = "<group>";
 		};
 		3C75ACA21C90637C0054AA3F /* CommentCell */ = {
@@ -604,6 +619,9 @@
 		E2FD05691C59C9FA004B2C34 /* ExtLibs */ = {
 			isa = PBXGroup;
 			children = (
+				3C59EC7F1CAF04FB00AE696D /* CustomInfiniteIndicator.h */,
+				3C59EC801CAF04FB00AE696D /* CustomInfiniteIndicator.m */,
+				3C59EC7E1CAE790500AE696D /* AsyncImageView */,
 				E2F36EC41C5AFFE700923DF0 /* IntroControll */,
 			);
 			path = ExtLibs;
@@ -920,10 +938,12 @@
 				E2FD05851C59E548004B2C34 /* ActivityVC.m in Sources */,
 				0044B7CC1C7D9C6B000BB837 /* BaseVC.m in Sources */,
 				E27FC5101C69E7A300489DE3 /* LocationNav.m in Sources */,
+				3C59EC7D1CAE78FD00AE696D /* AsyncImageView.m in Sources */,
 				E2149DF51C755FE00005D50A /* FacebookPostVC.m in Sources */,
 				E2FD057F1C59E4B2004B2C34 /* ProfileVC.m in Sources */,
 				E2FD058B1C59E5D8004B2C34 /* MainTabNav.m in Sources */,
 				E2F36ECE1C5AFFE700923DF0 /* IntroControll.m in Sources */,
+				3C59EC811CAF04FB00AE696D /* CustomInfiniteIndicator.m in Sources */,
 				0084F3F41C7AFBD300E111D0 /* CCUtils.swift in Sources */,
 				3C324E561C9C8E2400EFBEC4 /* LocationBarCell.m in Sources */,
 				3CE5EB1F1C84F8310068DF59 /* ProfileViewCell.m in Sources */,

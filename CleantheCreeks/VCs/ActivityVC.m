@@ -6,9 +6,11 @@
 #import "ActivityPhotoDetailsVC.h"
 #import "KudosVC.h"
 #import <CoreLocation/CoreLocation.h>
-
+#import <UIScrollView+InfiniteScroll.h>
+#import "CustomInfiniteIndicator.h"
 @interface ActivityVC()
 @property (nonatomic,strong) UIRefreshControl * refreshControl;
+@property (nonatomic,strong) CustomInfiniteIndicator *infiniteIndicator;
 @end
 
 @implementation ActivityVC
@@ -16,7 +18,7 @@
 -(void) viewDidLoad
 {
     [super viewDidLoad];
-     self.displayItemCount=10;
+    self.displayItemCount=8;
     [self.profileTopBar setHeaderStyle:YES title:@"ACTIVITY" rightBtnHidden:YES];
     // Do any additional setup after loading the view.
     self.refreshControl = [[UIRefreshControl alloc]init];
@@ -28,7 +30,20 @@
     self.current_user_id = [self.defaults objectForKey:@"user_id"];
     self.tv.estimatedRowHeight = 65.f;
     self.tv.rowHeight = UITableViewAutomaticDimension;
+   
+    self.tv.infiniteScrollIndicatorStyle = UIActivityIndicatorViewStyleGray;
+    self.infiniteIndicator = [[CustomInfiniteIndicator alloc] initWithFrame:CGRectMake(0, 0, 40, 40)];
     
+    self.tv.infiniteScrollIndicatorView = self.infiniteIndicator;
+    self.appDelegate=(AppDelegate*)[[UIApplication sharedApplication]delegate];
+    [self.tv addInfiniteScrollWithHandler:^(UITableView* tableView) {
+        self.displayItemCount+=2;
+        self.displayItemCount=MIN(self.activityArray.count,self.displayItemCount);
+        [self.infiniteIndicator startAnimating];
+        [tableView reloadData];
+        [tableView finishInfiniteScroll];
+    }];
+
 }
 
 - (void)didReceiveMemoryWarning
@@ -37,10 +52,9 @@
     // Dispose of any resources that can be recreated.
 }
 
-
 - (void) loadImage:(NSString*)activty
 {
-    NSString *userImageURL = [NSString stringWithFormat:@"https://graph.facebook.com/%@/picture?type=large", activty];
+    NSString *userImageURL = [NSString stringWithFormat:@"https://graph.facebook.com/%@/picture", activty];
     
     NSData * data = [[NSData alloc] initWithContentsOfURL: [NSURL URLWithString: userImageURL]];
     if ( data == nil )
@@ -51,12 +65,11 @@
 #pragma UITableView Delegate Implementation
 -(void) updateData
 {
-    self.userArray=[[NSMutableDictionary alloc]init];
+    self.appDelegate.userArray=[[NSMutableDictionary alloc]init];
     
     self.activityArray=[[NSMutableArray alloc]init];
     self.imageArray=[[NSMutableDictionary alloc]init];
     
-    [self.userArray removeAllObjects];
     [self.activityArray removeAllObjects];
     AWSDynamoDBObjectMapper *dynamoDBObjectMapper = [AWSDynamoDBObjectMapper defaultDynamoDBObjectMapper];
     AWSDynamoDBScanExpression *scanExpression = [AWSDynamoDBScanExpression new];
@@ -67,181 +80,22 @@
              AWSDynamoDBPaginatedOutput *paginatedOutput = task.result;
              for (User *user in paginatedOutput.items)
              {
-                 [self.userArray setObject:user forKey:user.user_id];
+                 [self.appDelegate.userArray setObject:user forKey:user.user_id];
                  [self loadImage:user.user_id];
              }
-             if([self.userArray count]>0)
+             if([self.appDelegate.userArray count]>0)
              {
-             User * current_user = [self.userArray objectForKey:self.current_user_id];
-             AWSDynamoDBObjectMapper *dynamoDBObjectMapper2 = [AWSDynamoDBObjectMapper defaultDynamoDBObjectMapper];
-             AWSDynamoDBScanExpression *scanExpression2 = [AWSDynamoDBScanExpression new];
-             [[dynamoDBObjectMapper2 scan:[Location class] expression:scanExpression2] continueWithBlock:^id(AWSTask *task) {
-                 if (task.result) {
-                     AWSDynamoDBPaginatedOutput *paginatedOutput = task.result;
-                     
-                     for(NSDictionary * item in current_user.followers)
-                     {
-                         NSString * follower_id=[item objectForKey:@"id"];
-                         NSNumber *following_date=[item objectForKey:@"time"];
-                         // Adding finders to the activity array
-                         Activity *activity=[[Activity alloc]init];
-                         activity.activity_id = follower_id;
-                         activity.activity_time=[following_date doubleValue];
-                         activity.activity_type = @"follow";
-                         [self.activityArray addObject:activity];
-                     }
-                     for (Location *location in paginatedOutput.items) {
-                         for(NSDictionary * iterator in current_user.followings)
-                         {
-                             NSString * person_id=[iterator objectForKey:@"id"];
-                             
-                             // Adding finders to the activity array
-                             if([location.founder_id isEqualToString:person_id])
-                             {
-                                 Activity *activity=[[Activity alloc]init];
-                                 activity.activity_id = location.founder_id;
-                                 activity.activity_time=location.found_date;
-                                 activity.activity_type = @"find";
-                                 activity.activity_location = location;
-                                 
-                                 [self.activityArray addObject:activity];
-                             }
-                             
-                             //Adding following cleaners to the activity array
-                             if([location.cleaner_id isEqualToString:person_id] && ![location.founder_id isEqualToString:self.current_user_id])
-                             {
-                                 Activity *activity=[[Activity alloc]init];
-                                 activity.activity_id = location.cleaner_id;
-                                 activity.activity_time=location.cleaned_date;
-                                 activity.activity_type = @"clean";
-                                 activity.activity_location = location;
-                                 activity.kudo_count=[location.kudos count];
-                                 if(location.kudos!=nil)
-                                 {
-                                     for(NSDictionary *kudo_gaver in location.kudos)
-                                     {
-                                         if([[kudo_gaver objectForKey:@"id"] isEqualToString:self.current_user_id])
-                                         {
-                                             activity.kudo_assigned=YES;
-                                             break;
-                                         }
-                                     }
-                                 }
-                                 [self.activityArray addObject:activity];
-                             }
-                         }
-                         if([location.founder_id isEqualToString:self.current_user_id])
-                         {
-                             Activity *activity=[[Activity alloc]init];
-                             activity.activity_id = location.cleaner_id;
-                             activity.activity_time=location.cleaned_date;
-                             activity.activity_type = @"clean";
-                             activity.activity_location = location;
-                             activity.kudo_count=[location.kudos count];
-                             if(location.kudos!=nil)
-                             {
-                                 for(NSDictionary *kudo_gaver in location.kudos)
-                                 {
-                                     if([[kudo_gaver objectForKey:@"id"] isEqualToString:self.current_user_id])
-                                     {
-                                         activity.kudo_assigned=YES;
-                                         break;
-                                     }
-                                 }
-                             }
-                             [self.activityArray addObject:activity];
-                         }
-
-                         if([location.founder_id isEqualToString:self.current_user_id])
-                         {
-                             // Adding commenters
-                             for(NSDictionary * item in location.comments)
-                             {
-                                 NSString * commenter_id=[item objectForKey:@"id"];
-                                 NSString * comment_date=[item objectForKey:@"time"];
-                                 Activity *activity=[[Activity alloc]init];
-                                 activity.activity_id=commenter_id;
-                                 activity.activity_time = [comment_date doubleValue];
-                                 activity.activity_type = @"comment";
-                                 activity.activity_location = location;
-                                 [self.activityArray addObject:activity];
-                             }
-                             
-                         }
-                         // Adding kudos
-                         if([location.cleaner_id isEqualToString:self.current_user_id])
-                         {
-                             for(NSDictionary * iterator in location.kudos)
-                             {
-                                 NSString * kudo_person_id=[iterator objectForKey:@"id"];
-                                 NSString * kudo_date=[iterator objectForKey:@"time"];
-                                 // Adding finders to the activity array
-                                 Activity *activity=[[Activity alloc]init];
-                                 activity.activity_id = kudo_person_id;
-                                 activity.activity_time=[kudo_date doubleValue];
-                                 activity.activity_type = @"kudo";
-                             
-                                 [self.activityArray addObject:activity];
-
-                             }
-                         }
-                         // Adding followings
-                         
-                     }
-                     dispatch_async(dispatch_get_main_queue(), ^{
-                         self.activityArray = (NSMutableArray*)[self.activityArray sortedArrayUsingComparator:^NSComparisonResult(id a, id b) {
-                             double first = ((Activity*)a).activity_time;
-                             double second = ((Activity*)b).activity_time;
-                             return first<second;
-                         }];
-                         
-                         [self.tv reloadData];
-                         [self.refreshControl endRefreshing];
-                     });
-                 }
-                 
-                 return nil;
-             }];
-             }
-             
-         }
-         return nil;
-     }];
-
-}
--(void) updateCell
-{
-    self.userArray=[[NSMutableDictionary alloc]init];
-    
-    self.activityArray=[[NSMutableArray alloc]init];
-    
-    [self.userArray removeAllObjects];
-    [self.activityArray removeAllObjects];
-    AWSDynamoDBObjectMapper *dynamoDBObjectMapper = [AWSDynamoDBObjectMapper defaultDynamoDBObjectMapper];
-    AWSDynamoDBScanExpression *scanExpression = [AWSDynamoDBScanExpression new];
-    [[dynamoDBObjectMapper scan:[User class] expression:scanExpression]
-     continueWithBlock:^id(AWSTask *task) {
-         
-         if (task.result) {
-             AWSDynamoDBPaginatedOutput *paginatedOutput = task.result;
-             for (User *user in paginatedOutput.items)
-             {
-                 [self.userArray setObject:user forKey:user.user_id];
-                 
-             }
-             if([self.userArray count]>0)
-             {
-                 User * current_user = [self.userArray objectForKey:self.current_user_id];
+                 User * current_user = [self.appDelegate.userArray objectForKey:self.current_user_id];
                  AWSDynamoDBObjectMapper *dynamoDBObjectMapper2 = [AWSDynamoDBObjectMapper defaultDynamoDBObjectMapper];
                  AWSDynamoDBScanExpression *scanExpression2 = [AWSDynamoDBScanExpression new];
                  [[dynamoDBObjectMapper2 scan:[Location class] expression:scanExpression2] continueWithBlock:^id(AWSTask *task) {
                      if (task.result) {
                          AWSDynamoDBPaginatedOutput *paginatedOutput = task.result;
-                         
+                         //My followers
                          for(NSDictionary * item in current_user.followers)
                          {
                              NSString * follower_id=[item objectForKey:@"id"];
-                             NSString * following_date=[item objectForKey:@"time"];
+                             NSNumber *following_date=[item objectForKey:@"time"];
                              // Adding finders to the activity array
                              Activity *activity=[[Activity alloc]init];
                              activity.activity_id = follower_id;
@@ -249,6 +103,8 @@
                              activity.activity_type = @"follow";
                              [self.activityArray addObject:activity];
                          }
+                         
+                         //Adding find and clean activites for following users
                          for (Location *location in paginatedOutput.items) {
                              for(NSDictionary * iterator in current_user.followings)
                              {
@@ -267,7 +123,7 @@
                                  }
                                  
                                  //Adding following cleaners to the activity array
-                                 if([location.cleaner_id isEqualToString:person_id] && ![location.founder_id isEqualToString:self.current_user_id])
+                                 if([location.cleaner_id isEqualToString:person_id] && ![location.founder_id isEqualToString:self.current_user_id]&&!location.isDirty)
                                  {
                                      Activity *activity=[[Activity alloc]init];
                                      activity.activity_id = location.cleaner_id;
@@ -289,7 +145,19 @@
                                      [self.activityArray addObject:activity];
                                  }
                              }
-                             if([location.founder_id isEqualToString:self.current_user_id])
+                             //Showing my found activities
+                             if([location.founder_id isEqualToString:self.current_user_id] && location.isDirty)
+                             {
+                                 Activity *activity=[[Activity alloc]init];
+                                 activity.activity_id = location.founder_id;
+                                 activity.activity_time=location.found_date;
+                                 activity.activity_type = @"find";
+                                 activity.activity_location = location;
+                                 
+                                 [self.activityArray addObject:activity];
+                             }
+                             // Showing cleaned activities on my found areas
+                             if([location.founder_id isEqualToString:self.current_user_id] && !location.isDirty &&location.cleaner_id)
                              {
                                  Activity *activity=[[Activity alloc]init];
                                  activity.activity_id = location.cleaner_id;
@@ -311,9 +179,9 @@
                                  [self.activityArray addObject:activity];
                              }
                              
+                             // Adding commenters
                              if([location.founder_id isEqualToString:self.current_user_id])
                              {
-                                 // Adding commenters
                                  for(NSDictionary * item in location.comments)
                                  {
                                      NSString * commenter_id=[item objectForKey:@"id"];
@@ -327,6 +195,7 @@
                                  }
                                  
                              }
+                             
                              // Adding kudos
                              if([location.cleaner_id isEqualToString:self.current_user_id])
                              {
@@ -344,7 +213,7 @@
                                      
                                  }
                              }
-                             // Adding followings
+                            
                              
                          }
                          dispatch_async(dispatch_get_main_queue(), ^{
@@ -355,7 +224,7 @@
                              }];
                              
                              [self.tv reloadData];
-                             
+                             [self.refreshControl endRefreshing];
                          });
                      }
                      
@@ -369,11 +238,162 @@
     
 }
 
-- (NSInteger)tableView:(UITableView *)tableView numberOfRowsInSection:(NSInteger)section{
-    if(self.activityArray!=nil)
+-(void) updateCell
+{
+    if([self.appDelegate.userArray count]>0)
     {
-        return [self.activityArray count];
+        User * current_user = [self.appDelegate.userArray objectForKey:self.current_user_id];
+        AWSDynamoDBObjectMapper *dynamoDBObjectMapper2 = [AWSDynamoDBObjectMapper defaultDynamoDBObjectMapper];
+        AWSDynamoDBScanExpression *scanExpression2 = [AWSDynamoDBScanExpression new];
+        [[dynamoDBObjectMapper2 scan:[Location class] expression:scanExpression2] continueWithBlock:^id(AWSTask *task) {
+            if (task.result) {
+                AWSDynamoDBPaginatedOutput *paginatedOutput = task.result;
+                //My followers
+                for(NSDictionary * item in current_user.followers)
+                {
+                    NSString * follower_id=[item objectForKey:@"id"];
+                    NSNumber *following_date=[item objectForKey:@"time"];
+                    // Adding finders to the activity array
+                    Activity *activity=[[Activity alloc]init];
+                    activity.activity_id = follower_id;
+                    activity.activity_time=[following_date doubleValue];
+                    activity.activity_type = @"follow";
+                    [self.activityArray addObject:activity];
+                }
+                
+                //Adding find and clean activites for following users
+                for (Location *location in paginatedOutput.items) {
+                    for(NSDictionary * iterator in current_user.followings)
+                    {
+                        NSString * person_id=[iterator objectForKey:@"id"];
+                        
+                        // Adding finders to the activity array
+                        if([location.founder_id isEqualToString:person_id])
+                        {
+                            Activity *activity=[[Activity alloc]init];
+                            activity.activity_id = location.founder_id;
+                            activity.activity_time=location.found_date;
+                            activity.activity_type = @"find";
+                            activity.activity_location = location;
+                            
+                            [self.activityArray addObject:activity];
+                        }
+                        
+                        //Adding following cleaners to the activity array
+                        if([location.cleaner_id isEqualToString:person_id] && ![location.founder_id isEqualToString:self.current_user_id]&&!location.isDirty)
+                        {
+                            Activity *activity=[[Activity alloc]init];
+                            activity.activity_id = location.cleaner_id;
+                            activity.activity_time=location.cleaned_date;
+                            activity.activity_type = @"clean";
+                            activity.activity_location = location;
+                            activity.kudo_count=[location.kudos count];
+                            if(location.kudos!=nil)
+                            {
+                                for(NSDictionary *kudo_gaver in location.kudos)
+                                {
+                                    if([[kudo_gaver objectForKey:@"id"] isEqualToString:self.current_user_id])
+                                    {
+                                        activity.kudo_assigned=YES;
+                                        break;
+                                    }
+                                }
+                            }
+                            [self.activityArray addObject:activity];
+                        }
+                    }
+                    //Showing my found activities
+                    if([location.founder_id isEqualToString:self.current_user_id] && location.isDirty)
+                    {
+                        Activity *activity=[[Activity alloc]init];
+                        activity.activity_id = location.founder_id;
+                        activity.activity_time=location.found_date;
+                        activity.activity_type = @"find";
+                        activity.activity_location = location;
+                        
+                        [self.activityArray addObject:activity];
+                    }
+                    // Showing cleaned activities on my found areas
+                    if([location.founder_id isEqualToString:self.current_user_id] && !location.isDirty &&location.cleaner_id)
+                    {
+                        Activity *activity=[[Activity alloc]init];
+                        activity.activity_id = location.cleaner_id;
+                        activity.activity_time=location.cleaned_date;
+                        activity.activity_type = @"clean";
+                        activity.activity_location = location;
+                        activity.kudo_count=[location.kudos count];
+                        if(location.kudos!=nil)
+                        {
+                            for(NSDictionary *kudo_gaver in location.kudos)
+                            {
+                                if([[kudo_gaver objectForKey:@"id"] isEqualToString:self.current_user_id])
+                                {
+                                    activity.kudo_assigned=YES;
+                                    break;
+                                }
+                            }
+                        }
+                        [self.activityArray addObject:activity];
+                    }
+                    
+                    // Adding commenters
+                    if([location.founder_id isEqualToString:self.current_user_id])
+                    {
+                        for(NSDictionary * item in location.comments)
+                        {
+                            NSString * commenter_id=[item objectForKey:@"id"];
+                            NSString * comment_date=[item objectForKey:@"time"];
+                            Activity *activity=[[Activity alloc]init];
+                            activity.activity_id=commenter_id;
+                            activity.activity_time = [comment_date doubleValue];
+                            activity.activity_type = @"comment";
+                            activity.activity_location = location;
+                            [self.activityArray addObject:activity];
+                        }
+                        
+                    }
+                    
+                    // Adding kudos
+                    if([location.cleaner_id isEqualToString:self.current_user_id])
+                    {
+                        for(NSDictionary * iterator in location.kudos)
+                        {
+                            NSString * kudo_person_id=[iterator objectForKey:@"id"];
+                            NSString * kudo_date=[iterator objectForKey:@"time"];
+                            // Adding finders to the activity array
+                            Activity *activity=[[Activity alloc]init];
+                            activity.activity_id = kudo_person_id;
+                            activity.activity_time=[kudo_date doubleValue];
+                            activity.activity_type = @"kudo";
+                            
+                            [self.activityArray addObject:activity];
+                            
+                        }
+                    }
+                    
+                    
+                }
+                dispatch_async(dispatch_get_main_queue(), ^{
+                    self.activityArray = (NSMutableArray*)[self.activityArray sortedArrayUsingComparator:^NSComparisonResult(id a, id b) {
+                        double first = ((Activity*)a).activity_time;
+                        double second = ((Activity*)b).activity_time;
+                        return first<second;
+                    }];
+                    
+                    [self.tv reloadData];
+                    
+                });
+            }
+            
+            return nil;
+        }];
     }
+    
+}
+
+- (NSInteger)tableView:(UITableView *)tableView numberOfRowsInSection:(NSInteger)section{
+    if([self.activityArray count]>0)
+        return self.displayItemCount;
     return 0;
 }
 
@@ -381,11 +401,11 @@
     
     NSInteger row = indexPath.row;
     UITableViewCell *cell;
-   
+    
     if([self.activityArray count]>0)
     {
         Activity * activity = [self.activityArray objectAtIndex:row];
-        User * user=[self.userArray objectForKey:activity.activity_id];
+        User * user=[self.appDelegate.userArray objectForKey:activity.activity_id];
         
         if([activity.activity_type isEqualToString: @"clean"])
         {
@@ -400,7 +420,7 @@
             [((CleaningDoneCell*)cell).btnKudos setImage:[UIImage imageNamed:@"IconKudos3"] forState:UIControlStateSelected];
             [((CleaningDoneCell*)cell).btnKudos setTitle:@"Give Kudos" forState:UIControlStateNormal];
             [((CleaningDoneCell*)cell).btnKudos setImage:[UIImage imageNamed:@"IconKudos2"] forState:UIControlStateNormal];
-           
+            
             ((CleaningDoneCell*)cell).btnKudos.selected=activity.kudo_assigned;
             
             ((CleaningDoneCell*)cell).btnKudos.tag = indexPath.row;
@@ -495,7 +515,7 @@
              [self updateCell];
              if(assigned)
              {
-                 self.appDelegate=(AppDelegate*)[[UIApplication sharedApplication]delegate];
+                 
                  NSString * user_name = [self.defaults objectForKey:@"user_name"];
                  NSMutableAttributedString * attributedString=[self generateString:user_name content:@" gave you kudos" location:@""];
                  
@@ -507,7 +527,7 @@
          }
          return nil;
      }];
-
+    
 }
 
 

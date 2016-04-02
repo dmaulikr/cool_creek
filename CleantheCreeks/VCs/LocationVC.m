@@ -13,9 +13,11 @@
 #import "ActivityPhotoDetailsVC.h"
 #import "CameraVC.h"
 #import "Clean the Creek-Bridging-Header.h"
-
+#import <UIScrollView+InfiniteScroll.h>
+#import "CustomInfiniteIndicator.h"
 @interface LocationVC()
 @property (nonatomic,strong) UIRefreshControl * refreshControl;
+@property (nonatomic,strong) CustomInfiniteIndicator *infiniteIndicator;
 @property(strong,nonatomic) Location * annotationLocation;
 @end
 
@@ -31,7 +33,7 @@
     
     _locationManager.delegate=self;
     _locationManager.desiredAccuracy=kCLLocationAccuracyBest;
-    _locationManager.distanceFilter = 500.f;
+    _locationManager.distanceFilter = 100.f;
     self.locationManager=_locationManager;
     if([CLLocationManager locationServicesEnabled]){
         [self.locationManager startUpdatingLocation];
@@ -47,11 +49,23 @@
     self.mainDelegate=(AppDelegate*)[[UIApplication sharedApplication]delegate];
     self.refreshControl = [[UIRefreshControl alloc]init];
     [self.locationTable addSubview:self.refreshControl];
-    self.displayItemCount=20;
+    self.displayItemCount=8;
     [self.refreshControl beginRefreshing];
     [self updateData];
     
     [self.refreshControl addTarget:self action:@selector(updateData) forControlEvents:UIControlEventValueChanged];
+    self.locationTable.infiniteScrollIndicatorStyle = UIActivityIndicatorViewStyleGray;
+    self.infiniteIndicator = [[CustomInfiniteIndicator alloc] initWithFrame:CGRectMake(0, 0, 40, 40)];
+    
+    self.locationTable.infiniteScrollIndicatorView = self.infiniteIndicator;
+
+    [self.locationTable addInfiniteScrollWithHandler:^(UITableView* tableView) {
+        self.displayItemCount+=2;
+         self.displayItemCount=MIN(self.locationArray.count,self.displayItemCount);
+        [self.infiniteIndicator startAnimating];
+        [tableView reloadData];
+        [tableView finishInfiniteScroll];
+    }];
     
 }
 
@@ -76,7 +90,7 @@
 
 - (NSInteger)tableView:(UITableView *)tableView numberOfRowsInSection:(NSInteger)section{
     if([self.locationArray count]>0)
-        return [self.locationArray count];
+        return self.displayItemCount;
     return 0;
 }
 
@@ -119,29 +133,6 @@
     [footerView addSubview:_spinner];
     
     return footerView;
-}
-
-- (void)tableView:(UITableView *)tableView willDisplayCell:(UITableViewCell *)cell forRowAtIndexPath:(NSIndexPath *)indexPath{
-    if(indexPath.section==2)
-    {
-        self.displayItemCount+=5;
-        if (_spinner.superview != nil) {
-            CGRect frm = _spinner.superview.frame;
-            _spinner.center = CGPointMake(frm.size.width / 2, frm.size.height / 2);
-        }
-        [_spinner startAnimating];
-        [self updateData];
-    }
-    
-}
-- (void)scrollViewDidScroll:(UIScrollView *)scrollView_
-{
-    CGFloat actualPosition = scrollView_.contentOffset.y;
-    CGFloat contentHeight = scrollView_.contentSize.height - 10;
-    if (actualPosition >= contentHeight) {
-        [self updateData];
-        
-    }
 }
 
 
@@ -206,11 +197,7 @@
     [[dynamoDBObjectMapper scan:[Location class] expression:scanExpression] continueWithBlock:^id(AWSTask *task) {
         if (task.result) {
             AWSDynamoDBPaginatedOutput *paginatedOutput = task.result;
-            
-            int maxCount = self.displayItemCount;
-            if(maxCount>paginatedOutput.items.count)
-                maxCount = paginatedOutput.items.count;
-            for (int i=0;i<maxCount;i++) {
+            for (int i=0;i<paginatedOutput.items.count;i++) {
                 Location * location= [paginatedOutput.items objectAtIndex:i];
                 CLLocation*exitingLocation=[[CLLocation alloc]initWithLatitude:location.latitude longitude:location.longitude];
                 CLLocationDistance distance=[exitingLocation distanceFromLocation:self.currentLocation];
@@ -253,8 +240,9 @@
                         return distanceA>distanceB;
                     }];
                 [self.locationTable reloadData];
+                
                 [self.refreshControl endRefreshing];
-                [self.spinner stopAnimating];
+    
             });
             
 

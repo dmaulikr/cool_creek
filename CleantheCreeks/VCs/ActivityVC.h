@@ -13,7 +13,7 @@
 @property (strong,nonatomic) NSMutableArray * activityArray;
 @property (strong,nonatomic) NSMutableDictionary * imageArray;
 @property (strong,nonatomic) AppDelegate * appDelegate;
-@property (strong,nonatomic) NSMutableDictionary * userArray;
+//@property (strong,nonatomic) NSMutableDictionary * userArray;
 @property(nonatomic) int displayItemCount;
 
 @property (strong, nonatomic) Location * selectedLocation;

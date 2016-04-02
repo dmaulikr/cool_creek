@@ -34,25 +34,22 @@ UIButton *loginButton;
     dtapGestureRecognize.numberOfTapsRequired = 1;
     UIButton *mapButton=[self.view viewWithTag:15];
     [mapButton addGestureRecognizer:dtapGestureRecognize];
-    
-    
-    loginButton = [[UIButton alloc] initWithFrame:CGRectMake(0,0,0,0)];
-    loginButton = [UIButton buttonWithType:UIButtonTypeCustom];
-    [loginButton setTitleColor:[UIColor whiteColor] forState:UIControlStateNormal];
-    [loginButton setTitle:@"SIGN IN WITH FACEBOOK" forState:UIControlStateNormal];
-    [loginButton setTitleShadowColor:[UIColor blackColor] forState:UIControlStateHighlighted];
-    loginButton.backgroundColor = [UIColor colorWithRed:(1/255.0) green:(122/255.0) blue:(255/255.0) alpha:1.0];
-    loginButton.layer.cornerRadius = 4.0f;
-    loginButton.frame = CGRectMake(0, 0, self.view.frame.size.width*0.8, self.view.frame.size.width*0.15);
-    [loginButton setCenter:CGPointMake(self.view.frame.size.width/2,self.view.frame.size.height/23*21-loginButton.frame.size.height/2)];
-    [loginButton addTarget:self action:@selector(loginButtonClicked) forControlEvents:UIControlEventTouchUpInside];
-    [self.view addSubview:loginButton];
-
+    NSMutableArray * gestureArray=[[NSMutableArray alloc]init];
+    for(int i=0;i<5;i++)
+    {
+        UITapGestureRecognizer *fbGestureRecognize = [[UITapGestureRecognizer alloc] initWithTarget:self action:@selector(loginButtonClicked)];
+        fbGestureRecognize.delegate = self;
+        fbGestureRecognize.numberOfTapsRequired = 1;
+        UIButton *fbButton=[self.view viewWithTag:i+16];
+        [fbButton addGestureRecognizer:fbGestureRecognize];
+    }
 }
+
 -(void) mapLabelClicked
 {
     [self performSegueWithIdentifier:@"viewAroundMe" sender:self];
 }
+
 - (void)viewDidLoad
 {
     [super viewDidLoad];

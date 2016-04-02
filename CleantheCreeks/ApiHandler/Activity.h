@@ -9,7 +9,7 @@
 #ifndef Activity_h
 #define Activity_h
 #import <Foundation/Foundation.h>
-#import <UIKit/UIKit.h>
+
 #import <CoreLocation/CoreLocation.h>
 #import "Location.h"
 @interface Activity :NSObject

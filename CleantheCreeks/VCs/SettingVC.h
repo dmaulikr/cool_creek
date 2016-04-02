@@ -22,5 +22,6 @@
 - (IBAction)switchLocationUpdate:(id)sender;
 - (IBAction)measurementUpdate:(id)sender;
 @property (weak, nonatomic) IBOutlet UIButton *measurementButton;
+- (IBAction)signOut:(id)sender;
 
 @end

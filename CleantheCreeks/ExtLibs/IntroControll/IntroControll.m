@@ -59,6 +59,7 @@
         for(int i = 1; i <  _pages.count-1; i++) {
             IntroView *view = [[IntroView alloc] initWithFrame:frame model:[_pages objectAtIndex:i]];
             view.frame = CGRectOffset(view.frame, i*frame.size.width, 0);
+            view.loginButton.tag=16+i;
             [_scrollView addSubview:view];
         }
         LastPageView * lastPage=[[LastPageView alloc] initWithFrame:frame model:[_pages objectAtIndex:_pages.count-1]];

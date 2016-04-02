@@ -50,38 +50,59 @@
 -(void)loadData
 {
     self.displayArray=[[NSMutableArray alloc]init];
-    
-    dispatch_async(dispatch_get_main_queue(), ^{
-        [self.appDelegate loadData];
-        if(self.displayIndex==0)
-            self.displayArray=self.appDelegate.followingArray;
-        else if(self.displayIndex==1)
-            self.displayArray=self.appDelegate.followersArray;
-        [self.followTable reloadData];
-        [self.refreshControl endRefreshing];
-        
-    });
+    self.imageArray=[[NSMutableDictionary alloc]init];
+    AWSDynamoDBObjectMapper *dynamoDBObjectMapper = [AWSDynamoDBObjectMapper defaultDynamoDBObjectMapper];
+    AWSDynamoDBScanExpression *scanExpression = [AWSDynamoDBScanExpression new];
+    [[dynamoDBObjectMapper scan:[User class] expression:scanExpression]
+     continueWithBlock:^id(AWSTask *task) {
+         
+         if (task.result) {
+             AWSDynamoDBPaginatedOutput *paginatedOutput = task.result;
+             for (User *user in paginatedOutput.items)
+             {
+                 [self.appDelegate.userArray setObject:user forKey:user.user_id];
+                 [self loadImage:user.user_id];
+             }
+             dispatch_async(dispatch_get_main_queue(), ^{
+                 [self.appDelegate loadData];
+                 if(self.displayIndex==0)
+                     self.displayArray=self.appDelegate.followingArray;
+                 else if(self.displayIndex==1)
+                     self.displayArray=self.appDelegate.followersArray;
+                 [self.followTable reloadData];
+                 [self.refreshControl endRefreshing];
+                 
+             });
+         }
+         return nil;
+     }];
+
     
 }
 - (NSInteger)tableView:(UITableView *)tableView numberOfRowsInSection:(NSInteger)section
 {
     return [self.displayArray count];
 }
-
+-(void) loadImage:(NSString *)user_id
+{
+    NSString *userImageURL = [NSString stringWithFormat:@"https://graph.facebook.com/%@/picture", user_id];
+    dispatch_async(dispatch_get_main_queue(), ^{
+        NSData * data = [[NSData alloc] initWithContentsOfURL: [NSURL URLWithString: userImageURL]];
+        if ( data != nil ){
+            [self.imageArray setObject:[UIImage imageWithData:data] forKey:user_id];
+            [self.followTable reloadData];
+        }
+        
+    });
+}
 - (UITableViewCell *)tableView:(UITableView *)tableView cellForRowAtIndexPath:(NSIndexPath *)indexPath
 {
     KudosCell* cell = (KudosCell*)[tableView dequeueReusableCellWithIdentifier:@"KudosCell"];
     NSDictionary * current_user=[self.displayArray objectAtIndex:indexPath.row];
     NSDictionary * user_id=[current_user objectForKey:@"id"];
     User * user=[self.appDelegate.userArray objectForKey:user_id];
-    NSString *userImageURL = [NSString stringWithFormat:@"https://graph.facebook.com/%@/picture?type=large", user_id];
-    dispatch_async(dispatch_get_global_queue(0,0), ^{
-        NSData * data = [[NSData alloc] initWithContentsOfURL: [NSURL URLWithString: userImageURL]];
-        if ( data == nil )
-            return;
-        [cell.user_photo setImage:[UIImage imageWithData: data]];
-    });
     
+    [cell.user_photo setImage:[self.imageArray objectForKey:user.user_id]];
     [cell.user_name setText:user.user_name];
     [cell.user_location setText:[NSString stringWithFormat:@"%@, %@, %@", user.location, user.state, user.country]];
     cell.likeButton.tag=indexPath.row;
@@ -130,7 +151,7 @@
     if(selected)
     {
         [followingArray addObject:followingItem];
-        
+
     }
     else
     {
