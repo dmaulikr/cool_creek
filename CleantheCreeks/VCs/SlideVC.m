@@ -108,6 +108,9 @@ UIButton *loginButton;
                       //user_info.kudos = [[NSArray alloc]init];
                       user_info.user_name = result[@"name"];
                       user_info.device_token = [loginInfo objectForKey:@"devicetoken"];
+                      user_info.user_email= [loginInfo objectForKey:@"user_email"];
+                      user_info.user_about=[loginInfo objectForKey:@"user_about"];
+                      
                       AWSDynamoDBObjectMapperConfiguration *updateMapperConfig = [AWSDynamoDBObjectMapperConfiguration new];
                       updateMapperConfig.saveBehavior = AWSDynamoDBObjectMapperSaveBehaviorAppendSet;
                       AWSDynamoDBObjectMapper *dynamoDBObjectMapper = [AWSDynamoDBObjectMapper defaultDynamoDBObjectMapper];

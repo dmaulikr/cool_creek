@@ -8,6 +8,7 @@
 #import <CoreLocation/CoreLocation.h>
 #import <UIScrollView+InfiniteScroll.h>
 #import "CustomInfiniteIndicator.h"
+#import "ProfileVC.h"
 @interface ActivityVC()
 @property (nonatomic,strong) UIRefreshControl * refreshControl;
 @property (nonatomic,strong) CustomInfiniteIndicator *infiniteIndicator;
@@ -60,7 +61,7 @@
     if ( data == nil )
         return;
     [self.imageArray setObject:[UIImage imageWithData: data] forKey:activty];
-    [self.tv reloadSections:[NSIndexSet indexSetWithIndex:0] withRowAnimation:UITableViewRowAnimationAutomatic];
+    [self.tv reloadData];
 }
 #pragma UITableView Delegate Implementation
 -(void) updateData
@@ -443,21 +444,43 @@
             else if([activity.activity_type isEqualToString: @"kudo"])
             {
                 [((CleaningCommentCell*)cell).lblContent setAttributedText:[self generateString:user.user_name content:@" gave you Kudos \n" location:@""]];
+                ((CleaningCommentCell*)cell).profileAvatar.tag = indexPath.row;
+                UITapGestureRecognizer *followTap=[[UITapGestureRecognizer alloc]initWithTarget:self action:@selector(showProfile:)];
+                followTap.numberOfTapsRequired=1;
+                [((CleaningCommentCell*)cell).profileAvatar addGestureRecognizer:followTap];
+                ((CleaningCommentCell*)cell).profileAvatar.userInteractionEnabled=YES;
+
             }
             else if([activity.activity_type isEqualToString: @"follow"])
             {
                 [((CleaningCommentCell*)cell).lblContent setAttributedText:[self generateString:user.user_name content:@" started follwing you" location:@""]];
+                ((CleaningCommentCell*)cell).profileAvatar.tag = indexPath.row;
+                UITapGestureRecognizer *followTap=[[UITapGestureRecognizer alloc]initWithTarget:self action:@selector(showProfile:)];
+                followTap.numberOfTapsRequired=1;
+                [((CleaningCommentCell*)cell).profileAvatar addGestureRecognizer:followTap];
+                ((CleaningCommentCell*)cell).profileAvatar.userInteractionEnabled=YES;
             }
             
             [((CleaningCommentCell*)cell).activityHours setText:[self timeDifference:activity.activity_time]];
             if([self.imageArray objectForKey:activity.activity_id]!=nil)
+            {
                 [((CleaningCommentCell*)cell).profileAvatar setImage: [self.imageArray objectForKey:user.user_id]];
+               
+            }
         }
     }
     if (cell == nil){
         cell = [[UITableViewCell alloc] init];
     }
     return cell;
+}
+
+-(void) showProfile:(id)sender
+{
+    NSLog(@"image tapped");
+    UITapGestureRecognizer *gesture = (UITapGestureRecognizer *) sender;
+    self.selectedImgIndex = gesture.view.tag;
+    [self performSegueWithIdentifier:@"showProfile" sender:self];
 }
 
 -(void) kudoCountClicked:(UIButton*)sender
@@ -572,6 +595,12 @@
         {
             KudosVC * vc=(KudosVC*)segue.destinationViewController;
             vc.location=self.selectedLocation;
+        }
+        else if([segue.identifier isEqualToString:@"showProfile"])
+        {
+            ProfileVC * vc=(ProfileVC*)segue.destinationViewController;
+            
+            vc.current_user_id = [self.activityArray objectAtIndex:self.selectedImgIndex];
         }
         
     }

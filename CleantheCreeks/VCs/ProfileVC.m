@@ -25,23 +25,11 @@
 - (void)viewDidLoad
 {
     [super viewDidLoad];
-    self.kudoCount=0;
     self.locationArray=[[NSMutableArray alloc]init];
-    NSUserDefaults *defaults = [NSUserDefaults standardUserDefaults];
-    self.luser_id = [defaults objectForKey:@"user_id"];
-    self.luser_name = [defaults objectForKey:@"user_name"];
-    self.luser_email = [defaults objectForKey:@"user_email"];
-    self.luser_location = [defaults objectForKey:@"user_location"];
-    self.luser_about = [defaults objectForKey:@"user_about"];
-    self.fb_username = [defaults objectForKey:@"username"];
     self.refreshControl = [[UIRefreshControl alloc]init];
     [self.profileTable addSubview:self.refreshControl];
-    self.firstArray=[[NSMutableDictionary alloc] init];
-    self.secondArray=[[NSMutableDictionary alloc] init];
-    [self.refreshControl beginRefreshing];
-    [self updateData];
     [self.refreshControl addTarget:self action:@selector(updateData) forControlEvents:UIControlEventValueChanged];
-    [self.profileTopBar setHeaderStyle:YES title:self.luser_name rightBtnHidden:NO];
+    
     self.displayItemCount=3;
     self.profileTable.estimatedRowHeight = 323.f;
     self.profileTable.rowHeight = UITableViewAutomaticDimension;
@@ -58,17 +46,53 @@
         [tableView reloadData];
         [tableView finishInfiniteScroll];
     }];
-    
+
 }
 
 -(void) viewWillAppear:(BOOL)animated
 {
-    [self.tabBarController.tabBar setHidden:NO];
+    self.kudoCount=0;
+   
+    NSUserDefaults *defaults = [NSUserDefaults standardUserDefaults];
+    if(!self.mode)
+    {
+        self.current_user_id = [defaults objectForKey:@"user_id"];
+        [self.tabBarController.tabBar setHidden:NO];
+        
+    }
+    else
+    {
+        [self.tabBarController.tabBar setHidden:YES];
+        
+    }
+    [self.profileTopBar setHeaderStyle:self.mode title:self.profile_user.user_name rightBtnHidden:!self.mode];
+    self.firstArray=[[NSMutableDictionary alloc] init];
+    self.secondArray=[[NSMutableDictionary alloc] init];
+    self.dynamoDBObjectMapper = [AWSDynamoDBObjectMapper defaultDynamoDBObjectMapper];
+
+    [[self.dynamoDBObjectMapper load:[User class] hashKey:self.current_user_id rangeKey:nil]
+     continueWithBlock:^id(AWSTask *task) {
+         
+         if (task.error) {
+             NSLog(@"The request failed. Error: [%@]", task.error);
+         }
+         if (task.exception) {
+             NSLog(@"The request failed. Exception: [%@]", task.exception);
+         }
+         if (task.result) {
+             self.profile_user=task.result;
+             [self.profileTopBar setHeaderStyle:self.mode title:self.profile_user.user_name rightBtnHidden:!self.mode];
+             [self.refreshControl beginRefreshing];
+             [self updateData];
+             
+         }
+         return nil;
+     }];
 }
 
 -(void) loadProfileImage:(NSString *) user_id
 {
-    NSString *userImageURL = [NSString stringWithFormat:@"https://graph.facebook.com/%@/picture?width=100&&height=100", self.luser_id];
+    NSString *userImageURL = [NSString stringWithFormat:@"https://graph.facebook.com/%@/picture?width=100&&height=100", user_id];
     dispatch_async(dispatch_get_main_queue(), ^{
         NSData * data = [[NSData alloc] initWithContentsOfURL: [NSURL URLWithString: userImageURL]];
         if ( data != nil )
@@ -104,18 +128,18 @@
     });
     
 }
+
 -(void) updateData
 {
     //Loading profile image
-    [self loadProfileImage:self.luser_id];
+    [self loadProfileImage:self.profile_user.user_id];
     self.locationArray=[[NSMutableArray alloc]init];
     
     self.appDelegate=(AppDelegate*)[[UIApplication sharedApplication]delegate];
     
     AWSDynamoDBScanExpression *scanExpression = [AWSDynamoDBScanExpression new];
     scanExpression.filterExpression = @"cleaner_id = :val";
-    self.dynamoDBObjectMapper = [AWSDynamoDBObjectMapper defaultDynamoDBObjectMapper];
-    scanExpression.expressionAttributeValues = @{@":val":self.luser_id};
+    scanExpression.expressionAttributeValues = @{@":val":self.current_user_id};
     [[self.dynamoDBObjectMapper scan:[Location class]
                           expression:scanExpression]
      continueWithBlock:^id(AWSTask *task) {
@@ -126,13 +150,11 @@
              {
                  if([location.isDirty isEqualToString:@"false"]) //cleaned
                  {
-                     
                      //Counting item count
-                     
                      [self.locationArray addObject:location];
+                     
                      //Loading images for the location
                      [self loadImage:location];
-                     
                      
                      //Adding total kudo count
                      self.kudoCount+=location.kudos.count;
@@ -141,6 +163,7 @@
                  
              }
              dispatch_async(dispatch_get_main_queue(), ^{
+                 if([self.locationArray count]>0)
                  self.locationArray = (NSMutableArray*)[self.locationArray sortedArrayUsingComparator:^NSComparisonResult(id a, id b) {
                      double first = ((Location*)a).cleaned_date;
                      double second = ((Location*)b).cleaned_date;
@@ -158,7 +181,7 @@
     AWSDynamoDBScanExpression *scanExpression2 = [AWSDynamoDBScanExpression new];
     
     scanExpression2.filterExpression = @"founder_id = :val";
-    scanExpression2.expressionAttributeValues = @{@":val":self.luser_id};
+    scanExpression2.expressionAttributeValues = @{@":val":self.profile_user.user_id};
     [[self.dynamoDBObjectMapper scan:[Location class]
                           expression:scanExpression2]
      continueWithBlock:^id(AWSTask *task) {
@@ -170,27 +193,124 @@
          }
          return nil;
      }];
+    if(self.profile_user.followings)
+        self.appDelegate.followingArray=self.profile_user.followings;
+    if(self.profile_user.followers)
+        self.appDelegate.followersArray=self.profile_user.followers;
+    self.luser_location=[NSString stringWithFormat:@"%@, %@, %@",self.profile_user.location,self.profile_user.state,self.profile_user.country];
     
-    [[self.dynamoDBObjectMapper load:[User class] hashKey:self.luser_id rangeKey:nil]
+}
+
+-(void)followClicked:(UIButton*)sender
+{
+   /* NSUserDefaults *defaults = [NSUserDefaults standardUserDefaults];
+    NSString *user= [defaults objectForKey:@"user_id"];
+    NSDictionary * target_user=[self.displayArray objectAtIndex:sender.tag];
+    NSString * target_id=[target_user objectForKey:@"id"];
+    User * targetuser=[self.appDelegate.userArray objectForKey:target_id];
+    User * currentuser=[self.appDelegate.userArray objectForKey:self.current_user_id];
+    
+    NSMutableArray * followerArray=[[NSMutableArray alloc] init]; //Add current user to the follower list of the user on the table
+    NSMutableArray * followingArray=[[NSMutableArray alloc] init];
+    if(targetuser.followers!=nil)
+        followerArray=targetuser.followers;
+    
+    if(currentuser.followings!=nil)
+        followingArray=currentuser.followings;
+    
+    NSMutableDictionary *followerItem=[[NSMutableDictionary alloc]init];
+    [followerItem setObject:self.current_user_id forKey:@"id"];
+    double date =[[NSDate date]timeIntervalSince1970];
+    NSNumber *dateObj = [[NSNumber alloc] initWithDouble:date];
+    //NSString *dateString=[NSString stringWithFormat:@"%f",date];
+    [followerItem setObject:dateObj forKey:@"time"];
+    
+    NSMutableDictionary *followingItem=[[NSMutableDictionary alloc]init];
+    [followingItem setObject:target_id forKey:@"id"];
+    [followingItem setObject:dateObj forKey:@"time"];
+    
+    bool selected=!sender.selected;
+    
+    //Updating current user followings
+    if(selected)
+    {
+        [followingArray addObject:followingItem];
+        
+    }
+    else
+    {
+        if(followingArray!=nil)
+        {
+            for(NSDictionary *following in followingArray)
+            {
+                if([[following objectForKey:@"id"] isEqualToString:target_id])
+                {
+                    [followingArray removeObject:following];
+                    
+                    break;
+                }
+            }
+        }
+        
+    }
+    if([followingArray count]!=0)
+        currentuser.followings=[[NSMutableArray alloc] initWithArray:followingArray];
+    else
+        currentuser.followings=nil;
+    sender.enabled=NO;
+    AWSDynamoDBObjectMapper *dynamoDBObjectMapper = [AWSDynamoDBObjectMapper defaultDynamoDBObjectMapper];
+    AWSDynamoDBObjectMapperConfiguration *updateMapperConfig = [AWSDynamoDBObjectMapperConfiguration new];
+    updateMapperConfig.saveBehavior = AWSDynamoDBObjectMapperSaveBehaviorUpdate;
+    
+    [[dynamoDBObjectMapper save:currentuser configuration:updateMapperConfig]
      continueWithBlock:^id(AWSTask *task) {
          
-         if (task.error) {
-             NSLog(@"The request failed. Error: [%@]", task.error);
-         }
-         if (task.exception) {
-             NSLog(@"The request failed. Exception: [%@]", task.exception);
-         }
          if (task.result) {
-             User *user=task.result;
              
-             self.appDelegate.followingArray=user.followings;
-             self.appDelegate.followersArray=user.followers;
-             [self.profileTable reloadData];
+             //Updating target using followers
+             if(![target_id isEqual:self.current_user_id])
+             {
+                 if(selected)
+                     [followerArray addObject:followerItem];
+                 else
+                 {
+                     if(followerArray!=nil)
+                     {
+                         for(NSDictionary *follower in followerArray)
+                         {
+                             if([[follower objectForKey:@"id"] isEqualToString:self.current_user_id])
+                             {
+                                 [followerArray removeObject:follower];
+                                 break;
+                             }
+                         }
+                     }
+                 }
+                 if([followerArray count]!=0)
+                     targetuser.followers=[[NSMutableArray alloc] initWithArray:followerArray];
+                 else
+                     targetuser.followers=nil;
+                 
+                 
+                 [[dynamoDBObjectMapper save:targetuser configuration:updateMapperConfig]
+                  continueWithBlock:^id(AWSTask *task) {
+                      if (task.result) {
+                          sender.enabled=YES;
+                          [self.appDelegate loadData];
+                          sender.selected=!sender.selected;
+                      }
+                      
+                      return nil;
+                  }];
+             }
              
          }
+         
          return nil;
-     }];
+     }];*/
+    
 }
+
 - (NSInteger)tableView:(UITableView *)tableView numberOfRowsInSection:(NSInteger)section{
     NSInteger rowCount=0;
     if(section==0)
@@ -222,10 +342,10 @@
             if(self.profileImage)
                 [cell.userPhoto setImage:self.profileImage];
             
-            [cell.user_name setText:self.luser_name ];
-            [cell.user_quotes setText:self.luser_about];
+            [cell.user_name setText:self.profile_user.user_name ];
+            [cell.user_quotes setText:self.profile_user.user_about];
             [cell.user_location setText:self.luser_location];
-            [cell.user_email setText:self.luser_email];
+            [cell.user_email setText:self.profile_user.user_email];
             UITapGestureRecognizer *followingTap=[[UITapGestureRecognizer alloc]initWithTarget:self action:@selector(showFollowing)];
             followingTap.numberOfTapsRequired=1;
             
@@ -236,7 +356,12 @@
             [cell.followingLabel addGestureRecognizer:followingTap];
             [cell.user_follows addGestureRecognizer:followersTap];
             [cell.followersLabel addGestureRecognizer:followersTap];
-            
+            [cell.btnFollow addTarget:self action:@selector(followClicked) forControlEvents:UIControlEventTouchUpInside];
+            cell.btnFollow.hidden=!self.mode;
+            [cell.btnFollow setImage:[UIImage imageNamed:@"btnKudoSelect"] forState:UIControlStateNormal];
+            [cell.btnFollow setImage:[UIImage imageNamed:@"btnKudoUnselect"] forState:UIControlStateSelected];
+            if([AppDelegate isFollowing:self.profile_user])
+                cell.btnFollow.selected=YES;
             if(self.appDelegate.followingArray!=nil)
                 [cell.user_following setText:[NSString stringWithFormat:@"%lu",(unsigned long)[self.appDelegate.followingArray count]]];
             if(self.appDelegate.followersArray!=nil)
@@ -266,9 +391,9 @@
             UIColor * color2= [UIColor colorWithRed:(145/255.0) green:(145/255.0) blue:(145/255.0) alpha:1.0];
             NSDictionary * attributes1 = [NSDictionary dictionaryWithObject:color1 forKey:NSForegroundColorAttributeName];
             NSDictionary * attributes2 = [NSDictionary dictionaryWithObject:color2 forKey:NSForegroundColorAttributeName];
-            if(self.luser_name!=nil)
+            if(self.profile_user.user_name!=nil)
             {
-                NSAttributedString * nameStr = [[NSAttributedString alloc] initWithString:self.luser_name attributes:attributes1];
+                NSAttributedString * nameStr = [[NSAttributedString alloc] initWithString:self.profile_user.user_name attributes:attributes1];
                 [string appendAttributedString:nameStr];
             }
             
@@ -308,7 +433,7 @@
 #pragma ProfileTopBarVCDelegate Implementation
 
 - (void)leftBtnTopBarTapped:(UIButton *)sender topBar:(id)topBar{
-    
+    [self dismissVC];
 }
 
 - (void)rightBtnTopBarTapped:(UIButton *)sender topBar:(id)topBar{

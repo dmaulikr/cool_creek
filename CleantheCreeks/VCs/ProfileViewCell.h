@@ -30,5 +30,6 @@
 @property (weak, nonatomic) IBOutlet UIButton *user_kudos;
 @property (weak, nonatomic) IBOutlet UILabel *followingLabel;
 @property (weak, nonatomic) IBOutlet UILabel *followersLabel;
+@property (weak, nonatomic) IBOutlet UIButton *btnFollow;
 
 @end

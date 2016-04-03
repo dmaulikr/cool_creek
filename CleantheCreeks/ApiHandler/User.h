@@ -22,7 +22,8 @@
 @property (nonatomic, strong) NSMutableArray *followings;
 @property (nonatomic, strong) NSString* device_token;
 @property (nonatomic, strong) NSMutableArray *followers;
-
+@property (nonatomic, strong) NSString *user_email;
+@property (nonatomic, strong) NSString *user_about;
 @end
 
 #endif /* User_h */
