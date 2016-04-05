@@ -68,7 +68,6 @@
     
     [self updateData];
     
-    
 }
 
 -(void) loadProfileImage:(NSString *) user_id
