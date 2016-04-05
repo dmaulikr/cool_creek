@@ -14,15 +14,16 @@
 @end
 @implementation KudosVC
 
--(void) viewDidLoad
+-(void) viewWillAppear:(BOOL)animated
 {
-    [super viewDidLoad];
+    [super viewWillAppear:animated];
     
     [self.profileTopBar setHeaderStyle:NO title:@"KUDOS" rightBtnHidden:YES];
-    // Do any additional setup after loading the view.
+    
     self.refreshControl = [[UIRefreshControl alloc]init];
     [self.kudoTable addSubview:self.refreshControl];
     [self.refreshControl addTarget:self action:@selector(updateData) forControlEvents:UIControlEventValueChanged];
+    self.appDelegate=(AppDelegate*)[[UIApplication sharedApplication]delegate];
     [self updateData];
     self.kudoTable.estimatedRowHeight = 79.f;
     self.kudoTable.rowHeight = UITableViewAutomaticDimension;
@@ -35,18 +36,6 @@
     // Dispose of any resources that can be recreated.
 }
 
-
-- (void) loadImage:(NSString*)user_id
-{
-    NSString *userImageURL = [NSString stringWithFormat:@"https://graph.facebook.com/%@/picture", user_id];
-    
-    NSData * data = [[NSData alloc] initWithContentsOfURL: [NSURL URLWithString: userImageURL]];
-    if ( data == nil )
-        return;
-    [self.imageArray setObject:[UIImage imageWithData: data] forKey:user_id];
-    [self.kudoTable reloadData];
-}
-
 - (void)leftBtnTopBarTapped:(UIButton *)sender topBar:(id)topBar{
     [self dismissVC];
 }
@@ -54,45 +43,26 @@
 
 -(void)updateData
 {
-    self.userArray=[[NSMutableArray alloc]init];
     
-    self.imageArray=[[NSMutableDictionary alloc]init];
-    [self.userArray removeAllObjects];
-    
-    AWSDynamoDBObjectMapper *dynamoDBObjectMapper = [AWSDynamoDBObjectMapper defaultDynamoDBObjectMapper];
-    AWSDynamoDBScanExpression *scanExpression = [AWSDynamoDBScanExpression new];
-    [[dynamoDBObjectMapper scan:[User class] expression:scanExpression]
-     continueWithBlock:^id(AWSTask *task) {
-         
-         if (task.result) {
-             AWSDynamoDBPaginatedOutput *paginatedOutput = task.result;
-             for (User *user in paginatedOutput.items)
-             {
-                 for(NSMutableDictionary *kudo in self.location.kudos)
-                 {
-                     if([[kudo objectForKey:@"id"] isEqualToString:user.user_id])
-                     {
-                         [self.userArray addObject:user];
-                         dispatch_async(dispatch_get_global_queue(0,0), ^{
-                             [self loadImage:user.user_id];
-                             
-                         });
-                     }
-                 }
-             }
-             dispatch_async(dispatch_get_main_queue(), ^{
-                 [self.kudoTable reloadData];
-                 [self.refreshControl endRefreshing];
-                 
-             });
-
+    for (User *user in self.appDelegate.userArray)
+    {
+        for(NSMutableDictionary *kudo in self.location.kudos)
+        {
+            if([[kudo objectForKey:@"id"] isEqualToString:user.user_id])
+            {
+                [self.userArray addObject:user];
             }
-         return nil;
-     }];
+        }
+    }
+    dispatch_async(dispatch_get_main_queue(), ^{
+        [self.kudoTable reloadData];
+        [self.refreshControl endRefreshing];
+        
+    });
     
 }
 - (NSInteger)tableView:(UITableView *)tableView numberOfRowsInSection:(NSInteger)section{
-    if(self.location!=nil)
+    if(self.userArray)
     {
         return [self.userArray count];
     }

@@ -11,4 +11,5 @@
 @interface MainTabNav : UITabBarController<UITabBarControllerDelegate,UITabBarDelegate,CLLocationManagerDelegate>
 
 @property (strong, nonatomic) CLLocationManager *locationManager;
+
 @end

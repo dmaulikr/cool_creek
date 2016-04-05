@@ -8,7 +8,7 @@
 
 #import "MainTabNav.h"
 #import <CoreLocation/CoreLocation.h>
-
+#import "AppDelegate.h"
 @interface MainTabNav ()<CLLocationManagerDelegate,UINavigationControllerDelegate>
 
 @end
@@ -28,7 +28,9 @@ CLLocationManager * locationManager;
 
 -(void) viewDidAppear:(BOOL)animated
 {
+    
 }
+
 - (void)didReceiveMemoryWarning {
     [super didReceiveMemoryWarning];
     // Dispose of any resources that can be recreated.

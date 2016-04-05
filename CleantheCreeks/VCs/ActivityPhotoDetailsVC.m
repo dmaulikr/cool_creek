@@ -95,6 +95,8 @@
         }
         return nil;
     }];
+    UIButton * btnKudo = [self.view viewWithTag:22];
+    btnKudo.enabled = NO;
     if(self.cleaned)
     {
         AWSS3TransferManagerDownloadRequest *secondRequest = [AWSS3TransferManagerDownloadRequest new];
@@ -111,7 +113,7 @@
                 self.afterPhoto = [UIImage imageWithContentsOfFile:downloadingFilePath];
                 dispatch_async(dispatch_get_main_queue(), ^{
                     [self.tv reloadData];
-                    
+                    btnKudo.enabled = YES;
                 });
             }
             return nil;
@@ -120,6 +122,7 @@
     }
     dispatch_async(dispatch_get_main_queue(), ^{
         [self.tv reloadData];
+        btnKudo.enabled = YES;
     });
     [self.profileTopBar setHeaderStyle:NO title:self.location.location_name rightBtnHidden:YES];
 }
@@ -242,6 +245,7 @@
             
             [((LocationBarCell*)cell).btnComment setImage:[UIImage imageNamed:@"IconComment"] forState:UIControlStateSelected];
             ((LocationBarCell*)cell).btnComment.selected=self.commentVisible;
+            ((LocationBarCell*)cell).btnLike.tag = 22;
             if(self.cleaned)
             {
                 [((LocationBarCell*)cell).btnLike setImage:[UIImage imageNamed:@"IconKudos4"] forState:UIControlStateNormal];

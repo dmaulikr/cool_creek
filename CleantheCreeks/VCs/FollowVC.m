@@ -76,7 +76,7 @@
          }
          return nil;
      }];
-
+    
     
 }
 - (NSInteger)tableView:(UITableView *)tableView numberOfRowsInSection:(NSInteger)section
@@ -140,35 +140,34 @@
     NSNumber *dateObj = [[NSNumber alloc] initWithDouble:date];
     //NSString *dateString=[NSString stringWithFormat:@"%f",date];
     [followerItem setObject:dateObj forKey:@"time"];
-
+    
     NSMutableDictionary *followingItem=[[NSMutableDictionary alloc]init];
     [followingItem setObject:target_id forKey:@"id"];
     [followingItem setObject:dateObj forKey:@"time"];
-
+    
     bool selected=!sender.selected;
     
     //Updating current user followings
+    
+    if(followingArray!=nil)
+    {
+        NSMutableArray * removeArray=[[NSMutableArray alloc]init];
+        for(NSDictionary *following in followingArray)
+        {
+            if([[following objectForKey:@"id"] isEqualToString:target_id])
+            {
+                [removeArray addObject:following];
+               
+            }
+        }
+        [followingArray removeObjectsInArray:removeArray];
+    }
     if(selected)
     {
         [followingArray addObject:followingItem];
-
-    }
-    else
-    {
-        if(followingArray!=nil)
-        {
-            for(NSDictionary *following in followingArray)
-            {
-                if([[following objectForKey:@"id"] isEqualToString:target_id])
-                {
-                    [followingArray removeObject:following];
-                    
-                    break;
-                }
-            }
-        }
         
     }
+    
     if([followingArray count]!=0)
         currentuser.followings=[[NSMutableArray alloc] initWithArray:followingArray];
     else
@@ -180,28 +179,26 @@
     
     [[dynamoDBObjectMapper save:currentuser configuration:updateMapperConfig]
      continueWithBlock:^id(AWSTask *task) {
-        
+         
          if (task.result) {
              
              //Updating target using followers
              if(![target_id isEqual:self.current_user_id])
              {
-                 if(selected)
-                     [followerArray addObject:followerItem];
-                 else
+                 if(followerArray!=nil)
                  {
-                     if(followerArray!=nil)
+                     NSMutableArray * removeArray=[[NSMutableArray alloc]init];
+                     for(NSDictionary *follower in followerArray)
                      {
-                         for(NSDictionary *follower in followerArray)
+                         if([[follower objectForKey:@"id"] isEqualToString:self.current_user_id])
                          {
-                             if([[follower objectForKey:@"id"] isEqualToString:self.current_user_id])
-                             {
-                                 [followerArray removeObject:follower];
-                                 break;
-                             }
+                             [removeArray addObject:follower];
                          }
                      }
+                     [followerArray removeObjectsInArray:removeArray];
                  }
+                 if(selected)
+                     [followerArray addObject:followerItem];
                  if([followerArray count]!=0)
                      targetuser.followers=[[NSMutableArray alloc] initWithArray:followerArray];
                  else
@@ -210,16 +207,19 @@
                  
                  [[dynamoDBObjectMapper save:targetuser configuration:updateMapperConfig]
                   continueWithBlock:^id(AWSTask *task) {
-                    if (task.result) {
-                            sender.enabled=YES;
-                          [self.appDelegate loadData];
-                           sender.selected=!sender.selected;
+                      if (task.result) {
+                          dispatch_async(dispatch_get_main_queue(), ^{
+                              [self.appDelegate loadData];
+                              sender.selected=!sender.selected;
+                              sender.enabled=YES;
+                          });
+                          
                       }
                       
                       return nil;
                   }];
              }
-
+             
          }
          
          return nil;

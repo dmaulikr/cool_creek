@@ -20,15 +20,15 @@
 
 - (void)setSelected:(BOOL)selected animated:(BOOL)animated {
     [super setSelected:selected animated:animated];
-
+    
     // Configure the view for the selected state
 }
 
 
 - (IBAction)kudosBtnTapped:(id)sender {
-
+    
     NSLog(@"%ld",(long)[sender tag]);
-
+    
 }
 
 - (IBAction)giveKudosBtnTapped:(id)sender {
@@ -44,23 +44,20 @@
     double date =[[NSDate date]timeIntervalSince1970];
     NSString *dateString=[NSString stringWithFormat:@"%f",date];
     [kudoItem setObject:dateString forKey:@"time"];
-    
-    if(selected)
-        [kudoArray addObject:kudoItem];
-    else
+    if(kudoArray!=nil)
     {
-        if(kudoArray!=nil)
+        NSMutableArray *removeArray=[[NSMutableArray alloc]init];
+        for(NSDictionary *kudo_gaver in kudoArray)
         {
-            for(NSDictionary *kudo_gaver in kudoArray)
+            if([[kudo_gaver objectForKey:@"id"] isEqualToString:self.parentVC.current_user_id])
             {
-                if([[kudo_gaver objectForKey:@"id"] isEqualToString:self.parentVC.current_user_id])
-                {
-                    [kudoArray removeObject:kudo_gaver];
-                    break;
-                }
+                [removeArray addObject:kudo_gaver];
             }
         }
+        [kudoArray removeObjectsInArray:removeArray];
     }
+    if(selected)
+        [kudoArray addObject:kudoItem];
     if([kudoArray count]!=0)
         location.kudos=[[NSMutableArray alloc] initWithArray:kudoArray];
     else
@@ -79,8 +76,11 @@
              NSLog(@"The request failed. Exception: [%@]", task.exception);
          }
          if (task.result) {
-             senderButton.enabled=YES;
-             [self.parentVC updateCell];
+             dispatch_async(dispatch_get_main_queue(), ^{
+                 
+                 [self.parentVC updateCell];
+                 senderButton.enabled=YES;
+             });
          }
          
          return nil;

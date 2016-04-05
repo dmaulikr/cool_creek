@@ -19,6 +19,7 @@
 @property (strong, nonatomic) NSMutableArray *followersArray;
 @property (strong, nonatomic) NSMutableArray *followingArray;
 @property (strong, nonatomic) NSMutableDictionary *userArray;
+@property (strong, nonatomic) CLLocation * currentLocation;
 +(BOOL) isFollowing:(User*) user;
 -(void) loadData;
 

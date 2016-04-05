@@ -49,7 +49,14 @@ UIButton *loginButton;
 {
     [self performSegueWithIdentifier:@"viewAroundMe" sender:self];
 }
-
+-(void) viewWillAppear:(BOOL)animated
+{
+    if(self.aroundView)
+    {
+        self.aroundView = NO;
+        [self moveToMainNav];
+    }
+}
 - (void)viewDidLoad
 {
     [super viewDidLoad];
@@ -70,8 +77,17 @@ UIButton *loginButton;
     if([segue.identifier isEqualToString:@"viewAroundMe"])
     {
         LocationVC* vc = (LocationVC*)segue.destinationViewController;
-        vc.fromSlider=YES;
+        vc.fromSlider = YES;
+        self.aroundView = YES;
     }
+    else if([segue.identifier isEqualToString:@"moveToMainNav"])
+    {
+        
+        LocationVC* vc = (LocationVC*)segue.destinationViewController;
+        vc.fromSlider = NO;
+        self.aroundView = NO;
+    }
+    
 }
 
 -(void)loginButtonClicked

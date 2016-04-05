@@ -15,6 +15,9 @@
 #import "Clean the Creek-Bridging-Header.h"
 #import <UIScrollView+InfiniteScroll.h>
 #import "CustomInfiniteIndicator.h"
+
+#import <FBSDKCoreKit/FBSDKCoreKit.h>
+#import <FBSDKLoginKit/FBSDKLoginKit.h>
 @interface LocationVC()
 @property (nonatomic,strong) UIRefreshControl * refreshControl;
 @property (nonatomic,strong) CustomInfiniteIndicator *infiniteIndicator;
@@ -50,6 +53,7 @@
     self.refreshControl = [[UIRefreshControl alloc]init];
     [self.locationTable addSubview:self.refreshControl];
     self.displayItemCount=8;
+    
     [self.refreshControl beginRefreshing];
     [self updateData];
     
@@ -58,10 +62,10 @@
     self.infiniteIndicator = [[CustomInfiniteIndicator alloc] initWithFrame:CGRectMake(0, 0, 40, 40)];
     
     self.locationTable.infiniteScrollIndicatorView = self.infiniteIndicator;
-
+    
     [self.locationTable addInfiniteScrollWithHandler:^(UITableView* tableView) {
         self.displayItemCount+=2;
-         self.displayItemCount=MIN(self.locationArray.count,self.displayItemCount);
+        self.displayItemCount = MIN(self.locationArray.count,self.displayItemCount);
         [self.infiniteIndicator startAnimating];
         [tableView reloadData];
         [tableView finishInfiniteScroll];
@@ -77,9 +81,10 @@
 -(void) viewWillAppear:(BOOL)animated
 {
     [super viewWillAppear:animated];
+    [self.tabBarController.tabBar setHidden:self.fromSlider];
     self.backBtn.hidden = !self.fromSlider;
+    
 }
-
 
 - (void)didReceiveMemoryWarning{
     [super didReceiveMemoryWarning];
@@ -131,7 +136,6 @@
     CGFloat screenHeight = [UIScreen mainScreen].bounds.size.height;
     UIView* footerView = [[UIView alloc] initWithFrame:CGRectMake(0, 0, (40/667) * screenHeight, (40/667) * screenHeight)];
     [footerView addSubview:_spinner];
-    
     return footerView;
 }
 
@@ -145,8 +149,89 @@
 
 -(void)cleanBtnClicked:(UIButton*)sender
 {
-    self.selectedIndex=sender.tag;
-    [self performSegueWithIdentifier:@"cleanLocation" sender:self];
+    if(self.fromSlider)
+    {
+        UIAlertController *alertController = [UIAlertController alertControllerWithTitle:@"Sign in with Facebook" message:@"In order to take a photo you must be signed in ot your facebook account." preferredStyle:UIAlertControllerStyleAlert];
+        
+        [alertController addAction:[UIAlertAction actionWithTitle:@"Cancel" style:UIAlertActionStyleDefault handler:^(UIAlertAction *action) {
+            [alertController dismissViewControllerAnimated:YES completion:nil];
+        }]];
+        
+        [alertController addAction:[UIAlertAction actionWithTitle:@"OK" style:UIAlertActionStyleDefault handler:^(UIAlertAction *action) {
+            
+            FBSDKLoginManager *login = [[FBSDKLoginManager alloc] init];
+            [login
+             logInWithReadPermissions: @[@"public_profile",@"email"]
+             fromViewController:self
+             handler:^(FBSDKLoginManagerLoginResult *result, NSError *error) {
+                 if (error) {
+                     NSLog(@"Process error");
+                 } else if (result.isCancelled) {
+                     NSLog(@"Cancelled");
+                 }
+                 else
+                 {
+                     NSMutableDictionary* parameters = [NSMutableDictionary dictionary];
+                     [parameters setValue:@"id,name,email,location,about" forKey:@"fields"];
+                     [[[FBSDKGraphRequest alloc] initWithGraphPath:@"me" parameters:parameters]
+                      startWithCompletionHandler:^(FBSDKGraphRequestConnection *connection, id result, NSError *error) {
+                          
+                          if (!error) {
+                              NSLog(@"fetched user:%@  and Email : %@", result,result[@"email"]);
+                              NSUserDefaults *loginInfo = [NSUserDefaults standardUserDefaults];
+                              NSString *fbUsername = [[result valueForKey:@"link"] lastPathComponent];
+                              [loginInfo setObject:fbUsername forKey:@"username"];
+                              [loginInfo setObject:result[@"id"] forKey:@"user_id"];
+                              [loginInfo setObject:result[@"name"] forKey:@"user_name"];
+                              [loginInfo setObject:result[@"email"] forKey:@"user_email"];
+                              [loginInfo setObject:result[@"location"] forKey:@"user_location"];
+                              [loginInfo setObject:result[@"about"] forKey:@"user_about"];
+                              [loginInfo synchronize];
+                              User * user_info = [User new];
+                              user_info.user_id = result[@"id"];
+                              //user_info.kudos = [[NSArray alloc]init];
+                              user_info.user_name = result[@"name"];
+                              user_info.device_token = [loginInfo objectForKey:@"devicetoken"];
+                              user_info.user_email= [loginInfo objectForKey:@"user_email"];
+                              user_info.user_about=[loginInfo objectForKey:@"user_about"];
+                              
+                              AWSDynamoDBObjectMapperConfiguration *updateMapperConfig = [AWSDynamoDBObjectMapperConfiguration new];
+                              updateMapperConfig.saveBehavior = AWSDynamoDBObjectMapperSaveBehaviorAppendSet;
+                              AWSDynamoDBObjectMapper *dynamoDBObjectMapper = [AWSDynamoDBObjectMapper defaultDynamoDBObjectMapper];
+                              [[dynamoDBObjectMapper save:user_info configuration:updateMapperConfig]
+                               continueWithBlock:^id(AWSTask *task) {
+                                   if (task.error) {
+                                       NSLog(@"The request failed. Error: [%@]", task.error);
+                                   }
+                                   if (task.exception) {
+                                       NSLog(@"The request failed. Exception: [%@]", task.exception);
+                                   }
+                                   if (task.result) {
+                                       
+                                       [self dismissVC];
+                                   }
+                                   return nil;
+                               }];
+                              
+                            }
+                          
+                      }];
+                     
+                     
+                 }
+             }];
+
+        }]];
+        
+        dispatch_async(dispatch_get_main_queue(), ^ {
+            [self presentViewController:alertController animated:YES completion:nil];
+        });
+    }
+    else
+    {
+        self.selectedIndex = sender.tag;
+        [self performSegueWithIdentifier:@"cleanLocation" sender:self];
+    }
     
 }
 
@@ -163,15 +248,15 @@
             vc.location = [[Location alloc]init];
             
             vc.location = location;
-            vc.beforePhoto=(UIImage*)(self.mainDelegate.locationData[location.location_id]);
-            vc.cleaned=NO;
+            vc.beforePhoto = (UIImage*)(self.mainDelegate.locationData[location.location_id]);
+            vc.cleaned = NO;
         }
         else if([segue.identifier isEqualToString:@"showMapDetails"])
         {
             ActivityPhotoDetailsVC* vc = (ActivityPhotoDetailsVC*)segue.destinationViewController;
             vc.location = self.annotationLocation;
         }
-
+        
         else if([segue.identifier isEqualToString:@"cleanLocation"])
         {
             CameraVC* vc = (CameraVC*)segue.destinationViewController;
@@ -204,7 +289,7 @@
                 distance=distance/1000.0;
                 NSString *downloadingFilePath = [NSTemporaryDirectory() stringByAppendingPathComponent:location.location_id];
                 NSURL *downloadingFileURL = [NSURL fileURLWithPath:downloadingFilePath];
-               
+                
                 if(![self.locationArray containsObject:location])
                     [self.locationArray addObject:location];
                 AWSS3TransferManagerDownloadRequest *downloadRequest = [AWSS3TransferManagerDownloadRequest new];
@@ -230,33 +315,34 @@
                 
             }
             dispatch_async(dispatch_get_main_queue(), ^{
-            
-                    self.locationArray = (NSMutableArray*)[self.locationArray sortedArrayUsingComparator:^NSComparisonResult(id a, id b) {
-                        CLLocation*locationA=[[CLLocation alloc]initWithLatitude:((Location*)a).latitude longitude:((Location*)a).longitude];
-                        CLLocationDistance distanceA=[locationA distanceFromLocation:self.currentLocation];
-                        
-                        CLLocation*locationB=[[CLLocation alloc]initWithLatitude:((Location*)b).latitude longitude:((Location*)b).longitude];
-                        CLLocationDistance distanceB=[locationB distanceFromLocation:self.currentLocation];
-                        return distanceA>distanceB;
-                    }];
+                
+                self.locationArray = (NSMutableArray*)[self.locationArray sortedArrayUsingComparator:^NSComparisonResult(id a, id b) {
+                    CLLocation*locationA=[[CLLocation alloc]initWithLatitude:((Location*)a).latitude longitude:((Location*)a).longitude];
+                    CLLocationDistance distanceA=[locationA distanceFromLocation:self.currentLocation];
+                    
+                    CLLocation*locationB=[[CLLocation alloc]initWithLatitude:((Location*)b).latitude longitude:((Location*)b).longitude];
+                    CLLocationDistance distanceB=[locationB distanceFromLocation:self.currentLocation];
+                    return distanceA>distanceB;
+                }];
+                self.displayItemCount = MIN(self.locationArray.count,self.displayItemCount);
                 [self.locationTable reloadData];
                 
                 [self.refreshControl endRefreshing];
-    
+                
             });
             
-
+            
         }
         return nil;
         
     }];
-
+    
 }
 - (void)locationManager:(CLLocationManager *)manager
     didUpdateToLocation:(CLLocation *)newLocation
            fromLocation:(CLLocation *)oldLocation
 {
-   
+    
     MKCoordinateRegion region;
     MKCoordinateSpan span;
     span.latitudeDelta = 0.2;
@@ -266,10 +352,11 @@
     cLocation.longitude = newLocation.coordinate.longitude;
     region.span = span;
     region.center = cLocation;
-   
+    
     [self.mapView setRegion:region animated:YES];
     [self.mapView setShowsUserLocation:YES];
     self.currentLocation=newLocation;
+    self.mainDelegate.currentLocation=newLocation;
     CLGeocoder *ceo = [[CLGeocoder alloc]init];
     [ceo reverseGeocodeLocation:self.currentLocation
               completionHandler:^(NSArray *placemarks, NSError *error) {
@@ -296,17 +383,17 @@
         }
         
         [pin setImage:[UIImage imageNamed:@"Dot"]];
-        pin.canShowCallout = YES;
+        pin.canShowCallout = NO;
         pin.rightCalloutAccessoryView = [UIButton buttonWithType:UIButtonTypeDetailDisclosure];
         return pin;
-
+        
     }
     else
     {
         LocationOverlayView *annotationView = [[LocationOverlayView alloc] initWithAnnotation:annotation reuseIdentifier:@"Attraction"];
         annotationView.canShowCallout = YES;
         return annotationView;
-
+        
     }
 }
 
@@ -323,7 +410,8 @@
             break;
         }
     }
-    [self performSegueWithIdentifier:@"showMapDetails" sender:self];
+    if(view.annotation !=mapView.userLocation)
+        [self performSegueWithIdentifier:@"showMapDetails" sender:self];
     NSLog(@"selected annotation");
 }
 
