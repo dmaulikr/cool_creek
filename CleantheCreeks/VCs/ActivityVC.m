@@ -507,7 +507,7 @@
         {
             KudosVC * vc=(KudosVC*)segue.destinationViewController;
             vc.location=self.selectedLocation;
-
+            //vc.userArray=self.selectedLocation.kudos;
             vc.imageArray=[[NSMutableDictionary alloc] initWithDictionary:self.imageArray copyItems:YES];
             
         }

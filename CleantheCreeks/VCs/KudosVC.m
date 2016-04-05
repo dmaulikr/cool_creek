@@ -17,7 +17,8 @@
 -(void) viewWillAppear:(BOOL)animated
 {
     [super viewWillAppear:animated];
-    
+    NSUserDefaults *defaults = [NSUserDefaults standardUserDefaults];
+    self.current_user_id = [defaults objectForKey:@"user_id"];
     [self.profileTopBar setHeaderStyle:NO title:@"KUDOS" rightBtnHidden:YES];
     
     self.refreshControl = [[UIRefreshControl alloc]init];
@@ -43,16 +44,14 @@
 
 -(void)updateData
 {
+    self.userArray=[[NSMutableArray alloc] init];
     
-    for (User *user in self.appDelegate.userArray)
+    for(NSMutableDictionary *kudo in self.location.kudos)
     {
-        for(NSMutableDictionary *kudo in self.location.kudos)
-        {
-            if([[kudo objectForKey:@"id"] isEqualToString:user.user_id])
-            {
-                [self.userArray addObject:user];
-            }
-        }
+        
+        User * user=[self.appDelegate.userArray objectForKey:[kudo objectForKey:@"id"]];
+        [self.userArray addObject:user];
+        
     }
     dispatch_async(dispatch_get_main_queue(), ^{
         [self.kudoTable reloadData];
@@ -83,21 +82,18 @@
         [cell.user_photo setImage:[self.imageArray objectForKey:user.user_id]];
         [cell.user_name setText:user.user_name];
         [cell.user_location setText:user.location];
+        cell.likeButton.tag=indexPath.row;
         [cell.likeButton setImage:[UIImage imageNamed:@"btnKudoSelect"] forState:UIControlStateNormal];
         [cell.likeButton setImage:[UIImage imageNamed:@"btnKudoUnselect"] forState:UIControlStateSelected];
-        for (NSMutableDictionary* following in user.followings)
+        if(![user.user_id isEqualToString:self.current_user_id])
         {
-            NSString * user_id=[following objectForKey:@"id"];
+            if([AppDelegate isFollowing:user])
+                [cell.likeButton setSelected:YES];
             
-            if([user_id isEqualToString:self.current_user_id])
-            {
-                
-                [cell.likeButton setSelected:NO];
-                break;
-            }
+            [cell.likeButton addTarget:self action:@selector(kudoButtonClicked:) forControlEvents:UIControlEventTouchUpInside];
         }
-        cell.likeButton.tag=row;
-        [cell.likeButton addTarget:self action:@selector(kudoButtonClicked:) forControlEvents:UIControlEventTouchUpInside];
+        else
+            cell.likeButton.hidden=YES;
     }
     if (cell == nil){
         return [[UITableViewCell alloc] init];
@@ -106,8 +102,113 @@
 }
 -(void)kudoButtonClicked:(UIButton*)sender
 {
-    //[self.delegate giveKudoWithLocation:self.location assigned:!sender.selected];
-    sender.selected=!sender.selected;
+    
+    
+    
+    User * targetuser=[self.userArray objectAtIndex:sender.tag];
+    NSString * target_id=targetuser.user_id;
+    
+    User * currentuser=[self.appDelegate.userArray objectForKey:self.current_user_id];
+    
+    NSMutableArray * followerArray=[[NSMutableArray alloc] init]; //Add current user to the follower list of the user on the table
+    NSMutableArray * followingArray=[[NSMutableArray alloc] init];
+    if(targetuser.followers!=nil)
+        followerArray=targetuser.followers;
+    
+    if(currentuser.followings!=nil)
+        followingArray=currentuser.followings;
+    
+    NSMutableDictionary *followerItem=[[NSMutableDictionary alloc]init];
+    [followerItem setObject:self.current_user_id forKey:@"id"];
+    double date =[[NSDate date]timeIntervalSince1970];
+    NSNumber *dateObj = [[NSNumber alloc] initWithDouble:date];
+    //NSString *dateString=[NSString stringWithFormat:@"%f",date];
+    [followerItem setObject:dateObj forKey:@"time"];
+    
+    NSMutableDictionary *followingItem=[[NSMutableDictionary alloc]init];
+    [followingItem setObject:target_id forKey:@"id"];
+    [followingItem setObject:dateObj forKey:@"time"];
+    
+    bool selected=!sender.selected;
+    
+    //Updating current user followings
+    
+    if(followingArray!=nil)
+    {
+        NSMutableArray * removeArray=[[NSMutableArray alloc]init];
+        for(NSDictionary *following in followingArray)
+        {
+            if([[following objectForKey:@"id"] isEqualToString:target_id])
+            {
+                [removeArray addObject:following];
+                
+            }
+        }
+        [followingArray removeObjectsInArray:removeArray];
+    }
+    if(selected)
+    {
+        [followingArray addObject:followingItem];
+        
+    }
+    
+    if([followingArray count]!=0)
+        currentuser.followings=[[NSMutableArray alloc] initWithArray:followingArray];
+    else
+        currentuser.followings=nil;
+    sender.enabled=NO;
+    AWSDynamoDBObjectMapper *dynamoDBObjectMapper = [AWSDynamoDBObjectMapper defaultDynamoDBObjectMapper];
+    AWSDynamoDBObjectMapperConfiguration *updateMapperConfig = [AWSDynamoDBObjectMapperConfiguration new];
+    updateMapperConfig.saveBehavior = AWSDynamoDBObjectMapperSaveBehaviorUpdate;
+    
+    [[dynamoDBObjectMapper save:currentuser configuration:updateMapperConfig]
+     continueWithBlock:^id(AWSTask *task) {
+         
+         if (task.result) {
+             
+             //Updating target using followers
+             if(![target_id isEqual:self.current_user_id])
+             {
+                 if(followerArray!=nil)
+                 {
+                     NSMutableArray * removeArray=[[NSMutableArray alloc]init];
+                     for(NSDictionary *follower in followerArray)
+                     {
+                         if([[follower objectForKey:@"id"] isEqualToString:self.current_user_id])
+                         {
+                             [removeArray addObject:follower];
+                         }
+                     }
+                     [followerArray removeObjectsInArray:removeArray];
+                 }
+                 if(selected)
+                     [followerArray addObject:followerItem];
+                 if([followerArray count]!=0)
+                     targetuser.followers=[[NSMutableArray alloc] initWithArray:followerArray];
+                 else
+                     targetuser.followers=nil;
+                 
+                 
+                 [[dynamoDBObjectMapper save:targetuser configuration:updateMapperConfig]
+                  continueWithBlock:^id(AWSTask *task) {
+                      if (task.result) {
+                          dispatch_async(dispatch_get_main_queue(), ^{
+                              [self.appDelegate loadData];
+                              [self.kudoTable reloadData];
+                              sender.enabled=YES;
+                          });
+                          
+                      }
+                      
+                      return nil;
+                  }];
+             }
+             
+         }
+         
+         return nil;
+     }];
+    
     
 }
 
