@@ -15,6 +15,7 @@
 @property (strong, nonatomic) UIImage * secondPhoto;
 @property (weak, nonatomic) IBOutlet UIImageView *fbFirstImg;
 @property (weak, nonatomic) IBOutlet UIImageView *fbLastImage;
+@property (weak, nonatomic) IBOutlet UIImageView *fbImage;
 
 @property (weak, nonatomic) IBOutlet UIImageView *fbTopImage;
 - (IBAction)skip:(id)sender;

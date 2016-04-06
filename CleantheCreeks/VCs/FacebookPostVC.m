@@ -42,7 +42,7 @@
     [self.navigationController popToRootViewControllerAnimated:YES];
 }
 
- - (UIImage*)mergeImage:(UIImage*)first withImage:(UIImage*)second
+- (UIImage*)mergeImage:(UIImage*)first withImage:(UIImage*)second bottomImage:(UIImage*)bottom
 {
     // get size of the first image
     CGImageRef firstImageRef = first.CGImage;
@@ -54,7 +54,7 @@
     CGFloat size=MIN(firstWidth, firstHeight);
     // build merged size
     
-    CGSize mergedSize = CGSizeMake((size*2), size);
+    CGSize mergedSize = CGSizeMake((size*2), size+size*2*0.3345);
     
     // capture image context ref
     UIGraphicsBeginImageContext(mergedSize);
@@ -64,6 +64,7 @@
     //[second drawInRect:CGRectMake(firstWidth, 0, secondWidth, secondHeight)];
     [second drawInRect:CGRectMake(size-1, 0, size, size)
              blendMode:kCGBlendModeNormal alpha:1.0];
+    [bottom drawInRect:CGRectMake(0, size, size*2, size*0.3345*2)];
     
     // assign context to new UIImage
     UIImage *newImage = UIGraphicsGetImageFromCurrentImageContext();
@@ -74,6 +75,8 @@
     return newImage;
     
 }
+
+
 
 - (IBAction)FBPost:(id)sender {
     /*UIImage *bottomImage =fbPostImage.
@@ -94,7 +97,7 @@
         _mySLComposerSheet = [[SLComposeViewController alloc] init]; //initiate the Social Controller
         _mySLComposerSheet = [SLComposeViewController composeViewControllerForServiceType:SLServiceTypeFacebook]; //Tell him with what social plattform to use it, e.g. facebook or twitter
         [_mySLComposerSheet setInitialText:[NSString stringWithFormat:@"Clean the Creek",_mySLComposerSheet.serviceType]]; //the message you want to post
-        UIImage * fbPostImg=[self mergeImage:self.firstPhoto withImage:self.secondPhoto];
+        UIImage * fbPostImg=[self mergeImage:self.firstPhoto withImage:self.secondPhoto bottomImage:[UIImage imageNamed:@"website"]];
         [_mySLComposerSheet addImage:fbPostImg]; //an image you could post
         [_mySLComposerSheet setTitle:@"Look what I just cleaned up #cleanthecreek"];
         //[_mySLComposerSheet addURL:[NSURL URLWithString:@"http://www.cleanthecreek.com"]];

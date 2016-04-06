@@ -6634,6 +6634,12 @@
                                     </mask>
                                 </variation>
                             </imageView>
+                            <imageView userInteractionEnabled="NO" contentMode="scaleToFill" horizontalHuggingPriority="251" verticalHuggingPriority="251" translatesAutoresizingMaskIntoConstraints="NO" id="j1X-Zw-PWQ">
+                                <rect key="frame" x="0.0" y="0.0" width="240" height="128"/>
+                                <variation key="heightClass=regular-widthClass=compact" fixedFrame="YES">
+                                    <rect key="frame" x="68" y="348" width="240" height="182"/>
+                                </variation>
+                            </imageView>
                         </subviews>
                         <color key="backgroundColor" red="0.95686274510000002" green="0.95686274510000002" blue="0.95686274510000002" alpha="1" colorSpace="calibratedRGB"/>
                         <constraints>
@@ -6679,6 +6685,7 @@
                                 <exclude reference="s9F-bs-Xvt"/>
                                 <exclude reference="YXU-sb-lbd"/>
                                 <exclude reference="Iqy-8L-fQe"/>
+                                <exclude reference="j1X-Zw-PWQ"/>
                             </mask>
                             <mask key="constraints">
                                 <exclude reference="veM-yq-NPG"/>
@@ -6714,6 +6721,7 @@
                                 <include reference="s9F-bs-Xvt"/>
                                 <include reference="YXU-sb-lbd"/>
                                 <include reference="Iqy-8L-fQe"/>
+                                <include reference="j1X-Zw-PWQ"/>
                             </mask>
                             <mask key="constraints">
                                 <include reference="veM-yq-NPG"/>
@@ -6743,6 +6751,7 @@
                     <simulatedScreenMetrics key="simulatedDestinationMetrics" type="retina47"/>
                     <connections>
                         <outlet property="fbFirstImg" destination="s9F-bs-Xvt" id="DbB-Dc-Yss"/>
+                        <outlet property="fbImage" destination="j1X-Zw-PWQ" id="mub-bw-qRm"/>
                         <outlet property="fbLastImage" destination="QoS-g5-Rwg" id="3XZ-Qx-jMt"/>
                         <outlet property="fbTopImage" destination="Iqy-8L-fQe" id="gKe-Xk-HUj"/>
                         <segue destination="bXz-fE-HI5" kind="show" identifier="showFBSuccess" id="yox-nr-2ui"/>
@@ -7681,15 +7690,15 @@
         <image name="btnKudoUnselect" width="59" height="59"/>
     </resources>
     <inferredMetricsTieBreakers>
-        <segue reference="yLh-kk-a1b"/>
-        <segue reference="yF2-Rg-sXf"/>
-        <segue reference="4Px-2i-OHW"/>
         <segue reference="0Fy-iE-bFK"/>
         <segue reference="3W8-Vp-ceG"/>
+        <segue reference="4Px-2i-OHW"/>
+        <segue reference="yF2-Rg-sXf"/>
+        <segue reference="yLh-kk-a1b"/>
+        <segue reference="aWT-n8-56e"/>
+        <segue reference="yox-nr-2ui"/>
         <segue reference="PZm-Yi-vmH"/>
         <segue reference="BTd-do-kiK"/>
         <segue reference="m8v-6I-Pen"/>
-        <segue reference="4o4-Js-9Xl"/>
-        <segue reference="yox-nr-2ui"/>
     </inferredMetricsTieBreakers>
 </document>

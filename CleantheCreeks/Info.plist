@@ -28,7 +28,7 @@
 		</dict>
 	</array>
 	<key>CFBundleVersion</key>
-	<string>26</string>
+	<string>27</string>
 	<key>FacebookAppID</key>
 	<string>1535898660055979</string>
 	<key>FacebookDisplayName</key>
@@ -48,7 +48,7 @@
 		<true/>
 	</dict>
 	<key>NSLocationAlwaysUsageDescription</key>
-	<string>Allow Clean the Creek to access your location while you are using this app?</string>
+	<string>Allow Clean the Creek to always access your location?</string>
 	<key>NSLocationWhenInUseUsageDescription</key>
 	<string>Allow Clean the Creek to access your location while you are using this app?</string>
 	<key>UIAppFonts</key>
