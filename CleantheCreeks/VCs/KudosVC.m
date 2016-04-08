@@ -14,9 +14,9 @@
 @end
 @implementation KudosVC
 
--(void) viewWillAppear:(BOOL)animated
+-(void) viewDidLoad
 {
-    [super viewWillAppear:animated];
+    [super viewDidLoad];
     NSUserDefaults *defaults = [NSUserDefaults standardUserDefaults];
     self.current_user_id = [defaults objectForKey:@"user_id"];
     [self.profileTopBar setHeaderStyle:NO title:@"KUDOS" rightBtnHidden:YES];
@@ -25,7 +25,9 @@
     [self.kudoTable addSubview:self.refreshControl];
     [self.refreshControl addTarget:self action:@selector(updateData) forControlEvents:UIControlEventValueChanged];
     self.appDelegate=(AppDelegate*)[[UIApplication sharedApplication]delegate];
+    dispatch_async(dispatch_get_main_queue(), ^{
     [self updateData];
+    });
     self.kudoTable.estimatedRowHeight = 79.f;
     self.kudoTable.rowHeight = UITableViewAutomaticDimension;
     
@@ -85,10 +87,12 @@
         cell.likeButton.tag=indexPath.row;
         [cell.likeButton setImage:[UIImage imageNamed:@"btnKudoSelect"] forState:UIControlStateNormal];
         [cell.likeButton setImage:[UIImage imageNamed:@"btnKudoUnselect"] forState:UIControlStateSelected];
+        [cell.likeButton setSelected:NO];
         if(![user.user_id isEqualToString:self.current_user_id])
         {
             if([AppDelegate isFollowing:user])
                 [cell.likeButton setSelected:YES];
+            
             
             [cell.likeButton addTarget:self action:@selector(kudoButtonClicked:) forControlEvents:UIControlEventTouchUpInside];
         }
@@ -100,11 +104,9 @@
     }
     return cell;
 }
+
 -(void)kudoButtonClicked:(UIButton*)sender
 {
-    
-    
-    
     User * targetuser=[self.userArray objectAtIndex:sender.tag];
     NSString * target_id=targetuser.user_id;
     

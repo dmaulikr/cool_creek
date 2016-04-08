@@ -24,6 +24,8 @@
         [self takePhoto];
         self.photoTaken=YES;
     }
+    else
+        self.photoTaken=NO;
 }
 
 -(void) takePhoto

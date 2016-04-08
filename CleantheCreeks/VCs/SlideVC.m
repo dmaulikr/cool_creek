@@ -53,8 +53,10 @@ UIButton *loginButton;
 {
     if(self.aroundView)
     {
+        dispatch_async(dispatch_get_main_queue(), ^ {
         self.aroundView = NO;
         [self moveToMainNav];
+        });
     }
 }
 - (void)viewDidLoad

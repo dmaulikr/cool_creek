@@ -15,9 +15,9 @@
 #import "FacebookPostVC.h"
 @implementation PhotoDetailsVC
 
--(void)viewWillAppear:(BOOL)animated
+-(void)viewDidLoad
 {
-    [super viewWillAppear:animated];
+    [super viewDidLoad];
     [self.delegate cameraRefresh:NO];
     [self.tabBarController.tabBar setHidden:YES];
     _locationManager=[[CLLocationManager alloc] init];
@@ -72,12 +72,6 @@
     else
         [self.nextButton setEnabled:NO];
     [self.detailTable reloadData];
-    
-}
-
--(void) viewDidLoad
-{
-    [super viewDidLoad];
     self.detailTable.estimatedRowHeight = 5.f;
     self.detailTable.rowHeight = UITableViewAutomaticDimension;
 }
@@ -125,12 +119,6 @@
     if ([view isMemberOfClass:[UITableViewCell class]])
         return (UITableViewCell*)view;
     return [self parentCellFor:view.superview];
-}
-
--(void)textViewDidEndEditing:(UITextView *)textView
-{
-    [textView resignFirstResponder];
-    self.commentText=[textView text];
 }
 
 -(void) setSecondPhoto:(BOOL)set photo:(UIImage*)photo
@@ -200,9 +188,6 @@
     return count;
 }
 
-// Row display. Implementers should *always* try to reuse cells by setting each cell's reuseIdentifier and querying for available reusable cells with dequeueReusableCellWithIdentifier:
-// Cell gets various attributes set automatically based on table (separators) and data source (accessory views, editing controls)
-
 - (UITableViewCell *)tableView:(UITableView *)tableView cellForRowAtIndexPath:(NSIndexPath *)indexPath
 {
     UITableViewCell *cell = nil;
@@ -218,7 +203,8 @@
             [((PhotoViewCell*)cell).firstPhoto setImage:self.takenPhoto];
                 if(self.secondPhototaken)
                     [((PhotoViewCell*)cell).secondPhoto setImage:self.cleanedPhoto];
-                
+                else
+                    [((PhotoViewCell*)cell).secondPhoto setImage:[UIImage imageNamed:@"EmptyPhoto"]];
             ((PhotoViewCell*)cell).delegate=self;
         }
     }
@@ -344,6 +330,7 @@
     {
         [self storeData:false];
         [self performSegueWithIdentifier:@"cleanedFBPost" sender:self];
+        self.mainDelegate.shouldRefreshLocation = YES;
     }
     else
     {
@@ -365,7 +352,7 @@
             {
                 picker.sourceType=UIImagePickerControllerSourceTypeCamera;
             }
-            picker.delegate=self;
+            picker.delegate = self;
             [self presentViewController:picker animated:YES completion:nil];
             self.secondPhototaken=YES;
         }]];
@@ -385,16 +372,18 @@
     if([segue.identifier isEqualToString:@"foundFBPost"])
     {
         vc.firstPhoto=[[UIImage alloc]init];
-        vc.firstPhoto=self.takenPhoto;
+        vc.firstPhoto=[PhotoDetailsVC scaleImage:self.takenPhoto toSize:CGSizeMake(320.0,320.0)];
         vc.secondPhoto=[[UIImage alloc]init];
         vc.secondPhoto=[UIImage imageNamed:@"CleanMe"];
+        vc.cleaned=NO;
     }
     else if([segue.identifier isEqualToString:@"cleanedFBPost"])
     {
         vc.firstPhoto=[[UIImage alloc]init];
-        vc.firstPhoto=self.takenPhoto;
+        vc.firstPhoto=[PhotoDetailsVC scaleImage:self.takenPhoto toSize:CGSizeMake(320.0,320.0)];
         vc.secondPhoto=[[UIImage alloc]init];
-        vc.secondPhoto=self.cleanedPhoto;
+        vc.secondPhoto=[PhotoDetailsVC scaleImage:self.cleanedPhoto toSize:CGSizeMake(320.0,320.0)];
+        vc.cleaned=YES;
     }
     
 }
@@ -412,6 +401,7 @@
     picker.delegate=self;
     [self presentViewController:picker animated:YES completion:nil];
 }
+
 -(void)storeData:(BOOL)isDirty
 {
     NSUserDefaults *defaults = [NSUserDefaults standardUserDefaults];
@@ -470,7 +460,6 @@
     NSString *cleanPath = [[paths objectAtIndex:0] stringByAppendingPathComponent:[NSString stringWithFormat:@"%@b.jpg", self.location.location_id]];
     UIImage *cimage = [PhotoDetailsVC scaleImage:self.takenPhoto toSize:CGSizeMake(320.0,320.0)];
     [UIImageJPEGRepresentation(cimage, 0.8) writeToFile:dirtyPath atomically:YES];
- //   [UIImagePNGRepresentation(cimage) writeToFile:dirtyPath atomically:YES];
     NSURL* dirtyURL = [NSURL fileURLWithPath:dirtyPath];
     
     UIImage* cimage2 = [PhotoDetailsVC scaleImage:self.cleanedPhoto toSize:CGSizeMake(320.0,320.0)];
@@ -557,13 +546,13 @@
     photo=[info objectForKey:UIImagePickerControllerOriginalImage];
     if(self.secondPhototaken)
     {
-        
         [self setSecondPhoto:YES photo:photo];
     }
     else
     {
         self.takenPhoto=photo;
-        self.secondPhototaken=YES;
+        if(self.location)
+            self.secondPhototaken=YES;
     }
     [picker dismissViewControllerAnimated:YES completion:NULL];
     [self.detailTable reloadData];
@@ -576,8 +565,12 @@
     if(self.secondPhototaken) //do not remove the item when it's clean mode from location view
     {
         if(self.location==nil)
-            self.secondPhototaken=NO;
-        else
+        {
+            self.secondPhototaken=NO; //One step backward by removing the 2nd taken photo when adding new location
+            [self setSecondPhoto:NO photo:nil];
+            
+        }
+        else  //Going back to location view when cleaning the exisitng lcoation
         {
             [self.tabBarController setSelectedIndex:1];
             [self.tabBarController.tabBar setHidden:NO];
@@ -587,11 +580,13 @@
     }
     else
     {
-        [self.tabBarController.tabBar setHidden:NO];
-        [self.navigationController popToRootViewControllerAnimated:YES];
-        [self.tabBarController setSelectedIndex:1];
+        //[self.delegate cameraRefresh:YES];
         
-        [self dismissVC];
+        [self.tabBarController.tabBar setHidden:NO];
+        [self.tabBarController setSelectedIndex:1];
+        [self.navigationController popToRootViewControllerAnimated:YES];
+        
+        
     }
 }
 

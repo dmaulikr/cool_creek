@@ -96,11 +96,11 @@ class CCUtils {
     }
     
     static func setTextAccessoryView(text: UIView, target: AnyObject?, selector: Selector?) {
-        let barButton = UIBarButtonItem(barButtonSystemItem: UIBarButtonSystemItem.Done, target: text, action: Selector("resignFirstResponder"))
+        let barButton = UIBarButtonItem(barButtonSystemItem: UIBarButtonSystemItem.Done, target: text, action: #selector(UIResponder.resignFirstResponder))
         barButton.tintColor = UIColor.blackColor()
         let toolbar = UIToolbar(frame: CGRectMake(0, 0, 320, 44))
         toolbar.barTintColor = UIColor(red: 236.0/255.0, green: 240.0/255.0, blue:241.0/255.0, alpha:1.0)
-        let flexible = UIBarButtonItem(barButtonSystemItem: UIBarButtonSystemItem.FlexibleSpace, target: text, action: Selector("resignFirstResponder"))
+        let flexible = UIBarButtonItem(barButtonSystemItem: UIBarButtonSystemItem.FlexibleSpace, target: text, action: #selector(UIResponder.resignFirstResponder))
         
         toolbar.items = [flexible, flexible, barButton]
         

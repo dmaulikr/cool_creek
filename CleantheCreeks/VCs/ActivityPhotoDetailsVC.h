@@ -16,7 +16,7 @@
 -(void) giveKudoWithLocation:(Location*)location assigned:(bool) assigned;
 @end
 
-@interface ActivityPhotoDetailsVC : BaseVC<UITableViewDataSource, UITableViewDelegate,UITextFieldDelegate>
+@interface ActivityPhotoDetailsVC : BaseVC<UITableViewDataSource, UITableViewDelegate,UITextFieldDelegate, UIImagePickerControllerDelegate>
 @property (weak, nonatomic) IBOutlet UITableView *tv;
 @property (strong, nonatomic) Location * location;
 @property (nonatomic) BOOL cleaned,isKudoed;
@@ -30,5 +30,5 @@
 @property (nonatomic) bool commentVisible;
 @property(nonatomic, retain) id<KudoDelegate> delegate;
 @property (strong,nonatomic )AppDelegate * mainDelegate;
-
+@property(nonatomic) bool fromLocationView;
 @end

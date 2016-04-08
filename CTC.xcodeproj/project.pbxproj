@@ -88,6 +88,7 @@
 		E2FD05851C59E548004B2C34 /* ActivityVC.m in Sources */ = {isa = PBXBuildFile; fileRef = E2FD05841C59E548004B2C34 /* ActivityVC.m */; };
 		E2FD05881C59E579004B2C34 /* LocationVC.m in Sources */ = {isa = PBXBuildFile; fileRef = E2FD05871C59E579004B2C34 /* LocationVC.m */; };
 		E2FD058B1C59E5D8004B2C34 /* MainTabNav.m in Sources */ = {isa = PBXBuildFile; fileRef = E2FD058A1C59E5D8004B2C34 /* MainTabNav.m */; };
+		E49CE64E1CB57F22006CE1C8 /* FXPageControl.m in Sources */ = {isa = PBXBuildFile; fileRef = E49CE64D1CB57F22006CE1C8 /* FXPageControl.m */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -230,6 +231,8 @@
 		E2FD05871C59E579004B2C34 /* LocationVC.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = LocationVC.m; sourceTree = "<group>"; };
 		E2FD05891C59E5D8004B2C34 /* MainTabNav.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = MainTabNav.h; sourceTree = "<group>"; };
 		E2FD058A1C59E5D8004B2C34 /* MainTabNav.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = MainTabNav.m; sourceTree = "<group>"; };
+		E49CE64C1CB57F22006CE1C8 /* FXPageControl.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = FXPageControl.h; sourceTree = "<group>"; };
+		E49CE64D1CB57F22006CE1C8 /* FXPageControl.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = FXPageControl.m; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -619,6 +622,7 @@
 		E2FD05691C59C9FA004B2C34 /* ExtLibs */ = {
 			isa = PBXGroup;
 			children = (
+				E49CE64B1CB57F18006CE1C8 /* FXPageControll */,
 				3C59EC7F1CAF04FB00AE696D /* CustomInfiniteIndicator.h */,
 				3C59EC801CAF04FB00AE696D /* CustomInfiniteIndicator.m */,
 				3C59EC7E1CAE790500AE696D /* AsyncImageView */,
@@ -748,6 +752,15 @@
 				3CE5EB201C84F8370068DF59 /* ProfileViewCell */,
 			);
 			name = ProfileVC;
+			sourceTree = "<group>";
+		};
+		E49CE64B1CB57F18006CE1C8 /* FXPageControll */ = {
+			isa = PBXGroup;
+			children = (
+				E49CE64C1CB57F22006CE1C8 /* FXPageControl.h */,
+				E49CE64D1CB57F22006CE1C8 /* FXPageControl.m */,
+			);
+			name = FXPageControll;
 			sourceTree = "<group>";
 		};
 /* End PBXGroup section */
@@ -927,6 +940,7 @@
 			files = (
 				E2F36ECF1C5AFFE700923DF0 /* IntroModel.m in Sources */,
 				3C75ACA11C9063750054AA3F /* CommentCell.m in Sources */,
+				E49CE64E1CB57F22006CE1C8 /* FXPageControl.m in Sources */,
 				3C2874B31C88EC9800725B40 /* FollowVC.m in Sources */,
 				3CA8D7DA1C8D0D5900838FDC /* FBSuccessVC.m in Sources */,
 				E2F36EDB1C5B103400923DF0 /* LastPageView.m in Sources */,
@@ -1100,7 +1114,7 @@
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				CLANG_ENABLE_MODULES = YES;
-				CODE_SIGN_IDENTITY = "iPhone Developer: Eiji Kimura (VG6XFZ6ZNQ)";
+				CODE_SIGN_IDENTITY = "iPhone Distribution: Red Cherry Consulting Inc (835ZX9XC8P)";
 				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "iPhone Distribution: Red Cherry Consulting Inc (835ZX9XC8P)";
 				FRAMEWORK_SEARCH_PATHS = (
 					"$(inherited)",
@@ -1110,7 +1124,7 @@
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks";
 				PRODUCT_BUNDLE_IDENTIFIER = com.redcherry.CleantheCreeks;
 				PRODUCT_NAME = CTC;
-				PROVISIONING_PROFILE = "16007bbe-70ce-461d-af82-9f32c485b708";
+				PROVISIONING_PROFILE = "1e9c4fb2-9b87-4010-93f1-5c12195b2f73";
 				SWIFT_OBJC_BRIDGING_HEADER = "CleantheCreeks/Utils/Clean the Creek-Bridging-Header.h";
 				SWIFT_OPTIMIZATION_LEVEL = "-Onone";
 			};
@@ -1122,7 +1136,7 @@
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				CLANG_ENABLE_MODULES = YES;
-				CODE_SIGN_IDENTITY = "iPhone Developer: Eiji Kimura (VG6XFZ6ZNQ)";
+				CODE_SIGN_IDENTITY = "iPhone Distribution: Red Cherry Consulting Inc (835ZX9XC8P)";
 				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "iPhone Distribution: Red Cherry Consulting Inc (835ZX9XC8P)";
 				FRAMEWORK_SEARCH_PATHS = (
 					"$(inherited)",
@@ -1132,7 +1146,7 @@
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks";
 				PRODUCT_BUNDLE_IDENTIFIER = com.redcherry.CleantheCreeks;
 				PRODUCT_NAME = CTC;
-				PROVISIONING_PROFILE = "16007bbe-70ce-461d-af82-9f32c485b708";
+				PROVISIONING_PROFILE = "1e9c4fb2-9b87-4010-93f1-5c12195b2f73";
 				SWIFT_OBJC_BRIDGING_HEADER = "CleantheCreeks/Utils/Clean the Creek-Bridging-Header.h";
 			};
 			name = Release;

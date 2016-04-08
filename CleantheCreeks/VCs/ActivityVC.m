@@ -359,7 +359,6 @@
             {
                 [((CleaningCommentCell*)cell).lblContent setAttributedText:[self generateString:user.user_name content:@" started follwing you\n" location:@""]];
                 
-                
             }
             
             [((CleaningCommentCell*)cell).profileAvatar addGestureRecognizer:followTap];
@@ -388,8 +387,8 @@
     Activity * selectedActivity = [self.activityArray objectAtIndex:self.selectedImgIndex];
     if(![selectedActivity.activity_id isEqualToString:self.current_user_id])
     {
-        if([selectedActivity.activity_type isEqualToString:@"kudo"] || [selectedActivity.activity_type isEqualToString:@"follow"])
-            [self performSegueWithIdentifier:@"showProfile" sender:self];
+        
+        [self performSegueWithIdentifier:@"showProfile" sender:self];
     }
 }
 
@@ -508,7 +507,7 @@
             KudosVC * vc=(KudosVC*)segue.destinationViewController;
             vc.location=self.selectedLocation;
             //vc.userArray=self.selectedLocation.kudos;
-            vc.imageArray=[[NSMutableDictionary alloc] initWithDictionary:self.imageArray copyItems:YES];
+            vc.imageArray = [[NSMutableDictionary alloc] initWithDictionary:self.imageArray copyItems:YES];
             
         }
         else if([segue.identifier isEqualToString:@"showProfile"])
@@ -516,7 +515,8 @@
             ProfileVC * vc=(ProfileVC*)segue.destinationViewController;
             Activity * activity=[self.activityArray objectAtIndex:self.selectedImgIndex];
             vc.current_user_id = activity.activity_id;
-            vc.mode=YES;
+            vc.mode = YES;
+            self.appDelegate.shouldRefreshProfile = YES;
         }
         
     }

@@ -20,6 +20,9 @@
 @property (strong, nonatomic) NSMutableArray *followingArray;
 @property (strong, nonatomic) NSMutableDictionary *userArray;
 @property (strong, nonatomic) CLLocation * currentLocation;
+@property(nonatomic) bool shouldRefreshLocation;
+@property(nonatomic) bool shouldRefreshActivity;
+@property(nonatomic) bool shouldRefreshProfile;
 +(BOOL) isFollowing:(User*) user;
 -(void) loadData;
 

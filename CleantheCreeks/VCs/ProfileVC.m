@@ -29,7 +29,7 @@
     self.refreshControl = [[UIRefreshControl alloc]init];
     [self.profileTable addSubview:self.refreshControl];
     [self.refreshControl addTarget:self action:@selector(updateData) forControlEvents:UIControlEventValueChanged];
-    
+    self.appDelegate=(AppDelegate*)[[UIApplication sharedApplication]delegate];
     self.displayItemCount=3;
     
     self.profileTable.estimatedRowHeight = 323.f;
@@ -47,26 +47,13 @@
         [tableView reloadData];
         [tableView finishInfiniteScroll];
     }];
+    NSUserDefaults *defaults = [NSUserDefaults standardUserDefaults];
+    [self.profileTopBar setHeaderStyle:!self.mode title:[defaults objectForKey:@"user_name"] rightBtnHidden:self.mode];
+        [self.refreshControl beginRefreshing];
     
-}
-
--(void) viewWillAppear:(BOOL)animated
-{
-    if(!self.mode)
-    {
-        
-        [self.tabBarController.tabBar setHidden:NO];
-        
-    }
-    else
-    {
-        [self.tabBarController.tabBar setHidden:YES];
-        
-    }
-    [self.profileTopBar setHeaderStyle:!self.mode title:@"" rightBtnHidden:self.mode];
-    [self.refreshControl beginRefreshing];
+        [self updateData];
     
-    [self updateData];
+    
     
 }
 
@@ -87,26 +74,42 @@
 
 -(void) loadImage:(Location *)location
 {
-    NSString * url=[location.location_id stringByReplacingOccurrencesOfString:@"," withString:@"%2C"];
-    NSString *firstPicture = [NSString stringWithFormat:@"https://s3-ap-northeast-1.amazonaws.com/cleanthecreeks/%@a", url];
-    NSString *secondPicture = [NSString stringWithFormat:@"https://s3-ap-northeast-1.amazonaws.com/cleanthecreeks/%@b", url];
-    dispatch_async(dispatch_get_main_queue(), ^{
-        NSData * data = [[NSData alloc] initWithContentsOfURL: [NSURL URLWithString: firstPicture]];
-        if ( data !=nil )
-        {
-            [self.firstArray setObject:[UIImage imageWithData: data] forKey:location.location_id];
-            
-        }
-        NSData * data2 = [[NSData alloc] initWithContentsOfURL: [NSURL URLWithString: secondPicture]];
-        if ( data2 != nil )
-        {
-            
-            [self.secondArray setObject:[UIImage imageWithData: data2] forKey:location.location_id];
-            
-        }
-        [self.profileTable reloadData];
-    });
+    AWSS3TransferManager *transferManager = [AWSS3TransferManager defaultS3TransferManager];
+    //Setting the file download path
+    NSString *downloadingFilePath = [NSTemporaryDirectory() stringByAppendingPathComponent:location.location_id];
+    NSString *firstPath=[downloadingFilePath stringByAppendingString:@"a"];
+    NSString *secondPath=[downloadingFilePath stringByAppendingString:@"b"];
     
+    AWSS3TransferManagerDownloadRequest *downloadRequest = [AWSS3TransferManagerDownloadRequest new];
+    downloadRequest.bucket = @"cleanthecreeks";
+    NSString * key=[location.location_id stringByAppendingString:@"a"];
+    downloadRequest.key = key;
+    downloadRequest.downloadingFileURL = [NSURL fileURLWithPath:firstPath];
+    
+    [[transferManager download:downloadRequest] continueWithExecutor:[AWSExecutor mainThreadExecutor] withBlock:^id(AWSTask *task) {
+        if (task.result) {
+            [self.firstArray setObject:[UIImage imageWithContentsOfFile:firstPath] forKey:location.location_id];
+            [self.profileTable reloadData];
+            
+        }
+        return nil;
+    }];
+    
+    AWSS3TransferManagerDownloadRequest *downloadRequest2 = [AWSS3TransferManagerDownloadRequest new];
+    downloadRequest2.bucket = @"cleanthecreeks";
+
+    NSString * key2=[location.location_id stringByAppendingString:@"b"];
+    downloadRequest2.key = key2;
+    downloadRequest2.downloadingFileURL = [NSURL fileURLWithPath:secondPath];
+    
+    [[transferManager download:downloadRequest2] continueWithExecutor:[AWSExecutor mainThreadExecutor] withBlock:^id(AWSTask *task) {
+        if (task.result) {
+            [self.secondArray setObject:[UIImage imageWithContentsOfFile:secondPath] forKey:location.location_id];
+            [self.profileTable reloadData];
+            
+        }
+        return nil;
+    }];
 }
 
 -(void) updateData
@@ -139,8 +142,6 @@
              
              [self loadProfileImage:self.profile_user.user_id];
              self.locationArray=[[NSMutableArray alloc]init];
-             
-             self.appDelegate=(AppDelegate*)[[UIApplication sharedApplication]delegate];
              
              AWSDynamoDBScanExpression *scanExpression = [AWSDynamoDBScanExpression new];
              scanExpression.filterExpression = @"cleaner_id = :val";

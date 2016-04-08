@@ -17,6 +17,8 @@
 #import "LocationBarCell.h"
 #import "CommentCell.h"
 #import "User.h"
+#import "PhotoDetailsVC.h"
+#import "FacebookPostVC.h"
 @implementation ActivityPhotoDetailsVC
 
 - (void)registerForKeyboardNotifications
@@ -43,9 +45,7 @@
     // Your app might not need or want this behavior.
     
     CGRect aRect = self.view.frame;
-    
     aRect.size.height -= kbSize.height;
-    
     if (!CGRectContainsPoint(aRect, self.commentView.frame.origin) ) {
         
         [self.tv scrollRectToVisible:self.commentView.frame animated:YES];
@@ -73,9 +73,23 @@
     return YES;
 }
 
--(void) viewWillAppear:(BOOL)animated
+-(void) viewDidLoad
 {
-    [super viewWillAppear:animated];
+    [super viewDidLoad];
+    
+    self.textComment.delegate=self;
+    self.commentVisible=NO;
+    [self.commentView setHidden:!self.commentVisible];
+    UITapGestureRecognizer *tap = [[UITapGestureRecognizer alloc]
+                                   initWithTarget:self
+                                   action:@selector(dismissKeyboard)];
+    
+    [self.view addGestureRecognizer:tap];
+    self.mainDelegate=(AppDelegate*)[[UIApplication sharedApplication]delegate];
+    [self.mainDelegate loadData];
+    [self registerForKeyboardNotifications];
+    self.tv.estimatedRowHeight = 65.f;
+    self.tv.rowHeight = UITableViewAutomaticDimension;
     AWSS3TransferManager *transferManager = [AWSS3TransferManager defaultS3TransferManager];
     
     AWSS3TransferManagerDownloadRequest *firstRequest = [AWSS3TransferManagerDownloadRequest new];
@@ -96,7 +110,8 @@
         return nil;
     }];
     UIButton * btnKudo = [self.view viewWithTag:22];
-    btnKudo.enabled = NO;
+    
+    btnKudo.enabled = NO; //disabling the button while finishing the db update
     if(self.cleaned)
     {
         AWSS3TransferManagerDownloadRequest *secondRequest = [AWSS3TransferManagerDownloadRequest new];
@@ -125,23 +140,6 @@
         btnKudo.enabled = YES;
     });
     [self.profileTopBar setHeaderStyle:NO title:self.location.location_name rightBtnHidden:YES];
-}
-
-- (void) viewDidLoad{
-    [super viewDidLoad];
-    self.textComment.delegate=self;
-    self.commentVisible=NO;
-    [self.commentView setHidden:!self.commentVisible];
-    UITapGestureRecognizer *tap = [[UITapGestureRecognizer alloc]
-                                   initWithTarget:self
-                                   action:@selector(dismissKeyboard)];
-    
-    [self.view addGestureRecognizer:tap];
-    self.mainDelegate=(AppDelegate*)[[UIApplication sharedApplication]delegate];
-    [self.mainDelegate loadData];
-    [self registerForKeyboardNotifications];
-    self.tv.estimatedRowHeight = 65.f;
-    self.tv.rowHeight = UITableViewAutomaticDimension;
 }
 
 -(void)dismissKeyboard {
@@ -233,9 +231,22 @@
         if(indexPath.row==0)
         {
             cell = (LocationPhotoCell*)[tableView dequeueReusableCellWithIdentifier:@"LocationPhotoCell"];
+            
             [((LocationPhotoCell*)cell).firstPhoto setImage:self.beforePhoto];
             if(self.cleaned)
                 [((LocationPhotoCell*)cell).secondPhoto setImage:self.afterPhoto];
+            else
+            {
+                [((LocationPhotoCell*)cell).secondPhoto setImage:[UIImage imageNamed:@"EmptyPhoto"]];
+                if(self.fromLocationView)
+                {
+                    UITapGestureRecognizer *tapClean=[[UITapGestureRecognizer alloc]initWithTarget:self action:@selector(takePhoto:)];
+                    tapClean.numberOfTapsRequired=1;
+                    
+                    [((LocationPhotoCell*)cell).secondPhoto addGestureRecognizer:tapClean];
+                    ((LocationPhotoCell*)cell).secondPhoto.userInteractionEnabled=YES;
+                }
+            }
         }
         
         else if(indexPath.row==1)
@@ -263,6 +274,7 @@
             [((LocationBarCell*)cell).btnComment addTarget:self action:@selector(commentButtonClicked:) forControlEvents:UIControlEventTouchUpInside];
         }
     }
+    
     else if(indexPath.section==1)
     {
         NSUserDefaults *defaults = [NSUserDefaults standardUserDefaults];
@@ -311,7 +323,7 @@
     {
         if(indexPath.row==0)
             cell = [tableView dequeueReusableCellWithIdentifier:@"SecondBar"];
-       
+        
         else
         {
             if(self.location!=nil)
@@ -325,7 +337,7 @@
                 NSString *commentText=[commentItem objectForKey:@"text"];
                 [((CommentCell*)cell).commentLabel setAttributedText:[self generateCommentString:commentUserName content:commentText]];
             }
-
+            
         }
         
     }
@@ -349,7 +361,7 @@
 -(void) kudoButtonClicked:(UIButton*)sender
 {
     sender.selected=!sender.selected;
-
+    
     [self.delegate giveKudoWithLocation:self.location assigned:sender.selected];
 }
 
@@ -358,7 +370,7 @@
     self.commentVisible=!self.commentVisible;
     [self.commentView setHidden:!self.commentVisible];
     sender.selected=self.commentVisible;
-
+    
 }
 
 - (IBAction)closeBtnClicked:(id)sender {
@@ -385,7 +397,7 @@
     
     
     [commentArray addObject:commentItem];
-   
+    
     self.location.comments=[[NSMutableArray alloc] initWithArray:commentArray];
     
     AWSDynamoDBObjectMapper *dynamoDBObjectMapper = [AWSDynamoDBObjectMapper defaultDynamoDBObjectMapper];
@@ -401,14 +413,156 @@
              NSLog(@"The request failed. Exception: [%@]", task.exception);
          }
          if (task.result) {
-             [self.textComment setText:@""];
-             
-             [self.tv reloadData];
-             NSLog(@"Updated Comment");
+             dispatch_async(dispatch_get_main_queue(), ^{
+                 [self.textComment setText:@""];
+                 
+                 [self.tv reloadData];
+                 NSLog(@"Updated Comment");
+             });
          }
          return nil;
      }];
+    
+}
 
+-(void) takePhoto:(id)sender
+{
+    
+    UIImagePickerController *picker=[[UIImagePickerController alloc] init];
+    if([UIImagePickerController isSourceTypeAvailable:UIImagePickerControllerSourceTypeCamera]==NO)
+    {
+        picker.sourceType=UIImagePickerControllerSourceTypePhotoLibrary;
+    }
+    else
+    {
+        picker.sourceType=UIImagePickerControllerSourceTypeCamera;
+    }
+    picker.delegate=self;
+    [self presentViewController:picker animated:YES completion:nil];
+}
+
+-(void)imagePickerController:(UIImagePickerController *)picker didFinishPickingMediaWithInfo:(NSDictionary<NSString *,id> *)info
+{
+    NSLog(@"Photo taken");
+    UIImage * photo=[[UIImage alloc]init];
+    photo=[info objectForKey:UIImagePickerControllerOriginalImage];
+    
+    self.afterPhoto=photo;
+    [picker dismissViewControllerAnimated:YES completion:nil];
+    
+    dispatch_async(dispatch_get_main_queue(), ^ {
+        [self cleanLocation];
+    });
+    [self dismissViewControllerAnimated:NO completion:nil];
+    
+    
+    
+}
+
+- (void)imagePickerControllerDidCancel:(UIImagePickerController *)picker
+{
+    [picker dismissViewControllerAnimated:YES completion:nil];
+}
+
+-(void) cleanLocation
+{
+    NSUserDefaults *defaults = [NSUserDefaults standardUserDefaults];
+    NSString *user_name = [defaults objectForKey:@"user_name"];
+    NSString *user_id = [defaults objectForKey:@"user_id"];
+    
+    NSDateFormatter *dateFormatter=[[NSDateFormatter alloc] init];
+    [dateFormatter setDateFormat:@"MMM dd, yyyy"];
+    
+    
+    self.location.isDirty=@"false";
+    self.location.cleaner_id=user_id;
+    self.location.cleaner_name=user_name;
+    self.location.cleaned_date=[[NSDate date] timeIntervalSince1970];
+    
+    //Updating the database
+    
+    AWSDynamoDBObjectMapper *dynamoDBObjectMapper = [AWSDynamoDBObjectMapper defaultDynamoDBObjectMapper];
+    
+    [[dynamoDBObjectMapper save:self.location]
+     continueWithBlock:^id(AWSTask *task) {
+         if (task.error) {
+             NSLog(@"The request failed. Error: [%@]", task.error);
+         }
+         if (task.exception) {
+             NSLog(@"The request failed. Exception: [%@]", task.exception);
+         }
+         if (task.result) {
+             //Do something with the result.
+         }
+         return nil;
+     }];
+    
+    AWSS3TransferManager *transferManager = [AWSS3TransferManager defaultS3TransferManager];
+    NSArray *paths = NSSearchPathForDirectoriesInDomains(NSDocumentDirectory, NSUserDomainMask, YES);
+    
+    NSString *cleanPath = [[paths objectAtIndex:0] stringByAppendingPathComponent:[NSString stringWithFormat:@"%@b.jpg", self.location.location_id]];
+    UIImage* cimage2 = [PhotoDetailsVC scaleImage:self.afterPhoto toSize:CGSizeMake(320.0,320.0)];
+    [UIImagePNGRepresentation(cimage2) writeToFile:cleanPath atomically:YES];
+    NSURL* cleanURL = [NSURL fileURLWithPath:cleanPath];
+    AWSS3TransferManagerUploadRequest *seconduploadRequest = [AWSS3TransferManagerUploadRequest new];
+    seconduploadRequest.bucket = @"cleanthecreeks";
+    seconduploadRequest.contentType = @"image/png";
+    seconduploadRequest.body = cleanURL;
+    
+    seconduploadRequest.key = [NSString stringWithFormat:@"%f,%fb",
+                               self.location.latitude, self.location.longitude];
+    [[transferManager upload:seconduploadRequest] continueWithExecutor:[AWSExecutor mainThreadExecutor] withBlock:^id(AWSTask *task) {
+        if (task.error) {
+            if ([task.error.domain isEqualToString:AWSS3TransferManagerErrorDomain]) {
+                switch (task.error.code) {
+                    case AWSS3TransferManagerErrorCancelled:
+                    case AWSS3TransferManagerErrorPaused:
+                        break;
+                        
+                    default:
+                    {
+                        UIAlertController *alertController = [UIAlertController alertControllerWithTitle:@"Server Error" message:@"Please try again later." preferredStyle:UIAlertControllerStyleAlert];
+                        
+                        dispatch_async(dispatch_get_main_queue(), ^ {
+                            [self presentViewController:alertController animated:YES completion:nil];
+                        });
+                        break;
+                    }
+                }
+            } else {
+                UIAlertController *alertController = [UIAlertController alertControllerWithTitle:@"Server Error" message:@"Please try again later." preferredStyle:UIAlertControllerStyleAlert];
+                
+                dispatch_async(dispatch_get_main_queue(), ^ {
+                    [self presentViewController:alertController animated:YES completion:nil];
+                });
+                
+            }
+        }
+        
+        if (task.result) {
+            NSLog(@"cleaned photo uploaded");
+            [self performSegueWithIdentifier:@"cleanFromView" sender:self];
+        }
+        return nil;
+    }];
+    
+    
+}
+
+- (void) prepareForSegue:(UIStoryboardSegue *)segue sender:(id)sender
+{
+    [super prepareForSegue:segue sender:sender];
+    FacebookPostVC* vc = (FacebookPostVC*)segue.destinationViewController;
+    
+    if([segue.identifier isEqualToString:@"cleanFromView"])
+    {
+        vc.firstPhoto=[[UIImage alloc]init];
+        vc.firstPhoto=[PhotoDetailsVC scaleImage:self.beforePhoto toSize:CGSizeMake(320.0,320.0)];
+        vc.secondPhoto=[[UIImage alloc]init];
+        vc.secondPhoto=[PhotoDetailsVC scaleImage:self.afterPhoto toSize:CGSizeMake(320.0,320.0)];
+        vc.cleaned=YES;
+    }
+    
 }
 
 - (NSMutableAttributedString *)generateCommentString:(NSString*)name content:(NSString*)content

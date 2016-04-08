@@ -13,11 +13,14 @@
 @interface FacebookPostVC : BaseVC<UITabBarControllerDelegate>
 @property (strong, nonatomic) UIImage * firstPhoto;
 @property (strong, nonatomic) UIImage * secondPhoto;
-@property (weak, nonatomic) IBOutlet UIImageView *fbFirstImg;
-@property (weak, nonatomic) IBOutlet UIImageView *fbLastImage;
+
 @property (weak, nonatomic) IBOutlet UIImageView *fbImage;
+@property (weak, nonatomic) IBOutlet UIImageView *user_photo;
+@property (weak, nonatomic) IBOutlet UILabel *user_name;
+@property (weak, nonatomic) IBOutlet UILabel *time;
 
 @property (weak, nonatomic) IBOutlet UIImageView *fbTopImage;
 - (IBAction)skip:(id)sender;
 @property(strong,nonatomic)SLComposeViewController *mySLComposerSheet;
+@property(nonatomic)bool cleaned;
 @end

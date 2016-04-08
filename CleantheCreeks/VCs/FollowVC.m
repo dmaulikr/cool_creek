@@ -26,6 +26,7 @@
 -(void)viewDidLoad
 {
     [super viewDidLoad];
+    [self.followSegment setSelectedSegmentIndex:self.displayIndex];
     self.appDelegate=(AppDelegate*)[[UIApplication sharedApplication]delegate];
     self.defaults = [NSUserDefaults standardUserDefaults];
     NSString *user_name = [self.defaults objectForKey:@"user_name"];
@@ -39,12 +40,6 @@
     [self.refreshControl beginRefreshing];
     
     [self loadData];
-}
-
--(void) viewWillAppear:(BOOL)animated
-{
-    [super viewWillAppear:animated];
-    [self.followSegment setSelectedSegmentIndex:self.displayIndex];
 }
 
 -(void)loadData

@@ -9,20 +9,29 @@
 #import "FacebookPostVC.h"
 #import "MainTabnav.h"
 @implementation FacebookPostVC
--(void)viewDidLoad
+
+-(void) viewDidLoad
 {
     [super viewDidLoad];
     [self.profileTopBar setHeaderStyle:YES title:@"LOCATION DETAILS" rightBtnHidden:YES];
     [self.tabBarController.tabBar setHidden:YES];
-}
-
--(void) viewWillAppear:(BOOL)animated
-{
-    [super viewWillAppear:animated];
-    if(self.firstPhoto!=nil)
-       [self.fbFirstImg setImage:self.firstPhoto];
-    if(self.secondPhoto!=nil)
-        [self.fbLastImage setImage:self.secondPhoto];
+    NSUserDefaults *defaults = [NSUserDefaults standardUserDefaults];
+    NSString *user_name = [defaults objectForKey:@"user_name"];
+    NSString *user_id = [defaults objectForKey:@"user_id"];
+    NSString *userImageURL = [NSString stringWithFormat:@"https://graph.facebook.com/%@/picture", user_id];
+    dispatch_async(dispatch_get_main_queue(), ^{
+        NSData * data = [[NSData alloc] initWithContentsOfURL: [NSURL URLWithString: userImageURL]];
+        if ( data != nil ){
+            [self.user_photo setImage:[UIImage imageWithData:data]];
+        }
+        
+    });
+    self.user_name.adjustsFontSizeToFitWidth = YES;
+    self.time.adjustsFontSizeToFitWidth=YES;
+    [self.user_name setText:user_name];
+    UIImage* img=[self mergeImage:self.firstPhoto withImage:self.secondPhoto bottomImage:[UIImage imageNamed:@"website"]];
+    
+    [_fbImage setImage:img];
     
 }
 
@@ -66,31 +75,34 @@
              blendMode:kCGBlendModeNormal alpha:1.0];
     [bottom drawInRect:CGRectMake(0, size, size*2, size*0.3345*2)];
     
+    //Place logo
+    UIImage * imgLogo=[UIImage imageNamed:@"SliderLogoSmall"];
+    [imgLogo drawInRect:CGRectMake(5,5,imgLogo.size.width,imgLogo.size.height)];
+    
+    //Place before button
+    UIImage * imgBefore=[UIImage imageNamed:@"btnBefore"];
+    [imgBefore drawInRect:CGRectMake(size-imgBefore.size.width,5+imgLogo.size.height/2-imgBefore.size.height/2,imgBefore.size.width,imgBefore.size.height)];
+    
+    //Place after button
+    if(self.cleaned)
+    {
+        UIImage * imgAfter=[UIImage imageNamed:@"btnAfter"];
+        [imgAfter drawInRect:CGRectMake(size*2-imgAfter.size.width,5+imgLogo.size.height/2-imgAfter.size.height/2,imgAfter.size.width,imgAfter.size.height)];
+    }
+    //Place download button
+    
+    UIImage * imgDownload=[UIImage imageNamed:@"downloadImg"];
+    [imgDownload drawInRect:CGRectMake(size - imgDownload.size.width/2,size-40-imgDownload.size.height/2,imgDownload.size.width,imgDownload.size.height)];
     // assign context to new UIImage
     UIImage *newImage = UIGraphicsGetImageFromCurrentImageContext();
     
     // end context
     UIGraphicsEndImageContext();
-    
     return newImage;
     
 }
 
-
-
 - (IBAction)FBPost:(id)sender {
-    /*UIImage *bottomImage =fbPostImage.
-     UIImage *image       = [UIImage imageNamed:@"top.png"]; //foreground image
-     
-     CGSize newSize = CGSizeMake(width, height);
-     UIGraphicsBeginImageContext( newSize );
-     
-     // Use existing opacity as is
-     [bottomImage drawInRect:CGRectMake(0,0,newSize.width,newSize.height)];
-     
-     // Apply supplied opacity if applicable
-     [image drawInRect:CGRectMake(0,0,newSize.width,newSize.height) blendMode:kCGBlendModeNormal alpha:0.8];*/
-
     
     if([SLComposeViewController isAvailableForServiceType:SLServiceTypeFacebook]) //check if Facebook Account is linked
     {

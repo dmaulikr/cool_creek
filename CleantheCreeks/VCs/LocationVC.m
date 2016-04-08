@@ -70,6 +70,8 @@
         [tableView reloadData];
         [tableView finishInfiniteScroll];
     }];
+
+    
     
 }
 
@@ -83,7 +85,13 @@
     [super viewWillAppear:animated];
     [self.tabBarController.tabBar setHidden:self.fromSlider];
     self.backBtn.hidden = !self.fromSlider;
-    
+    self.mainDelegate=(AppDelegate*)[[UIApplication sharedApplication]delegate];
+    if(self.mainDelegate.shouldRefreshLocation)
+    {
+        [self.refreshControl beginRefreshing];
+        [self updateData];
+        self.mainDelegate.shouldRefreshLocation = NO;
+    }
 }
 
 - (void)didReceiveMemoryWarning{
@@ -200,15 +208,10 @@
                               AWSDynamoDBObjectMapper *dynamoDBObjectMapper = [AWSDynamoDBObjectMapper defaultDynamoDBObjectMapper];
                               [[dynamoDBObjectMapper save:user_info configuration:updateMapperConfig]
                                continueWithBlock:^id(AWSTask *task) {
-                                   if (task.error) {
-                                       NSLog(@"The request failed. Error: [%@]", task.error);
-                                   }
-                                   if (task.exception) {
-                                       NSLog(@"The request failed. Exception: [%@]", task.exception);
-                                   }
+                                  
                                    if (task.result) {
                                        
-                                       [self dismissVC];
+                                        [self dismissVC];
                                    }
                                    return nil;
                                }];
@@ -250,6 +253,7 @@
             vc.location = location;
             vc.beforePhoto = (UIImage*)(self.mainDelegate.locationData[location.location_id]);
             vc.cleaned = NO;
+            vc.fromLocationView = YES;
         }
         else if([segue.identifier isEqualToString:@"showMapDetails"])
         {
@@ -287,21 +291,28 @@
                 CLLocation*exitingLocation=[[CLLocation alloc]initWithLatitude:location.latitude longitude:location.longitude];
                 CLLocationDistance distance=[exitingLocation distanceFromLocation:self.currentLocation];
                 distance=distance/1000.0;
+                
+                //Setting the file download path
                 NSString *downloadingFilePath = [NSTemporaryDirectory() stringByAppendingPathComponent:location.location_id];
                 NSURL *downloadingFileURL = [NSURL fileURLWithPath:downloadingFilePath];
                 
                 if(![self.locationArray containsObject:location])
                     [self.locationArray addObject:location];
-                AWSS3TransferManagerDownloadRequest *downloadRequest = [AWSS3TransferManagerDownloadRequest new];
-                downloadRequest.bucket = @"cleanthecreeks";
-                NSString * key=[location.location_id stringByAppendingString:@"a"];
-                downloadRequest.key = key;
-                downloadRequest.downloadingFileURL = downloadingFileURL;
+                
+                //Setting the annotation
                 LocationAnnotation *annotation=[[LocationAnnotation alloc]init];
                 annotation.coordinate = CLLocationCoordinate2DMake(location.latitude, location.longitude);
                 
                 annotation.title = location.location_name;
                 annotation.subtitle = location.location_id;
+                
+                //Downloading files
+                AWSS3TransferManagerDownloadRequest *downloadRequest = [AWSS3TransferManagerDownloadRequest new];
+                downloadRequest.bucket = @"cleanthecreeks";
+                NSString * key=[location.location_id stringByAppendingString:@"a"];
+                downloadRequest.key = key;
+                downloadRequest.downloadingFileURL = downloadingFileURL;
+                
                 self.mainDelegate.locationData[location.location_id]=[UIImage imageNamed:@"EmptyPhoto"];
                 [[transferManager download:downloadRequest] continueWithExecutor:[AWSExecutor mainThreadExecutor] withBlock:^id(AWSTask *task2) {
                     if (task2.result) {

@@ -37,11 +37,15 @@
         [self addSubview:self.scrollView];
         
         //Initial PageView
-        self.pageControl = [[UIPageControl alloc] init];
+        self.pageControl = [[FXPageControl alloc] init];
         _pageControl.numberOfPages = pagesArray.count;
-        _pageControl.pageIndicatorTintColor=[UIColor whiteColor];
-        _pageControl.currentPageIndicatorTintColor=[UIColor clearColor];
+        _pageControl.selectedDotImage =[UIImage imageNamed:@"emptyHalo"];
+        _pageControl.dotImage = [UIImage imageNamed:@"fullHalo"];
+        _pageControl.backgroundColor = [UIColor clearColor];
+        _pageControl.dotSize=10.0f;
+        _pageControl.wrapEnabled=YES;
         
+     
         [_pageControl sizeToFit];
         [_pageControl setCenter:CGPointMake(frame.size.width/2.0, frame.size.height/23*22)];
         [self addSubview:_pageControl];
@@ -54,7 +58,7 @@
         
         //Adding views into scroll view.
         FirstPageView * firstPage=[[FirstPageView alloc] initWithFrame:frame model:[_pages objectAtIndex:0]];
-        firstPage.frame=CGRectOffset(firstPage.frame, 0, 0);
+        firstPage.frame = CGRectOffset(firstPage.frame, 0, 0);
         [_scrollView addSubview:firstPage];
         for(int i = 1; i <  _pages.count-1; i++) {
             IntroView *view = [[IntroView alloc] initWithFrame:frame model:[_pages objectAtIndex:i]];
@@ -63,7 +67,7 @@
             [_scrollView addSubview:view];
         }
         LastPageView * lastPage=[[LastPageView alloc] initWithFrame:frame model:[_pages objectAtIndex:_pages.count-1]];
-        lastPage.frame=CGRectOffset(lastPage.frame, (_pages.count-1)*frame.size.width, 0);
+        lastPage.frame = CGRectOffset(lastPage.frame, (_pages.count-1)*frame.size.width, 0);
         [_scrollView addSubview:lastPage];
         
         [self initShow];
@@ -89,7 +93,6 @@
     }
     
     float offset =  _scrollView.contentOffset.x - (_currentPhotoNum * self.frame.size.width);
-    
 
     //left
     if(offset < 0) {
@@ -100,6 +103,7 @@
         _backgroundImage1.alpha = (offset / self.frame.size.width);
     
     //other
+        
     } else if(offset != 0) {
         //last
         if(scrollPhotoNumber == _pages.count-1) {
