@@ -29,4 +29,5 @@
 @property (nonatomic) bool fromSlider;
 @property (weak, nonatomic) IBOutlet UIButton *backBtn;
 
+
 @end

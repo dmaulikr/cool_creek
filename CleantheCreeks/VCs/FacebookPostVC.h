@@ -18,6 +18,7 @@
 @property (weak, nonatomic) IBOutlet UIImageView *user_photo;
 @property (weak, nonatomic) IBOutlet UILabel *user_name;
 @property (weak, nonatomic) IBOutlet UILabel *time;
+@property (weak, nonatomic) IBOutlet UIButton *btnPost;
 
 @property (weak, nonatomic) IBOutlet UIImageView *fbTopImage;
 - (IBAction)skip:(id)sender;

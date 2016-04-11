@@ -2,7 +2,7 @@
 //  LocationPhotoCell.h
 //  CTC
 //
-//  Created by Andy Johansson on 06/03/16.
+//  Created by Kimura Eiji on 06/03/16.
 //  Copyright © 2016 RedCherry. All rights reserved.
 //
 

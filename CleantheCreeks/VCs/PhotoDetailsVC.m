@@ -160,11 +160,11 @@
         if(indexPath.row==0)
             height=5;
         else
-             height=self.view.frame.size.height*0.3;
+            height=self.view.frame.size.height*0.3;
     }
     
     return height;
-
+    
 }
 - (NSInteger)tableView:(UITableView *)tableView numberOfRowsInSection:(NSInteger)section
 {
@@ -192,7 +192,7 @@
 {
     UITableViewCell *cell = nil;
     cell=[[UITableViewCell alloc]init];
-
+    
     if(indexPath.section==0)
     {
         if(indexPath.row==0)
@@ -200,11 +200,11 @@
         else if(indexPath.row==1)
         {
             cell = (PhotoViewCell*)[tableView dequeueReusableCellWithIdentifier:@"PhotoCell"];
-            [((PhotoViewCell*)cell).firstPhoto setImage:self.takenPhoto];
-                if(self.secondPhototaken)
-                    [((PhotoViewCell*)cell).secondPhoto setImage:self.cleanedPhoto];
-                else
-                    [((PhotoViewCell*)cell).secondPhoto setImage:[UIImage imageNamed:@"EmptyPhoto"]];
+            [((PhotoViewCell*)cell).firstPhoto setImage:[PhotoDetailsVC scaleImage:self.takenPhoto toSize:CGSizeMake(320.0,320.0)]];
+            if(self.secondPhototaken)
+                [((PhotoViewCell*)cell).secondPhoto setImage:[PhotoDetailsVC scaleImage:self.cleanedPhoto toSize:CGSizeMake(320.0,320.0)]];
+            else
+                [((PhotoViewCell*)cell).secondPhoto setImage:[UIImage imageNamed:@"EmptyPhoto"]];
             ((PhotoViewCell*)cell).delegate=self;
         }
     }
@@ -244,7 +244,7 @@
                 [((DetailCell*)cell).finderName setText:user_name];
             NSDate* founddate=[[NSDate alloc]initWithTimeIntervalSince1970:self.foundDate];
             [((DetailCell*)cell).foundDate setText:[dateFormatter stringFromDate:founddate]];
-           
+            
             
         }
         else if(indexPath.row==3)
@@ -254,7 +254,7 @@
             NSDate* cleanDate=[[NSDate alloc]initWithTimeIntervalSince1970:self.cleanedDate];
             [((DetailCell*)cell).cleanedDate setText:[dateFormatter stringFromDate:cleanDate]];
         }
-
+        
     }
     else if(indexPath.section==2)
     {
@@ -288,13 +288,13 @@
     UIColor * color2= [UIColor colorWithRed:(51/255.0) green:(51/255.0) blue:(51/255.0) alpha:1.0];
     
     NSDictionary * attributes1 = [NSDictionary dictionaryWithObject:color1 forKey:NSForegroundColorAttributeName];
-   
+    
     NSDictionary * attributes2 = [NSDictionary dictionaryWithObject:color2 forKey:NSForegroundColorAttributeName];
     if(name!=nil)
     {
         NSAttributedString * nameStr = [[NSAttributedString alloc] initWithString:name attributes:attributes1];
         [string appendAttributedString:nameStr];
-
+        
     }
     NSAttributedString * space = [[NSAttributedString alloc] initWithString:@" " attributes:attributes2];
     [string appendAttributedString:space];
@@ -303,7 +303,7 @@
         NSAttributedString * middleStr = [[NSAttributedString alloc] initWithString:content attributes:attributes2];
         [string appendAttributedString:middleStr];
     }
-   
+    
     return string;
 }
 
@@ -324,11 +324,51 @@
     return title;
 }
 
+-(void) generateNotification:(bool)mode
+{
+    self.defaults=[NSUserDefaults standardUserDefaults];
+    NSString *user_name = [self.defaults objectForKey:@"user_name"];
+    NSString * user_id=[self.defaults objectForKey:@"user_id"];
+    AWSDynamoDBObjectMapper *dynamoDBObjectMapper = [AWSDynamoDBObjectMapper defaultDynamoDBObjectMapper];
+    NSString * attributedString;
+    if(!mode)
+    {
+        attributedString=[NSString stringWithFormat:@"%@ found a new dirty spot %@", user_name, self.location.location_name];
+       
+    }
+    else
+    {
+        attributedString=[NSString stringWithFormat:@"%@ has cleaned %@", user_name, self.location.location_name];
+        
+    }
+    
+    AWSDynamoDBScanExpression *scanExpression = [AWSDynamoDBScanExpression new];
+    [[dynamoDBObjectMapper scan:[User class] expression:scanExpression]
+     continueWithBlock:^id(AWSTask *task) {
+         
+         if (task.result) {
+             AWSDynamoDBPaginatedOutput *paginatedOutput = task.result;
+             for(User * user in paginatedOutput.items)
+             {
+                 if(user.device_token)
+                 {
+                     CLLocation* userLocation=[[CLLocation alloc]initWithLatitude:user.latitude longitude:user.longitude];
+                     CLLocationDistance distance=[userLocation distanceFromLocation:self.currentLocation];
+                     distance=distance/1000.0;
+                     if(distance<100.0 || [AppDelegate isFollowing:user] || [self.location.found_by isEqualToString:user.user_id])
+                         [self.mainDelegate send_notification:user message:attributedString];
+                 }
+             }
+         }
+         return nil;
+     }];
+}
 - (IBAction)nextPage:(id)sender {
     
     if(self.secondPhototaken)
     {
         [self storeData:false];
+        [self generateNotification:YES];
         [self performSegueWithIdentifier:@"cleanedFBPost" sender:self];
         self.mainDelegate.shouldRefreshLocation = YES;
     }
@@ -338,6 +378,7 @@
         
         [alertController addAction:[UIAlertAction actionWithTitle:@"Tag as dirty" style:UIAlertActionStyleDefault handler:^(UIAlertAction *action) {
             [self storeData:true];
+            [self generateNotification:NO];
             [self performSegueWithIdentifier:@"foundFBPost" sender:self];
         }]];
         
@@ -360,9 +401,9 @@
         dispatch_async(dispatch_get_main_queue(), ^ {
             [self presentViewController:alertController animated:YES completion:nil];
         });
-
+        
     }
-
+    
 }
 
 - (void) prepareForSegue:(UIStoryboardSegue *)segue sender:(id)sender
@@ -415,7 +456,7 @@
     {
         self.location = [Location new];
         NSString *location_id = [NSString stringWithFormat:@"%f,%f",
-        self.currentLocation.coordinate.latitude, self.currentLocation.coordinate.longitude];
+                                 self.currentLocation.coordinate.latitude, self.currentLocation.coordinate.longitude];
         self.location.location_id=location_id;
         self.location.location_name = self.locationName1;
         self.location.locality = self.locationName2;
@@ -423,7 +464,7 @@
         self.location.country=self.countryName;
         self.location.found_by=user_name;
         self.location.founder_id=user_id;
-       
+        
         self.location.found_date=self.foundDate;
         self.location.latitude=self.currentLocation.coordinate.latitude;
         self.location.longitude=self.currentLocation.coordinate.longitude;
@@ -465,18 +506,18 @@
     UIImage* cimage2 = [PhotoDetailsVC scaleImage:self.cleanedPhoto toSize:CGSizeMake(320.0,320.0)];
     [UIImagePNGRepresentation(cimage2) writeToFile:cleanPath atomically:YES];
     NSURL* cleanURL = [NSURL fileURLWithPath:cleanPath];
-
+    
     AWSS3TransferManagerUploadRequest *uploadRequest = [AWSS3TransferManagerUploadRequest new];
     uploadRequest.body = dirtyURL;
     uploadRequest.bucket = @"cleanthecreeks";
     uploadRequest.contentType = @"image/jpg";
     if(self.location==nil)
-         uploadRequest.key = [NSString stringWithFormat:@"%f,%fa",
-                         self.currentLocation.coordinate.latitude, self.currentLocation.coordinate.longitude];
+        uploadRequest.key = [NSString stringWithFormat:@"%f,%fa",
+                             self.currentLocation.coordinate.latitude, self.currentLocation.coordinate.longitude];
     else
         uploadRequest.key = [NSString stringWithFormat:@"%f,%fa",
                              self.location.latitude, self.location.longitude];
-
+    
     [[transferManager upload:uploadRequest] continueWithExecutor:[AWSExecutor mainThreadExecutor] withBlock:^id(AWSTask *task) {
         if (task.error) {
             if ([task.error.domain isEqualToString:AWSS3TransferManagerErrorDomain]) {
@@ -509,10 +550,10 @@
         seconduploadRequest.body = cleanURL;
         if(self.location==nil)
             seconduploadRequest.key = [NSString stringWithFormat:@"%f,%fb",
-                                 self.currentLocation.coordinate.latitude, self.currentLocation.coordinate.longitude];
+                                       self.currentLocation.coordinate.latitude, self.currentLocation.coordinate.longitude];
         else
             seconduploadRequest.key = [NSString stringWithFormat:@"%f,%fb",
-                                 self.location.latitude, self.location.longitude];
+                                       self.location.latitude, self.location.longitude];
         [[transferManager upload:seconduploadRequest] continueWithExecutor:[AWSExecutor mainThreadExecutor] withBlock:^id(AWSTask *task) {
             if (task.error) {
                 if ([task.error.domain isEqualToString:AWSS3TransferManagerErrorDomain]) {
@@ -592,10 +633,40 @@
 
 +(UIImage *)scaleImage:(UIImage *)image toSize:(CGSize)newSize
 {
-    UIGraphicsBeginImageContext(newSize);
-    [image drawInRect:CGRectMake(0, 0, newSize.width, newSize.height)];
-    UIImage *newImage = UIGraphicsGetImageFromCurrentImageContext();
+    
+    CGAffineTransform scaleTransform;
+    CGPoint origin;
+    
+    if (image.size.width > image.size.height) {
+        CGFloat scaleRatio = newSize.width / image.size.height;
+        scaleTransform = CGAffineTransformMakeScale(scaleRatio, scaleRatio);
+        
+        origin = CGPointMake(-(image.size.width - image.size.height) / 2.0f, 0);
+    } else {
+        CGFloat scaleRatio = newSize.width / image.size.width;
+        scaleTransform = CGAffineTransformMakeScale(scaleRatio, scaleRatio);
+        
+        origin = CGPointMake(0, -(image.size.height - image.size.width) / 2.0f);
+    }
+    
+    CGSize size = CGSizeMake(newSize.width, newSize.height);
+    if ([[UIScreen mainScreen] respondsToSelector:@selector(scale)]) {
+        UIGraphicsBeginImageContextWithOptions(size, YES, 0);
+    } else {
+        UIGraphicsBeginImageContext(size);
+    }
+    
+    CGContextRef context = UIGraphicsGetCurrentContext();
+    CGContextConcatCTM(context, scaleTransform);
+    
+    [image drawAtPoint:origin];
+    
+    image = UIGraphicsGetImageFromCurrentImageContext();
+    
     UIGraphicsEndImageContext();
-    return newImage;
-}
+    
+    return image;}
+
+
+
 @end

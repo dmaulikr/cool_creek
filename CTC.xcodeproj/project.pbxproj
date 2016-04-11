@@ -88,6 +88,8 @@
 		E2FD05851C59E548004B2C34 /* ActivityVC.m in Sources */ = {isa = PBXBuildFile; fileRef = E2FD05841C59E548004B2C34 /* ActivityVC.m */; };
 		E2FD05881C59E579004B2C34 /* LocationVC.m in Sources */ = {isa = PBXBuildFile; fileRef = E2FD05871C59E579004B2C34 /* LocationVC.m */; };
 		E2FD058B1C59E5D8004B2C34 /* MainTabNav.m in Sources */ = {isa = PBXBuildFile; fileRef = E2FD058A1C59E5D8004B2C34 /* MainTabNav.m */; };
+		E481116E1CBB4AA9000987E2 /* MessageUI.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = E481116D1CBB4AA9000987E2 /* MessageUI.framework */; };
+		E48111731CBB5773000987E2 /* Constants.m in Sources */ = {isa = PBXBuildFile; fileRef = E48111721CBB5773000987E2 /* Constants.m */; };
 		E49CE64E1CB57F22006CE1C8 /* FXPageControl.m in Sources */ = {isa = PBXBuildFile; fileRef = E49CE64D1CB57F22006CE1C8 /* FXPageControl.m */; };
 /* End PBXBuildFile section */
 
@@ -231,6 +233,9 @@
 		E2FD05871C59E579004B2C34 /* LocationVC.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = LocationVC.m; sourceTree = "<group>"; };
 		E2FD05891C59E5D8004B2C34 /* MainTabNav.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = MainTabNav.h; sourceTree = "<group>"; };
 		E2FD058A1C59E5D8004B2C34 /* MainTabNav.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = MainTabNav.m; sourceTree = "<group>"; };
+		E481116D1CBB4AA9000987E2 /* MessageUI.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = MessageUI.framework; path = System/Library/Frameworks/MessageUI.framework; sourceTree = SDKROOT; };
+		E481116F1CBB56BB000987E2 /* Constants.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = Constants.h; sourceTree = "<group>"; };
+		E48111721CBB5773000987E2 /* Constants.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = Constants.m; sourceTree = "<group>"; };
 		E49CE64C1CB57F22006CE1C8 /* FXPageControl.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = FXPageControl.h; sourceTree = "<group>"; };
 		E49CE64D1CB57F22006CE1C8 /* FXPageControl.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = FXPageControl.m; sourceTree = "<group>"; };
 /* End PBXFileReference section */
@@ -240,6 +245,7 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				E481116E1CBB4AA9000987E2 /* MessageUI.framework in Frameworks */,
 				E2D5F7131C6CA677005A497F /* MapKit.framework in Frameworks */,
 				E2D103601C6933ED00FD67A0 /* CoreLocation.framework in Frameworks */,
 				E252E6251C6120E10013F1B7 /* SystemConfiguration.framework in Frameworks */,
@@ -516,6 +522,7 @@
 		BD0603DD1C595F5000A2C3EC /* Frameworks */ = {
 			isa = PBXGroup;
 			children = (
+				E481116D1CBB4AA9000987E2 /* MessageUI.framework */,
 				E2D5F7121C6CA677005A497F /* MapKit.framework */,
 				E2D1035F1C6933ED00FD67A0 /* CoreLocation.framework */,
 				E252E6241C6120E10013F1B7 /* SystemConfiguration.framework */,
@@ -640,6 +647,8 @@
 				3CA250F01C843D74004BB466 /* User.h */,
 				3C2874AE1C88E26B00725B40 /* Activity.h */,
 				3C2874AF1C88E2E200725B40 /* Activity.m */,
+				E481116F1CBB56BB000987E2 /* Constants.h */,
+				E48111721CBB5773000987E2 /* Constants.m */,
 			);
 			path = ApiHandler;
 			sourceTree = "<group>";
@@ -973,6 +982,7 @@
 				BD0603A21C595D4700A2C3EC /* AppDelegate.m in Sources */,
 				000467E51C7CB53400946DE8 /* ProfileTopBarVC.m in Sources */,
 				E2656BEC1C5DA885004786EA /* PhotoDetailsVC.m in Sources */,
+				E48111731CBB5773000987E2 /* Constants.m in Sources */,
 				0084F3EA1C7ABA6200E111D0 /* CleaningCommentCell.m in Sources */,
 				E2F36ECD1C5AFFE700923DF0 /* FirstPageView.m in Sources */,
 				E2960D7A1C6E36D8009425CA /* DetailCell.m in Sources */,
@@ -1124,7 +1134,7 @@
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks";
 				PRODUCT_BUNDLE_IDENTIFIER = com.redcherry.CleantheCreeks;
 				PRODUCT_NAME = CTC;
-				PROVISIONING_PROFILE = "1e9c4fb2-9b87-4010-93f1-5c12195b2f73";
+				PROVISIONING_PROFILE = "7bc24844-ac81-4b04-9c50-389a2fdcf557";
 				SWIFT_OBJC_BRIDGING_HEADER = "CleantheCreeks/Utils/Clean the Creek-Bridging-Header.h";
 				SWIFT_OPTIMIZATION_LEVEL = "-Onone";
 			};
@@ -1146,7 +1156,7 @@
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks";
 				PRODUCT_BUNDLE_IDENTIFIER = com.redcherry.CleantheCreeks;
 				PRODUCT_NAME = CTC;
-				PROVISIONING_PROFILE = "1e9c4fb2-9b87-4010-93f1-5c12195b2f73";
+				PROVISIONING_PROFILE = "7bc24844-ac81-4b04-9c50-389a2fdcf557";
 				SWIFT_OBJC_BRIDGING_HEADER = "CleantheCreeks/Utils/Clean the Creek-Bridging-Header.h";
 			};
 			name = Release;

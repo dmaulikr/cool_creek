@@ -2,7 +2,7 @@
 //  FollowVC.h
 //  Clean the Creek
 //
-//  Created by Andy Johansson on 04/03/16.
+//  Created by Kimura Eiji on 04/03/16.
 //  Copyright © 2016 RedCherry. All rights reserved.
 //
 
@@ -15,9 +15,11 @@
 @property (strong, nonatomic) NSMutableArray * displayArray;
 @property (nonatomic) int displayIndex;
 @property (strong, nonatomic) AppDelegate * appDelegate;
-- (IBAction)followingChange:(id)sender;
 @property (strong,nonatomic) NSUserDefaults *defaults;
-@property (strong, nonatomic) NSString * current_user_id;
+@property (strong, nonatomic) User * profile_user;
+
 @property (strong ,nonatomic) NSMutableDictionary* imageArray;
 @property (strong, nonatomic) NSMutableArray * userArray;
+- (IBAction)followingChange:(id)sender;
+@property(nonatomic) int selectedImgIndex;
 @end

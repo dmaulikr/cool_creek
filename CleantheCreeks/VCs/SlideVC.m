@@ -47,18 +47,9 @@ UIButton *loginButton;
 
 -(void) mapLabelClicked
 {
-    [self performSegueWithIdentifier:@"viewAroundMe" sender:self];
+    [self performSegueWithIdentifier:@"Slide2MainTabNav" sender:self];
 }
--(void) viewWillAppear:(BOOL)animated
-{
-    if(self.aroundView)
-    {
-        dispatch_async(dispatch_get_main_queue(), ^ {
-        self.aroundView = NO;
-        [self moveToMainNav];
-        });
-    }
-}
+
 - (void)viewDidLoad
 {
     [super viewDidLoad];
@@ -76,20 +67,16 @@ UIButton *loginButton;
 }
 
 -(void) prepareForSegue:(UIStoryboardSegue *)segue sender:(id)sender{
-    if([segue.identifier isEqualToString:@"viewAroundMe"])
-    {
-        LocationVC* vc = (LocationVC*)segue.destinationViewController;
-        vc.fromSlider = YES;
-        self.aroundView = YES;
-    }
-    else if([segue.identifier isEqualToString:@"moveToMainNav"])
+
+    [super prepareForSegue:segue sender:sender];
+    if([segue.identifier isEqualToString:@"Slide2MainTabNav"])
     {
         
-        LocationVC* vc = (LocationVC*)segue.destinationViewController;
-        vc.fromSlider = NO;
-        self.aroundView = NO;
     }
-    
+    else
+    {
+        
+    }
 }
 
 -(void)loginButtonClicked
@@ -110,7 +97,10 @@ UIButton *loginButton;
              [[[FBSDKGraphRequest alloc] initWithGraphPath:@"me" parameters:parameters]
               startWithCompletionHandler:^(FBSDKGraphRequestConnection *connection, id result, NSError *error) {
                   
+                      [self moveToMainNav];
+                  
                   if (!error) {
+                     
                       NSLog(@"fetched user:%@  and Email : %@", result,result[@"email"]);
                        NSUserDefaults *loginInfo = [NSUserDefaults standardUserDefaults];
                       NSString *fbUsername = [[result valueForKey:@"link"] lastPathComponent];
@@ -148,7 +138,8 @@ UIButton *loginButton;
 
                   }
               }];
-            [self moveToMainNav];
+             
+            
              
          }
      }];

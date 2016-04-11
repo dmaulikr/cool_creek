@@ -2,7 +2,7 @@
 //  LocationBarCell.h
 //  CTC
 //
-//  Created by Andy Johansson on 18/03/16.
+//  Created by Kimura Eiji on 18/03/16.
 //  Copyright © 2016 RedCherry. All rights reserved.
 //
 
@@ -13,5 +13,6 @@
 @property (weak, nonatomic) IBOutlet UIButton *btnComment;
 @property (weak, nonatomic) IBOutlet NSLayoutConstraint *kudoLeadingConst;
 @property (weak, nonatomic) IBOutlet NSLayoutConstraint *commentLeadingConst;
+@property (weak, nonatomic) IBOutlet UIButton *btnReport;
 
 @end

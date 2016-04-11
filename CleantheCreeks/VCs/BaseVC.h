@@ -12,7 +12,9 @@
 @interface BaseVC : UIViewController<ProfileTopBarVCDelegate>
 
 @property (nonatomic, weak) ProfileTopBarVC* profileTopBar;
-
+@property (nonatomic,strong) NSUserDefaults * defaults;
 - (void)dismissVC;
 @property(strong,nonatomic) NSString * current_user_id;
+
+- (void) networkError;
 @end

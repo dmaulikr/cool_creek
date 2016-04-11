@@ -2,7 +2,7 @@
 //  User.h
 //  Clean the Creek
 //
-//  Created by Andy Johansson on 29/02/16.
+//  Created by Kimura Eiji on 29/02/16.
 //  Copyright © 2016 RedCherry. All rights reserved.
 //
 
@@ -24,6 +24,8 @@
 @property (nonatomic, strong) NSMutableArray *followers;
 @property (nonatomic, strong) NSString *user_email;
 @property (nonatomic, strong) NSString *user_about;
+@property  double latitude;
+@property  double longitude;
 @end
 
 #endif /* User_h */

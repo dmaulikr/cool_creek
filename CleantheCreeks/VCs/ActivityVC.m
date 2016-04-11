@@ -54,21 +54,6 @@
     // Dispose of any resources that can be recreated.
 }
 
-- (void) loadImage:(NSString*)activty
-{
-    NSString *userImageURL = [NSString stringWithFormat:@"https://graph.facebook.com/%@/picture", activty];
-    dispatch_async(dispatch_get_main_queue(), ^{
-        NSData * data = [[NSData alloc] initWithContentsOfURL: [NSURL URLWithString: userImageURL]];
-        if ( data != nil )
-        {
-            [self.imageArray setObject:[UIImage imageWithData: data] forKey:activty];
-           
-        }
-        
-    });
-    
-}
-
 #pragma UITableView Delegate Implementation
 -(void) updateData
 {
@@ -76,26 +61,30 @@
     self.imageArray=[[NSMutableDictionary alloc]init];
     AWSDynamoDBObjectMapper *dynamoDBObjectMapper = [AWSDynamoDBObjectMapper defaultDynamoDBObjectMapper];
     AWSDynamoDBScanExpression *scanExpression = [AWSDynamoDBScanExpression new];
-         [[dynamoDBObjectMapper scan:[User class] expression:scanExpression]
+    [[dynamoDBObjectMapper scan:[User class] expression:scanExpression]
      continueWithBlock:^id(AWSTask *task) {
-         
+         if (task.error) {
+             [self networkError];
+             [self.refreshControl endRefreshing];
+         }
+         if (task.exception) {
+             [self networkError];
+             [self.refreshControl endRefreshing];
+         }
          if (task.result) {
              AWSDynamoDBPaginatedOutput *paginatedOutput = task.result;
              dispatch_async(dispatch_get_main_queue(), ^{
-             for (User *user in paginatedOutput.items)
-             {
-                 [self.appDelegate.userArray setObject:user forKey:user.user_id];
-                 [self loadImage:user.user_id];
-             }
-            [self updateCell];
-
+                 for (User *user in paginatedOutput.items)
+                 {
+                     [self.appDelegate.userArray setObject:user forKey:user.user_id];
+                     //[self loadImage:user.user_id];
+                 }
+                 [self updateCell];
+                 
              });
          }
          return nil;
      }];
- 
-    
-    
 }
 
 -(void) updateCell
@@ -107,13 +96,20 @@
         AWSDynamoDBObjectMapper *dynamoDBObjectMapper2 = [AWSDynamoDBObjectMapper defaultDynamoDBObjectMapper];
         AWSDynamoDBScanExpression *scanExpression2 = [AWSDynamoDBScanExpression new];
         [[dynamoDBObjectMapper2 scan:[Location class] expression:scanExpression2] continueWithBlock:^id(AWSTask *task) {
+            if (task.error) {
+                [self networkError];
+                
+            }
+            if (task.exception) {
+                [self networkError];
+            }
             if (task.result) {
                 AWSDynamoDBPaginatedOutput *paginatedOutput = task.result;
                 //My followers
                 for(NSDictionary * item in current_user.followers)
                 {
                     NSString * follower_id=[item objectForKey:@"id"];
-                    NSNumber *following_date=[item objectForKey:@"time"];
+                    NSNumber * following_date=[item objectForKey:@"time"];
                     // Adding finders to the activity array
                     Activity *activity=[[Activity alloc]init];
                     activity.activity_id = follower_id;
@@ -266,7 +262,7 @@
                             // Adding finders to the activity array
                             Activity *activity=[[Activity alloc]init];
                             activity.activity_id = kudo_person_id;
-                            activity.activity_time=[kudo_date doubleValue];
+                            activity.activity_time = [kudo_date doubleValue];
                             activity.activity_type = @"kudo";
                             
                             [self.activityArray addObject:activity];
@@ -320,7 +316,31 @@
             [((CleaningDoneCell*)cell).activityHours setText:[self timeDifference:activity.activity_time]];
             [((CleaningDoneCell*)cell).kudoCounter setTitle:[[NSString alloc] initWithFormat:@"%d Kudos",activity.kudo_count] forState:UIControlStateNormal];
             if([self.imageArray objectForKey:activity.activity_id]!=nil)
-                [((CleaningDoneCell*)cell).profileAvatar setImage: [self.imageArray objectForKey:activity.activity_id]];
+            {
+                [((CleaningDoneCell*)cell).profileAvatar setImage: [self.imageArray objectForKey:user.user_id]];
+            }
+            else
+            {
+                NSString *userImageURL = [NSString stringWithFormat:@"https://graph.facebook.com/%@/picture", activity.activity_id];
+                NSURL *url = [NSURL URLWithString:userImageURL];
+                
+                NSURLSessionTask *task = [[NSURLSession sharedSession] dataTaskWithURL:url completionHandler:^(NSData * _Nullable data, NSURLResponse * _Nullable response, NSError * _Nullable error) {
+                    if (data) {
+                        UIImage *image = [UIImage imageWithData:data];
+                        if (image) {
+                            dispatch_async(dispatch_get_main_queue(), ^{
+                                {
+                                    [self.imageArray setObject:image forKey:user.user_id];
+                                }
+                                if(cell)
+                                    [((CleaningDoneCell*)cell).profileAvatar setImage: image];
+                            });
+                        }
+                    }
+                }];
+                [task resume];
+            }
+
             [((CleaningDoneCell*)cell).btnKudos setTitle:@"You Gave Kudos" forState:UIControlStateSelected];
             [((CleaningDoneCell*)cell).btnKudos setImage:[UIImage imageNamed:@"IconKudos3"] forState:UIControlStateSelected];
             [((CleaningDoneCell*)cell).btnKudos setTitle:@"Give Kudos" forState:UIControlStateNormal];
@@ -352,13 +372,10 @@
             else if([activity.activity_type isEqualToString: @"kudo"])
             {
                 [((CleaningCommentCell*)cell).lblContent setAttributedText:[self generateString:user.user_name content:@" gave you Kudos \n" location:@""]];
-                
-                
             }
             else if([activity.activity_type isEqualToString: @"follow"])
             {
                 [((CleaningCommentCell*)cell).lblContent setAttributedText:[self generateString:user.user_name content:@" started follwing you\n" location:@""]];
-                
             }
             
             [((CleaningCommentCell*)cell).profileAvatar addGestureRecognizer:followTap];
@@ -368,7 +385,27 @@
             if([self.imageArray objectForKey:activity.activity_id]!=nil)
             {
                 [((CleaningCommentCell*)cell).profileAvatar setImage: [self.imageArray objectForKey:user.user_id]];
+            }
+            else
+            {
+                NSString *userImageURL = [NSString stringWithFormat:@"https://graph.facebook.com/%@/picture", activity.activity_id];
+                NSURL *url = [NSURL URLWithString:userImageURL];
                 
+                NSURLSessionTask *task = [[NSURLSession sharedSession] dataTaskWithURL:url completionHandler:^(NSData * _Nullable data, NSURLResponse * _Nullable response, NSError * _Nullable error) {
+                    if (data) {
+                        UIImage *image = [UIImage imageWithData:data];
+                        if (image) {
+                            dispatch_async(dispatch_get_main_queue(), ^{
+                                {
+                                    [self.imageArray setObject:image forKey:user.user_id];
+                                }
+                                if(cell)
+                                    [((CleaningCommentCell*)cell).profileAvatar setImage: image];
+                            });
+                        }
+                    }
+                }];
+                [task resume];
             }
         }
     }
@@ -402,6 +439,7 @@
 
 -(void) giveKudoWithLocation:(Location*) location assigned:(bool)assigned
 {
+    
     NSMutableArray * kudoArray=[[NSMutableArray alloc] init];
     if(location.kudos!=nil)
         kudoArray=location.kudos;
@@ -410,7 +448,6 @@
     double date =[[NSDate date]timeIntervalSince1970];
     NSString *dateString=[NSString stringWithFormat:@"%f",date];
     [kudoItem setObject:dateString forKey:@"time"];
-    
     
     if(kudoArray!=nil)
     {
@@ -449,15 +486,16 @@
              });
              if(assigned)
              {
-                 
+                 User * user=[self.appDelegate.userArray objectForKey:location.cleaner_id];
                  NSString * user_name = [self.defaults objectForKey:@"user_name"];
-                 NSMutableAttributedString * attributedString=[self generateString:user_name content:@" gave you kudos" location:@""];
+                 NSString * attributedString=[NSString stringWithFormat:@"%@ gave you kudos", user_name];
                  
-                 [self.appDelegate send_notification:location.cleaner_id message:attributedString.string];
+                 [self.appDelegate send_notification:user message:attributedString];
                  NSLog(@"assigned");
              }
              else
                  NSLog(@"unassigned");
+             
          }
          return nil;
      }];
@@ -514,7 +552,7 @@
         {
             ProfileVC * vc=(ProfileVC*)segue.destinationViewController;
             Activity * activity=[self.activityArray objectAtIndex:self.selectedImgIndex];
-            vc.current_user_id = activity.activity_id;
+            vc.profile_user_id = activity.activity_id;
             vc.mode = YES;
             self.appDelegate.shouldRefreshProfile = YES;
         }

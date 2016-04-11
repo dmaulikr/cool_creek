@@ -26,7 +26,7 @@
 +(BOOL) isFollowing:(User*) user;
 -(void) loadData;
 
--(void) send_notification:(NSString*)user_id message:(NSString*)message;
+-(void) send_notification:(User*)user message:(NSString*)message;
 
 @end
 

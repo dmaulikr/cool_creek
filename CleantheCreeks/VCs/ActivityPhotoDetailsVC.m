@@ -19,6 +19,11 @@
 #import "User.h"
 #import "PhotoDetailsVC.h"
 #import "FacebookPostVC.h"
+#import <FBSDKCoreKit/FBSDKCoreKit.h>
+#import <FBSDKLoginKit/FBSDKLoginKit.h>
+#import <MessageUI/MessageUI.h>
+#import <MessageUI/MFMailComposeViewController.h>
+
 @implementation ActivityPhotoDetailsVC
 
 - (void)registerForKeyboardNotifications
@@ -162,9 +167,9 @@
     if(indexPath.section==0)
     {
         if(indexPath.row==0)
-            height=self.view.frame.size.height*0.3;
+            height = self.view.frame.size.height*0.3;
         if(indexPath.row==1)
-            height=49.f;
+            height = 49.f;
     }
     else if(indexPath.section==1)
     {
@@ -272,6 +277,7 @@
                 
             }
             [((LocationBarCell*)cell).btnComment addTarget:self action:@selector(commentButtonClicked:) forControlEvents:UIControlEventTouchUpInside];
+            [((LocationBarCell*)cell).btnReport addTarget:self action:@selector(reportButtonClicked:) forControlEvents:UIControlEventTouchUpInside];
         }
     }
     
@@ -370,7 +376,47 @@
     self.commentVisible=!self.commentVisible;
     [self.commentView setHidden:!self.commentVisible];
     sender.selected=self.commentVisible;
+}
+
+-(void)reportButtonClicked:(UIButton*) sender
+{
+    UIActionSheet *popup = [[UIActionSheet alloc] initWithTitle:@"Report" delegate:self cancelButtonTitle:@"Cancel" destructiveButtonTitle:nil otherButtonTitles:
+                            @"Report",
+                            nil];
+    popup.tag = 1;
+    [popup showInView:self.view];
     
+}
+
+- (void)actionSheet:(UIActionSheet *)popup clickedButtonAtIndex:(NSInteger)buttonIndex {
+    
+    switch (popup.tag) {
+        case 1: {
+            switch (buttonIndex) {
+                case 0:
+                    if([MFMailComposeViewController canSendMail]) {
+                        MFMailComposeViewController *mailCont = [[MFMailComposeViewController alloc] init];
+                        mailCont.mailComposeDelegate = self;
+                        NSString * title = [NSString stringWithFormat:@"%@ has uploaded irrelevant photos.",self.location.found_by];
+                        [mailCont setSubject:title];
+                        [mailCont setToRecipients:[NSArray arrayWithObject:@"dan@redcherry.ca"]];
+                        NSString * message=[NSString stringWithFormat:@"%@ with id %@ has uploaded irrelevant photos on %@, %@, %@",self.location.found_by, self.location.founder_id, self.location.location_name, self.location.state, self.location.country];
+                        [mailCont setMessageBody:message isHTML:NO];
+                        
+                        [self presentModalViewController:mailCont animated:YES];
+                    }
+                    break;
+                default:
+                    break;
+            }
+            break;
+        }
+        default:
+            break;
+    }
+}
+- (void)mailComposeController:(MFMailComposeViewController*)controller didFinishWithResult:(MFMailComposeResult)result error:(NSError*)error {
+    [self dismissModalViewControllerAnimated:YES];
 }
 
 - (IBAction)closeBtnClicked:(id)sender {
@@ -407,15 +453,16 @@
     [[dynamoDBObjectMapper save:self.location configuration:updateMapperConfig]
      continueWithBlock:^id(AWSTask *task) {
          if (task.error) {
-             NSLog(@"The request failed. Error: [%@]", task.error);
+             [self networkError];
          }
          if (task.exception) {
-             NSLog(@"The request failed. Exception: [%@]", task.exception);
+             [self networkError];
          }
          if (task.result) {
              dispatch_async(dispatch_get_main_queue(), ^{
                  [self.textComment setText:@""];
                  
+                 [self generateNotification:self.location.cleaner_id mode:@"comment"];
                  [self.tv reloadData];
                  NSLog(@"Updated Comment");
              });
@@ -424,21 +471,52 @@
      }];
     
 }
-
+-(void) generateNotification:(NSString*) target_id mode:(NSString*) mode
+{
+    self.defaults=[NSUserDefaults standardUserDefaults];
+    NSString *user_name = [self.defaults objectForKey:@"user_name"];
+    AWSDynamoDBObjectMapper *dynamoDBObjectMapper = [AWSDynamoDBObjectMapper defaultDynamoDBObjectMapper];
+    NSString * attributedString;
+    if([mode isEqualToString:@"comment"])
+        attributedString=[NSString stringWithFormat:@"%@ commented on your clean up location", user_name];
+    else if([mode isEqualToString:@"clean"])
+        attributedString=[NSString stringWithFormat:@"%@ commented on your clean up location", user_name];
+    AWSDynamoDBScanExpression *scanExpression = [AWSDynamoDBScanExpression new];
+    [[dynamoDBObjectMapper load:[User class] hashKey:target_id rangeKey:nil]
+     continueWithBlock:^id(AWSTask *task) {
+         
+         if (task.result) {
+             User * user=task.result;
+             
+             if(user.device_token)
+             {
+                 if([AppDelegate isFollowing:user])
+                     [self.mainDelegate send_notification:user message:attributedString];
+             }
+             
+         }
+         return nil;
+     }];
+}
 -(void) takePhoto:(id)sender
 {
-    
-    UIImagePickerController *picker=[[UIImagePickerController alloc] init];
-    if([UIImagePickerController isSourceTypeAvailable:UIImagePickerControllerSourceTypeCamera]==NO)
+    self.defaults = [NSUserDefaults standardUserDefaults];
+    if([self.defaults objectForKey:@"user_id"])
     {
-        picker.sourceType=UIImagePickerControllerSourceTypePhotoLibrary;
+        UIImagePickerController *picker=[[UIImagePickerController alloc] init];
+        if([UIImagePickerController isSourceTypeAvailable:UIImagePickerControllerSourceTypeCamera]==NO)
+        {
+            picker.sourceType=UIImagePickerControllerSourceTypePhotoLibrary;
+        }
+        else
+        {
+            picker.sourceType=UIImagePickerControllerSourceTypeCamera;
+        }
+        picker.delegate=self;
+        [self presentViewController:picker animated:YES completion:nil];
     }
     else
-    {
-        picker.sourceType=UIImagePickerControllerSourceTypeCamera;
-    }
-    picker.delegate=self;
-    [self presentViewController:picker animated:YES completion:nil];
+        [self fbLogin];
 }
 
 -(void)imagePickerController:(UIImagePickerController *)picker didFinishPickingMediaWithInfo:(NSDictionary<NSString *,id> *)info
@@ -456,6 +534,83 @@
     [self dismissViewControllerAnimated:NO completion:nil];
     
     
+    
+}
+
+-(void) fbLogin
+{
+    
+    UIAlertController *alertController = [UIAlertController alertControllerWithTitle:@"Sign in with Facebook" message:@"In order to take a photo you must be signed in to your facebook account." preferredStyle:UIAlertControllerStyleAlert];
+    
+    [alertController addAction:[UIAlertAction actionWithTitle:@"Cancel" style:UIAlertActionStyleDefault handler:^(UIAlertAction *action) {
+        [alertController dismissViewControllerAnimated:YES completion:nil];
+    }]];
+    
+    [alertController addAction:[UIAlertAction actionWithTitle:@"OK" style:UIAlertActionStyleDefault handler:^(UIAlertAction *action) {
+        
+        FBSDKLoginManager *login = [[FBSDKLoginManager alloc] init];
+        [login
+         logInWithReadPermissions: @[@"public_profile",@"email"]
+         fromViewController:self
+         handler:^(FBSDKLoginManagerLoginResult *result, NSError *error) {
+             if (error) {
+                 NSLog(@"Process error");
+             } else if (result.isCancelled) {
+                 NSLog(@"Cancelled");
+             }
+             else
+             {
+                 
+                 NSMutableDictionary* parameters = [NSMutableDictionary dictionary];
+                 [parameters setValue:@"id,name,email,location,about" forKey:@"fields"];
+                 [[[FBSDKGraphRequest alloc] initWithGraphPath:@"me" parameters:parameters]
+                  startWithCompletionHandler:^(FBSDKGraphRequestConnection *connection, id result, NSError *error) {
+                      
+                      if (!error) {
+                          [self.tabBarController.tabBar setHidden:NO];
+                          NSLog(@"fetched user:%@  and Email : %@", result,result[@"email"]);
+                          NSUserDefaults *loginInfo = [NSUserDefaults standardUserDefaults];
+                          NSString *fbUsername = [[result valueForKey:@"link"] lastPathComponent];
+                          [loginInfo setObject:fbUsername forKey:@"username"];
+                          [loginInfo setObject:result[@"id"] forKey:@"user_id"];
+                          [loginInfo setObject:result[@"name"] forKey:@"user_name"];
+                          [loginInfo setObject:result[@"email"] forKey:@"user_email"];
+                          [loginInfo setObject:result[@"location"] forKey:@"user_location"];
+                          [loginInfo setObject:result[@"about"] forKey:@"user_about"];
+                          [loginInfo synchronize];
+                          User * user_info = [User new];
+                          user_info.user_id = result[@"id"];
+                          //user_info.kudos = [[NSArray alloc]init];
+                          user_info.user_name = result[@"name"];
+                          user_info.device_token = [loginInfo objectForKey:@"devicetoken"];
+                          user_info.user_email= [loginInfo objectForKey:@"user_email"];
+                          user_info.user_about=[loginInfo objectForKey:@"user_about"];
+                          
+                          AWSDynamoDBObjectMapperConfiguration *updateMapperConfig = [AWSDynamoDBObjectMapperConfiguration new];
+                          updateMapperConfig.saveBehavior = AWSDynamoDBObjectMapperSaveBehaviorAppendSet;
+                          AWSDynamoDBObjectMapper *dynamoDBObjectMapper = [AWSDynamoDBObjectMapper defaultDynamoDBObjectMapper];
+                          [[dynamoDBObjectMapper save:user_info configuration:updateMapperConfig]
+                           continueWithBlock:^id(AWSTask *task) {
+                               
+                               if (task.result) {
+                                   dispatch_async(dispatch_get_main_queue(), ^ {
+                                       [self dismissVC];
+                                   });
+                               }
+                               return nil;
+                           }];
+                          
+                      }
+                      
+                  }];
+             }
+         }];
+        
+    }]];
+    
+    dispatch_async(dispatch_get_main_queue(), ^ {
+        [self presentViewController:alertController animated:YES completion:nil];
+    });
     
 }
 

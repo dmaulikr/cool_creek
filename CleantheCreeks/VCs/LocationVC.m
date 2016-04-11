@@ -62,17 +62,14 @@
     self.infiniteIndicator = [[CustomInfiniteIndicator alloc] initWithFrame:CGRectMake(0, 0, 40, 40)];
     
     self.locationTable.infiniteScrollIndicatorView = self.infiniteIndicator;
-    
+    self.defaults = [NSUserDefaults standardUserDefaults];
     [self.locationTable addInfiniteScrollWithHandler:^(UITableView* tableView) {
-        self.displayItemCount+=2;
+        self.displayItemCount+=10;
         self.displayItemCount = MIN(self.locationArray.count,self.displayItemCount);
         [self.infiniteIndicator startAnimating];
         [tableView reloadData];
         [tableView finishInfiniteScroll];
     }];
-
-    
-    
 }
 
 - (IBAction)backBtnClicked:(id)sender {
@@ -83,9 +80,14 @@
 -(void) viewWillAppear:(BOOL)animated
 {
     [super viewWillAppear:animated];
-    [self.tabBarController.tabBar setHidden:self.fromSlider];
-    self.backBtn.hidden = !self.fromSlider;
+    self.backBtn.hidden = YES;
     self.mainDelegate=(AppDelegate*)[[UIApplication sharedApplication]delegate];
+    
+    self.defaults = [NSUserDefaults standardUserDefaults];
+    if([self.defaults objectForKey:@"user_id"])
+        [self.tabBarController.tabBar setHidden:NO];
+    else
+        [self.tabBarController.tabBar setHidden:YES];
     if(self.mainDelegate.shouldRefreshLocation)
     {
         [self.refreshControl beginRefreshing];
@@ -93,6 +95,7 @@
         self.mainDelegate.shouldRefreshLocation = NO;
     }
 }
+
 
 - (void)didReceiveMemoryWarning{
     [super didReceiveMemoryWarning];
@@ -157,78 +160,10 @@
 
 -(void)cleanBtnClicked:(UIButton*)sender
 {
-    if(self.fromSlider)
+    NSUserDefaults *loginInfo = [NSUserDefaults standardUserDefaults];
+    if(![loginInfo objectForKey:@"user_id"])
     {
-        UIAlertController *alertController = [UIAlertController alertControllerWithTitle:@"Sign in with Facebook" message:@"In order to take a photo you must be signed in ot your facebook account." preferredStyle:UIAlertControllerStyleAlert];
-        
-        [alertController addAction:[UIAlertAction actionWithTitle:@"Cancel" style:UIAlertActionStyleDefault handler:^(UIAlertAction *action) {
-            [alertController dismissViewControllerAnimated:YES completion:nil];
-        }]];
-        
-        [alertController addAction:[UIAlertAction actionWithTitle:@"OK" style:UIAlertActionStyleDefault handler:^(UIAlertAction *action) {
-            
-            FBSDKLoginManager *login = [[FBSDKLoginManager alloc] init];
-            [login
-             logInWithReadPermissions: @[@"public_profile",@"email"]
-             fromViewController:self
-             handler:^(FBSDKLoginManagerLoginResult *result, NSError *error) {
-                 if (error) {
-                     NSLog(@"Process error");
-                 } else if (result.isCancelled) {
-                     NSLog(@"Cancelled");
-                 }
-                 else
-                 {
-                     NSMutableDictionary* parameters = [NSMutableDictionary dictionary];
-                     [parameters setValue:@"id,name,email,location,about" forKey:@"fields"];
-                     [[[FBSDKGraphRequest alloc] initWithGraphPath:@"me" parameters:parameters]
-                      startWithCompletionHandler:^(FBSDKGraphRequestConnection *connection, id result, NSError *error) {
-                          
-                          if (!error) {
-                              NSLog(@"fetched user:%@  and Email : %@", result,result[@"email"]);
-                              NSUserDefaults *loginInfo = [NSUserDefaults standardUserDefaults];
-                              NSString *fbUsername = [[result valueForKey:@"link"] lastPathComponent];
-                              [loginInfo setObject:fbUsername forKey:@"username"];
-                              [loginInfo setObject:result[@"id"] forKey:@"user_id"];
-                              [loginInfo setObject:result[@"name"] forKey:@"user_name"];
-                              [loginInfo setObject:result[@"email"] forKey:@"user_email"];
-                              [loginInfo setObject:result[@"location"] forKey:@"user_location"];
-                              [loginInfo setObject:result[@"about"] forKey:@"user_about"];
-                              [loginInfo synchronize];
-                              User * user_info = [User new];
-                              user_info.user_id = result[@"id"];
-                              //user_info.kudos = [[NSArray alloc]init];
-                              user_info.user_name = result[@"name"];
-                              user_info.device_token = [loginInfo objectForKey:@"devicetoken"];
-                              user_info.user_email= [loginInfo objectForKey:@"user_email"];
-                              user_info.user_about=[loginInfo objectForKey:@"user_about"];
-                              
-                              AWSDynamoDBObjectMapperConfiguration *updateMapperConfig = [AWSDynamoDBObjectMapperConfiguration new];
-                              updateMapperConfig.saveBehavior = AWSDynamoDBObjectMapperSaveBehaviorAppendSet;
-                              AWSDynamoDBObjectMapper *dynamoDBObjectMapper = [AWSDynamoDBObjectMapper defaultDynamoDBObjectMapper];
-                              [[dynamoDBObjectMapper save:user_info configuration:updateMapperConfig]
-                               continueWithBlock:^id(AWSTask *task) {
-                                  
-                                   if (task.result) {
-                                       
-                                        [self dismissVC];
-                                   }
-                                   return nil;
-                               }];
-                              
-                            }
-                          
-                      }];
-                     
-                     
-                 }
-             }];
-
-        }]];
-        
-        dispatch_async(dispatch_get_main_queue(), ^ {
-            [self presentViewController:alertController animated:YES completion:nil];
-        });
+        [self fbLogin];
     }
     else
     {
@@ -236,6 +171,81 @@
         [self performSegueWithIdentifier:@"cleanLocation" sender:self];
     }
     
+}
+
+-(void) fbLogin
+{
+    
+    UIAlertController *alertController = [UIAlertController alertControllerWithTitle:@"Sign in with Facebook" message:@"In order to take a photo you must be signed in to your facebook account." preferredStyle:UIAlertControllerStyleAlert];
+    
+    [alertController addAction:[UIAlertAction actionWithTitle:@"Cancel" style:UIAlertActionStyleDefault handler:^(UIAlertAction *action) {
+        [alertController dismissViewControllerAnimated:YES completion:nil];
+    }]];
+    
+    [alertController addAction:[UIAlertAction actionWithTitle:@"OK" style:UIAlertActionStyleDefault handler:^(UIAlertAction *action) {
+        
+        FBSDKLoginManager *login = [[FBSDKLoginManager alloc] init];
+        [login
+         logInWithReadPermissions: @[@"public_profile",@"email"]
+         fromViewController:self
+         handler:^(FBSDKLoginManagerLoginResult *result, NSError *error) {
+             if (error) {
+                 NSLog(@"Process error");
+             } else if (result.isCancelled) {
+                 NSLog(@"Cancelled");
+             }
+             else
+             {
+                
+                 NSMutableDictionary* parameters = [NSMutableDictionary dictionary];
+                 [parameters setValue:@"id,name,email,location,about" forKey:@"fields"];
+                 [[[FBSDKGraphRequest alloc] initWithGraphPath:@"me" parameters:parameters]
+                  startWithCompletionHandler:^(FBSDKGraphRequestConnection *connection, id result, NSError *error) {
+                      
+                      if (!error) {
+                         [self.tabBarController.tabBar setHidden:NO];
+                          NSLog(@"fetched user:%@  and Email : %@", result,result[@"email"]);
+                          NSUserDefaults *loginInfo = [NSUserDefaults standardUserDefaults];
+                          NSString *fbUsername = [[result valueForKey:@"link"] lastPathComponent];
+                          [loginInfo setObject:fbUsername forKey:@"username"];
+                          [loginInfo setObject:result[@"id"] forKey:@"user_id"];
+                          [loginInfo setObject:result[@"name"] forKey:@"user_name"];
+                          [loginInfo setObject:result[@"email"] forKey:@"user_email"];
+                          [loginInfo setObject:result[@"location"] forKey:@"user_location"];
+                          [loginInfo setObject:result[@"about"] forKey:@"user_about"];
+                          [loginInfo synchronize];
+                          User * user_info = [User new];
+                          user_info.user_id = result[@"id"];
+                          //user_info.kudos = [[NSArray alloc]init];
+                          user_info.user_name = result[@"name"];
+                          user_info.device_token = [loginInfo objectForKey:@"devicetoken"];
+                          user_info.user_email= [loginInfo objectForKey:@"user_email"];
+                          user_info.user_about=[loginInfo objectForKey:@"user_about"];
+                          
+                          AWSDynamoDBObjectMapperConfiguration *updateMapperConfig = [AWSDynamoDBObjectMapperConfiguration new];
+                          updateMapperConfig.saveBehavior = AWSDynamoDBObjectMapperSaveBehaviorAppendSet;
+                          AWSDynamoDBObjectMapper *dynamoDBObjectMapper = [AWSDynamoDBObjectMapper defaultDynamoDBObjectMapper];
+                          [[dynamoDBObjectMapper save:user_info configuration:updateMapperConfig]
+                           continueWithBlock:^id(AWSTask *task) {
+                               
+                               if (task.result) {
+                                   [self.tabBarController.tabBar setHidden:NO];
+                                }
+                               return nil;
+                           }];
+                          
+                      }
+                      
+                  }];
+             }
+         }];
+        
+    }]];
+    
+    dispatch_async(dispatch_get_main_queue(), ^ {
+        [self presentViewController:alertController animated:YES completion:nil];
+    });
+
 }
 
 - (void) prepareForSegue:(UIStoryboardSegue *)segue sender:(id)sender
@@ -259,6 +269,9 @@
         {
             ActivityPhotoDetailsVC* vc = (ActivityPhotoDetailsVC*)segue.destinationViewController;
             vc.location = self.annotationLocation;
+            vc.beforePhoto = (UIImage*)(self.mainDelegate.locationData[self.annotationLocation.location_id]);
+            vc.cleaned = NO;
+            vc.fromLocationView = YES;
         }
         
         else if([segue.identifier isEqualToString:@"cleanLocation"])
@@ -284,6 +297,16 @@
     AWSS3TransferManager *transferManager = [AWSS3TransferManager defaultS3TransferManager];
     scanExpression.expressionAttributeValues = @{@":val":@"true"};
     [[dynamoDBObjectMapper scan:[Location class] expression:scanExpression] continueWithBlock:^id(AWSTask *task) {
+        if (task.error) {
+           
+            [self networkError];
+            [self.refreshControl endRefreshing];
+        }
+        if (task.exception) {
+            
+            [self networkError];
+            [self.refreshControl endRefreshing];
+        }
         if (task.result) {
             AWSDynamoDBPaginatedOutput *paginatedOutput = task.result;
             for (int i=0;i<paginatedOutput.items.count;i++) {
@@ -315,6 +338,8 @@
                 
                 self.mainDelegate.locationData[location.location_id]=[UIImage imageNamed:@"EmptyPhoto"];
                 [[transferManager download:downloadRequest] continueWithExecutor:[AWSExecutor mainThreadExecutor] withBlock:^id(AWSTask *task2) {
+
+
                     if (task2.result) {
                         self.imageArray[key]=[UIImage imageWithContentsOfFile:downloadingFilePath];
                         self.mainDelegate.locationData[location.location_id]=[UIImage imageWithContentsOfFile:downloadingFilePath];
@@ -375,6 +400,32 @@
                   [self.btnCountry setTitle:placemark.country forState:UIControlStateNormal];
                   [self.btnState setTitle:[placemark.addressDictionary valueForKey:@"State"] forState:UIControlStateNormal];
                   [self.btnLocal setTitle:placemark.locality forState:UIControlStateNormal];
+                  self.defaults = [NSUserDefaults standardUserDefaults];
+                  
+                  User * user_info = [User new];
+                  user_info.user_id = [self.defaults objectForKey:@"user_id"];
+                  user_info.location = placemark.locality;
+                  user_info.state = [placemark.addressDictionary valueForKey:@"State"];
+                  user_info.country = placemark.country;
+                  user_info.latitude= newLocation.coordinate.latitude;
+                  user_info.longitude= newLocation.coordinate.longitude;
+                  AWSDynamoDBObjectMapperConfiguration *updateMapperConfig = [AWSDynamoDBObjectMapperConfiguration new];
+                  updateMapperConfig.saveBehavior = AWSDynamoDBObjectMapperSaveBehaviorAppendSet;
+                  AWSDynamoDBObjectMapper *dynamoDBObjectMapper = [AWSDynamoDBObjectMapper defaultDynamoDBObjectMapper];
+                  [[dynamoDBObjectMapper save:user_info configuration:updateMapperConfig]
+                   continueWithBlock:^id(AWSTask *task) {
+                       if (task.error) {
+                           NSLog(@"The request failed. Error: [%@]", task.error);
+                       }
+                       if (task.exception) {
+                           NSLog(@"The request failed. Exception: [%@]", task.exception);
+                       }
+                       if (task.result) {
+                           NSLog(@"user location updated");
+                       }
+                       return nil;
+                   }];
+
               }
      ];
 }

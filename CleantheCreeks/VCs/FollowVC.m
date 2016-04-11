@@ -2,7 +2,7 @@
 //  FollowVC.m
 //  Clean the Creek
 //
-//  Created by Andy Johansson on 04/03/16.
+//  Created by Kimura Eiji on 04/03/16.
 //  Copyright © 2016 RedCherry. All rights reserved.
 //
 
@@ -16,6 +16,7 @@
 #import <AWSS3/AWSS3.h>
 #import "User.h"
 #import "Location.h"
+#import "ProfileVC.h"
 @interface FollowVC()
 @property (nonatomic,strong) UIRefreshControl * refreshControl;
 @property(nonatomic) int mode;
@@ -29,16 +30,15 @@
     [self.followSegment setSelectedSegmentIndex:self.displayIndex];
     self.appDelegate=(AppDelegate*)[[UIApplication sharedApplication]delegate];
     self.defaults = [NSUserDefaults standardUserDefaults];
-    NSString *user_name = [self.defaults objectForKey:@"user_name"];
-    NSLog(@"%@", user_name);
-    [self.profileTopBar setHeaderStyle:NO title:user_name rightBtnHidden:YES];
+
+    [self.profileTopBar setHeaderStyle:NO title:self.profile_user.user_name rightBtnHidden:YES];
     [self.tabBarController.tabBar setHidden:YES];
     self.refreshControl = [[UIRefreshControl alloc]init];
     [self.followTable addSubview:self.refreshControl];
     [self.refreshControl addTarget:self action:@selector(loadData) forControlEvents:UIControlEventValueChanged];
     
     [self.refreshControl beginRefreshing];
-    
+    self.profileTopBar.rightBtn.enabled = NO;
     [self loadData];
 }
 
@@ -56,7 +56,7 @@
              for (User *user in paginatedOutput.items)
              {
                  [self.appDelegate.userArray setObject:user forKey:user.user_id];
-                 [self loadImage:user.user_id];
+                 //[self loadImage:user.user_id];
              }
              dispatch_async(dispatch_get_main_queue(), ^{
                  [self.appDelegate loadData];
@@ -78,41 +78,98 @@
 {
     return [self.displayArray count];
 }
--(void) loadImage:(NSString *)user_id
+
+-(void) showProfile:(id)sender
 {
-    NSString *userImageURL = [NSString stringWithFormat:@"https://graph.facebook.com/%@/picture", user_id];
-    dispatch_async(dispatch_get_main_queue(), ^{
-        NSData * data = [[NSData alloc] initWithContentsOfURL: [NSURL URLWithString: userImageURL]];
-        if ( data != nil ){
-            [self.imageArray setObject:[UIImage imageWithData:data] forKey:user_id];
-            [self.followTable reloadData];
+    UITapGestureRecognizer *gesture = (UITapGestureRecognizer *) sender;
+    self.selectedImgIndex = gesture.view.tag;
+    NSLog(@"%u",self.selectedImgIndex);
+    NSDictionary * user = [self.displayArray objectAtIndex:self.selectedImgIndex];
+    NSString * user_id = [user objectForKey:@"id"];
+    if(![user_id isEqualToString:_profile_user.user_id])
+    {
+        
+        [self performSegueWithIdentifier:@"showProfileFromFollow" sender:self];
+    }
+}
+
+- (void) prepareForSegue:(UIStoryboardSegue *)segue sender:(id)sender
+{
+    [super prepareForSegue:segue sender:sender];
+    if([self.displayArray count]>0)
+    {
+        NSDictionary * user = [self.displayArray objectAtIndex:self.selectedImgIndex];
+        NSString * user_id = [user objectForKey:@"id"];
+
+        if([segue.identifier isEqualToString:@"showProfileFromFollow"])
+        {
+            ProfileVC * vc=(ProfileVC*)segue.destinationViewController;
+            vc.profile_user_id = user_id;
+            vc.mode = YES;
+            self.appDelegate.shouldRefreshProfile = YES;
         }
         
-    });
+    }
 }
+
 - (UITableViewCell *)tableView:(UITableView *)tableView cellForRowAtIndexPath:(NSIndexPath *)indexPath
 {
+    UITapGestureRecognizer *followTap=[[UITapGestureRecognizer alloc]initWithTarget:self action:@selector(showProfile:)];
+    followTap.numberOfTapsRequired=1;
     KudosCell* cell = (KudosCell*)[tableView dequeueReusableCellWithIdentifier:@"KudosCell"];
     NSDictionary * current_user=[self.displayArray objectAtIndex:indexPath.row];
     NSDictionary * user_id=[current_user objectForKey:@"id"];
     User * user=[self.appDelegate.userArray objectForKey:user_id];
     
     [cell.user_photo setImage:[self.imageArray objectForKey:user.user_id]];
+    
+    if([self.imageArray objectForKey:user.user_id]!=nil)
+    {
+        [cell.user_photo setImage: [self.imageArray objectForKey:user.user_id]];
+    }
+    else
+    {
+        NSString *userImageURL = [NSString stringWithFormat:@"https://graph.facebook.com/%@/picture", user.user_id];
+        NSURL *url = [NSURL URLWithString:userImageURL];
+        
+        NSURLSessionTask *task = [[NSURLSession sharedSession] dataTaskWithURL:url completionHandler:^(NSData * _Nullable data, NSURLResponse * _Nullable response, NSError * _Nullable error) {
+            if (data) {
+                UIImage *image = [UIImage imageWithData:data];
+                if (image) {
+                    dispatch_async(dispatch_get_main_queue(), ^{
+                        {
+                            [self.imageArray setObject:image forKey:user.user_id];
+                        }
+                        if(cell)
+                            [cell.user_photo setImage: image];
+                    });
+                }
+            }
+        }];
+        [task resume];
+    }
+
     [cell.user_name setText:user.user_name];
     [cell.user_location setText:[NSString stringWithFormat:@"%@, %@, %@", user.location, user.state, user.country]];
-    cell.likeButton.tag=indexPath.row;
+    cell.likeButton.tag = indexPath.row;
     [cell.likeButton addTarget:self action:@selector(likeBtnClicked:) forControlEvents:UIControlEventTouchUpInside];
     [cell.likeButton setImage:[UIImage imageNamed:@"btnKudoSelect"] forState:UIControlStateNormal];
     [cell.likeButton setImage:[UIImage imageNamed:@"btnKudoUnselect"] forState:UIControlStateSelected];
+    
+    [cell.user_photo addGestureRecognizer:followTap];
+    cell.user_photo.userInteractionEnabled = YES;
+    cell.user_photo.tag = indexPath.row;
     if([AppDelegate isFollowing:user])
-        cell.likeButton.selected=YES;
+        cell.likeButton.selected = YES;
+    else
+        cell.likeButton.selected =NO;
     if(!cell){
         cell = nil;
     }
     return cell;
 }
 
--(void)likeBtnClicked:(UIButton*)sender
+- (void)likeBtnClicked:(UIButton*)sender
 {
     NSUserDefaults *defaults = [NSUserDefaults standardUserDefaults];
     self.current_user_id = [defaults objectForKey:@"user_id"];
@@ -176,7 +233,7 @@
      continueWithBlock:^id(AWSTask *task) {
          
          if (task.result) {
-             
+             dispatch_async(dispatch_get_main_queue(), ^{
              //Updating target using followers
              if(![target_id isEqual:self.current_user_id])
              {
@@ -195,9 +252,9 @@
                  if(selected)
                      [followerArray addObject:followerItem];
                  if([followerArray count]!=0)
-                     targetuser.followers=[[NSMutableArray alloc] initWithArray:followerArray];
+                     targetuser.followers = [[NSMutableArray alloc] initWithArray:followerArray];
                  else
-                     targetuser.followers=nil;
+                     targetuser.followers = nil;
                  
                  
                  [[dynamoDBObjectMapper save:targetuser configuration:updateMapperConfig]
@@ -207,14 +264,21 @@
                               [self.appDelegate loadData];
                               sender.selected=!sender.selected;
                               sender.enabled=YES;
+                              
+                              if(self.followSegment.selectedSegmentIndex==0)
+                                  self.displayArray = self.appDelegate.followingArray;
+                              else
+                                  self.displayArray = self.appDelegate.followersArray;
+                              [self.followTable reloadData];
                           });
                           
                       }
                       
                       return nil;
                   }];
+                 
              }
-             
+             });
          }
          
          return nil;

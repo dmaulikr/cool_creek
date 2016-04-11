@@ -27,5 +27,5 @@
 
 @property(strong, nonatomic) NSUserDefaults *defaults;
 
-
+- (NSMutableAttributedString *)generateString:(NSString*)name content:(NSString*)content location:(NSString*) location;
 @end

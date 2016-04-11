@@ -26,6 +26,15 @@
     }
 }
 
+- (void) networkError
+{
+    UIAlertController *alertController = [UIAlertController alertControllerWithTitle:@"Error" message:@"Please check your network or server connection." preferredStyle:UIAlertControllerStyleAlert];
+    
+    UIAlertAction* ok = [UIAlertAction actionWithTitle:@"OK" style:UIAlertActionStyleDefault handler:nil];
+    [alertController addAction:ok];
+    
+    [self presentViewController:alertController animated:YES completion:nil];
+}
 #pragma ProfileTopBarVCDelegate Implementation
 
 - (void)leftBtnTopBarTapped:(UIButton *)sender topBar:(id)topBar{

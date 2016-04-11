@@ -24,6 +24,7 @@
 @property (weak, nonatomic) IBOutlet CommentView *commentView;
 @property (weak, nonatomic) IBOutlet UIButton *sendComment;
 @property (weak, nonatomic) IBOutlet UIButton *closeComment;
+
 @property (weak, nonatomic) IBOutlet UITextField *textComment;
 - (IBAction)closeBtnClicked:(id)sender;
 - (IBAction)sendButtonClicked:(id)sender;

@@ -21,16 +21,23 @@
     self = [super initWithNibName:nil bundle:nil];
     return self;
 }
+- (void) viewWillAppear:(BOOL)animated
+
+{
+    [self.tabBarController.tabBar setHidden:self.mode];
+}
 
 - (void)viewDidLoad
 {
     [super viewDidLoad];
+    self.defaults = [NSUserDefaults standardUserDefaults];
     self.locationArray=[[NSMutableArray alloc]init];
     self.refreshControl = [[UIRefreshControl alloc]init];
+    self.current_user_id=[self.defaults objectForKey:@"user_id"];
     [self.profileTable addSubview:self.refreshControl];
     [self.refreshControl addTarget:self action:@selector(updateData) forControlEvents:UIControlEventValueChanged];
     self.appDelegate=(AppDelegate*)[[UIApplication sharedApplication]delegate];
-    self.displayItemCount=3;
+    self.displayItemCount = 3;
     
     self.profileTable.estimatedRowHeight = 323.f;
     self.profileTable.rowHeight = UITableViewAutomaticDimension;
@@ -41,36 +48,20 @@
     self.profileTable.infiniteScrollIndicatorView = self.infiniteIndicator;
     
     [self.profileTable addInfiniteScrollWithHandler:^(UITableView* tableView) {
-        self.displayItemCount += 2;
+        self.displayItemCount += 5;
         self.displayItemCount = MIN(self.locationArray.count,self.displayItemCount);
         [self.infiniteIndicator startAnimating];
         [tableView reloadData];
         [tableView finishInfiniteScroll];
     }];
-    NSUserDefaults *defaults = [NSUserDefaults standardUserDefaults];
-    [self.profileTopBar setHeaderStyle:!self.mode title:[defaults objectForKey:@"user_name"] rightBtnHidden:self.mode];
-        [self.refreshControl beginRefreshing];
+    [self.profileTopBar setHeaderStyle:!self.mode title:@"" rightBtnHidden:self.mode];
+    [self.refreshControl beginRefreshing];
     
-        [self updateData];
-    
-    
+    [self updateData];
     
 }
 
--(void) loadProfileImage:(NSString *) user_id
-{
-    NSString *userImageURL = [NSString stringWithFormat:@"https://graph.facebook.com/%@/picture?width=100&&height=100", user_id];
-    dispatch_async(dispatch_get_main_queue(), ^{
-        NSData * data = [[NSData alloc] initWithContentsOfURL: [NSURL URLWithString: userImageURL]];
-        if ( data != nil )
-        {
-            self.profileImage = [[UIImage alloc]init];
-            self.profileImage = [UIImage imageWithData: data];
-            [self.profileTable reloadData];
-        }
-    });
-    
-}
+
 
 -(void) loadImage:(Location *)location
 {
@@ -97,7 +88,7 @@
     
     AWSS3TransferManagerDownloadRequest *downloadRequest2 = [AWSS3TransferManagerDownloadRequest new];
     downloadRequest2.bucket = @"cleanthecreeks";
-
+    
     NSString * key2=[location.location_id stringByAppendingString:@"b"];
     downloadRequest2.key = key2;
     downloadRequest2.downloadingFileURL = [NSURL fileURLWithPath:secondPath];
@@ -115,37 +106,35 @@
 -(void) updateData
 {
     self.kudoCount=0;
-    
-    NSUserDefaults *defaults = [NSUserDefaults standardUserDefaults];
-    
     if(!self.mode)
     {
-        self.current_user_id = [defaults objectForKey:@"user_id"];
-        
+        self.profile_user_id=self.current_user_id;
     }
+    
     self.firstArray=[[NSMutableDictionary alloc] init];
     self.secondArray=[[NSMutableDictionary alloc] init];
     self.dynamoDBObjectMapper = [AWSDynamoDBObjectMapper defaultDynamoDBObjectMapper];
     
-    [[self.dynamoDBObjectMapper load:[User class] hashKey:self.current_user_id rangeKey:nil]
+    [[self.dynamoDBObjectMapper load:[User class] hashKey:self.profile_user_id rangeKey:nil]
      continueWithBlock:^id(AWSTask *task) {
          
          if (task.error) {
-             NSLog(@"The request failed. Error: [%@]", task.error);
+             [self networkError];
+             [self.refreshControl endRefreshing];
          }
          if (task.exception) {
-             NSLog(@"The request failed. Exception: [%@]", task.exception);
+             [self networkError];
+             [self.refreshControl endRefreshing];
          }
          if (task.result) {
              self.profile_user=task.result;
              [self.profileTopBar setHeaderStyle:!self.mode title:self.profile_user.user_name rightBtnHidden:self.mode];
              
-             [self loadProfileImage:self.profile_user.user_id];
              self.locationArray=[[NSMutableArray alloc]init];
              
              AWSDynamoDBScanExpression *scanExpression = [AWSDynamoDBScanExpression new];
              scanExpression.filterExpression = @"cleaner_id = :val";
-             scanExpression.expressionAttributeValues = @{@":val":self.current_user_id};
+             scanExpression.expressionAttributeValues = @{@":val":self.profile_user.user_id};
              [[self.dynamoDBObjectMapper scan:[Location class]
                                    expression:scanExpression]
               continueWithBlock:^id(AWSTask *task) {
@@ -280,7 +269,13 @@
     
     [[dynamoDBObjectMapper save:currentuser configuration:updateMapperConfig]
      continueWithBlock:^id(AWSTask *task) {
-         
+         if (task.error) {
+             [self networkError];
+         }
+         if (task.exception) {
+             [self networkError];
+             
+         }
          if (task.result) {
              
              //Updating target using followers
@@ -318,6 +313,8 @@
                               sender.selected=!sender.selected;
                               sender.enabled=YES;
                               [self.profileTable reloadData];
+                              if(selected)
+                                  [self generateNotification:target_id];
                           });
                       }
                       
@@ -330,6 +327,34 @@
          return nil;
      }];
     
+}
+
+-(void) generateNotification:(NSString*) target_id
+{
+    self.defaults=[NSUserDefaults standardUserDefaults];
+    NSString *user_name = [self.defaults objectForKey:@"user_name"];
+    AWSDynamoDBObjectMapper *dynamoDBObjectMapper = [AWSDynamoDBObjectMapper defaultDynamoDBObjectMapper];
+    NSString * attributedString;
+    
+    attributedString=[NSString stringWithFormat:@"%@ started following you", user_name];
+    
+    
+    AWSDynamoDBScanExpression *scanExpression = [AWSDynamoDBScanExpression new];
+    [[dynamoDBObjectMapper load:[User class] hashKey:target_id rangeKey:nil]
+     continueWithBlock:^id(AWSTask *task) {
+         
+         if (task.result) {
+             User * user=task.result;
+             
+             if(user.device_token)
+             {
+                 if([AppDelegate isFollowing:user])
+                     [self.appDelegate send_notification:user message:attributedString];
+             }
+             
+         }
+         return nil;
+     }];
 }
 
 - (NSInteger)tableView:(UITableView *)tableView numberOfRowsInSection:(NSInteger)section{
@@ -357,17 +382,33 @@
 - (UITableViewCell *)tableView:(UITableView *)tableView cellForRowAtIndexPath:(NSIndexPath *)indexPath{
     
     ProfileViewCell * cell=nil;
+    
     if(indexPath.section==0)
     {
         if(indexPath.row==0)
         {
-            cell=[[UITableViewCell alloc]init];
             
             if(self.profile_user)
             {
                 cell = (ProfileViewCell*)[tableView dequeueReusableCellWithIdentifier:@"profileViewCell"];
-                if(self.profileImage)
-                    [cell.userPhoto setImage:self.profileImage];
+                NSString *userImageURL = [NSString stringWithFormat:@"https://graph.facebook.com/%@/picture?width=100&&height=100", self.profile_user.user_id];
+                NSURL *url = [NSURL URLWithString:userImageURL];
+                
+                NSURLSessionTask *task = [[NSURLSession sharedSession] dataTaskWithURL:url completionHandler:^(NSData * _Nullable data, NSURLResponse * _Nullable response, NSError * _Nullable error) {
+                    if (data) {
+                        UIImage *image = [UIImage imageWithData:data];
+                        if (image) {
+                            dispatch_async(dispatch_get_main_queue(), ^{
+                                {
+                                    if(cell)
+                                        [cell.userPhoto setImage: image];
+                                }
+                                
+                            });
+                        }
+                    }
+                }];
+                [task resume];
                 
                 [cell.user_name setText:self.profile_user.user_name ];
                 [cell.user_quotes setText:self.profile_user.user_about];
@@ -384,11 +425,15 @@
                 [cell.user_follows addGestureRecognizer:followersTap];
                 [cell.followersLabel addGestureRecognizer:followersTap];
                 [cell.btnFollow addTarget:self action:@selector(followClicked:) forControlEvents:UIControlEventTouchUpInside];
-                cell.btnFollow.hidden=!self.mode;
+                
+                cell.btnFollow.hidden = [self.profile_user.user_id  isEqualToString: self.current_user_id];
+                
                 [cell.btnFollow setImage:[UIImage imageNamed:@"btnKudoSelect"] forState:UIControlStateNormal];
                 [cell.btnFollow setImage:[UIImage imageNamed:@"btnKudoUnselect"] forState:UIControlStateSelected];
                 if([AppDelegate isFollowing:self.profile_user])
-                    cell.btnFollow.selected=YES;
+                    cell.btnFollow.selected = YES;
+                else
+                    cell.btnFollow.selected = NO;
                 if(self.appDelegate.followingArray!=nil)
                     [cell.user_following setText:[NSString stringWithFormat:@"%lu",(unsigned long)[self.appDelegate.followingArray count]]];
                 if(self.appDelegate.followersArray!=nil)
@@ -415,45 +460,46 @@
     {
         if([self.locationArray count]>0)
         {
-        if([self.locationArray objectAtIndex:indexPath.row])
-        {
-            cell = (ProfileViewCell*)[tableView dequeueReusableCellWithIdentifier:@"activityCell"];
-            Location * location=[self.locationArray objectAtIndex:indexPath.row];
-            NSMutableAttributedString * string = [[NSMutableAttributedString alloc] initWithString:@""];
-            UIColor * color1 = [UIColor blackColor];
-            UIColor * color2= [UIColor colorWithRed:(145/255.0) green:(145/255.0) blue:(145/255.0) alpha:1.0];
-            NSDictionary * attributes1 = [NSDictionary dictionaryWithObject:color1 forKey:NSForegroundColorAttributeName];
-            NSDictionary * attributes2 = [NSDictionary dictionaryWithObject:color2 forKey:NSForegroundColorAttributeName];
-            if(self.profile_user.user_name!=nil)
+            if([self.locationArray objectAtIndex:indexPath.row])
             {
-                NSAttributedString * nameStr = [[NSAttributedString alloc] initWithString:self.profile_user.user_name attributes:attributes1];
-                [string appendAttributedString:nameStr];
+                cell = (ProfileViewCell*)[tableView dequeueReusableCellWithIdentifier:@"activityCell"];
+                Location * location=[self.locationArray objectAtIndex:indexPath.row];
+                NSMutableAttributedString * string = [[NSMutableAttributedString alloc] initWithString:@""];
+                UIColor * color1 = [UIColor blackColor];
+                UIColor * color2= [UIColor colorWithRed:(145/255.0) green:(145/255.0) blue:(145/255.0) alpha:1.0];
+                NSDictionary * attributes1 = [NSDictionary dictionaryWithObject:color1 forKey:NSForegroundColorAttributeName];
+                NSDictionary * attributes2 = [NSDictionary dictionaryWithObject:color2 forKey:NSForegroundColorAttributeName];
+                if(self.profile_user.user_name!=nil)
+                {
+                    NSAttributedString * nameStr = [[NSAttributedString alloc] initWithString:self.profile_user.user_name attributes:attributes1];
+                    [string appendAttributedString:nameStr];
+                }
+                
+                NSAttributedString * middleStr = [[NSAttributedString alloc] initWithString:@" finished cleaning " attributes:attributes2];
+                [string appendAttributedString:middleStr];
+                
+                if(location.location_name!=nil)
+                {
+                    NSAttributedString * locationStr = [[NSAttributedString alloc] initWithString:location.location_name attributes:attributes1];
+                    [string appendAttributedString:locationStr];
+                }
+                [cell.comment setAttributedText:string];
+                [cell.location setText: location.location_name];
+                NSDateFormatter *dateFormatter=[[NSDateFormatter alloc] init];
+                [dateFormatter setDateFormat:@"MMM dd, yyyy"];
+                [cell.date setText:[dateFormatter stringFromDate:[NSDate dateWithTimeIntervalSince1970:location.cleaned_date]]];
+                [cell.kudoCount setText:[[NSString alloc]initWithFormat:@"%ld",(long)location.kudos.count]];
+                if([self.firstArray objectForKey:location.location_id])
+                    [cell.beforePhoto setImage:[self.firstArray objectForKey:location.location_id]];
+                if([self.secondArray objectForKey:location.location_id])
+                    [cell.afterPhoto setImage:[self.secondArray objectForKey:location.location_id]];
             }
-            
-            NSAttributedString * middleStr = [[NSAttributedString alloc] initWithString:@" finished cleaning " attributes:attributes2];
-            [string appendAttributedString:middleStr];
-            
-            if(location.location_name!=nil)
-            {
-                NSAttributedString * locationStr = [[NSAttributedString alloc] initWithString:location.location_name attributes:attributes1];
-                [string appendAttributedString:locationStr];
-            }
-            [cell.comment setAttributedText:string];
-            [cell.location setText: location.location_name];
-            NSDateFormatter *dateFormatter=[[NSDateFormatter alloc] init];
-            [dateFormatter setDateFormat:@"MMM dd, yyyy"];
-            [cell.date setText:[dateFormatter stringFromDate:[NSDate dateWithTimeIntervalSince1970:location.cleaned_date]]];
-            [cell.kudoCount setText:[[NSString alloc]initWithFormat:@"%ld",(long)location.kudos.count]];
-            if([self.firstArray objectForKey:location.location_id])
-                [cell.beforePhoto setImage:[self.firstArray objectForKey:location.location_id]];
-            if([self.secondArray objectForKey:location.location_id])
-                [cell.afterPhoto setImage:[self.secondArray objectForKey:location.location_id]];
-        }
         }
         
     }
     if(!cell){
         cell=[[UITableViewCell alloc]init];
+        cell.backgroundColor=[UIColor colorWithRed:238.0 green:238.0 blue:238.0 alpha:1];
     }
     return cell;
 }
@@ -487,14 +533,23 @@
 
 - (void)prepareForSegue:(UIStoryboardSegue *)segue sender:(id)sender {
     [super prepareForSegue:segue sender:sender];
-    FollowVC *followVC=(FollowVC*)segue.destinationViewController;
+    
     if([segue.identifier isEqual:@"showFollowing"])
     {
+        FollowVC *followVC=(FollowVC*)segue.destinationViewController;
+        if(self.profile_user)
+            
+            followVC.profile_user = self.profile_user;
         followVC.displayIndex=0;
+        
         [followVC.followSegment setSelectedSegmentIndex:0];
     }
     else if([segue.identifier isEqual:@"showFollowers"])
     {
+        FollowVC *followVC=(FollowVC*)segue.destinationViewController;
+        if(self.profile_user)
+            
+            followVC.profile_user = self.profile_user;
         followVC.displayIndex=1;
         [followVC.followSegment setSelectedSegmentIndex:1];
     }

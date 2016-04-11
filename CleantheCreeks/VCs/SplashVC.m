@@ -38,5 +38,8 @@
 {
     [self performSegueWithIdentifier:@"skip2MainNav" sender:self];
 }
-
+-(void) viewWillAppear:(BOOL)animated
+{
+    NSLog(@"root");
+}
 @end
