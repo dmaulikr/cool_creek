@@ -338,8 +338,6 @@
     
     attributedString=[NSString stringWithFormat:@"%@ started following you", user_name];
     
-    
-    AWSDynamoDBScanExpression *scanExpression = [AWSDynamoDBScanExpression new];
     [[dynamoDBObjectMapper load:[User class] hashKey:target_id rangeKey:nil]
      continueWithBlock:^id(AWSTask *task) {
          

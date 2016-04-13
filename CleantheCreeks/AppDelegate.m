@@ -96,8 +96,6 @@
     NSLog(@"deviceToken: %@", token);
     NSUserDefaults *defaults = [NSUserDefaults standardUserDefaults];
     
-    
-    
     AWSSNS *sns = [AWSSNS defaultSNS];
     AWSSNSCreatePlatformEndpointInput *request = [AWSSNSCreatePlatformEndpointInput new];
     request.token = token;

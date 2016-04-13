@@ -34,7 +34,7 @@ UIButton *loginButton;
     dtapGestureRecognize.numberOfTapsRequired = 1;
     UIButton *mapButton=[self.view viewWithTag:15];
     [mapButton addGestureRecognizer:dtapGestureRecognize];
-    NSMutableArray * gestureArray=[[NSMutableArray alloc]init];
+
     for(int i=0;i<5;i++)
     {
         UITapGestureRecognizer *fbGestureRecognize = [[UITapGestureRecognizer alloc] initWithTarget:self action:@selector(loginButtonClicked)];

@@ -481,7 +481,7 @@
         attributedString=[NSString stringWithFormat:@"%@ commented on your clean up location", user_name];
     else if([mode isEqualToString:@"clean"])
         attributedString=[NSString stringWithFormat:@"%@ commented on your clean up location", user_name];
-    AWSDynamoDBScanExpression *scanExpression = [AWSDynamoDBScanExpression new];
+
     [[dynamoDBObjectMapper load:[User class] hashKey:target_id rangeKey:nil]
      continueWithBlock:^id(AWSTask *task) {
          

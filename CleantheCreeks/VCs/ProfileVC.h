@@ -26,5 +26,5 @@
 @property (strong, nonatomic) AppDelegate * appDelegate;
 @property (strong, nonatomic) NSMutableArray *followingArray, *followerArray ;
 @property(nonatomic) int displayItemCount;
-@property (strong,nonatomic) NSUserDefaults * defaults;
+
 @end

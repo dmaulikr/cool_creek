@@ -328,7 +328,7 @@
 {
     self.defaults=[NSUserDefaults standardUserDefaults];
     NSString *user_name = [self.defaults objectForKey:@"user_name"];
-    NSString * user_id=[self.defaults objectForKey:@"user_id"];
+
     AWSDynamoDBObjectMapper *dynamoDBObjectMapper = [AWSDynamoDBObjectMapper defaultDynamoDBObjectMapper];
     NSString * attributedString;
     if(!mode)

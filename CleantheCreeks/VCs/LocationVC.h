@@ -20,7 +20,6 @@
 @property (strong, nonatomic) CLLocationManager *locationManager;
 @property (retain) CLLocation * currentLocation;
 @property (strong,nonatomic) NSMutableArray * locationArray;
-@property (strong,nonatomic) NSMutableDictionary * imageArray;
 @property (strong,nonatomic )AppDelegate * mainDelegate;
 @property (nonatomic) NSInteger selectedIndex;
 @property (nonatomic) NSInteger displayItemCount;

@@ -18,14 +18,12 @@
 
 @property (strong, nonatomic) Location * selectedLocation;
 @property(strong,nonatomic)NSString *current_user;
-@property(nonatomic)NSInteger* selectedIndex;
+@property(nonatomic)NSInteger selectedIndex;
 @property(nonatomic) int selectedImgIndex;
 @property(strong, nonatomic)NSMutableArray * indexPathArray;
 
 -(void) giveKudoWithIndex:(int) index assigned:(bool)assigned;
 -(void) updateCell;
-
-@property(strong, nonatomic) NSUserDefaults *defaults;
 
 - (NSMutableAttributedString *)generateString:(NSString*)name content:(NSString*)content location:(NSString*) location;
 @end

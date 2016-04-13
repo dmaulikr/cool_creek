@@ -40,7 +40,7 @@
     self.appDelegate=(AppDelegate*)[[UIApplication sharedApplication]delegate];
     [self.tv addInfiniteScrollWithHandler:^(UITableView* tableView) {
         self.displayItemCount+=5;
-        self.displayItemCount=MIN(self.activityArray.count,self.displayItemCount);
+        self.displayItemCount = MIN(self.activityArray.count,self.displayItemCount);
         [self.infiniteIndicator startAnimating];
         [tableView reloadData];
         [tableView finishInfiniteScroll];

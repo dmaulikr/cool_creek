@@ -108,7 +108,7 @@
     {
         _mySLComposerSheet = [[SLComposeViewController alloc] init]; //initiate the Social Controller
         _mySLComposerSheet = [SLComposeViewController composeViewControllerForServiceType:SLServiceTypeFacebook]; //Tell him with what social plattform to use it, e.g. facebook or twitter
-        [_mySLComposerSheet setInitialText:[NSString stringWithFormat:@"Clean the Creek",_mySLComposerSheet.serviceType]]; //the message you want to post
+        [_mySLComposerSheet setInitialText:@"Clean the Creek"]; //the message you want to post
         UIImage * fbPostImg=[self mergeImage:self.firstPhoto withImage:self.secondPhoto bottomImage:[UIImage imageNamed:@"website2"]];
         [_mySLComposerSheet addImage:fbPostImg]; //an image you could post
         [_mySLComposerSheet setTitle:@"Look what I just cleaned up #cleanthecreek"];

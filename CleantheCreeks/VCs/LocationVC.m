@@ -124,7 +124,6 @@
  
         if([self.defaults objectForKey:@"measurement"])
         {
-            
             if([[self.defaults objectForKey:@"measurement"] isEqualToString:@"miles"])
                 distance = distance/1609.344;
             else
@@ -139,6 +138,12 @@
         {
             cell.image.image=(UIImage*)(self.mainDelegate.locationData[location.location_id]);
         }
+        UITapGestureRecognizer *viewTap=[[UITapGestureRecognizer alloc]initWithTarget:self action:@selector(imageClicked:)];
+        viewTap.numberOfTapsRequired=1;
+        cell.image.tag = indexPath.row;
+        [cell.image addGestureRecognizer:viewTap];
+        
+        cell.image.userInteractionEnabled = YES;
         cell.viewBtn.tag = indexPath.row;
         cell.cleanBtn.tag = indexPath.row;
         
@@ -154,14 +159,14 @@
     return cell;
 }
 
-- (UIView *)tableView:(UITableView *)tableView viewForFooterInSection:(NSInteger)section{
-    _spinner = [[UIActivityIndicatorView alloc] initWithActivityIndicatorStyle:UIActivityIndicatorViewStyleGray];
-    CGFloat screenHeight = [UIScreen mainScreen].bounds.size.height;
-    UIView* footerView = [[UIView alloc] initWithFrame:CGRectMake(0, 0, (40/667) * screenHeight, (40/667) * screenHeight)];
-    [footerView addSubview:_spinner];
-    return footerView;
-}
 
+-(void)imageClicked:(id)sender
+{
+    UITapGestureRecognizer *gesture = (UITapGestureRecognizer *) sender;
+    self.selectedIndex = gesture.view.tag;
+    [self performSegueWithIdentifier:@"showLocationDetails" sender:self];
+    
+}
 
 -(void)viewBtnClicked:(UIButton*)sender
 {
@@ -307,6 +312,7 @@
     scanExpression.filterExpression = @"isDirty = :val";
     AWSS3TransferManager *transferManager = [AWSS3TransferManager defaultS3TransferManager];
     scanExpression.expressionAttributeValues = @{@":val":@"true"};
+    [self.mapView removeAnnotations:self.mapView.annotations];
     [[dynamoDBObjectMapper scan:[Location class] expression:scanExpression] continueWithBlock:^id(AWSTask *task) {
         if (task.error) {
             
@@ -319,8 +325,6 @@
             [self.refreshControl endRefreshing];
         }
         if (task.result) {
-            [self.mapView removeAnnotations:self.mapView.annotations];
-            [self.mapView reloadInputViews];
             AWSDynamoDBPaginatedOutput *paginatedOutput = task.result;
             for (int i=0;i<paginatedOutput.items.count;i++) {
                 Location * location= [paginatedOutput.items objectAtIndex:i];
@@ -351,7 +355,7 @@
                     
                     
                     if (task2.result) {
-                        self.imageArray[key]=[UIImage imageWithContentsOfFile:downloadingFilePath];
+                        
                         self.mainDelegate.locationData[location.location_id]=[UIImage imageWithContentsOfFile:downloadingFilePath];
                         [self.locationTable reloadData];
                         
@@ -475,7 +479,7 @@
 {
     CLLocationCoordinate2D coordinate=[view.annotation coordinate];
     NSString * location_id=[NSString stringWithFormat:@"%f,%f",coordinate.latitude,coordinate.longitude];
-    self.annotationLocation=[Location class];
+    self.annotationLocation=[[Location alloc]init];
     for(Location * loc in self.locationArray)
     {
         if([loc.location_id isEqualToString:location_id])
