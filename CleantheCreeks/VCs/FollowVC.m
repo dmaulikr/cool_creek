@@ -24,19 +24,25 @@
 
 @implementation FollowVC
 
+-(void)viewWillAppear:(BOOL)animated
+{
+    [super viewWillAppear:animated];
+    [self.tabBarController.tabBar setHidden:YES];
+}
 -(void)viewDidLoad
 {
     [super viewDidLoad];
     [self.followSegment setSelectedSegmentIndex:self.displayIndex];
     self.appDelegate=(AppDelegate*)[[UIApplication sharedApplication]delegate];
     self.defaults = [NSUserDefaults standardUserDefaults];
-
+    
     [self.profileTopBar setHeaderStyle:NO title:self.profile_user.user_name rightBtnHidden:YES];
     [self.tabBarController.tabBar setHidden:YES];
     self.refreshControl = [[UIRefreshControl alloc]init];
     [self.followTable addSubview:self.refreshControl];
     [self.refreshControl addTarget:self action:@selector(loadData) forControlEvents:UIControlEventValueChanged];
     
+    self.current_user_id = [self.defaults objectForKey:@"user_id"];
     [self.refreshControl beginRefreshing];
     self.profileTopBar.rightBtn.enabled = NO;
     [self loadData];
@@ -44,8 +50,11 @@
 
 -(void)loadData
 {
-    self.displayArray=[[NSMutableArray alloc]init];
-    self.imageArray=[[NSMutableDictionary alloc]init];
+    self.displayArray = [[NSMutableArray alloc]init];
+    self.imageArray = [[NSMutableDictionary alloc]init];
+    NSString * user_id=self.current_user_id;
+    if(self.profile_user)
+        user_id=self.profile_user.user_id;
     AWSDynamoDBObjectMapper *dynamoDBObjectMapper = [AWSDynamoDBObjectMapper defaultDynamoDBObjectMapper];
     AWSDynamoDBScanExpression *scanExpression = [AWSDynamoDBScanExpression new];
     [[dynamoDBObjectMapper scan:[User class] expression:scanExpression]
@@ -56,14 +65,21 @@
              for (User *user in paginatedOutput.items)
              {
                  [self.appDelegate.userArray setObject:user forKey:user.user_id];
-                 //[self loadImage:user.user_id];
+                 
+                 if([user.user_id isEqualToString:user_id])
+                 {
+                     self.followerArray=user.followers;
+                     self.followingArray=user.followings;
+                     
+                 }
+                 
              }
              dispatch_async(dispatch_get_main_queue(), ^{
-                 [self.appDelegate loadData];
-                 if(self.displayIndex==0)
-                     self.displayArray=self.appDelegate.followingArray;
-                 else if(self.displayIndex==1)
-                     self.displayArray=self.appDelegate.followersArray;
+                 if(self.displayIndex == 0)
+                     self.displayArray = self.followingArray;
+                 
+                 else if(self.displayIndex == 1)
+                     self.displayArray = self.followerArray;
                  [self.followTable reloadData];
                  [self.refreshControl endRefreshing];
                  
@@ -100,7 +116,7 @@
     {
         NSDictionary * user = [self.displayArray objectAtIndex:self.selectedImgIndex];
         NSString * user_id = [user objectForKey:@"id"];
-
+        
         if([segue.identifier isEqualToString:@"showProfileFromFollow"])
         {
             ProfileVC * vc=(ProfileVC*)segue.destinationViewController;
@@ -139,6 +155,7 @@
                     dispatch_async(dispatch_get_main_queue(), ^{
                         {
                             [self.imageArray setObject:image forKey:user.user_id];
+                            
                         }
                         if(cell)
                             [cell.user_photo setImage: image];
@@ -148,7 +165,8 @@
         }];
         [task resume];
     }
-
+    
+    cell.likeButton.hidden = [user.user_id isEqualToString:self.current_user_id];
     [cell.user_name setText:user.user_name];
     [cell.user_location setText:[NSString stringWithFormat:@"%@, %@, %@", user.location, user.state, user.country]];
     cell.likeButton.tag = indexPath.row;
@@ -171,8 +189,7 @@
 
 - (void)likeBtnClicked:(UIButton*)sender
 {
-    NSUserDefaults *defaults = [NSUserDefaults standardUserDefaults];
-    self.current_user_id = [defaults objectForKey:@"user_id"];
+    
     NSDictionary * target_user=[self.displayArray objectAtIndex:sender.tag];
     NSString * target_id=[target_user objectForKey:@"id"];
     User * targetuser=[self.appDelegate.userArray objectForKey:target_id];
@@ -209,7 +226,7 @@
             if([[following objectForKey:@"id"] isEqualToString:target_id])
             {
                 [removeArray addObject:following];
-               
+                
             }
         }
         [followingArray removeObjectsInArray:removeArray];
@@ -221,10 +238,10 @@
     }
     
     if([followingArray count]!=0)
-        currentuser.followings=[[NSMutableArray alloc] initWithArray:followingArray];
+        currentuser.followings = [[NSMutableArray alloc] initWithArray:followingArray];
     else
         currentuser.followings=nil;
-    sender.enabled=NO;
+    sender.enabled = NO;
     AWSDynamoDBObjectMapper *dynamoDBObjectMapper = [AWSDynamoDBObjectMapper defaultDynamoDBObjectMapper];
     AWSDynamoDBObjectMapperConfiguration *updateMapperConfig = [AWSDynamoDBObjectMapperConfiguration new];
     updateMapperConfig.saveBehavior = AWSDynamoDBObjectMapperSaveBehaviorUpdate;
@@ -234,50 +251,45 @@
          
          if (task.result) {
              dispatch_async(dispatch_get_main_queue(), ^{
-             //Updating target using followers
-             if(![target_id isEqual:self.current_user_id])
-             {
-                 if(followerArray!=nil)
+                 //Updating target using followers
+                 if(![target_id isEqual:self.current_user_id])
                  {
-                     NSMutableArray * removeArray=[[NSMutableArray alloc]init];
-                     for(NSDictionary *follower in followerArray)
+                     if(followerArray!=nil)
                      {
-                         if([[follower objectForKey:@"id"] isEqualToString:self.current_user_id])
+                         NSMutableArray * removeArray=[[NSMutableArray alloc]init];
+                         for(NSDictionary *follower in followerArray)
                          {
-                             [removeArray addObject:follower];
+                             if([[follower objectForKey:@"id"] isEqualToString:self.current_user_id])
+                             {
+                                 [removeArray addObject:follower];
+                             }
                          }
+                         [followerArray removeObjectsInArray:removeArray];
                      }
-                     [followerArray removeObjectsInArray:removeArray];
-                 }
-                 if(selected)
-                     [followerArray addObject:followerItem];
-                 if([followerArray count]!=0)
-                     targetuser.followers = [[NSMutableArray alloc] initWithArray:followerArray];
-                 else
-                     targetuser.followers = nil;
-                 
-                 
-                 [[dynamoDBObjectMapper save:targetuser configuration:updateMapperConfig]
-                  continueWithBlock:^id(AWSTask *task) {
-                      if (task.result) {
-                          dispatch_async(dispatch_get_main_queue(), ^{
-                              [self.appDelegate loadData];
-                              sender.selected=!sender.selected;
-                              sender.enabled=YES;
+                     if(selected)
+                         [followerArray addObject:followerItem];
+                     if([followerArray count]!=0)
+                         targetuser.followers = [[NSMutableArray alloc] initWithArray:followerArray];
+                     else
+                         targetuser.followers = nil;
+                     
+                     [[dynamoDBObjectMapper save:targetuser configuration:updateMapperConfig]
+                      continueWithBlock:^id(AWSTask *task) {
+                          if (task.result) {
+                              dispatch_async(dispatch_get_main_queue(), ^{
+                                  
+                                  sender.selected=!sender.selected;
+                                  sender.enabled=YES;
+                                  
+                                  [self loadData];
+                              });
                               
-                              if(self.followSegment.selectedSegmentIndex==0)
-                                  self.displayArray = self.appDelegate.followingArray;
-                              else
-                                  self.displayArray = self.appDelegate.followersArray;
-                              [self.followTable reloadData];
-                          });
+                          }
                           
-                      }
-                      
-                      return nil;
-                  }];
-                 
-             }
+                          return nil;
+                      }];
+                     
+                 }
              });
          }
          
@@ -287,10 +299,11 @@
 }
 
 - (IBAction)followingChange:(id)sender {
+    self.displayIndex= self.followSegment.selectedSegmentIndex;
     if(self.followSegment.selectedSegmentIndex==0)
-        self.displayArray=self.appDelegate.followingArray;
+        self.displayArray=self.followingArray;
     else
-        self.displayArray=self.appDelegate.followersArray;
+        self.displayArray=self.followerArray;
     [self.followTable reloadData];
 }
 
@@ -301,4 +314,5 @@
 - (void)rightBtnTopBarTapped:(UIButton *)sender topBar:(id)topBar{
     
 }
+
 @end

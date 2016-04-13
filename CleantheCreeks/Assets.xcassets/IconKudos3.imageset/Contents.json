@@ -2,12 +2,12 @@
   "images" : [
     {
       "idiom" : "universal",
-      "filename" : "IconKudo3.png",
+      "filename" : "thumb.png",
       "scale" : "1x"
     },
     {
       "idiom" : "universal",
-      "filename" : "IconKudo3@2x.png",
+      "filename" : "thumb2.png",
       "scale" : "2x"
     },
     {

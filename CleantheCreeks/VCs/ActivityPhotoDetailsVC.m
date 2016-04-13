@@ -399,7 +399,7 @@
                         mailCont.mailComposeDelegate = self;
                         NSString * title = [NSString stringWithFormat:@"%@ has uploaded irrelevant photos.",self.location.found_by];
                         [mailCont setSubject:title];
-                        [mailCont setToRecipients:[NSArray arrayWithObject:@"dan@redcherry.ca"]];
+                        [mailCont setToRecipients:[NSArray arrayWithObject:@"abuse@cleanthecreek.com"]];
                         NSString * message=[NSString stringWithFormat:@"%@ with id %@ has uploaded irrelevant photos on %@, %@, %@",self.location.found_by, self.location.founder_id, self.location.location_name, self.location.state, self.location.country];
                         [mailCont setMessageBody:message isHTML:NO];
                         

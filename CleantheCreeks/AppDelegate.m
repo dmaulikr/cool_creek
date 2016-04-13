@@ -96,8 +96,6 @@
     NSLog(@"deviceToken: %@", token);
     NSUserDefaults *defaults = [NSUserDefaults standardUserDefaults];
     
-    [defaults setObject:token forKey:@"devicetoken"];
-    [defaults synchronize];
     
     
     AWSSNS *sns = [AWSSNS defaultSNS];
@@ -111,6 +109,9 @@
             AWSSNSCreateEndpointResponse *createEndPointResponse = task.result;
             NSLog(@"endpointArn: %@",createEndPointResponse);
             [[NSUserDefaults standardUserDefaults] setObject:createEndPointResponse.endpointArn forKey:@"endpointArn"];
+            [defaults setObject:createEndPointResponse.endpointArn forKey:@"devicetoken"];
+            [defaults synchronize];
+
             [[NSUserDefaults standardUserDefaults] synchronize];
             NSString *user_id = [defaults objectForKey:@"user_id"];
             if(user_id)

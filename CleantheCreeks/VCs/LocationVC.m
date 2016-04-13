@@ -120,8 +120,20 @@
         [cell.locationName setText:location.location_name];
         CLLocation*exitingLocation=[[CLLocation alloc]initWithLatitude:location.latitude longitude:location.longitude];
         CLLocationDistance distance=[exitingLocation distanceFromLocation:self.currentLocation];
-        distance=distance/1000.0;
-        NSString*distanceText=[[NSString alloc]initWithFormat:@"%.02fKM",distance];
+        NSString * unit=@"KM";
+ 
+        if([self.defaults objectForKey:@"measurement"])
+        {
+            
+            if([[self.defaults objectForKey:@"measurement"] isEqualToString:@"miles"])
+                distance = distance/1609.344;
+            else
+                distance = distance/1000.0;
+            unit=[self.defaults objectForKey:@"measurement"];
+        }
+        else
+            distance =distance/1000.0;
+        NSString*distanceText=[[NSString alloc]initWithFormat:@"%.02f %@",distance,unit];
         [cell.distance setText:distanceText];
         if(self.mainDelegate.locationData[location.location_id]!=nil)
         {
@@ -175,7 +187,6 @@
 
 -(void) fbLogin
 {
-    
     UIAlertController *alertController = [UIAlertController alertControllerWithTitle:@"Sign in with Facebook" message:@"In order to take a photo you must be signed in to your facebook account." preferredStyle:UIAlertControllerStyleAlert];
     
     [alertController addAction:[UIAlertAction actionWithTitle:@"Cancel" style:UIAlertActionStyleDefault handler:^(UIAlertAction *action) {
@@ -196,14 +207,14 @@
              }
              else
              {
-                
+                 
                  NSMutableDictionary* parameters = [NSMutableDictionary dictionary];
                  [parameters setValue:@"id,name,email,location,about" forKey:@"fields"];
                  [[[FBSDKGraphRequest alloc] initWithGraphPath:@"me" parameters:parameters]
                   startWithCompletionHandler:^(FBSDKGraphRequestConnection *connection, id result, NSError *error) {
                       
                       if (!error) {
-                         [self.tabBarController.tabBar setHidden:NO];
+                          [self.tabBarController.tabBar setHidden:NO];
                           NSLog(@"fetched user:%@  and Email : %@", result,result[@"email"]);
                           NSUserDefaults *loginInfo = [NSUserDefaults standardUserDefaults];
                           NSString *fbUsername = [[result valueForKey:@"link"] lastPathComponent];
@@ -230,7 +241,7 @@
                                
                                if (task.result) {
                                    [self.tabBarController.tabBar setHidden:NO];
-                                }
+                               }
                                return nil;
                            }];
                           
@@ -245,7 +256,7 @@
     dispatch_async(dispatch_get_main_queue(), ^ {
         [self presentViewController:alertController animated:YES completion:nil];
     });
-
+    
 }
 
 - (void) prepareForSegue:(UIStoryboardSegue *)segue sender:(id)sender
@@ -298,7 +309,7 @@
     scanExpression.expressionAttributeValues = @{@":val":@"true"};
     [[dynamoDBObjectMapper scan:[Location class] expression:scanExpression] continueWithBlock:^id(AWSTask *task) {
         if (task.error) {
-           
+            
             [self networkError];
             [self.refreshControl endRefreshing];
         }
@@ -308,12 +319,11 @@
             [self.refreshControl endRefreshing];
         }
         if (task.result) {
+            [self.mapView removeAnnotations:self.mapView.annotations];
+            [self.mapView reloadInputViews];
             AWSDynamoDBPaginatedOutput *paginatedOutput = task.result;
             for (int i=0;i<paginatedOutput.items.count;i++) {
                 Location * location= [paginatedOutput.items objectAtIndex:i];
-                CLLocation*exitingLocation=[[CLLocation alloc]initWithLatitude:location.latitude longitude:location.longitude];
-                CLLocationDistance distance=[exitingLocation distanceFromLocation:self.currentLocation];
-                distance=distance/1000.0;
                 
                 //Setting the file download path
                 NSString *downloadingFilePath = [NSTemporaryDirectory() stringByAppendingPathComponent:location.location_id];
@@ -338,13 +348,15 @@
                 
                 self.mainDelegate.locationData[location.location_id]=[UIImage imageNamed:@"EmptyPhoto"];
                 [[transferManager download:downloadRequest] continueWithExecutor:[AWSExecutor mainThreadExecutor] withBlock:^id(AWSTask *task2) {
-
-
+                    
+                    
                     if (task2.result) {
                         self.imageArray[key]=[UIImage imageWithContentsOfFile:downloadingFilePath];
                         self.mainDelegate.locationData[location.location_id]=[UIImage imageWithContentsOfFile:downloadingFilePath];
                         [self.locationTable reloadData];
+                        
                         [self.mapView addAnnotation:annotation];
+                        
                     }
                     return nil;
                 }];
@@ -425,7 +437,7 @@
                        }
                        return nil;
                    }];
-
+                  
               }
      ];
 }

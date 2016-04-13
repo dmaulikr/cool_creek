@@ -15,11 +15,11 @@
 @property (strong, nonatomic) NSMutableArray * displayArray;
 @property (nonatomic) int displayIndex;
 @property (strong, nonatomic) AppDelegate * appDelegate;
-@property (strong,nonatomic) NSUserDefaults *defaults;
+
 @property (strong, nonatomic) User * profile_user;
 
 @property (strong ,nonatomic) NSMutableDictionary* imageArray;
-@property (strong, nonatomic) NSMutableArray * userArray;
+@property (strong, nonatomic) NSMutableArray * userArray,*followerArray,*followingArray;
 - (IBAction)followingChange:(id)sender;
 @property(nonatomic) int selectedImgIndex;
 @end

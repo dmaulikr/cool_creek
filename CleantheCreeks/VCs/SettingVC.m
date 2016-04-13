@@ -38,7 +38,16 @@
     NSString *measurement = [settingInfo objectForKey:@"measurement"];
     if(measurement!=nil)
     {
-        [self.measurementButton setTitle:measurement forState:UIControlStateNormal];
+        if([measurement isEqualToString:@"miles"])
+        {
+            
+            [self.measurementButton setTitle:@"Miles" forState:UIControlStateNormal];
+        }
+        else
+        {
+            
+            [self.measurementButton setTitle:@"Metric" forState:UIControlStateNormal];
+        }
     }
     [self.tabBarController.tabBar setHidden:YES];
 }
@@ -94,12 +103,12 @@
     NSString *measurement = [self.measurementButton titleForState:UIControlStateNormal];
     if([measurement isEqualToString:@"Metric"])
     {
-        [settingInfo setObject:@"Inches" forKey:@"measurement"];
-        [self.measurementButton setTitle:@"Inches" forState:UIControlStateNormal];
+        [settingInfo setObject:@"miles" forKey:@"measurement"];
+        [self.measurementButton setTitle:@"Miles" forState:UIControlStateNormal];
     }
-    else if([measurement isEqualToString:@"Inches"])
+    else
     {
-        [settingInfo setObject:@"Metric" forKey:@"measurement"];
+        [settingInfo setObject:@"KM" forKey:@"measurement"];
         [self.measurementButton setTitle:@"Metric" forState:UIControlStateNormal];
     }
 }

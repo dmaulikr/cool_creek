@@ -370,7 +370,7 @@
         [self storeData:false];
         [self generateNotification:YES];
         [self performSegueWithIdentifier:@"cleanedFBPost" sender:self];
-        self.mainDelegate.shouldRefreshLocation = YES;
+        
     }
     else
     {
@@ -416,6 +416,7 @@
         vc.firstPhoto=[PhotoDetailsVC scaleImage:self.takenPhoto toSize:CGSizeMake(320.0,320.0)];
         vc.secondPhoto=[[UIImage alloc]init];
         vc.secondPhoto=[UIImage imageNamed:@"CleanMe"];
+        
         vc.cleaned=NO;
     }
     else if([segue.identifier isEqualToString:@"cleanedFBPost"])
@@ -445,6 +446,7 @@
 
 -(void)storeData:(BOOL)isDirty
 {
+    self.mainDelegate.shouldRefreshLocation = YES;
     NSUserDefaults *defaults = [NSUserDefaults standardUserDefaults];
     NSString *user_name = [defaults objectForKey:@"user_name"];
     NSString *user_id = [defaults objectForKey:@"user_id"];
@@ -490,7 +492,7 @@
              NSLog(@"The request failed. Exception: [%@]", task.exception);
          }
          if (task.result) {
-             //Do something with the result.
+             
          }
          return nil;
      }];
