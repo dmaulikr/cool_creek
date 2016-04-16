@@ -211,7 +211,6 @@
     NSString * target_id=self.profile_user.user_id;
     User * targetuser=self.profile_user;
     
-    
     NSMutableArray * followerArray=[[NSMutableArray alloc] init]; //Add current user to the follower list of the user on the table
     NSMutableArray * followingArray=[[NSMutableArray alloc] init];
     if(targetuser.followers!=nil)
@@ -249,7 +248,6 @@
         }
         if([followingArray count]>0)
             [followingArray removeObjectsInArray:removeArray];
-        //[followingArray removeObject:following];
     }
     if(selected)
     {
@@ -411,7 +409,8 @@
                 [cell.user_name setText:self.profile_user.user_name ];
                 [cell.user_quotes setText:self.profile_user.user_about];
                 [cell.user_location setText:self.luser_location];
-                [cell.user_email setText:self.profile_user.user_email];
+                //Removed email
+                //[cell.user_email setText:self.profile_user.user_email];
                 UITapGestureRecognizer *followingTap=[[UITapGestureRecognizer alloc]initWithTarget:self action:@selector(showFollowing)];
                 followingTap.numberOfTapsRequired=1;
                 
@@ -433,9 +432,9 @@
                 else
                     cell.btnFollow.selected = NO;
                 if(self.appDelegate.followingArray!=nil)
-                    [cell.user_following setText:[NSString stringWithFormat:@"%lu",(unsigned long)[self.appDelegate.followingArray count]]];
+                    [cell.user_following setText:[NSString stringWithFormat:@"%lu",(unsigned long)[self.profile_user.followings count]]];
                 if(self.appDelegate.followersArray!=nil)
-                    [cell.user_follows setText:[NSString stringWithFormat:@"%lu",(unsigned long)[self.appDelegate.followersArray count]]];
+                    [cell.user_follows setText:[NSString stringWithFormat:@"%lu",(unsigned long)[self.profile_user.followers count]]];
             }
         }
     }

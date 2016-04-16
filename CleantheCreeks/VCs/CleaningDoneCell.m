@@ -32,6 +32,8 @@
 }
 
 - (IBAction)giveKudosBtnTapped:(id)sender {
+    if(self.parentVC.activityArray.count==0)
+        return;
     UIButton * senderButton=(UIButton*)sender;
     bool selected=!senderButton.selected;
     Activity * activity=[self.parentVC.activityArray objectAtIndex:[sender tag]];

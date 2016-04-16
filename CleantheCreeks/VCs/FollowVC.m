@@ -189,7 +189,8 @@
 
 - (void)likeBtnClicked:(UIButton*)sender
 {
-    
+    if([self.displayArray count]==0)
+        return;
     NSDictionary * target_user=[self.displayArray objectAtIndex:sender.tag];
     NSString * target_id=[target_user objectForKey:@"id"];
     User * targetuser=[self.appDelegate.userArray objectForKey:target_id];

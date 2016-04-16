@@ -15,7 +15,7 @@
 
 @property (strong, nonatomic) UIImage * profileImage;
 @property (nonatomic) bool mode;
-@property (strong,nonatomic) NSString *luser_location, *current_user_id,*profile_user_id;
+@property (strong,nonatomic) NSString *luser_location,*profile_user_id;
 
 @property (strong,nonatomic) User * profile_user;
 @property (strong,nonatomic) NSString *formattedCleansCount;

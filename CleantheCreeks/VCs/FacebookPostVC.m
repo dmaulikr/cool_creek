@@ -77,22 +77,22 @@
     
     //Place logo
     UIImage * imgLogo=[UIImage imageNamed:@"SliderLogoSmall"];
-    [imgLogo drawInRect:CGRectMake(5,5,imgLogo.size.width,imgLogo.size.height)];
+    [imgLogo drawInRect:CGRectMake(5,5,imgLogo.size.width*2,imgLogo.size.height*2)];
     
     //Place before button
     UIImage * imgBefore=[UIImage imageNamed:@"btnBefore"];
-    [imgBefore drawInRect:CGRectMake(size-imgBefore.size.width,5+imgLogo.size.height/2-imgBefore.size.height/2,imgBefore.size.width,imgBefore.size.height)];
+    [imgBefore drawInRect:CGRectMake(size-imgBefore.size.width*2,5+imgLogo.size.height-imgBefore.size.height,imgBefore.size.width*2,imgBefore.size.height*2)];
     
     //Place after button
     if(self.cleaned)
     {
         UIImage * imgAfter=[UIImage imageNamed:@"btnAfter"];
-        [imgAfter drawInRect:CGRectMake(size*2-imgAfter.size.width,5+imgLogo.size.height/2-imgAfter.size.height/2,imgAfter.size.width,imgAfter.size.height)];
+        [imgAfter drawInRect:CGRectMake(size*2-imgAfter.size.width*2,5+imgLogo.size.height-imgAfter.size.height,imgAfter.size.width*2,imgAfter.size.height*2)];
     }
     //Place download button
     
     UIImage * imgDownload=[UIImage imageNamed:@"downloadImg"];
-    [imgDownload drawInRect:CGRectMake(size - imgDownload.size.width/2,size-40-imgDownload.size.height/2,imgDownload.size.width,imgDownload.size.height)];
+    [imgDownload drawInRect:CGRectMake(size - imgDownload.size.width,size-80-imgDownload.size.height,imgDownload.size.width*2,imgDownload.size.height*2)];
     // assign context to new UIImage
     UIImage *newImage = UIGraphicsGetImageFromCurrentImageContext();
     
