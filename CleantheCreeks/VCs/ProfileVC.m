@@ -9,22 +9,20 @@
 #import "AppDelegate.h"
 #import <UIScrollView+InfiniteScroll.h>
 #import "CustomInfiniteIndicator.h"
-
+#import "ActivityPhotoDetailsVC.h"
 @interface ProfileVC()
 @property (nonatomic,strong) UIRefreshControl * refreshControl;
 @property (nonatomic,strong) CustomInfiniteIndicator *infiniteIndicator;
 @end
 @implementation ProfileVC
 
-- (id)init
-{
-    self = [super initWithNibName:nil bundle:nil];
-    return self;
-}
 - (void) viewWillAppear:(BOOL)animated
-
 {
+    [super viewWillAppear:animated];
     [self.tabBarController.tabBar setHidden:self.mode];
+    id<GAITracker> tracker = [[GAI sharedInstance] defaultTracker];
+    [tracker set:kGAIScreenName value:@"Profile"];
+    [tracker send:[[GAIDictionaryBuilder createScreenView] build]];
 }
 
 - (void)viewDidLoad
@@ -61,8 +59,6 @@
     
 }
 
-
-
 -(void) loadImage:(Location *)location
 {
     AWSS3TransferManager *transferManager = [AWSS3TransferManager defaultS3TransferManager];
@@ -76,31 +72,34 @@
     NSString * key=[location.location_id stringByAppendingString:@"a"];
     downloadRequest.key = key;
     downloadRequest.downloadingFileURL = [NSURL fileURLWithPath:firstPath];
-    
-    [[transferManager download:downloadRequest] continueWithExecutor:[AWSExecutor mainThreadExecutor] withBlock:^id(AWSTask *task) {
-        if (task.result) {
-            [self.firstArray setObject:[UIImage imageWithContentsOfFile:firstPath] forKey:location.location_id];
-            [self.profileTable reloadData];
-            
-        }
-        return nil;
-    }];
-    
+    if(![self.firstArray objectForKey:location.location_id])
+    {
+        [[transferManager download:downloadRequest] continueWithExecutor:[AWSExecutor mainThreadExecutor] withBlock:^id(AWSTask *task) {
+            if (task.result) {
+                [self.firstArray setObject:[UIImage imageWithContentsOfFile:firstPath] forKey:location.location_id];
+                [self.profileTable reloadData];
+                
+            }
+            return nil;
+        }];
+    }
     AWSS3TransferManagerDownloadRequest *downloadRequest2 = [AWSS3TransferManagerDownloadRequest new];
     downloadRequest2.bucket = @"cleanthecreeks";
     
     NSString * key2=[location.location_id stringByAppendingString:@"b"];
     downloadRequest2.key = key2;
     downloadRequest2.downloadingFileURL = [NSURL fileURLWithPath:secondPath];
-    
-    [[transferManager download:downloadRequest2] continueWithExecutor:[AWSExecutor mainThreadExecutor] withBlock:^id(AWSTask *task) {
-        if (task.result) {
-            [self.secondArray setObject:[UIImage imageWithContentsOfFile:secondPath] forKey:location.location_id];
-            [self.profileTable reloadData];
-            
-        }
-        return nil;
-    }];
+    if(![self.secondArray objectForKey:location.location_id])
+    {
+        [[transferManager download:downloadRequest2] continueWithExecutor:[AWSExecutor mainThreadExecutor] withBlock:^id(AWSTask *task) {
+            if (task.result) {
+                [self.secondArray setObject:[UIImage imageWithContentsOfFile:secondPath] forKey:location.location_id];
+                [self.profileTable reloadData];
+                
+            }
+            return nil;
+        }];
+    }
 }
 
 -(void) updateData
@@ -110,11 +109,11 @@
     {
         self.profile_user_id=self.current_user_id;
     }
-    
+    self.kudoArray=[[NSMutableDictionary alloc]init];
     self.firstArray=[[NSMutableDictionary alloc] init];
     self.secondArray=[[NSMutableDictionary alloc] init];
     self.dynamoDBObjectMapper = [AWSDynamoDBObjectMapper defaultDynamoDBObjectMapper];
-    
+    self.locationArray=[[NSMutableArray alloc]init];
     [[self.dynamoDBObjectMapper load:[User class] hashKey:self.profile_user_id rangeKey:nil]
      continueWithBlock:^id(AWSTask *task) {
          
@@ -129,8 +128,6 @@
          if (task.result) {
              self.profile_user=task.result;
              [self.profileTopBar setHeaderStyle:!self.mode title:self.profile_user.user_name rightBtnHidden:self.mode];
-             
-             self.locationArray=[[NSMutableArray alloc]init];
              
              AWSDynamoDBScanExpression *scanExpression = [AWSDynamoDBScanExpression new];
              scanExpression.filterExpression = @"cleaner_id = :val";
@@ -153,6 +150,17 @@
                               
                               //Adding total kudo count
                               self.kudoCount+=location.kudos.count;
+                              if(location.kudos!=nil)
+                              {
+                                  for(NSDictionary *kudo_gaver in location.kudos)
+                                  {
+                                      if([[kudo_gaver objectForKey:@"id"] isEqualToString:self.current_user_id])
+                                      {
+                                          [self.kudoArray setObject:@"true" forKey:location.location_id];
+                                          break;
+                                      }
+                                  }
+                              }
                               
                           }
                           
@@ -200,6 +208,67 @@
          return nil;
      }];
     
+}
+
+-(void) updateCell
+{
+    self.kudoArray=[[NSMutableDictionary alloc]init];
+    self.locationArray = [[NSMutableArray alloc]init];
+    self.kudoCount=0;
+    self.dynamoDBObjectMapper = [AWSDynamoDBObjectMapper defaultDynamoDBObjectMapper];
+    
+    AWSDynamoDBScanExpression *scanExpression = [AWSDynamoDBScanExpression new];
+    scanExpression.filterExpression = @"cleaner_id = :val";
+    scanExpression.expressionAttributeValues = @{@":val":self.profile_user.user_id};
+    [[self.dynamoDBObjectMapper scan:[Location class]
+                          expression:scanExpression]
+     continueWithBlock:^id(AWSTask *task) {
+         if (task.result) {
+             AWSDynamoDBPaginatedOutput *paginatedOutput = task.result;
+             
+             for (Location *location in paginatedOutput.items)
+             {
+                 if([location.isDirty isEqualToString:@"false"]) //cleaned
+                 {
+                     //Counting item count
+                     [self.locationArray addObject:location];
+                     
+                     
+                     //Adding total kudo count
+                     self.kudoCount+=location.kudos.count;
+                     if(location.kudos!=nil)
+                     {
+                         for(NSDictionary *kudo_gaver in location.kudos)
+                         {
+                             if([[kudo_gaver objectForKey:@"id"] isEqualToString:self.current_user_id])
+                             {
+                                 [self.kudoArray setObject:@"true" forKey:location.location_id];
+                                 break;
+                             }
+                         }
+                     }
+                 }
+                 
+             }
+             
+             
+             dispatch_async(dispatch_get_main_queue(), ^{
+                 if([self.locationArray count]>0)
+                     self.locationArray = (NSMutableArray*)[self.locationArray sortedArrayUsingComparator:^NSComparisonResult(id a, id b) {
+                         double first = ((Location*)a).cleaned_date;
+                         double second = ((Location*)b).cleaned_date;
+                         return first<second;
+                     }];
+                 
+                 [self.profileTable reloadData];
+                 [self.refreshControl endRefreshing];
+                 
+             });
+         }
+         
+         return nil;
+     }];
+
 }
 
 -(void)followClicked:(UIButton*)sender
@@ -344,7 +413,7 @@
              
              if(user.device_token)
              {
-                 if([AppDelegate isFollowing:user])
+                 if([AppDelegate isFollowed:user])
                      [self.appDelegate send_notification:user message:attributedString];
              }
              
@@ -359,7 +428,7 @@
         rowCount=1;
     else if(section==1)
         rowCount=1;
-    else
+    else if(section==2)
     {
         if([self.locationArray count]>0)
             rowCount=self.displayItemCount;
@@ -427,6 +496,7 @@
                 
                 [cell.btnFollow setImage:[UIImage imageNamed:@"btnKudoSelect"] forState:UIControlStateNormal];
                 [cell.btnFollow setImage:[UIImage imageNamed:@"btnKudoUnselect"] forState:UIControlStateSelected];
+                
                 if([AppDelegate isFollowing:self.profile_user])
                     cell.btnFollow.selected = YES;
                 else
@@ -460,6 +530,7 @@
             if([self.locationArray objectAtIndex:indexPath.row])
             {
                 cell = (ProfileViewCell*)[tableView dequeueReusableCellWithIdentifier:@"activityCell"];
+                cell.parentVC = self;
                 Location * location=[self.locationArray objectAtIndex:indexPath.row];
                 NSMutableAttributedString * string = [[NSMutableAttributedString alloc] initWithString:@""];
                 UIColor * color1 = [UIColor blackColor];
@@ -484,12 +555,36 @@
                 [cell.location setText: location.location_name];
                 NSDateFormatter *dateFormatter=[[NSDateFormatter alloc] init];
                 [dateFormatter setDateFormat:@"MMM dd, yyyy"];
+                [cell.btnKudo setImage:[UIImage imageNamed:@"IconKudos2"] forState:UIControlStateNormal];
+                [cell.btnKudo setImage:[UIImage imageNamed:@"IconKudos3"] forState:UIControlStateSelected];
+                
+                if([[self.kudoArray objectForKey:location.location_id] isEqualToString:@"true"])
+                {
+                    cell.btnKudo.selected=YES;
+                }
+                else
+                    cell.btnKudo.selected=NO;
+                cell.btnKudo.tag=indexPath.row;
                 [cell.date setText:[dateFormatter stringFromDate:[NSDate dateWithTimeIntervalSince1970:location.cleaned_date]]];
                 [cell.kudoCount setText:[[NSString alloc]initWithFormat:@"%ld",(long)location.kudos.count]];
+                cell.beforePhoto.tag = indexPath.row;
+                cell.afterPhoto.tag = indexPath.row;
+                
                 if([self.firstArray objectForKey:location.location_id])
                     [cell.beforePhoto setImage:[self.firstArray objectForKey:location.location_id]];
                 if([self.secondArray objectForKey:location.location_id])
                     [cell.afterPhoto setImage:[self.secondArray objectForKey:location.location_id]];
+                UITapGestureRecognizer *locationTap=[[UITapGestureRecognizer alloc]initWithTarget:self action:@selector(showLocation:)];
+                locationTap.numberOfTapsRequired=1;
+                
+                UITapGestureRecognizer *locationTap2=[[UITapGestureRecognizer alloc]initWithTarget:self action:@selector(showLocation:)];
+                locationTap2.numberOfTapsRequired=1;
+                [cell.beforePhoto setUserInteractionEnabled:YES];
+                [cell.afterPhoto setUserInteractionEnabled:YES];
+                
+                [cell.beforePhoto addGestureRecognizer:locationTap];
+                [cell.afterPhoto addGestureRecognizer:locationTap2];
+                
             }
         }
         
@@ -499,6 +594,13 @@
         cell.backgroundColor=[UIColor colorWithRed:238.0 green:238.0 blue:238.0 alpha:1];
     }
     return cell;
+}
+
+-(void) showLocation:(id) sender
+{
+    UITapGestureRecognizer *gesture = (UITapGestureRecognizer *) sender;
+    self.selectedIndex = gesture.view.tag;
+    [self performSegueWithIdentifier:@"showLocationFromProfile" sender:self];
 }
 
 - (void)didReceiveMemoryWarning
@@ -549,6 +651,16 @@
             followVC.profile_user = self.profile_user;
         followVC.displayIndex=1;
         [followVC.followSegment setSelectedSegmentIndex:1];
+    }
+    else if([segue.identifier isEqual:@"showLocationFromProfile"])
+    {
+        ActivityPhotoDetailsVC *vc=(ActivityPhotoDetailsVC*)segue.destinationViewController;
+        vc.location = [self.locationArray objectAtIndex:self.selectedIndex];
+        vc.beforePhoto = [self.firstArray objectForKey:vc.location.location_id];
+        vc.afterPhoto = [self.secondArray objectForKey:vc.location.location_id];
+        vc.cleaned = YES;
+        vc.fromLocationView = YES;
+        
     }
 }
 

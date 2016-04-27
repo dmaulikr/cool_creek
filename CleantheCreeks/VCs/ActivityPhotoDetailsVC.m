@@ -23,7 +23,7 @@
 #import <FBSDKLoginKit/FBSDKLoginKit.h>
 #import <MessageUI/MessageUI.h>
 #import <MessageUI/MFMailComposeViewController.h>
-
+#import "ProfileVC.h"
 @implementation ActivityPhotoDetailsVC
 
 - (void)registerForKeyboardNotifications
@@ -78,6 +78,29 @@
     return YES;
 }
 
+-(void)loadData
+{
+    
+    AWSDynamoDBObjectMapper *dynamoDBObjectMapper = [AWSDynamoDBObjectMapper defaultDynamoDBObjectMapper];
+    AWSDynamoDBScanExpression *scanExpression = [AWSDynamoDBScanExpression new];
+    [[dynamoDBObjectMapper scan:[User class] expression:scanExpression]
+     continueWithBlock:^id(AWSTask *task) {
+         
+         if (task.result) {
+             AWSDynamoDBPaginatedOutput *paginatedOutput = task.result;
+             for (User *user in paginatedOutput.items)
+             {
+                 [self.mainDelegate.userArray setObject:user forKey:user.user_id];
+                 
+             }
+             dispatch_async(dispatch_get_main_queue(), ^{
+                 [self.tv reloadData];
+             });
+         }
+         return nil;
+     }];
+}
+
 -(void) viewDidLoad
 {
     [super viewDidLoad];
@@ -91,7 +114,7 @@
     
     [self.view addGestureRecognizer:tap];
     self.mainDelegate=(AppDelegate*)[[UIApplication sharedApplication]delegate];
-    [self.mainDelegate loadData];
+    [self loadData];
     [self registerForKeyboardNotifications];
     self.tv.estimatedRowHeight = 65.f;
     self.tv.rowHeight = UITableViewAutomaticDimension;
@@ -145,6 +168,9 @@
         btnKudo.enabled = YES;
     });
     [self.profileTopBar setHeaderStyle:NO title:self.location.location_name rightBtnHidden:YES];
+    
+    
+    //[self.tv setHeaderViewInsets:UIEdgeInsetsMake(-100, 0, 0, 0)];
 }
 
 -(void)dismissKeyboard {
@@ -157,9 +183,6 @@
     [self dismissVC];
 }
 
-- (void)rightBtnTopBarTapped:(UIButton *)sender topBar:(id)topBar{
-    
-}
 
 - (CGFloat)tableView:(UITableView *)tableView heightForRowAtIndexPath:(NSIndexPath *)indexPath
 {
@@ -201,6 +224,15 @@
     return 3;
 }
 
+-(void) viewWillAppear:(BOOL)animated
+{
+    [super viewWillAppear:animated];
+    [self.tabBarController.tabBar setHidden:YES];
+    id<GAITracker> tracker = [[GAI sharedInstance] defaultTracker];
+    [tracker set:kGAIScreenName value:@"Activity Photo Details"];
+    [tracker send:[[GAIDictionaryBuilder createScreenView] build]];
+}
+
 - (NSInteger)tableView:(UITableView *)tableView numberOfRowsInSection:(NSInteger)section
 {
     NSInteger count=0;
@@ -236,21 +268,19 @@
         if(indexPath.row==0)
         {
             cell = (LocationPhotoCell*)[tableView dequeueReusableCellWithIdentifier:@"LocationPhotoCell"];
-            
             [((LocationPhotoCell*)cell).firstPhoto setImage:self.beforePhoto];
             if(self.cleaned)
                 [((LocationPhotoCell*)cell).secondPhoto setImage:self.afterPhoto];
             else
             {
-                [((LocationPhotoCell*)cell).secondPhoto setImage:[UIImage imageNamed:@"EmptyPhoto"]];
-                if(self.fromLocationView)
-                {
-                    UITapGestureRecognizer *tapClean=[[UITapGestureRecognizer alloc]initWithTarget:self action:@selector(takePhoto:)];
-                    tapClean.numberOfTapsRequired=1;
-                    
-                    [((LocationPhotoCell*)cell).secondPhoto addGestureRecognizer:tapClean];
-                    ((LocationPhotoCell*)cell).secondPhoto.userInteractionEnabled=YES;
-                }
+                [((LocationPhotoCell*)cell).secondPhoto setImage:[UIImage imageNamed:@"camera"]];
+                
+                UITapGestureRecognizer *tapClean=[[UITapGestureRecognizer alloc]initWithTarget:self action:@selector(takePhoto:)];
+                tapClean.numberOfTapsRequired=1;
+                
+                [((LocationPhotoCell*)cell).secondPhoto addGestureRecognizer:tapClean];
+                ((LocationPhotoCell*)cell).secondPhoto.userInteractionEnabled=YES;
+                
             }
         }
         
@@ -311,6 +341,12 @@
             NSDate* founddate=[[NSDate alloc]initWithTimeIntervalSince1970:self.location.found_date];
             [((DetailCell*)cell).foundDate setText:[dateFormatter stringFromDate:founddate]];
             
+            UITapGestureRecognizer *finderNameTap = [[UITapGestureRecognizer alloc]
+                                                     initWithTarget:self
+                                                     action:@selector(showFinder:)];
+            finderNameTap.numberOfTapsRequired=1;
+            [((DetailCell*)cell).finderName addGestureRecognizer:finderNameTap];
+            [((DetailCell*)cell).finderName setUserInteractionEnabled:YES];
         }
         else if(indexPath.row==3)
         {
@@ -322,6 +358,12 @@
             NSDate* cleanedDate=[[NSDate alloc]initWithTimeIntervalSince1970:self.location.cleaned_date];
             [((DetailCell*)cell).cleanedDate setText:[dateFormatter stringFromDate:cleanedDate]];
             
+            UITapGestureRecognizer *cleanerNameTap = [[UITapGestureRecognizer alloc]
+                                                      initWithTarget:self
+                                                      action:@selector(showCleaner:)];
+            cleanerNameTap.numberOfTapsRequired=1;
+            [((DetailCell*)cell).cleanerName addGestureRecognizer:cleanerNameTap];
+            [((DetailCell*)cell).cleanerName setUserInteractionEnabled:YES];
         }
         
     }
@@ -337,11 +379,18 @@
                 
                 cell = (CommentCell*)[tableView dequeueReusableCellWithIdentifier:@"CommentCell"];
                 NSMutableDictionary *commentItem=[self.location.comments objectAtIndex:indexPath.row-1];
-                
                 User * commentUser=[self.mainDelegate.userArray objectForKey:[commentItem objectForKey:@"id"]];
                 NSString *commentUserName=commentUser.user_name;
                 NSString *commentText=[commentItem objectForKey:@"text"];
                 [((CommentCell*)cell).commentLabel setAttributedText:[self generateCommentString:commentUserName content:commentText]];
+                
+                UITapGestureRecognizer *commentTap = [[UITapGestureRecognizer alloc]
+                                                      initWithTarget:self
+                                                      action:@selector(showCommenter:)];
+                commentTap.numberOfTapsRequired=1;
+                [((CommentCell*)cell).commentLabel addGestureRecognizer:commentTap];
+                [((CommentCell*)cell).commentLabel setUserInteractionEnabled:YES];
+                ((CommentCell*)cell).commentLabel.tag =indexPath.row-1;
             }
             
         }
@@ -352,6 +401,26 @@
         
     }
     return cell;
+}
+
+-(void)showCleaner:(id)sender
+{
+    self.selected_user = self.location.cleaner_id;
+    [self performSegueWithIdentifier:@"showProfileFromDetails" sender:self];
+}
+
+-(void)showFinder:(id)sender
+{
+    self.selected_user = self.location.founder_id;
+    [self performSegueWithIdentifier:@"showProfileFromDetails" sender:self];
+}
+
+-(void)showCommenter:(id)sender
+{
+    UITapGestureRecognizer *gesture = (UITapGestureRecognizer *) sender;
+    NSMutableDictionary *commentItem=[self.location.comments objectAtIndex:gesture.view.tag];
+    self.selected_user = [commentItem objectForKey:@"id"];
+    [self performSegueWithIdentifier:@"showProfileFromDetails" sender:self];
 }
 
 - (nullable NSString *)tableView:(UITableView *)tableView titleForHeaderInSection:(NSInteger)section
@@ -426,7 +495,7 @@
 }
 
 - (IBAction)sendButtonClicked:(id)sender {
-    self.commentVisible=NO;
+    self.commentVisible = NO;
     [self.commentView setHidden:YES];
     
     NSMutableArray * commentArray=[[NSMutableArray alloc] init];
@@ -481,7 +550,7 @@
         attributedString=[NSString stringWithFormat:@"%@ commented on your clean up location", user_name];
     else if([mode isEqualToString:@"clean"])
         attributedString=[NSString stringWithFormat:@"%@ commented on your clean up location", user_name];
-
+    
     [[dynamoDBObjectMapper load:[User class] hashKey:target_id rangeKey:nil]
      continueWithBlock:^id(AWSTask *task) {
          
@@ -519,6 +588,12 @@
         [self fbLogin];
 }
 
+- (BOOL)textField:(UITextField *)textField shouldChangeCharactersInRange:(NSRange)range replacementString:(NSString *)string {
+    if ([self.textComment.text length] > 255)
+        return NO;
+    else
+        return YES;
+}
 -(void)imagePickerController:(UIImagePickerController *)picker didFinishPickingMediaWithInfo:(NSDictionary<NSString *,id> *)info
 {
     NSLog(@"Photo taken");
@@ -532,8 +607,6 @@
         [self cleanLocation];
     });
     [self dismissViewControllerAnimated:NO completion:nil];
-    
-    
     
 }
 
@@ -697,11 +770,52 @@
         if (task.result) {
             NSLog(@"cleaned photo uploaded");
             [self performSegueWithIdentifier:@"cleanFromView" sender:self];
+            [self generateNotification:YES];
         }
         return nil;
     }];
     
     
+}
+
+-(void) generateNotification:(bool)mode
+{
+    self.defaults=[NSUserDefaults standardUserDefaults];
+    NSString *user_name = [self.defaults objectForKey:@"user_name"];
+    
+    AWSDynamoDBObjectMapper *dynamoDBObjectMapper = [AWSDynamoDBObjectMapper defaultDynamoDBObjectMapper];
+    NSString * attributedString;
+    if(!mode)
+    {
+        attributedString=[NSString stringWithFormat:@"%@ found a new dirty spot %@", user_name, self.location.location_name];
+        
+    }
+    else
+    {
+        attributedString=[NSString stringWithFormat:@"%@ has cleaned %@", user_name, self.location.location_name];
+        
+    }
+    
+    AWSDynamoDBScanExpression *scanExpression = [AWSDynamoDBScanExpression new];
+    [[dynamoDBObjectMapper scan:[User class] expression:scanExpression]
+     continueWithBlock:^id(AWSTask *task) {
+         
+         if (task.result) {
+             AWSDynamoDBPaginatedOutput *paginatedOutput = task.result;
+             for(User * user in paginatedOutput.items)
+             {
+                 if(user.device_token)
+                 {
+                     CLLocation* userLocation=[[CLLocation alloc]initWithLatitude:user.latitude longitude:user.longitude];
+                     CLLocationDistance distance=[userLocation distanceFromLocation:self.location];
+                     distance=distance/1000.0;
+                     if(distance<100.0 || [AppDelegate isFollowed:user] || [self.location.found_by isEqualToString:user.user_id])
+                         [self.mainDelegate send_notification:user message:attributedString];
+                 }
+             }
+         }
+         return nil;
+     }];
 }
 
 - (void) prepareForSegue:(UIStoryboardSegue *)segue sender:(id)sender
@@ -717,6 +831,18 @@
         vc.secondPhoto=[PhotoDetailsVC scaleImage:self.afterPhoto toSize:CGSizeMake(320.0,320.0)];
         vc.cleaned=YES;
     }
+    else if([segue.identifier isEqualToString:@"showProfileFromDetails"])
+    {
+        if(self.selected_user)
+        {
+            ProfileVC * vc=(ProfileVC*)segue.destinationViewController;
+            
+            vc.profile_user_id = self.selected_user;
+            vc.mode = YES;
+            self.mainDelegate.shouldRefreshProfile = YES;
+        }
+    }
+    
     
 }
 

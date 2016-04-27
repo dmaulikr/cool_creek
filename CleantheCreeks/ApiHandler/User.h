@@ -24,6 +24,7 @@
 @property (nonatomic, strong) NSMutableArray *followers;
 @property (nonatomic, strong) NSString *user_email;
 @property (nonatomic, strong) NSString *user_about;
+@property (nonatomic, strong) NSString *is_blocked;
 @property  double latitude;
 @property  double longitude;
 @end

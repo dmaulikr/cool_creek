@@ -16,19 +16,77 @@ CLLocationManager * locationManager;
 
 @implementation MainTabNav
 
+- (id) init
+{
+    self = [super init];
+    if (!self) return nil;
+    
+    // Add this instance of TestClass as an observer of the TestNotification.
+    // We tell the notification center to inform us of "TestNotification"
+    // notifications using the receiveTestNotification: selector. By
+    // specifying object:nil, we tell the notification center that we are not
+    // interested in who posted the notification. If you provided an actual
+    // object rather than nil, the notification center will only notify you
+    // when the notification was posted by that particular object.
+    
+    [[NSNotificationCenter defaultCenter] addObserver:self
+                                             selector:@selector(receivePushNotification:)
+                                                 name:@"PushNotification"
+                                               object:nil];
+    
+    return self;
+}
+
 - (void)viewDidLoad
 {
     [super viewDidLoad];
-    self.selectedViewController=[self.viewControllers objectAtIndex:1];
+    [[NSNotificationCenter defaultCenter] addObserver:self
+                                             selector:@selector(receivePushNotification:)
+                                                 name:@"PushNotification"
+                                               object:nil];
+    self.mainDelegate=(AppDelegate*)[[UIApplication sharedApplication]delegate];
+    
+}
+
+- (void)viewWillAppear:(BOOL)animated
+{
+    if(!_freshLoad)
+    {
+    self.selectedIndex=1;
+        _freshLoad=YES;
+    }
+    NSUserDefaults *defaults = [NSUserDefaults standardUserDefaults];
+    NSString *user_id = [defaults objectForKey:@"user_id"];
+    AWSDynamoDBObjectMapper *dynamoDBObjectMapper = [AWSDynamoDBObjectMapper defaultDynamoDBObjectMapper];
+    
+    [[dynamoDBObjectMapper load:[User class] hashKey:user_id rangeKey:nil]
+     continueWithBlock:^id(AWSTask *task) {
+         if (task.result) {
+             User *user=task.result;
+             
+             if([user.is_blocked isEqualToString:@"1"])
+             {
+                 [self blocked];
+             }
+         }
+         return nil;
+     }];
+
 }
 
 -(void)locationManager:(CLLocationManager *)manager didUpdateToLocation:(CLLocation *)newLocation fromLocation:(CLLocation *)oldLocation{
     
 }
 
--(void) viewDidAppear:(BOOL)animated
+- (void) receivePushNotification:(NSNotification *) notification
 {
-    
+    if(self.mainDelegate.notificationCount > 0)
+    {
+        NSString * str=[NSString stringWithFormat:@"%ld",(long)self.mainDelegate.notificationCount];
+        [[[[self tabBar] items]
+          objectAtIndex:2] setBadgeValue:str];
+        NSLog(@"received");
+    }
 }
 
 - (void)didReceiveMemoryWarning {
@@ -41,10 +99,31 @@ CLLocationManager * locationManager;
     if(tabBarController.selectedIndex==0)
     {
         NSLog(@"selected 1st");
-         self.selectedViewController=[self.viewControllers objectAtIndex:1];
+        self.selectedViewController=[self.viewControllers objectAtIndex:1];
     }
 }
 
+- (void) blocked
+{
+    UIAlertController *alertController = [UIAlertController alertControllerWithTitle:@"Alert" message:@"You have been blocked from the system." preferredStyle:UIAlertControllerStyleAlert];
+    
+    [alertController addAction:[UIAlertAction actionWithTitle:@"OK" style:UIAlertActionStyleDefault handler:^(UIAlertAction *action) {
+        
+        NSUserDefaults * defs = [NSUserDefaults standardUserDefaults];
+        NSDictionary * dict = [defs dictionaryRepresentation];
+        for (id key in dict) {
+            [defs removeObjectForKey:key];
+        }
+        [defs synchronize];
+        
+        [self.navigationController popViewControllerAnimated:YES];
+        
+    }]];
+    
+    
+    [self presentViewController:alertController animated:YES completion:nil];
+   
+}
 
 #pragma mark - Navigation
 

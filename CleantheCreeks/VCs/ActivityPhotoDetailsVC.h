@@ -32,4 +32,5 @@
 @property(nonatomic, retain) id<KudoDelegate> delegate;
 @property (strong,nonatomic )AppDelegate * mainDelegate;
 @property(nonatomic) bool fromLocationView;
+@property(nonatomic, strong) NSString * selected_user;
 @end

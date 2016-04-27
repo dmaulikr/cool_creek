@@ -8,8 +8,10 @@
 
 #import <UIKit/UIKit.h>
 #import <CoreLocation/CoreLocation.h>
+#import "AppDelegate.h"
 @interface MainTabNav : UITabBarController<UITabBarControllerDelegate,UITabBarDelegate,CLLocationManagerDelegate>
 
 @property (strong, nonatomic) CLLocationManager *locationManager;
-
+@property (strong,nonatomic )AppDelegate * mainDelegate;
+@property ( nonatomic) bool freshLoad;
 @end

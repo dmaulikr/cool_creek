@@ -8,7 +8,7 @@
 
 #import <UIKit/UIKit.h>
 #import "ProfileTopBarVC.h"
-
+#import <Google/Analytics.h>
 @interface BaseVC : UIViewController<ProfileTopBarVCDelegate>
 
 @property (nonatomic, weak) ProfileTopBarVC* profileTopBar;

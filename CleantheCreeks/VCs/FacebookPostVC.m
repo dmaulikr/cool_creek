@@ -19,7 +19,7 @@
     NSString *user_name = [defaults objectForKey:@"user_name"];
     NSString *user_id = [defaults objectForKey:@"user_id"];
     NSString *userImageURL = [NSString stringWithFormat:@"https://graph.facebook.com/%@/picture", user_id];
-    dispatch_async(dispatch_get_global_queue(0,0), ^{
+    dispatch_async(dispatch_get_main_queue(), ^{
         NSData * data = [[NSData alloc] initWithContentsOfURL: [NSURL URLWithString: userImageURL]];
         if ( data != nil ){
             [self.user_photo setImage:[UIImage imageWithData:data]];
@@ -33,6 +33,14 @@
     
     [_fbImage setImage:img];
     
+}
+
+-(void)viewWillAppear:(BOOL)animated
+{
+    [super viewWillAppear:animated];
+    id<GAITracker> tracker = [[GAI sharedInstance] defaultTracker];
+    [tracker set:kGAIScreenName value:@"Facebook Posting"];
+    [tracker send:[[GAIDictionaryBuilder createScreenView] build]];
 }
 
 - (void)tabBarController:(UITabBarController *)tabBarController
@@ -60,10 +68,10 @@
     
     // get size of the second image
     
-    CGFloat size=MIN(firstWidth, firstHeight);
+    CGFloat size = MIN(firstWidth, firstHeight);
     // build merged size
-    
-    CGSize mergedSize = CGSizeMake((size*2), size+size*2*0.59);
+    float bottomHeight = (CGFloat)(CGImageGetHeight(bottom.CGImage) / (CGFloat)CGImageGetWidth(bottom.CGImage)) * size*2;
+    CGSize mergedSize = CGSizeMake((size*2), size+bottomHeight);
     
     // capture image context ref
     UIGraphicsBeginImageContext(mergedSize);
@@ -73,7 +81,7 @@
     //[second drawInRect:CGRectMake(firstWidth, 0, secondWidth, secondHeight)];
     [second drawInRect:CGRectMake(size-1, 0, size, size)
              blendMode:kCGBlendModeNormal alpha:1.0];
-    [bottom drawInRect:CGRectMake(0, size, size*2, size*0.59*2)];
+    [bottom drawInRect:CGRectMake(0, size, size*2, bottomHeight)];
     
     //Place logo
     UIImage * imgLogo=[UIImage imageNamed:@"SliderLogoSmall"];

@@ -76,18 +76,45 @@
         // Your handler code here
         return nil;
     }];
+    self.notificationCount = 0;
+    // Configure tracker from GoogleService-Info.plist.
+    NSError *configureError;
+    [[GGLContext sharedInstance] configureWithError:&configureError];
+    NSAssert(!configureError, @"Error configuring Google services: %@", configureError);
+    
+    // Optional: configure GAI options.
+    GAI *gai = [GAI sharedInstance];
+    gai.trackUncaughtExceptions = YES;  // report uncaught exceptions
+    gai.logger.logLevel = kGAILogLevelVerbose;  // remove before app release
     
     return YES;
 }
 
-
+- (void)application:(UIApplication *)application didReceiveRemoteNotification:(NSDictionary *)userInfo fetchCompletionHandler:(void (^)(UIBackgroundFetchResult result))handler
+{
+    self.notificationCount++;
+    if ([UIApplication sharedApplication].applicationState == UIApplicationStateInactive) {
+        [[NSNotificationCenter defaultCenter] postNotificationName:@"PushNotification" object:nil];
+    }
+    
+    else if([UIApplication sharedApplication].applicationState==UIApplicationStateActive){
+        [[NSNotificationCenter defaultCenter] postNotificationName:@"PushNotification" object:nil];
+    }
+    
+    //When the app is in the background
+    else {
+        [[NSNotificationCenter defaultCenter] postNotificationName:@"PushNotification" object:nil];
+        
+    }//End background
+    
+}
 - (void)application:(UIApplication *)application didRegisterUserNotificationSettings:(UIUserNotificationSettings *)notificationSettings // NS_AVAILABLE_IOS(8_0);
 {
     [application registerForRemoteNotifications];
 }
 
 - (void)application:(UIApplication*)application didRegisterForRemoteNotificationsWithDeviceToken:(NSData*)deviceToken{
-
+    
     NSString * token = [NSString stringWithFormat:@"%@", deviceToken];
     //Format token as you need:
     token = [token stringByReplacingOccurrencesOfString:@" " withString:@""];
@@ -109,7 +136,7 @@
             [[NSUserDefaults standardUserDefaults] setObject:createEndPointResponse.endpointArn forKey:@"endpointArn"];
             [defaults setObject:createEndPointResponse.endpointArn forKey:@"devicetoken"];
             [defaults synchronize];
-
+            
             [[NSUserDefaults standardUserDefaults] synchronize];
             NSString *user_id = [defaults objectForKey:@"user_id"];
             if(user_id)
@@ -227,11 +254,25 @@
     return NO;
 }
 
++(BOOL) isFollowed:(User*) user
+{
+    NSUserDefaults *defaults = [NSUserDefaults standardUserDefaults];
+    NSString *user_id = [defaults objectForKey:@"user_id"];
+    for(NSDictionary * iterator in user.followings)
+    {
+        NSString * target=[iterator objectForKey:@"id"];
+        if([user_id isEqualToString:target])
+            return YES;
+    }
+    return NO;
+}
+
+
 -(void) send_notification:(User*)user message:(NSString*)message
 {
     
     NSString * device_id = user.device_token;
-
+    
     AWSCognitoCredentialsProvider *credentialsProvider = [[AWSCognitoCredentialsProvider alloc]
                                                           initWithRegionType:AWSRegionAPNortheast1
                                                           identityPoolId:@"ap-northeast-1:709bfbb9-9e4d-4ebc-9e98-253f29e9a4d3"];

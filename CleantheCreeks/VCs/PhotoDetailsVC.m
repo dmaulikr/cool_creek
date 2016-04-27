@@ -15,14 +15,77 @@
 #import "FacebookPostVC.h"
 @implementation PhotoDetailsVC
 
+- (void)registerForKeyboardNotifications
+{
+    
+    [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(keyboardWasShown:) name:UIKeyboardDidShowNotification object:nil];
+    
+    [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(keyboardWillBeHidden:) name:UIKeyboardWillHideNotification object:nil];
+}
+
+// Called when the UIKeyboardDidShowNotification is sent.
+
+- (void)keyboardWasShown:(NSNotification*)aNotification
+
+{
+    NSDictionary* info = [aNotification userInfo];
+    CGSize kbSize = [[info objectForKey:UIKeyboardFrameBeginUserInfoKey] CGRectValue].size;
+    UIEdgeInsets contentInsets = UIEdgeInsetsMake(0.0, 0.0, kbSize.height, 0.0);
+    self.detailTable.contentInset = contentInsets;
+    self.detailTable.scrollIndicatorInsets = contentInsets;
+    
+    // If active text field is hidden by keyboard, scroll it so it's visible
+    
+    // Your app might not need or want this behavior.
+    
+    CGRect aRect = self.view.frame;
+    aRect.size.height -= kbSize.height;
+    if (!CGRectContainsPoint(aRect, self.commentView.frame.origin) ) {
+        
+        [self.detailTable scrollRectToVisible:self.commentView.frame animated:YES];
+        CGRect commentFrame=self.commentView.frame;
+        commentFrame.origin.y-=kbSize.height;
+        [self.commentView setFrame:commentFrame];
+    }
+    NSLog(@"keyboard was shown");
+}
+// Called when the UIKeyboardWillHideNotification is sent
+
+- (void)keyboardWillBeHidden:(NSNotification*)aNotification
+{
+    
+    UIEdgeInsets contentInsets = UIEdgeInsetsZero;
+    self.detailTable.contentInset = contentInsets;
+    self.detailTable.scrollIndicatorInsets = contentInsets;
+    NSLog(@"keyboard hidden");
+}
+
+- (BOOL)textFieldShouldEndEditing:(UITextField *)textField
+
+{
+    [textField resignFirstResponder];
+    return YES;
+}
+
+-(void)dismissKeyboard {
+    [self.txtComment resignFirstResponder];
+    [self.detailTable reloadData];
+    
+}
+
 -(void)viewDidLoad
 {
     [super viewDidLoad];
     [self.delegate cameraRefresh:NO];
+    [self registerForKeyboardNotifications];
     [self.tabBarController.tabBar setHidden:YES];
     _locationManager=[[CLLocationManager alloc] init];
     self.mainDelegate=(AppDelegate*)[[UIApplication sharedApplication]delegate];
+    UITapGestureRecognizer *tap = [[UITapGestureRecognizer alloc]
+                                   initWithTarget:self
+                                   action:@selector(dismissKeyboard)];
     
+    [self.view addGestureRecognizer:tap];
     if(self.location==nil)
     {
         if([CLLocationManager authorizationStatus]==kCLAuthorizationStatusNotDetermined)
@@ -71,11 +134,28 @@
         [self.nextButton setEnabled:YES];
     else
         [self.nextButton setEnabled:NO];
+    self.commentText=@"";
+    self.txtComment.delegate=self;
     [self.detailTable reloadData];
     self.detailTable.estimatedRowHeight = 5.f;
     self.detailTable.rowHeight = UITableViewAutomaticDimension;
 }
 
+- (BOOL)textField:(UITextField *)textField shouldChangeCharactersInRange:(NSRange)range replacementString:(NSString *)string {
+    if ([_txtComment.text length] > 10)
+        return NO;
+    else
+        return YES;
+}
+
+-(void) viewWillAppear:(BOOL)animated
+{
+    [super viewWillAppear:animated];
+    self.commentView.hidden= YES;
+    id<GAITracker> tracker = [[GAI sharedInstance] defaultTracker];
+    [tracker set:kGAIScreenName value:@"Adding new location"];
+    [tracker send:[[GAIDictionaryBuilder createScreenView] build]];
+}
 - (void)locationManager:(CLLocationManager *)manager didUpdateToLocation:(CLLocation *)newLocation fromLocation:(CLLocation *)oldLocation
 {
     self.currentLocation=newLocation;
@@ -166,6 +246,7 @@
     return height;
     
 }
+
 - (NSInteger)tableView:(UITableView *)tableView numberOfRowsInSection:(NSInteger)section
 {
     NSInteger count=0;
@@ -204,7 +285,7 @@
             if(self.secondPhototaken)
                 [((PhotoViewCell*)cell).secondPhoto setImage:[PhotoDetailsVC scaleImage:self.cleanedPhoto toSize:CGSizeMake(320.0,320.0)]];
             else
-                [((PhotoViewCell*)cell).secondPhoto setImage:[UIImage imageNamed:@"EmptyPhoto"]];
+                [((PhotoViewCell*)cell).secondPhoto setImage:[UIImage imageNamed:@"camera"]];
             ((PhotoViewCell*)cell).delegate=self;
         }
     }
@@ -262,14 +343,27 @@
             cell = [tableView dequeueReusableCellWithIdentifier:@"ThirdBar"];
         else
         {
+            cell = (CommentCell*)[tableView dequeueReusableCellWithIdentifier:@"CommentCell"];
             if(self.location!=nil)
             {
-                cell = (CommentCell*)[tableView dequeueReusableCellWithIdentifier:@"CommentCell"];
                 NSMutableDictionary *commentItem=[self.location.comments objectAtIndex:indexPath.row-1];
+                
                 User * commentUser=[self.mainDelegate.userArray objectForKey:[commentItem objectForKey:@"id"]];
                 NSString *commentUserName=commentUser.user_name;
-                NSString *commentText=[commentItem objectForKey:@"text"];
-                [((CommentCell*)cell).commentLabel setAttributedText:[self generateCommentString:commentUserName content:commentText]];
+                self.commentText=[commentItem objectForKey:@"text"];
+                [((CommentCell*)cell).commentLabel setAttributedText:[self generateCommentString:commentUserName content:self.commentText]];
+            }
+            else
+            {
+                if(self.commentText.length>0)
+                    [((CommentCell*)cell).commentLabel setText:self.commentText];
+                else
+                    [((CommentCell*)cell).commentLabel setText:@"Tap to comment"];
+                
+                UITapGestureRecognizer *tapClean=[[UITapGestureRecognizer alloc]initWithTarget:self action:@selector(showComment:)];
+                tapClean.numberOfTapsRequired=1;
+                ((CommentCell*)cell).commentLabel.userInteractionEnabled = YES;
+                [((CommentCell*)cell).commentLabel addGestureRecognizer:tapClean];
             }
         }
         
@@ -279,6 +373,11 @@
         
     }
     return cell;
+}
+
+-(void)showComment:(id)sender
+{
+    self.commentView.hidden=NO;
 }
 
 - (NSMutableAttributedString *)generateCommentString:(NSString*)name content:(NSString*)content
@@ -328,13 +427,13 @@
 {
     self.defaults=[NSUserDefaults standardUserDefaults];
     NSString *user_name = [self.defaults objectForKey:@"user_name"];
-
+    
     AWSDynamoDBObjectMapper *dynamoDBObjectMapper = [AWSDynamoDBObjectMapper defaultDynamoDBObjectMapper];
     NSString * attributedString;
     if(!mode)
     {
         attributedString=[NSString stringWithFormat:@"%@ found a new dirty spot %@", user_name, self.location.location_name];
-       
+        
     }
     else
     {
@@ -355,7 +454,7 @@
                      CLLocation* userLocation=[[CLLocation alloc]initWithLatitude:user.latitude longitude:user.longitude];
                      CLLocationDistance distance=[userLocation distanceFromLocation:self.currentLocation];
                      distance=distance/1000.0;
-                     if(distance<100.0 || [AppDelegate isFollowing:user] || [self.location.found_by isEqualToString:user.user_id])
+                     if(distance<100.0 || [AppDelegate isFollowed:user] || [self.location.found_by isEqualToString:user.user_id])
                          [self.mainDelegate send_notification:user message:attributedString];
                  }
              }
@@ -454,7 +553,19 @@
     NSDateFormatter *dateFormatter=[[NSDateFormatter alloc] init];
     [dateFormatter setDateFormat:@"MMM dd, yyyy"];
     
-    if(self.location==nil)
+    NSMutableArray * commentArray=[[NSMutableArray alloc] init];
+    
+    NSMutableDictionary *commentItem=[[NSMutableDictionary alloc]init];
+    [commentItem setObject:user_id forKey:@"id"];
+    double date =[[NSDate date]timeIntervalSince1970];
+    if(self.commentText.length>0)
+    {
+        NSString *dateString=[NSString stringWithFormat:@"%f",date];
+        [commentItem setObject:dateString forKey:@"time"];
+        [commentItem setObject:self.commentText forKey:@"text"];
+        [commentArray addObject:commentItem];
+    }
+    if(self.location == nil)
     {
         self.location = [Location new];
         NSString *location_id = [NSString stringWithFormat:@"%f,%f",
@@ -462,21 +573,23 @@
         self.location.location_id=location_id;
         self.location.location_name = self.locationName1;
         self.location.locality = self.locationName2;
-        self.location.state=self.stateName;
-        self.location.country=self.countryName;
-        self.location.found_by=user_name;
-        self.location.founder_id=user_id;
+        self.location.state = self.stateName;
+        self.location.country = self.countryName;
+        self.location.found_by = user_name;
+        self.location.founder_id = user_id;
         
-        self.location.found_date=self.foundDate;
-        self.location.latitude=self.currentLocation.coordinate.latitude;
-        self.location.longitude=self.currentLocation.coordinate.longitude;
+        self.location.found_date = self.foundDate;
+        self.location.latitude = self.currentLocation.coordinate.latitude;
+        self.location.longitude = self.currentLocation.coordinate.longitude;
+        if([commentArray count] > 0)
+            self.location.comments = commentArray;
     }
     if(!isDirty)
     {
-        self.location.isDirty=@"false";
-        self.location.cleaner_id=user_id;
-        self.location.cleaner_name=user_name;
-        self.location.cleaned_date=self.cleanedDate;
+        self.location.isDirty = @"false";
+        self.location.cleaner_id = user_id;
+        self.location.cleaner_name = user_name;
+        self.location.cleaned_date = self.cleanedDate;
     }
     else
         self.location.isDirty=@"true";
@@ -492,7 +605,7 @@
              NSLog(@"The request failed. Exception: [%@]", task.exception);
          }
          if (task.result) {
-             
+             NSLog(@"Data updated");
          }
          return nil;
      }];
@@ -667,8 +780,16 @@
     
     UIGraphicsEndImageContext();
     
-    return image;}
+    return image;
+}
 
+- (IBAction)closeComment:(id)sender {
+    self.commentView.hidden=YES;
+}
 
-
+- (IBAction)btnSendComment:(id)sender {
+    self.commentText = self.txtComment.text;
+    self.commentView.hidden=YES;
+    [self dismissKeyboard];
+}
 @end

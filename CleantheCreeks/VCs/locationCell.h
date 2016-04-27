@@ -8,8 +8,8 @@
 
 #import <UIKit/UIKit.h>
 #import "LocationVC.h"
-
-@interface locationCell : UITableViewCell
+#import <SWTableViewCell.h>
+@interface locationCell : SWTableViewCell
 @property (weak, nonatomic) IBOutlet UIImageView *image;
 @property (weak, nonatomic) IBOutlet UILabel *locationName;
 @property (weak, nonatomic) IBOutlet UILabel *distance;

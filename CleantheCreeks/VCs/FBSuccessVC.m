@@ -23,4 +23,12 @@
     NSURL *url = [NSURL URLWithString:fb_base];
     [[UIApplication sharedApplication] openURL:url];
 }
+
+-(void)viewWillAppear:(BOOL)animated
+{
+    [super viewWillAppear:animated];
+    id<GAITracker> tracker = [[GAI sharedInstance] defaultTracker];
+    [tracker set:kGAIScreenName value:@"Facebook Posting Success"];
+    [tracker send:[[GAIDictionaryBuilder createScreenView] build]];
+}
 @end

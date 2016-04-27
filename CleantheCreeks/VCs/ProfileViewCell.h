@@ -9,7 +9,7 @@
 #import <UIKit/UIKit.h>
 #import <AWSCore/AWSCore.h>
 #import <AWSDynamoDB/AWSDynamoDB.h>
-
+#import "ProfileVC.h"
 #import <AWSS3/AWSS3.h>
 @interface ProfileViewCell : UITableViewCell
 @property (weak, nonatomic) IBOutlet UIImageView *beforePhoto;
@@ -31,5 +31,8 @@
 @property (weak, nonatomic) IBOutlet UILabel *followingLabel;
 @property (weak, nonatomic) IBOutlet UILabel *followersLabel;
 @property (weak, nonatomic) IBOutlet UIButton *btnFollow;
+@property (weak, nonatomic) IBOutlet UIButton *btnKudo;
+- (IBAction)kudoClicked:(id)sender;
 
+@property (strong, nonatomic) ProfileVC * parentVC;
 @end

@@ -1,31 +1,55 @@
 #import "CameraVC.h"
 
 @implementation CameraVC
--(id) init
+- (id) init
 {
-    self = [super initWithNibName:nil bundle:nil];
+    self = [super init];
+    if (!self) return nil;
     self.photoTaken=NO;
     return self;
     
 }
+
 - (void)viewDidLoad
 {
     [super viewDidLoad];
     
-	// Do any additional setup after loading the view.
+    // Do any additional setup after loading the view.
 }
 -(void)viewWillAppear:(BOOL)animated
 {
     [super viewWillAppear:animated];
-    NSLog(@"cameraview will appear");
     
+    NSLog(@"cameraview will appear");
+    self.internetReachableFoo = [Reachability reachabilityWithHostname:@"www.google.com"];
     if(!self.photoTaken)
     {
-        [self takePhoto];
-        self.photoTaken=YES;
+        self.internetReachableFoo.reachableBlock = ^(Reachability*reach)
+        {
+            // Update the UI on the main thread
+            dispatch_async(dispatch_get_main_queue(), ^{
+                
+                [self takePhoto];
+                self.photoTaken=YES;
+                
+            });
+        };
     }
     else
         self.photoTaken=NO;
+    // Internet is not reachable
+    self.internetReachableFoo.unreachableBlock = ^(Reachability*reach)
+    {
+        // Update the UI on the main thread
+        dispatch_async(dispatch_get_main_queue(), ^{
+            [self networkError];
+        });
+    };
+    
+    [self.internetReachableFoo startNotifier];
+    id<GAITracker> tracker = [[GAI sharedInstance] defaultTracker];
+    [tracker set:kGAIScreenName value:@"Camera View"];
+    [tracker send:[[GAIDictionaryBuilder createScreenView] build]];
 }
 
 -(void) takePhoto

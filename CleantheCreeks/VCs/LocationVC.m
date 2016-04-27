@@ -18,6 +18,7 @@
 
 #import <FBSDKCoreKit/FBSDKCoreKit.h>
 #import <FBSDKLoginKit/FBSDKLoginKit.h>
+
 @interface LocationVC()
 @property (nonatomic,strong) UIRefreshControl * refreshControl;
 @property (nonatomic,strong) CustomInfiniteIndicator *infiniteIndicator;
@@ -36,7 +37,7 @@
     
     _locationManager.delegate=self;
     _locationManager.desiredAccuracy=kCLLocationAccuracyBest;
-    _locationManager.distanceFilter = 100.f;
+    _locationManager.distanceFilter = 500.f;
     self.locationManager=_locationManager;
     if([CLLocationManager locationServicesEnabled]){
         [self.locationManager startUpdatingLocation];
@@ -52,10 +53,11 @@
     self.mainDelegate=(AppDelegate*)[[UIApplication sharedApplication]delegate];
     self.refreshControl = [[UIRefreshControl alloc]init];
     [self.locationTable addSubview:self.refreshControl];
-    self.displayItemCount=8;
+    self.displayItemCount = 8;
     
     [self.refreshControl beginRefreshing];
     [self updateData];
+    
     
     [self.refreshControl addTarget:self action:@selector(updateData) forControlEvents:UIControlEventValueChanged];
     self.locationTable.infiniteScrollIndicatorStyle = UIActivityIndicatorViewStyleGray;
@@ -80,6 +82,9 @@
 -(void) viewWillAppear:(BOOL)animated
 {
     [super viewWillAppear:animated];
+    id<GAITracker> tracker = [[GAI sharedInstance] defaultTracker];
+    [tracker set:kGAIScreenName value:@"LocationVC"];
+    [tracker send:[[GAIDictionaryBuilder createScreenView] build]];
     self.backBtn.hidden = YES;
     self.mainDelegate=(AppDelegate*)[[UIApplication sharedApplication]delegate];
     
@@ -105,60 +110,115 @@
 #pragma TableViewDelegate Implementation
 
 - (NSInteger)tableView:(UITableView *)tableView numberOfRowsInSection:(NSInteger)section{
-    if([self.locationArray count]>0)
-        return self.displayItemCount;
-    return 0;
+    int count = 0;
+    if(section==0)
+        count = 1;
+    else if(section==1)
+    {
+        count=0;
+        if([self.locationArray count]>0)
+            count= self.displayItemCount;
+        
+    }
+    return count;
+}
+
+- (NSInteger)numberOfSectionsInTableView:(UITableView *)tableView
+{
+    return 2;
 }
 
 - (UITableViewCell *)tableView:(UITableView *)tableView cellForRowAtIndexPath:(NSIndexPath *)indexPath{
     
-    locationCell * cell = nil;
-    cell = (locationCell*)[tableView dequeueReusableCellWithIdentifier:@"locationCell" forIndexPath:indexPath];
-    if([self.locationArray count]>0 && indexPath.row <= [self.locationArray count]-1)
+    UITableViewCell * cell = nil;
+    if(indexPath.section==0)
     {
-        Location * location=[self.locationArray objectAtIndex:indexPath.row];
-        [cell.locationName setText:location.location_name];
-        CLLocation*exitingLocation=[[CLLocation alloc]initWithLatitude:location.latitude longitude:location.longitude];
-        CLLocationDistance distance=[exitingLocation distanceFromLocation:self.currentLocation];
-        NSString * unit=@"KM";
- 
-        if([self.defaults objectForKey:@"measurement"])
+        if(indexPath.row==0)
         {
-            if([[self.defaults objectForKey:@"measurement"] isEqualToString:@"miles"])
-                distance = distance/1609.344;
+            cell = [tableView dequeueReusableCellWithIdentifier:@"separator" forIndexPath:indexPath];
+        }
+    }
+    else if(indexPath.section==1)
+    {
+        cell = (locationCell*)[tableView dequeueReusableCellWithIdentifier:@"locationCell" forIndexPath:indexPath];
+        if([self.locationArray count]>0 && indexPath.row <= [self.locationArray count]-1)
+        {
+            Location * location=[self.locationArray objectAtIndex:indexPath.row];
+            [((locationCell*)cell).locationName setText:location.location_name];
+            CLLocation*exitingLocation=[[CLLocation alloc]initWithLatitude:location.latitude longitude:location.longitude];
+            CLLocationDistance distance=[exitingLocation distanceFromLocation:self.currentLocation];
+            NSString * unit=@"KM";
+            
+            if([self.defaults objectForKey:@"measurement"])
+            {
+                if([[self.defaults objectForKey:@"measurement"] isEqualToString:@"miles"])
+                    distance = distance/1609.344;
+                else
+                    distance = distance/1000.0;
+                unit=[self.defaults objectForKey:@"measurement"];
+            }
             else
                 distance = distance/1000.0;
-            unit=[self.defaults objectForKey:@"measurement"];
+            NSString*distanceText=[[NSString alloc]initWithFormat:@"%.02f %@",distance,unit];
+            [((locationCell*)cell).distance setText:distanceText];
+            if(self.mainDelegate.locationData[location.location_id]!=nil)
+            {
+                ((locationCell*)cell).image.image=(UIImage*)(self.mainDelegate.locationData[location.location_id]);
+            }
+            UITapGestureRecognizer *viewTap=[[UITapGestureRecognizer alloc]initWithTarget:self action:@selector(imageClicked:)];
+            viewTap.numberOfTapsRequired=1;
+            UITapGestureRecognizer *viewTap2=[[UITapGestureRecognizer alloc]initWithTarget:self action:@selector(imageClicked:)];
+            viewTap.numberOfTapsRequired=1;
+            UITapGestureRecognizer *viewTap3=[[UITapGestureRecognizer alloc]initWithTarget:self action:@selector(imageClicked:)];
+            viewTap.numberOfTapsRequired=1;
+            
+            ((locationCell*)cell).image.tag = indexPath.row;
+            ((locationCell*)cell).distance.tag = indexPath.row;
+            ((locationCell*)cell).locationName.tag = indexPath.row;
+            [((locationCell*)cell).image addGestureRecognizer:viewTap];
+            [((locationCell*)cell).distance addGestureRecognizer:viewTap2];
+            [((locationCell*)cell).locationName addGestureRecognizer:viewTap3];
+            ((locationCell*)cell).image.userInteractionEnabled = YES;
+            ((locationCell*)cell).distance.userInteractionEnabled = YES;
+            ((locationCell*)cell).locationName.userInteractionEnabled = YES;
+            
+            ((locationCell*)cell).rightUtilityButtons = [self rightButtons];
         }
-        else
-            distance =distance/1000.0;
-        NSString*distanceText=[[NSString alloc]initWithFormat:@"%.02f %@",distance,unit];
-        [cell.distance setText:distanceText];
-        if(self.mainDelegate.locationData[location.location_id]!=nil)
-        {
-            cell.image.image=(UIImage*)(self.mainDelegate.locationData[location.location_id]);
-        }
-        UITapGestureRecognizer *viewTap=[[UITapGestureRecognizer alloc]initWithTarget:self action:@selector(imageClicked:)];
-        viewTap.numberOfTapsRequired=1;
-        cell.image.tag = indexPath.row;
-        [cell.image addGestureRecognizer:viewTap];
-        
-        cell.image.userInteractionEnabled = YES;
-        cell.viewBtn.tag = indexPath.row;
-        cell.cleanBtn.tag = indexPath.row;
-        
-        [cell.viewBtn addTarget:self action:@selector(viewBtnClicked:) forControlEvents:UIControlEventTouchUpInside];
-        [cell.cleanBtn addTarget:self action:@selector(cleanBtnClicked:) forControlEvents:UIControlEventTouchUpInside];
+        ((locationCell*)cell).delegate = self;
     }
-    
     if(!cell){
         cell=(locationCell*)[[UITableViewCell alloc]init];
     }
     
-    cell.delegate = self;
+    
     return cell;
 }
 
+- (NSArray *)rightButtons
+{
+    NSMutableArray *rightUtilityButtons = [NSMutableArray new];
+    
+    [rightUtilityButtons sw_addUtilityButtonWithColor:
+     [UIColor colorWithRed:0.9375 green:0.9375f blue:0.9375f alpha:1.0]
+                                                 icon:[UIImage imageNamed:@"IconListClean"]];
+    return rightUtilityButtons;
+}
+
+- (CGFloat)tableView:(UITableView *)tableView heightForRowAtIndexPath:(NSIndexPath *)indexPath
+{
+    float height=0;
+    if(indexPath.section==0)
+    {
+        if(indexPath.row==0)
+            height = 5;
+        
+    }
+    else if(indexPath.section>0)
+    {
+        height = 81;
+    }
+    return height;
+}
 
 -(void)imageClicked:(id)sender
 {
@@ -168,27 +228,12 @@
     
 }
 
--(void)viewBtnClicked:(UIButton*)sender
+- (void)tableView:(UITableView *)tableView didSelectRowAtIndexPath:(NSIndexPath *)indexPath
 {
-    self.selectedIndex=sender.tag;
+    self.selectedIndex=indexPath.row;
     [self performSegueWithIdentifier:@"showLocationDetails" sender:self];
-    
 }
 
--(void)cleanBtnClicked:(UIButton*)sender
-{
-    NSUserDefaults *loginInfo = [NSUserDefaults standardUserDefaults];
-    if(![loginInfo objectForKey:@"user_id"])
-    {
-        [self fbLogin];
-    }
-    else
-    {
-        self.selectedIndex = sender.tag;
-        [self performSegueWithIdentifier:@"cleanLocation" sender:self];
-    }
-    
-}
 
 -(void) fbLogin
 {
@@ -279,7 +324,7 @@
             vc.location = location;
             vc.beforePhoto = (UIImage*)(self.mainDelegate.locationData[location.location_id]);
             vc.cleaned = NO;
-            vc.fromLocationView = YES;
+            vc.fromLocationView = NO;
         }
         else if([segue.identifier isEqualToString:@"showMapDetails"])
         {
@@ -287,12 +332,12 @@
             vc.location = self.annotationLocation;
             vc.beforePhoto = (UIImage*)(self.mainDelegate.locationData[self.annotationLocation.location_id]);
             vc.cleaned = NO;
-            vc.fromLocationView = YES;
+            vc.fromLocationView = NO;
         }
         
         else if([segue.identifier isEqualToString:@"cleanLocation"])
         {
-            CameraVC* vc = (CameraVC*)segue.destinationViewController;
+            CameraVC * vc = (CameraVC*)segue.destinationViewController;
             vc.photoTaken = NO;
             vc.dirtyPhoto=(UIImage*)(self.mainDelegate.locationData[location.location_id]);
             vc.location = [[Location alloc]init];
@@ -305,6 +350,7 @@
 #pragma CLLocationDelegate
 - (void) updateData
 {
+    
     self.locationArray=[[NSMutableArray alloc]init];
     self.mainDelegate.locationData=[[NSMutableDictionary alloc] init];
     AWSDynamoDBObjectMapper *dynamoDBObjectMapper = [AWSDynamoDBObjectMapper defaultDynamoDBObjectMapper];
@@ -344,26 +390,27 @@
                 annotation.subtitle = location.location_id;
                 
                 //Downloading files
-                AWSS3TransferManagerDownloadRequest *downloadRequest = [AWSS3TransferManagerDownloadRequest new];
-                downloadRequest.bucket = @"cleanthecreeks";
-                NSString * key=[location.location_id stringByAppendingString:@"a"];
-                downloadRequest.key = key;
-                downloadRequest.downloadingFileURL = downloadingFileURL;
-                
-                self.mainDelegate.locationData[location.location_id]=[UIImage imageNamed:@"EmptyPhoto"];
-                [[transferManager download:downloadRequest] continueWithExecutor:[AWSExecutor mainThreadExecutor] withBlock:^id(AWSTask *task2) {
+                if([self.mainDelegate.locationData objectForKey:location.location_id]==nil)
+                {
+                    AWSS3TransferManagerDownloadRequest *downloadRequest = [AWSS3TransferManagerDownloadRequest new];
+                    downloadRequest.bucket = @"cleanthecreeks";
+                    NSString * key=[location.location_id stringByAppendingString:@"a"];
+                    downloadRequest.key = key;
+                    downloadRequest.downloadingFileURL = downloadingFileURL;
                     
-                    
-                    if (task2.result) {
-                        
-                        self.mainDelegate.locationData[location.location_id]=[UIImage imageWithContentsOfFile:downloadingFilePath];
-                        [self.locationTable reloadData];
-                        
-                        [self.mapView addAnnotation:annotation];
-                        
-                    }
-                    return nil;
-                }];
+                    //self.mainDelegate.locationData[location.location_id]=[UIImage imageNamed:@"EmptyPhoto"];
+                    [[transferManager download:downloadRequest] continueWithExecutor:[AWSExecutor mainThreadExecutor] withBlock:^id(AWSTask *task2) {
+                        if (task2.result) {
+                            
+                            self.mainDelegate.locationData[location.location_id]=[UIImage imageWithContentsOfFile:downloadingFilePath];
+                            [self.locationTable reloadData];
+                            
+                            [self.mapView addAnnotation:annotation];
+                            
+                        }
+                        return nil;
+                    }];
+                }
                 
             }
             dispatch_async(dispatch_get_main_queue(), ^{
@@ -390,6 +437,13 @@
     }];
     
 }
+
+- (BOOL)swipeableTableViewCellShouldHideUtilityButtonsOnSwipe:(SWTableViewCell *)cell
+{
+    return YES;
+}
+
+
 - (void)locationManager:(CLLocationManager *)manager
     didUpdateToLocation:(CLLocation *)newLocation
            fromLocation:(CLLocation *)oldLocation
@@ -409,6 +463,7 @@
     [self.mapView setShowsUserLocation:YES];
     self.currentLocation=newLocation;
     self.mainDelegate.currentLocation=newLocation;
+    [self updateData];
     CLGeocoder *ceo = [[CLGeocoder alloc]init];
     [ceo reverseGeocodeLocation:self.currentLocation
               completionHandler:^(NSArray *placemarks, NSError *error) {
@@ -446,6 +501,31 @@
      ];
 }
 
+- (void)swipeableTableViewCell:(SWTableViewCell *)cell didTriggerRightUtilityButtonWithIndex:(NSInteger)index {
+    switch (index) {
+            
+        case 0:
+        {
+            // Delete button was pressed
+            
+            NSUserDefaults *loginInfo = [NSUserDefaults standardUserDefaults];
+            if(![loginInfo objectForKey:@"user_id"])
+            {
+                [self fbLogin];
+            }
+            else
+            {
+                NSIndexPath *cellIndexPath = [self.locationTable indexPathForCell:cell];
+                self.selectedIndex = cellIndexPath.row;
+                [self performSegueWithIdentifier:@"cleanLocation" sender:self];
+            }
+            
+            break;
+        }
+        default:
+            break;
+    }
+}
 - (MKAnnotationView *)mapView:(MKMapView *)mapView viewForAnnotation:(id<MKAnnotation>)annotation{
     if(annotation == mapView.userLocation)
     {

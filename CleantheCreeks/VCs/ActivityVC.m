@@ -16,6 +16,8 @@
 
 @implementation ActivityVC
 
+
+
 -(void) viewDidLoad
 {
     [super viewDidLoad];
@@ -45,7 +47,19 @@
         [tableView reloadData];
         [tableView finishInfiniteScroll];
     }];
+        
     
+}
+
+-(void) viewWillAppear:(BOOL)animated
+{
+    [super viewWillAppear:animated];
+    id<GAITracker> tracker = [[GAI sharedInstance] defaultTracker];
+    [tracker set:kGAIScreenName value:@"ActivityVC"];
+    [tracker send:[[GAIDictionaryBuilder createScreenView] build]];
+    self.appDelegate.notificationCount=0;
+    [[[[[self tabBarController] tabBar] items]
+      objectAtIndex:2] setBadgeValue:nil];
 }
 
 - (void)didReceiveMemoryWarning
@@ -130,18 +144,6 @@
                         {
                             NSString * person_id=[iterator objectForKey:@"id"];
                             
-                            // Adding finders to the activity array
-                            if([location.founder_id isEqualToString:person_id] && ![location.founder_id isEqualToString:self.current_user_id] )
-                            {
-                                Activity *activity=[[Activity alloc]init];
-                                activity.activity_id = location.founder_id;
-                                activity.activity_time=location.found_date;
-                                activity.activity_type = @"find";
-                                activity.activity_location = location;
-                                
-                                [self.activityArray addObject:activity];
-                            }
-                            
                             //Adding following cleaners to the activity array
                             if([location.cleaner_id isEqualToString:person_id] && ![location.founder_id isEqualToString:self.current_user_id]&&[location.isDirty isEqualToString:@"false"])
                             {
@@ -150,7 +152,7 @@
                                 activity.activity_time=location.cleaned_date;
                                 activity.activity_type = @"clean";
                                 activity.activity_location = location;
-                                activity.kudo_count=[location.kudos count];
+                                activity.kudo_count = [location.kudos count];
                                 if(location.kudos!=nil)
                                 {
                                     for(NSDictionary *kudo_gaver in location.kudos)
@@ -164,18 +166,19 @@
                                 }
                                 [self.activityArray addObject:activity];
                             }
+                            // Adding finders to the activity array
+                            else if([location.founder_id isEqualToString:person_id] && ![location.founder_id isEqualToString:self.current_user_id] )
+                            {
+                                Activity *activity=[[Activity alloc]init];
+                                activity.activity_id = location.founder_id;
+                                activity.activity_time=location.found_date;
+                                activity.activity_type = @"find";
+                                activity.activity_location = location;
+                                
+                                [self.activityArray addObject:activity];
+                            }
                         }
-                        //Showing my found activities
-                        if([location.founder_id isEqualToString:self.current_user_id])
-                        {
-                            Activity *activity=[[Activity alloc]init];
-                            activity.activity_id = location.founder_id;
-                            activity.activity_time=location.found_date;
-                            activity.activity_type = @"find";
-                            activity.activity_location = location;
-                            
-                            [self.activityArray addObject:activity];
-                        }
+                        
                         // Showing cleaned activities on my found areas
                         if([location.founder_id isEqualToString:self.current_user_id] && [location.isDirty isEqualToString:@"false"])
                         {
@@ -198,18 +201,21 @@
                             }
                             [self.activityArray addObject:activity];
                         }
+                        else if([location.founder_id isEqualToString:self.current_user_id])
+                            {
+                                Activity *activity=[[Activity alloc]init];
+                                activity.activity_id = location.founder_id;
+                                activity.activity_time=location.found_date;
+                                activity.activity_type = @"find";
+                                activity.activity_location = location;
+                                
+                                [self.activityArray addObject:activity];
+                            }
                     }
                     
                     else //within 100kms
                     {
-                        //Showing all found activities
-                        Activity *activity=[[Activity alloc]init];
-                        activity.activity_id = location.founder_id;
-                        activity.activity_time=location.found_date;
-                        activity.activity_type = @"find";
-                        activity.activity_location = location;
-                        
-                        [self.activityArray addObject:activity];
+                       
                         // Showing cleaned activities witin 100kms
                         if([location.isDirty isEqualToString:@"false"])
                         {
@@ -230,6 +236,16 @@
                                     }
                                 }
                             }
+                            [self.activityArray addObject:activity];
+                        }
+                        else  //Showing all found activities
+                        {
+                            Activity *activity=[[Activity alloc]init];
+                            activity.activity_id = location.founder_id;
+                            activity.activity_time=location.found_date;
+                            activity.activity_type = @"find";
+                            activity.activity_location = location;
+                            
                             [self.activityArray addObject:activity];
                         }
                     }
@@ -270,7 +286,6 @@
                         }
                     }
                     
-                    
                 }
                 dispatch_async(dispatch_get_main_queue(), ^{
                     self.activityArray = (NSMutableArray*)[self.activityArray sortedArrayUsingComparator:^NSComparisonResult(id a, id b) {
@@ -291,9 +306,35 @@
     
 }
 
+- (CGFloat)tableView:(UITableView *)tableView heightForRowAtIndexPath:(NSIndexPath *)indexPath
+{
+    float height=0;
+    if(indexPath.section==0)
+    {
+        if(indexPath.row==0)
+            height=5;
+            
+    }
+    else if(indexPath.section>0)
+    {
+        height=tableView.rowHeight;
+    }
+    return height;
+}
+
+- (NSInteger)numberOfSectionsInTableView:(UITableView *)tableView
+{
+    return 2;
+}
+
 - (NSInteger)tableView:(UITableView *)tableView numberOfRowsInSection:(NSInteger)section{
-    if([self.activityArray count]>0)
-        return self.displayItemCount;
+    if(section==0)
+        return 1;
+    else if(section==1)
+    {
+        if([self.activityArray count]>0)
+            return self.displayItemCount;
+    }
     return 0;
 }
 
@@ -301,111 +342,116 @@
     
     NSInteger row = indexPath.row;
     UITableViewCell *cell;
-    
-    if([self.activityArray count]>0)
+    if(indexPath.section == 0)
+        cell=[tableView dequeueReusableCellWithIdentifier:@"Separator" forIndexPath:indexPath];
+    else if(indexPath.section == 1)
     {
-        Activity * activity = [self.activityArray objectAtIndex:row];
-        User * user=[self.appDelegate.userArray objectForKey:activity.activity_id];
-        UITapGestureRecognizer *followTap=[[UITapGestureRecognizer alloc]initWithTarget:self action:@selector(showProfile:)];
-        followTap.numberOfTapsRequired=1;
-        if([activity.activity_type isEqualToString: @"clean"])
+        if([self.activityArray count]>0)
         {
-            cell = (CleaningDoneCell*)[tableView dequeueReusableCellWithIdentifier:@"CleaningDoneCell" forIndexPath:indexPath];
-            
-            [((CleaningDoneCell*)cell).lblContent setAttributedText:[self generateString:user.user_name content:@" has finished cleaning " location:activity.activity_location.location_name]];
-            [((CleaningDoneCell*)cell).activityHours setText:[self timeDifference:activity.activity_time]];
-            [((CleaningDoneCell*)cell).kudoCounter setTitle:[[NSString alloc] initWithFormat:@"%d Kudos",activity.kudo_count] forState:UIControlStateNormal];
-            if([self.imageArray objectForKey:activity.activity_id]!=nil)
+            Activity * activity = [self.activityArray objectAtIndex:row];
+            User * user=[self.appDelegate.userArray objectForKey:activity.activity_id];
+            UITapGestureRecognizer *followTap=[[UITapGestureRecognizer alloc]initWithTarget:self action:@selector(showProfile:)];
+            followTap.numberOfTapsRequired=1;
+            if([activity.activity_type isEqualToString: @"clean"])
             {
-                [((CleaningDoneCell*)cell).profileAvatar setImage: [self.imageArray objectForKey:user.user_id]];
+                cell = (CleaningDoneCell*)[tableView dequeueReusableCellWithIdentifier:@"CleaningDoneCell" forIndexPath:indexPath];
+                
+                [((CleaningDoneCell*)cell).lblContent setAttributedText:[self generateString:user.user_name content:@" has finished cleaning " location:activity.activity_location.location_name]];
+                [((CleaningDoneCell*)cell).activityHours setText:[self timeDifference:activity.activity_time]];
+                [((CleaningDoneCell*)cell).kudoCounter setTitle:[[NSString alloc] initWithFormat:@"%d Kudos",activity.kudo_count] forState:UIControlStateNormal];
+                if([self.imageArray objectForKey:activity.activity_id]!=nil)
+                {
+                    [((CleaningDoneCell*)cell).profileAvatar setImage: [self.imageArray objectForKey:user.user_id]];
+                }
+                else
+                {
+                    NSString *userImageURL = [NSString stringWithFormat:@"https://graph.facebook.com/%@/picture", activity.activity_id];
+                    NSURL *url = [NSURL URLWithString:userImageURL];
+                    
+                    NSURLSessionTask *task = [[NSURLSession sharedSession] dataTaskWithURL:url completionHandler:^(NSData * _Nullable data, NSURLResponse * _Nullable response, NSError * _Nullable error) {
+                        if (data) {
+                            UIImage *image = [UIImage imageWithData:data];
+                            if (image) {
+                                dispatch_async(dispatch_get_main_queue(), ^{
+                                    {
+                                        if(image)
+                                            [self.imageArray setObject:image forKey:user.user_id];
+                                    }
+                                    if(cell)
+                                        [((CleaningDoneCell*)cell).profileAvatar setImage: image];
+                                });
+                            }
+                        }
+                    }];
+                    [task resume];
+                }
+                
+                [((CleaningDoneCell*)cell).btnKudos setTitle:@"You Gave Kudos" forState:UIControlStateSelected];
+                [((CleaningDoneCell*)cell).btnKudos setImage:[UIImage imageNamed:@"IconKudos3"] forState:UIControlStateSelected];
+                [((CleaningDoneCell*)cell).btnKudos setTitle:@"Give Kudos" forState:UIControlStateNormal];
+                [((CleaningDoneCell*)cell).btnKudos setImage:[UIImage imageNamed:@"IconKudos2"] forState:UIControlStateNormal];
+                
+                ((CleaningDoneCell*)cell).btnKudos.selected=activity.kudo_assigned;
+                
+                ((CleaningDoneCell*)cell).btnKudos.tag = indexPath.row;
+                ((CleaningDoneCell*)cell).btnKudoCount.tag = indexPath.row;
+                [((CleaningDoneCell*)cell).btnKudoCount addTarget:self action:@selector(kudoCountClicked:) forControlEvents:UIControlEventTouchUpInside];
+                ((CleaningDoneCell*)cell).parentVC = self;
+                [((CleaningDoneCell*)cell).profileAvatar addGestureRecognizer:followTap];
+                ((CleaningDoneCell*)cell).profileAvatar.userInteractionEnabled=YES;
+                ((CleaningDoneCell*)cell).profileAvatar.tag = indexPath.row;
+                [((CleaningDoneCell*)cell).activityHours setText:[self timeDifference:activity.activity_time]];
+                
             }
             else
             {
-                NSString *userImageURL = [NSString stringWithFormat:@"https://graph.facebook.com/%@/picture", activity.activity_id];
-                NSURL *url = [NSURL URLWithString:userImageURL];
+                cell = (CleaningCommentCell*)[tableView dequeueReusableCellWithIdentifier:@"CleaningCommentCell" forIndexPath:indexPath];
+                if([activity.activity_type isEqualToString: @"find"])
+                {
+                    [((CleaningCommentCell*)cell).lblContent setAttributedText:[self generateString:user.user_name content:@" found a new dirty spot " location:activity.activity_location.location_name]];
+                }
+                else if([activity.activity_type isEqualToString: @"comment"])
+                {
+                    [((CleaningCommentCell*)cell).lblContent setAttributedText:[self generateString:user.user_name content:@" commented on your clean up location " location:@""]];
+                }
+                else if([activity.activity_type isEqualToString: @"kudo"])
+                {
+                    [((CleaningCommentCell*)cell).lblContent setAttributedText:[self generateString:user.user_name content:@" gave you Kudos \n" location:@""]];
+                }
+                else if([activity.activity_type isEqualToString: @"follow"])
+                {
+                    [((CleaningCommentCell*)cell).lblContent setAttributedText:[self generateString:user.user_name content:@" started follwing you\n" location:@""]];
+                }
                 
-                NSURLSessionTask *task = [[NSURLSession sharedSession] dataTaskWithURL:url completionHandler:^(NSData * _Nullable data, NSURLResponse * _Nullable response, NSError * _Nullable error) {
-                    if (data) {
-                        UIImage *image = [UIImage imageWithData:data];
-                        if (image) {
-                            dispatch_async(dispatch_get_main_queue(), ^{
-                                {
-                                    [self.imageArray setObject:image forKey:user.user_id];
-                                }
-                                if(cell)
-                                    [((CleaningDoneCell*)cell).profileAvatar setImage: image];
-                            });
+                [((CleaningCommentCell*)cell).profileAvatar addGestureRecognizer:followTap];
+                ((CleaningCommentCell*)cell).profileAvatar.userInteractionEnabled=YES;
+                ((CleaningCommentCell*)cell).profileAvatar.tag = indexPath.row;
+                [((CleaningCommentCell*)cell).activityHours setText:[self timeDifference:activity.activity_time]];
+                if([self.imageArray objectForKey:activity.activity_id]!=nil)
+                {
+                    [((CleaningCommentCell*)cell).profileAvatar setImage: [self.imageArray objectForKey:user.user_id]];
+                }
+                else
+                {
+                    NSString *userImageURL = [NSString stringWithFormat:@"https://graph.facebook.com/%@/picture", activity.activity_id];
+                    NSURL *url = [NSURL URLWithString:userImageURL];
+                    
+                    NSURLSessionTask *task = [[NSURLSession sharedSession] dataTaskWithURL:url completionHandler:^(NSData * _Nullable data, NSURLResponse * _Nullable response, NSError * _Nullable error) {
+                        if (data) {
+                            UIImage *image = [UIImage imageWithData:data];
+                            if (image) {
+                                dispatch_async(dispatch_get_main_queue(), ^{
+                                    {
+                                        [self.imageArray setObject:image forKey:user.user_id];
+                                    }
+                                    if(cell)
+                                        [((CleaningCommentCell*)cell).profileAvatar setImage: image];
+                                });
+                            }
                         }
-                    }
-                }];
-                [task resume];
-            }
-
-            [((CleaningDoneCell*)cell).btnKudos setTitle:@"You Gave Kudos" forState:UIControlStateSelected];
-            [((CleaningDoneCell*)cell).btnKudos setImage:[UIImage imageNamed:@"IconKudos3"] forState:UIControlStateSelected];
-            [((CleaningDoneCell*)cell).btnKudos setTitle:@"Give Kudos" forState:UIControlStateNormal];
-            [((CleaningDoneCell*)cell).btnKudos setImage:[UIImage imageNamed:@"IconKudos2"] forState:UIControlStateNormal];
-            
-            ((CleaningDoneCell*)cell).btnKudos.selected=activity.kudo_assigned;
-            
-            ((CleaningDoneCell*)cell).btnKudos.tag = indexPath.row;
-            ((CleaningDoneCell*)cell).btnKudoCount.tag = indexPath.row;
-            [((CleaningDoneCell*)cell).btnKudoCount addTarget:self action:@selector(kudoCountClicked:) forControlEvents:UIControlEventTouchUpInside];
-            ((CleaningDoneCell*)cell).parentVC=self;
-            [((CleaningDoneCell*)cell).profileAvatar addGestureRecognizer:followTap];
-            ((CleaningDoneCell*)cell).profileAvatar.userInteractionEnabled=YES;
-            ((CleaningDoneCell*)cell).profileAvatar.tag = indexPath.row;
-            [((CleaningDoneCell*)cell).activityHours setText:[self timeDifference:activity.activity_time]];
-            
-        }
-        else
-        {
-            cell = (CleaningCommentCell*)[tableView dequeueReusableCellWithIdentifier:@"CleaningCommentCell" forIndexPath:indexPath];
-            if([activity.activity_type isEqualToString: @"find"])
-            {
-                [((CleaningCommentCell*)cell).lblContent setAttributedText:[self generateString:user.user_name content:@" found a new dirty spot " location:activity.activity_location.location_name]];
-            }
-            else if([activity.activity_type isEqualToString: @"comment"])
-            {
-                [((CleaningCommentCell*)cell).lblContent setAttributedText:[self generateString:user.user_name content:@" commented on your clean up location " location:@""]];
-            }
-            else if([activity.activity_type isEqualToString: @"kudo"])
-            {
-                [((CleaningCommentCell*)cell).lblContent setAttributedText:[self generateString:user.user_name content:@" gave you Kudos \n" location:@""]];
-            }
-            else if([activity.activity_type isEqualToString: @"follow"])
-            {
-                [((CleaningCommentCell*)cell).lblContent setAttributedText:[self generateString:user.user_name content:@" started follwing you\n" location:@""]];
-            }
-            
-            [((CleaningCommentCell*)cell).profileAvatar addGestureRecognizer:followTap];
-            ((CleaningCommentCell*)cell).profileAvatar.userInteractionEnabled=YES;
-            ((CleaningCommentCell*)cell).profileAvatar.tag = indexPath.row;
-            [((CleaningCommentCell*)cell).activityHours setText:[self timeDifference:activity.activity_time]];
-            if([self.imageArray objectForKey:activity.activity_id]!=nil)
-            {
-                [((CleaningCommentCell*)cell).profileAvatar setImage: [self.imageArray objectForKey:user.user_id]];
-            }
-            else
-            {
-                NSString *userImageURL = [NSString stringWithFormat:@"https://graph.facebook.com/%@/picture", activity.activity_id];
-                NSURL *url = [NSURL URLWithString:userImageURL];
-                
-                NSURLSessionTask *task = [[NSURLSession sharedSession] dataTaskWithURL:url completionHandler:^(NSData * _Nullable data, NSURLResponse * _Nullable response, NSError * _Nullable error) {
-                    if (data) {
-                        UIImage *image = [UIImage imageWithData:data];
-                        if (image) {
-                            dispatch_async(dispatch_get_main_queue(), ^{
-                                {
-                                    [self.imageArray setObject:image forKey:user.user_id];
-                                }
-                                if(cell)
-                                    [((CleaningCommentCell*)cell).profileAvatar setImage: image];
-                            });
-                        }
-                    }
-                }];
-                [task resume];
+                    }];
+                    [task resume];
+                }
             }
         }
     }
@@ -561,7 +607,6 @@
 }
 
 #pragma ProfileTopBarVCDelegate Implementation
-
 
 - (NSMutableAttributedString *)generateString:(NSString*)name content:(NSString*)content location:(NSString*) location
 {

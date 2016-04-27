@@ -9,10 +9,13 @@
 #import "LocationNav.h"
 
 @implementation LocationNav
+
+
 -(void) viewDidLoad
 {
     _locationManager=[[CLLocationManager alloc] init];
     
 }
+
 
 @end

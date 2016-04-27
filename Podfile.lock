@@ -8,6 +8,23 @@ PODS:
     - AWSCore (= 2.3.5)
   - AWSSNS (2.3.5):
     - AWSCore (= 2.3.5)
+  - Google/Analytics (2.0.4):
+    - Google/Core
+    - GoogleAnalytics (~> 3.12)
+  - Google/Core (2.0.4):
+    - GoogleInterchangeUtilities (~> 1.0)
+    - GoogleNetworkingUtilities (~> 1.0)
+    - GoogleSymbolUtilities (~> 1.0)
+    - GoogleUtilities (~> 1.1)
+  - GoogleAnalytics (3.14.0)
+  - GoogleInterchangeUtilities (1.2.0):
+    - GoogleSymbolUtilities (~> 1.0)
+  - GoogleNetworkingUtilities (1.2.0):
+    - GoogleSymbolUtilities (~> 1.0)
+  - GoogleSymbolUtilities (1.1.0)
+  - GoogleUtilities (1.3.0):
+    - GoogleSymbolUtilities (~> 1.0)
+  - SWTableViewCell (0.3.7)
   - UIScrollView-InfiniteScroll (0.7.3)
 
 DEPENDENCIES:
@@ -16,6 +33,8 @@ DEPENDENCIES:
   - AWSDynamoDB
   - AWSS3
   - AWSSNS
+  - Google/Analytics
+  - SWTableViewCell (~> 0.3.7)
   - UIScrollView-InfiniteScroll
 
 SPEC CHECKSUMS:
@@ -24,6 +43,13 @@ SPEC CHECKSUMS:
   AWSDynamoDB: 00123cb4cc540768dc4aef89f41b36a474de9363
   AWSS3: 967f4ad3c91f1ed2c9dca09a9dcf905111232a87
   AWSSNS: d95b17f039776ec0dd9cd9237313779d174b0215
+  Google: d0932824c5b97c96be489aa6f4e8cd6c294d637d
+  GoogleAnalytics: 9be1afdb8deeac4bb5f13ca7f7d3b9db2a1f43dc
+  GoogleInterchangeUtilities: 427382e42d8a340038bec37c6fdfd316e14b5fa2
+  GoogleNetworkingUtilities: ec1e9911aca811eb18b7144394fee6168b607785
+  GoogleSymbolUtilities: eb3965ea12710569c7b80db198a39e39b18613f7
+  GoogleUtilities: 5c653f7df2eedf0ce0efdfe5afe4f831f375fd7a
+  SWTableViewCell: 2a94aadc9d47b2b611fa064566bf57948b95b579
   UIScrollView-InfiniteScroll: b6c7d6d155dca7f9c5dd43813ecffeb301b3d50c
 
 COCOAPODS: 0.39.0

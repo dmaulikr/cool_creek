@@ -8,6 +8,7 @@
 
 #import <UIKit/UIKit.h>
 #import <CoreLocation/CoreLocation.h>
+#import <Google/Analytics.h>
 #import "User.h"
 @interface AppDelegate : UIResponder <UIApplicationDelegate>
 
@@ -23,7 +24,11 @@
 @property(nonatomic) bool shouldRefreshLocation;
 @property(nonatomic) bool shouldRefreshActivity;
 @property(nonatomic) bool shouldRefreshProfile;
+@property(nonatomic) NSInteger notificationCount;
+
+
 +(BOOL) isFollowing:(User*) user;
++(BOOL) isFollowed:(User*) user;
 -(void) loadData;
 
 -(void) send_notification:(User*)user message:(NSString*)message;

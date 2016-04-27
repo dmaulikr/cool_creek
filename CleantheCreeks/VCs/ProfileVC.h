@@ -25,6 +25,8 @@
 @property (strong,nonatomic) NSMutableDictionary*firstArray, *secondArray;
 @property (strong, nonatomic) AppDelegate * appDelegate;
 @property (strong, nonatomic) NSMutableArray *followingArray, *followerArray ;
-@property(nonatomic) int displayItemCount;
-
+@property(nonatomic) int displayItemCount, selectedIndex;
+@property (strong, nonatomic) NSMutableDictionary * kudoArray;
+- (void)updateData;
+- (void)updateCell;
 @end

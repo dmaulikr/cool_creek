@@ -34,6 +34,11 @@
 			<key>isShown</key>
 			<false/>
 		</dict>
+		<key>SWTableViewCell.xcscheme</key>
+		<dict>
+			<key>isShown</key>
+			<false/>
+		</dict>
 		<key>UIScrollView-InfiniteScroll.xcscheme</key>
 		<dict>
 			<key>isShown</key>
@@ -42,22 +47,22 @@
 	</dict>
 	<key>SuppressBuildableAutocreation</key>
 	<dict>
-		<key>0ABB6778E5661E3A2D5DB4F0207D23FE</key>
-		<dict>
-			<key>primary</key>
-			<true/>
-		</dict>
 		<key>0E379356BC4A11F545860C016C625E19</key>
 		<dict>
 			<key>primary</key>
 			<true/>
 		</dict>
-		<key>1D8A5FD38DA62DD8BA3D347772351913</key>
+		<key>2CC3FDC44CFE8AB9A5DA730E6B411C27</key>
 		<dict>
 			<key>primary</key>
 			<true/>
 		</dict>
 		<key>4D1D316CB9BD9BBE4169B95795828500</key>
+		<dict>
+			<key>primary</key>
+			<true/>
+		</dict>
+		<key>4F3A502D724F6B5A03318E8E2DC738E0</key>
 		<dict>
 			<key>primary</key>
 			<true/>
@@ -73,6 +78,11 @@
 			<true/>
 		</dict>
 		<key>B245E430CFFA89FA275EBD91D3330E87</key>
+		<dict>
+			<key>primary</key>
+			<true/>
+		</dict>
+		<key>D95AFC2BDB380BB6B03DA40ED4C9CF7E</key>
 		<dict>
 			<key>primary</key>
 			<true/>

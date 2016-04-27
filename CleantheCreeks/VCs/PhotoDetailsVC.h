@@ -13,11 +13,12 @@
 #import "Location.h"
 #import "BaseVC.h"
 #import "AppDelegate.h"
+
 @protocol CameraRefreshDelegate<NSObject>
 @optional
 -(void) cameraRefresh:(BOOL)set;
 @end
-@interface PhotoDetailsVC : BaseVC<UITableViewDataSource,UITableViewDelegate,CLLocationManagerDelegate,SetPhotoDelegate,UIImagePickerControllerDelegate>
+@interface PhotoDetailsVC : BaseVC<UITableViewDataSource,UITableViewDelegate,CLLocationManagerDelegate,SetPhotoDelegate,UIImagePickerControllerDelegate,UITextFieldDelegate>
 @property(nonatomic, strong) Location* location;
 @property (strong,nonatomic) UIImage*takenPhoto;
 @property (strong,nonatomic) UIImage*cleanedPhoto;
@@ -45,6 +46,11 @@
 @property(nonatomic, retain) id<CameraRefreshDelegate> delegate;
 
 @property(nonatomic) bool secondPhototaken;
+@property (weak, nonatomic) IBOutlet UIView *commentView;
+
+- (IBAction)closeComment:(id)sender;
+- (IBAction)btnSendComment:(id)sender;
+@property (weak, nonatomic) IBOutlet UITextField *txtComment;
 
 @end
 

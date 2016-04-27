@@ -28,7 +28,11 @@
 {
     [super viewWillAppear:animated];
     [self.tabBarController.tabBar setHidden:YES];
+    id<GAITracker> tracker = [[GAI sharedInstance] defaultTracker];
+    [tracker set:kGAIScreenName value:@"Following"];
+    [tracker send:[[GAIDictionaryBuilder createScreenView] build]];
 }
+
 -(void)viewDidLoad
 {
     [super viewDidLoad];
@@ -132,6 +136,10 @@
 {
     UITapGestureRecognizer *followTap=[[UITapGestureRecognizer alloc]initWithTarget:self action:@selector(showProfile:)];
     followTap.numberOfTapsRequired=1;
+    
+    UITapGestureRecognizer *followTap2=[[UITapGestureRecognizer alloc]initWithTarget:self action:@selector(showProfile:)];
+    followTap2.numberOfTapsRequired=1;
+    
     KudosCell* cell = (KudosCell*)[tableView dequeueReusableCellWithIdentifier:@"KudosCell"];
     NSDictionary * current_user=[self.displayArray objectAtIndex:indexPath.row];
     NSDictionary * user_id=[current_user objectForKey:@"id"];
@@ -176,7 +184,12 @@
     
     [cell.user_photo addGestureRecognizer:followTap];
     cell.user_photo.userInteractionEnabled = YES;
+    
+    [cell.user_name addGestureRecognizer:followTap2];
+    cell.user_name.userInteractionEnabled = YES;
+    
     cell.user_photo.tag = indexPath.row;
+    cell.user_name.tag = indexPath.row;
     if([AppDelegate isFollowing:user])
         cell.likeButton.selected = YES;
     else
@@ -190,6 +203,8 @@
 - (void)likeBtnClicked:(UIButton*)sender
 {
     if([self.displayArray count]==0)
+        return;
+    if(sender.tag > [self.displayArray count] -1)
         return;
     NSDictionary * target_user=[self.displayArray objectAtIndex:sender.tag];
     NSString * target_id=[target_user objectForKey:@"id"];

@@ -4,6 +4,7 @@
 #import <FBSDKLoginKit/FBSDKLoginKit.h>
 #import "User.h"
 #import "LocationVC.h"
+#import <Google/Analytics.h>
 
 @implementation SlideVC
 UIImage *firstPicture;
@@ -153,4 +154,13 @@ UIButton *loginButton;
         [loginButton setCenter:CGPointMake(self.view.frame.size.width/2,self.view.frame.size.height/23*21-loginButton.frame.size.height/2)];
         
 }
+
+-(void) viewWillAppear:(BOOL)animated
+{
+    [super viewWillAppear:animated];
+    id<GAITracker> tracker = [[GAI sharedInstance] defaultTracker];
+    [tracker set:kGAIScreenName value:@"Home Screen"];
+    [tracker send:[[GAIDictionaryBuilder createScreenView] build]];
+}
+
 @end

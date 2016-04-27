@@ -2,12 +2,12 @@
   "images" : [
     {
       "idiom" : "universal",
-      "filename" : "place.png",
+      "filename" : "icon-marker-blue-1.png",
       "scale" : "1x"
     },
     {
       "idiom" : "universal",
-      "filename" : "place@2x.png",
+      "filename" : "icon-marker-blue.png",
       "scale" : "2x"
     },
     {
