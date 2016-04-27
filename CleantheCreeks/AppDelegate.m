@@ -37,6 +37,7 @@
         [[UIApplication sharedApplication] registerForRemoteNotificationTypes:
          (UIUserNotificationTypeBadge | UIUserNotificationTypeSound | UIUserNotificationTypeAlert)];
     }
+    [UIApplication sharedApplication].statusBarStyle = UIStatusBarStyleLightContent;
     
     UIColor *backgroundColor = [UIColor whiteColor];
     _locationData=[[NSMutableDictionary alloc]init];

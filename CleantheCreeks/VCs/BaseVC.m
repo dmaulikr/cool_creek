@@ -18,6 +18,17 @@
     }
 }
 
+- (void) viewDidLoad
+{
+    [self setNeedsStatusBarAppearanceUpdate];
+
+}
+
+- (UIStatusBarStyle)preferredStatusBarStyle
+{
+    return UIStatusBarStyleLightContent;
+}
+
 - (void)dismissVC{
     NSLog(@"%@",self.navigationController.viewControllers);
     if (self.navigationController){
