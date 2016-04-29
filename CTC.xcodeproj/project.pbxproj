@@ -91,6 +91,7 @@
 		E48111731CBB5773000987E2 /* Constants.m in Sources */ = {isa = PBXBuildFile; fileRef = E48111721CBB5773000987E2 /* Constants.m */; };
 		E49CE64E1CB57F22006CE1C8 /* FXPageControl.m in Sources */ = {isa = PBXBuildFile; fileRef = E49CE64D1CB57F22006CE1C8 /* FXPageControl.m */; };
 		E4AD1D001CCF729900C8589B /* Reachability.m in Sources */ = {isa = PBXBuildFile; fileRef = E4AD1CFF1CCF729900C8589B /* Reachability.m */; };
+		E4DA6A2C1CD2908400636A12 /* FBSDKShareKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = E4DA6A2B1CD2908400636A12 /* FBSDKShareKit.framework */; };
 		E4EDCC451CC6343400267DF2 /* GoogleService-Info.plist in Resources */ = {isa = PBXBuildFile; fileRef = E4EDCC441CC6343400267DF2 /* GoogleService-Info.plist */; };
 		E4EDCC471CC6343C00267DF2 /* GoogleService-Info.plist in Resources */ = {isa = PBXBuildFile; fileRef = E4EDCC461CC6343C00267DF2 /* GoogleService-Info.plist */; };
 /* End PBXBuildFile section */
@@ -240,6 +241,7 @@
 		E49CE64D1CB57F22006CE1C8 /* FXPageControl.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = FXPageControl.m; sourceTree = "<group>"; };
 		E4AD1CFE1CCF729900C8589B /* Reachability.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Reachability.h; sourceTree = "<group>"; };
 		E4AD1CFF1CCF729900C8589B /* Reachability.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = Reachability.m; sourceTree = "<group>"; };
+		E4DA6A2B1CD2908400636A12 /* FBSDKShareKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = FBSDKShareKit.framework; path = "../Downloads/FacebookSDKs-iOS-20160412/FBSDKShareKit.framework"; sourceTree = "<group>"; };
 		E4EDCC441CC6343400267DF2 /* GoogleService-Info.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; path = "GoogleService-Info.plist"; sourceTree = "<group>"; };
 		E4EDCC461CC6343C00267DF2 /* GoogleService-Info.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; path = "GoogleService-Info.plist"; sourceTree = "<group>"; };
 /* End PBXFileReference section */
@@ -249,6 +251,7 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				E4DA6A2C1CD2908400636A12 /* FBSDKShareKit.framework in Frameworks */,
 				E481116E1CBB4AA9000987E2 /* MessageUI.framework in Frameworks */,
 				E2D5F7131C6CA677005A497F /* MapKit.framework in Frameworks */,
 				E2D103601C6933ED00FD67A0 /* CoreLocation.framework in Frameworks */,
@@ -519,6 +522,7 @@
 		BD0603DD1C595F5000A2C3EC /* Frameworks */ = {
 			isa = PBXGroup;
 			children = (
+				E4DA6A2B1CD2908400636A12 /* FBSDKShareKit.framework */,
 				E481116D1CBB4AA9000987E2 /* MessageUI.framework */,
 				E2D5F7121C6CA677005A497F /* MapKit.framework */,
 				E2D1035F1C6933ED00FD67A0 /* CoreLocation.framework */,

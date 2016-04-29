@@ -830,6 +830,7 @@
         vc.secondPhoto=[[UIImage alloc]init];
         vc.secondPhoto=[PhotoDetailsVC scaleImage:self.afterPhoto toSize:CGSizeMake(320.0,320.0)];
         vc.cleaned=YES;
+        vc.locationID = self.location.location_id;
     }
     else if([segue.identifier isEqualToString:@"showProfileFromDetails"])
     {

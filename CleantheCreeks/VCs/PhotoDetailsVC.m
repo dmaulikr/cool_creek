@@ -517,6 +517,7 @@
         vc.secondPhoto=[UIImage imageNamed:@"CleanMe"];
         
         vc.cleaned=NO;
+        vc.locationID = self.location.location_id;
     }
     else if([segue.identifier isEqualToString:@"cleanedFBPost"])
     {
@@ -524,6 +525,7 @@
         vc.firstPhoto=[PhotoDetailsVC scaleImage:self.takenPhoto toSize:CGSizeMake(320.0,320.0)];
         vc.secondPhoto=[[UIImage alloc]init];
         vc.secondPhoto=[PhotoDetailsVC scaleImage:self.cleanedPhoto toSize:CGSizeMake(320.0,320.0)];
+        vc.locationID = self.location.location_id;
         vc.cleaned=YES;
     }
     

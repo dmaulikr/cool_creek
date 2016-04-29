@@ -60,6 +60,8 @@
     self.appDelegate.notificationCount=0;
     [[[[[self tabBarController] tabBar] items]
       objectAtIndex:2] setBadgeValue:nil];
+    [self.refreshControl beginRefreshing];
+    [self updateCell];
 }
 
 - (void)didReceiveMemoryWarning

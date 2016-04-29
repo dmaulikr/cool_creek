@@ -14,6 +14,7 @@
 #import <AWSSNS/AWSSNS.h>
 #import "User.h"
 #import "Constants.h"
+#import "Flurry.h"
 #define kGeoCodingString @"http://maps.google.com/maps/geo?q=%f,%f&output=csv"
 @interface AppDelegate ()
 
@@ -88,6 +89,9 @@
     gai.trackUncaughtExceptions = YES;  // report uncaught exceptions
     gai.logger.logLevel = kGAILogLevelVerbose;  // remove before app release
     
+    
+    //Flurry analytics
+    [Flurry startSession:@"FG7S2SBZG6WNKCKVF6Z6"];
     return YES;
 }
 

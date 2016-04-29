@@ -7,3 +7,5 @@ pod 'AWSCognito'
 pod 'UIScrollView-InfiniteScroll'
 pod 'Google/Analytics'
 pod 'SWTableViewCell', '~> 0.3.7'
+pod 'Flurry-iOS-SDK/FlurrySDK'
+pod "CCHMapClusterController"

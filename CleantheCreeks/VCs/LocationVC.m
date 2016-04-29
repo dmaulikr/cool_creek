@@ -18,11 +18,14 @@
 
 #import <FBSDKCoreKit/FBSDKCoreKit.h>
 #import <FBSDKLoginKit/FBSDKLoginKit.h>
-
+#import "CCHMapClusterController.h"
+#import "CCHMapClusterAnnotation.h"
 @interface LocationVC()
 @property (nonatomic,strong) UIRefreshControl * refreshControl;
 @property (nonatomic,strong) CustomInfiniteIndicator *infiniteIndicator;
 @property(strong,nonatomic) Location * annotationLocation;
+@property (strong, nonatomic) CCHMapClusterController *mapClusterController;
+@property (strong, nonatomic) NSMutableArray* annotationArray;
 @end
 
 
@@ -50,19 +53,18 @@
     [self.locationArray removeAllObjects];
     self.mapView.delegate=self;
     self.mapView.showsUserLocation=YES;
+    self.mapClusterController.delegate = self;
     self.mainDelegate=(AppDelegate*)[[UIApplication sharedApplication]delegate];
     self.refreshControl = [[UIRefreshControl alloc]init];
     [self.locationTable addSubview:self.refreshControl];
     self.displayItemCount = 8;
     
-    [self.refreshControl beginRefreshing];
-    [self updateData];
-    
-    
+    //self.mapClusterController = [[CCHMapClusterController alloc] initWithMapView:self.mapView];
+    self.annotationArray = [[NSMutableArray alloc]init];
     [self.refreshControl addTarget:self action:@selector(updateData) forControlEvents:UIControlEventValueChanged];
     self.locationTable.infiniteScrollIndicatorStyle = UIActivityIndicatorViewStyleGray;
     self.infiniteIndicator = [[CustomInfiniteIndicator alloc] initWithFrame:CGRectMake(0, 0, 40, 40)];
-    
+   // self.mapClusterController = [[CCHMapClusterController alloc] initWithMapView:self.mapView];
     self.locationTable.infiniteScrollIndicatorView = self.infiniteIndicator;
     self.defaults = [NSUserDefaults standardUserDefaults];
     [self.locationTable addInfiniteScrollWithHandler:^(UITableView* tableView) {
@@ -74,10 +76,6 @@
     }];
 }
 
-- (IBAction)backBtnClicked:(id)sender {
-    [self dismissVC];
-}
-
 
 -(void) viewWillAppear:(BOOL)animated
 {
@@ -85,7 +83,7 @@
     id<GAITracker> tracker = [[GAI sharedInstance] defaultTracker];
     [tracker set:kGAIScreenName value:@"LocationVC"];
     [tracker send:[[GAIDictionaryBuilder createScreenView] build]];
-    self.backBtn.hidden = YES;
+    
     self.mainDelegate=(AppDelegate*)[[UIApplication sharedApplication]delegate];
     
     self.defaults = [NSUserDefaults standardUserDefaults];
@@ -93,12 +91,14 @@
         [self.tabBarController.tabBar setHidden:NO];
     else
         [self.tabBarController.tabBar setHidden:YES];
-    if(self.mainDelegate.shouldRefreshLocation)
-    {
-        [self.refreshControl beginRefreshing];
-        [self updateData];
-        self.mainDelegate.shouldRefreshLocation = NO;
-    }
+//    if(self.mainDelegate.shouldRefreshLocation)
+//    {
+//        [self.refreshControl beginRefreshing];
+//        [self updateData];
+//        self.mainDelegate.shouldRefreshLocation = NO;
+//    }
+    [self.refreshControl beginRefreshing];
+    [self updateData];
 }
 
 
@@ -348,6 +348,7 @@
 }
 
 #pragma CLLocationDelegate
+
 - (void) updateData
 {
     
@@ -390,27 +391,26 @@
                 annotation.subtitle = location.location_id;
                 
                 //Downloading files
-                if([self.mainDelegate.locationData objectForKey:location.location_id]==nil)
-                {
-                    AWSS3TransferManagerDownloadRequest *downloadRequest = [AWSS3TransferManagerDownloadRequest new];
-                    downloadRequest.bucket = @"cleanthecreeks";
-                    NSString * key=[location.location_id stringByAppendingString:@"a"];
-                    downloadRequest.key = key;
-                    downloadRequest.downloadingFileURL = downloadingFileURL;
-                    
-                    //self.mainDelegate.locationData[location.location_id]=[UIImage imageNamed:@"EmptyPhoto"];
-                    [[transferManager download:downloadRequest] continueWithExecutor:[AWSExecutor mainThreadExecutor] withBlock:^id(AWSTask *task2) {
-                        if (task2.result) {
-                            
-                            self.mainDelegate.locationData[location.location_id]=[UIImage imageWithContentsOfFile:downloadingFilePath];
-                            [self.locationTable reloadData];
-                            
-                            [self.mapView addAnnotation:annotation];
-                            
-                        }
-                        return nil;
-                    }];
-                }
+                
+                AWSS3TransferManagerDownloadRequest *downloadRequest = [AWSS3TransferManagerDownloadRequest new];
+                downloadRequest.bucket = @"cleanthecreeks";
+                NSString * key=[location.location_id stringByAppendingString:@"a"];
+                downloadRequest.key = key;
+                downloadRequest.downloadingFileURL = downloadingFileURL;
+                
+                //self.mainDelegate.locationData[location.location_id]=[UIImage imageNamed:@"EmptyPhoto"];
+                [[transferManager download:downloadRequest] continueWithExecutor:[AWSExecutor mainThreadExecutor] withBlock:^id(AWSTask *task2) {
+                    if (task2.result) {
+                        
+                        self.mainDelegate.locationData[location.location_id]=[UIImage imageWithContentsOfFile:downloadingFilePath];
+                        [self.locationTable reloadData];
+                        
+                          [self.mapView addAnnotation:annotation];
+                        [self.annotationArray addObject:annotation];
+                    }
+                    return nil;
+                }];
+                
                 
             }
             dispatch_async(dispatch_get_main_queue(), ^{
@@ -425,7 +425,7 @@
                 }];
                 self.displayItemCount = MIN(self.locationArray.count,self.displayItemCount);
                 [self.locationTable reloadData];
-                
+                //[self.mapClusterController addAnnotations:self.annotationArray withCompletionHandler:NULL];
                 [self.refreshControl endRefreshing];
                 
             });
@@ -436,6 +436,21 @@
         
     }];
     
+}
+
+- (NSString *)mapClusterController:(CCHMapClusterController *)mapClusterController titleForMapClusterAnnotation:(CCHMapClusterAnnotation *)mapClusterAnnotation
+{
+    NSUInteger numAnnotations = mapClusterAnnotation.annotations.count;
+    NSString *unit = numAnnotations > 1 ? @"annotations" : @"annotation";
+    return [NSString stringWithFormat:@"%tu %@", numAnnotations, unit];
+}
+
+- (NSString *)mapClusterController:(CCHMapClusterController *)mapClusterController subtitleForMapClusterAnnotation:(CCHMapClusterAnnotation *)mapClusterAnnotation
+{
+    NSUInteger numAnnotations = MIN(mapClusterAnnotation.annotations.count, 5);
+    NSArray *annotations = [mapClusterAnnotation.annotations.allObjects subarrayWithRange:NSMakeRange(0, numAnnotations)];
+    NSArray *titles = [annotations valueForKey:@"title"];
+    return [titles componentsJoinedByString:@", "];
 }
 
 - (BOOL)swipeableTableViewCellShouldHideUtilityButtonsOnSwipe:(SWTableViewCell *)cell
@@ -463,7 +478,11 @@
     [self.mapView setShowsUserLocation:YES];
     self.currentLocation=newLocation;
     self.mainDelegate.currentLocation=newLocation;
-    [self updateData];
+    if(!self.refreshed)
+    {
+        [self updateData];
+        self.refreshed = YES;
+    }
     CLGeocoder *ceo = [[CLGeocoder alloc]init];
     [ceo reverseGeocodeLocation:self.currentLocation
               completionHandler:^(NSArray *placemarks, NSError *error) {
@@ -527,6 +546,7 @@
     }
 }
 - (MKAnnotationView *)mapView:(MKMapView *)mapView viewForAnnotation:(id<MKAnnotation>)annotation{
+    
     if(annotation == mapView.userLocation)
     {
         MKAnnotationView *pin = (MKAnnotationView *) [self.mapView dequeueReusableAnnotationViewWithIdentifier: @"VoteSpotPin"];
@@ -548,7 +568,13 @@
     }
     else
     {
-        LocationOverlayView *annotationView = [[LocationOverlayView alloc] initWithAnnotation:annotation reuseIdentifier:@"Attraction"];
+        
+        LocationOverlayView *annotationView ;
+        //  if ([annotation isKindOfClass:CCHMapClusterAnnotation.class]) {
+        
+        annotationView = [[LocationOverlayView alloc] initWithAnnotation:annotation reuseIdentifier:@"Attraction"];
+        //}
+        
         annotationView.canShowCallout = YES;
         return annotationView;
         

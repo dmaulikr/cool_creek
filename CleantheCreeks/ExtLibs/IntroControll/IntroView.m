@@ -49,8 +49,6 @@
         [_loginButton setCenter:CGPointMake(self.frame.size.width/2,self.frame.size.height/23*21-_loginButton.frame.size.height/2)];
         [self addSubview:_loginButton];
         
-
-        
     }
     return self;
 }

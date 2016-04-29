@@ -24,4 +24,5 @@
 - (IBAction)skip:(id)sender;
 @property(strong,nonatomic)SLComposeViewController *mySLComposerSheet;
 @property(nonatomic)bool cleaned;
+@property(nonatomic, strong) NSString * locationID;
 @end

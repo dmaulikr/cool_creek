@@ -8,6 +8,9 @@
 
 #import "FacebookPostVC.h"
 #import "MainTabnav.h"
+#import <FBSDKCoreKit/FBSDKCoreKit.h>
+#import <FBSDKLoginKit/FBSDKLoginKit.h>
+#import <FBSDKShareKit/FBSDKShareKit.h>
 @implementation FacebookPostVC
 
 -(void) viewDidLoad
@@ -71,7 +74,7 @@
     CGFloat size = MIN(firstWidth, firstHeight);
     // build merged size
     float bottomHeight = (CGFloat)(CGImageGetHeight(bottom.CGImage) / (CGFloat)CGImageGetWidth(bottom.CGImage)) * size*2;
-    CGSize mergedSize = CGSizeMake((size*2), size+bottomHeight);
+    CGSize mergedSize = CGSizeMake((size*2), size+bottomHeight+10);
     
     // capture image context ref
     UIGraphicsBeginImageContext(mergedSize);
@@ -101,6 +104,15 @@
     
     UIImage * imgDownload=[UIImage imageNamed:@"downloadImg"];
     [imgDownload drawInRect:CGRectMake(size - imgDownload.size.width,size-80-imgDownload.size.height,imgDownload.size.width*2,imgDownload.size.height*2)];
+    
+    //Draw text
+    UIFont *font = [UIFont boldSystemFontOfSize:40];
+    
+    NSString *text = [[NSString alloc] initWithFormat:@"WWW.CLEANTHECREEK.COM | BY %@",[self.user_name.text uppercaseString]];
+    CGRect rect = CGRectMake(40,size+bottomHeight-40,size*2-10, 40);
+    [[UIColor colorWithRed:0.8 green:0.8 blue:0.8 alpha:1] set];
+    [text drawInRect:CGRectIntegral(rect) withFont:font];
+    
     // assign context to new UIImage
     UIImage *newImage = UIGraphicsGetImageFromCurrentImageContext();
     
@@ -111,16 +123,45 @@
 }
 
 - (IBAction)FBPost:(id)sender {
-    
+    UIImage * fbPostImg=[self mergeImage:self.firstPhoto withImage:self.secondPhoto bottomImage:[UIImage imageNamed:@"website2"]];
+    dispatch_async(dispatch_get_main_queue(), ^{
+        NSData *imageData = UIImageJPEGRepresentation(fbPostImg, 0.4);
+        NSString *imageString = [NSString stringWithFormat:@"Content-Disposition: form-data;    name=\"userfile\"; filename=\"%@\"\r\n", [NSString stringWithFormat:@"%@.jpg",self.locationID]];
+        
+        NSString *urlString = @"http://cleanthecreek.com/images/fb/upload.php";
+        
+        NSLog(@"upload url%@", urlString);
+        
+        NSMutableURLRequest *request = [[NSMutableURLRequest alloc] init];
+        [request setURL:[NSURL URLWithString:urlString]];
+        [request setHTTPMethod:@"POST"];
+        NSString *boundary = @"--------------------------    -14737809831466499882746641449";
+        NSString *contentType = [NSString stringWithFormat:@"multipart/form-data;     boundary=%@",boundary];
+        [request addValue:contentType forHTTPHeaderField: @"Content-Type"];
+        
+        NSMutableData *body = [NSMutableData data];
+        [body appendData:[[NSString stringWithFormat:@"\r\n--%@\r\n",boundary]     dataUsingEncoding:NSUTF8StringEncoding]];
+        [body appendData:[[NSString stringWithString:imageString ]     dataUsingEncoding:NSUTF8StringEncoding]];
+        [body appendData:[@"Content-Type: application/octet-    stream\r\n\r\n" dataUsingEncoding:NSUTF8StringEncoding]];
+        [body appendData:[NSData dataWithData:imageData]];
+        [body appendData:[[NSString stringWithFormat:@"\r\n--%@--\r\n",boundary]     dataUsingEncoding:NSUTF8StringEncoding]];
+        [request setHTTPBody:body];
+        
+        NSData *returnData = [NSURLConnection sendSynchronousRequest:request returningResponse:nil error:nil];
+        NSString *returnString = [[NSString alloc] initWithData:returnData encoding:NSUTF8StringEncoding];
+        NSLog(@"%@", returnString);
+    });
+
     if([SLComposeViewController isAvailableForServiceType:SLServiceTypeFacebook]) //check if Facebook Account is linked
     {
         _mySLComposerSheet = [[SLComposeViewController alloc] init]; //initiate the Social Controller
         _mySLComposerSheet = [SLComposeViewController composeViewControllerForServiceType:SLServiceTypeFacebook]; //Tell him with what social plattform to use it, e.g. facebook or twitter
         [_mySLComposerSheet setInitialText:@"Clean the Creek"]; //the message you want to post
-        UIImage * fbPostImg=[self mergeImage:self.firstPhoto withImage:self.secondPhoto bottomImage:[UIImage imageNamed:@"website2"]];
+    
         [_mySLComposerSheet addImage:fbPostImg]; //an image you could post
         [_mySLComposerSheet setTitle:@"Look what I just cleaned up #cleanthecreek"];
-        //[_mySLComposerSheet addURL:[NSURL URLWithString:@"http://www.cleanthecreek.com"]];
+        NSString * url = [NSString stringWithFormat:@"http://cleanthecreek.com/images/fb/fb-scrape.php?locationID=%@",self.locationID];
+        [_mySLComposerSheet addURL:[NSURL URLWithString:url]];
         [self presentViewController:_mySLComposerSheet animated:YES completion:nil];
     }
     [_mySLComposerSheet setCompletionHandler:^(SLComposeViewControllerResult result) {
