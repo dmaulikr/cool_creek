@@ -32,9 +32,12 @@
     self.user_name.adjustsFontSizeToFitWidth = YES;
     self.time.adjustsFontSizeToFitWidth=YES;
     [self.user_name setText:user_name];
-    UIImage* img=[self mergeImage:self.firstPhoto withImage:self.secondPhoto bottomImage:[UIImage imageNamed:@"website2"]];
-    
-    [_fbImage setImage:img];
+    UIImage* img=[self mergeImage:self.firstPhoto withImage:self.secondPhoto];
+    CGImageRef firstImageRef = self.firstPhoto.CGImage;
+    CGFloat size = CGImageGetWidth(firstImageRef);
+
+    self.postImage=[self displayImage:img bottom:[UIImage imageNamed:@"website2"] size:size];
+    [_fbImage setImage:self.postImage];
     
 }
 
@@ -62,7 +65,7 @@
     [self.navigationController popToRootViewControllerAnimated:YES];
 }
 
-- (UIImage*)mergeImage:(UIImage*)first withImage:(UIImage*)second bottomImage:(UIImage*)bottom
+- (UIImage*)mergeImage:(UIImage*)first withImage:(UIImage*)second
 {
     // get size of the first image
     CGImageRef firstImageRef = first.CGImage;
@@ -73,8 +76,8 @@
     
     CGFloat size = MIN(firstWidth, firstHeight);
     // build merged size
-    float bottomHeight = (CGFloat)(CGImageGetHeight(bottom.CGImage) / (CGFloat)CGImageGetWidth(bottom.CGImage)) * size*2;
-    CGSize mergedSize = CGSizeMake((size*2), size+bottomHeight+10);
+    
+    CGSize mergedSize = CGSizeMake((size*2), size);
     
     // capture image context ref
     UIGraphicsBeginImageContext(mergedSize);
@@ -84,7 +87,7 @@
     //[second drawInRect:CGRectMake(firstWidth, 0, secondWidth, secondHeight)];
     [second drawInRect:CGRectMake(size-1, 0, size, size)
              blendMode:kCGBlendModeNormal alpha:1.0];
-    [bottom drawInRect:CGRectMake(0, size, size*2, bottomHeight)];
+    
     
     //Place logo
     UIImage * imgLogo=[UIImage imageNamed:@"SliderLogoSmall"];
@@ -105,15 +108,9 @@
     UIImage * imgDownload=[UIImage imageNamed:@"downloadImg"];
     [imgDownload drawInRect:CGRectMake(size - imgDownload.size.width,size-80-imgDownload.size.height,imgDownload.size.width*2,imgDownload.size.height*2)];
     
-    //Draw text
-    UIFont *font = [UIFont boldSystemFontOfSize:40];
     
-    NSString *text = [[NSString alloc] initWithFormat:@"WWW.CLEANTHECREEK.COM | BY %@",[self.user_name.text uppercaseString]];
-    CGRect rect = CGRectMake(40,size+bottomHeight-40,size*2-10, 40);
-    [[UIColor colorWithRed:0.8 green:0.8 blue:0.8 alpha:1] set];
-    [text drawInRect:CGRectIntegral(rect) withFont:font];
-    
-    // assign context to new UIImage
+    // Place bottom image
+
     UIImage *newImage = UIGraphicsGetImageFromCurrentImageContext();
     
     // end context
@@ -122,8 +119,31 @@
     
 }
 
+-(UIImage *)displayImage:(UIImage *)mainImage bottom:(UIImage*)bottom size:(CGFloat) size
+{
+    float bottomHeight = (CGFloat)(CGImageGetHeight(bottom.CGImage) / (CGFloat)CGImageGetWidth(bottom.CGImage)) * size*2;
+    CGSize mergedSize = CGSizeMake((size*2), size+bottomHeight+10);
+    UIGraphicsBeginImageContext(mergedSize);
+    [mainImage drawInRect:CGRectMake(0, 0, size*2, size)];
+    [bottom drawInRect:CGRectMake(0, size, size*2, bottomHeight)];
+    
+    //Draw text
+    UIFont *font = [UIFont boldSystemFontOfSize:40];
+    
+    NSString *text = [[NSString alloc] initWithFormat:@"WWW.CLEANTHECREEK.COM | BY %@",[self.user_name.text uppercaseString]];
+    CGRect rect = CGRectMake(40,size+bottomHeight-40,size*2-10, 40);
+    [[UIColor colorWithRed:0.8 green:0.8 blue:0.8 alpha:1] set];
+    [text drawInRect:CGRectIntegral(rect) withFont:font];
+    
+    UIImage *newImage = UIGraphicsGetImageFromCurrentImageContext();
+    
+    // end context
+    UIGraphicsEndImageContext();
+    return newImage;
+}
+
 - (IBAction)FBPost:(id)sender {
-    UIImage * fbPostImg=[self mergeImage:self.firstPhoto withImage:self.secondPhoto bottomImage:[UIImage imageNamed:@"website2"]];
+    UIImage * fbPostImg=[self mergeImage:self.firstPhoto withImage:self.secondPhoto];
     dispatch_async(dispatch_get_main_queue(), ^{
         NSData *imageData = UIImageJPEGRepresentation(fbPostImg, 0.4);
         NSString *imageString = [NSString stringWithFormat:@"Content-Disposition: form-data;    name=\"userfile\"; filename=\"%@\"\r\n", [NSString stringWithFormat:@"%@.jpg",self.locationID]];
@@ -157,8 +177,9 @@
         _mySLComposerSheet = [[SLComposeViewController alloc] init]; //initiate the Social Controller
         _mySLComposerSheet = [SLComposeViewController composeViewControllerForServiceType:SLServiceTypeFacebook]; //Tell him with what social plattform to use it, e.g. facebook or twitter
         [_mySLComposerSheet setInitialText:@"Clean the Creek"]; //the message you want to post
-    
-        [_mySLComposerSheet addImage:fbPostImg]; //an image you could post
+        
+        
+        [_mySLComposerSheet addImage:self.postImage]; //an image you could post
         [_mySLComposerSheet setTitle:@"Look what I just cleaned up #cleanthecreek"];
         NSString * url = [NSString stringWithFormat:@"http://cleanthecreek.com/images/fb/fb-scrape.php?locationID=%@",self.locationID];
         [_mySLComposerSheet addURL:[NSURL URLWithString:url]];

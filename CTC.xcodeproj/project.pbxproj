@@ -78,7 +78,6 @@
 		E2F36EDB1C5B103400923DF0 /* LastPageView.m in Sources */ = {isa = PBXBuildFile; fileRef = E2F36EDA1C5B103400923DF0 /* LastPageView.m */; };
 		E2F36EDD1C5B253000923DF0 /* FBSDKLoginKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = E2F36EDC1C5B253000923DF0 /* FBSDKLoginKit.framework */; };
 		E2F36EDF1C5B25AD00923DF0 /* FBSDKCoreKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = E2F36EDE1C5B25AD00923DF0 /* FBSDKCoreKit.framework */; };
-		E2FD01041C77866300DAB3C5 /* LocationOverlayView.m in Sources */ = {isa = PBXBuildFile; fileRef = E2FD01031C77866300DAB3C5 /* LocationOverlayView.m */; };
 		E2FD05681C59C96B004B2C34 /* shadow@2x.png in Resources */ = {isa = PBXBuildFile; fileRef = E2FD05631C59C96B004B2C34 /* shadow@2x.png */; };
 		E2FD05721C59CA42004B2C34 /* SlideVC.m in Sources */ = {isa = PBXBuildFile; fileRef = E2FD05711C59CA42004B2C34 /* SlideVC.m */; };
 		E2FD05771C59E354004B2C34 /* SplashVC.m in Sources */ = {isa = PBXBuildFile; fileRef = E2FD05761C59E354004B2C34 /* SplashVC.m */; };
@@ -217,8 +216,6 @@
 		E2F36EDA1C5B103400923DF0 /* LastPageView.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = LastPageView.m; sourceTree = "<group>"; };
 		E2F36EDC1C5B253000923DF0 /* FBSDKLoginKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; path = FBSDKLoginKit.framework; sourceTree = "<group>"; };
 		E2F36EDE1C5B25AD00923DF0 /* FBSDKCoreKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; path = FBSDKCoreKit.framework; sourceTree = "<group>"; };
-		E2FD01021C77866300DAB3C5 /* LocationOverlayView.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = LocationOverlayView.h; sourceTree = "<group>"; };
-		E2FD01031C77866300DAB3C5 /* LocationOverlayView.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = LocationOverlayView.m; sourceTree = "<group>"; };
 		E2FD05631C59C96B004B2C34 /* shadow@2x.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "shadow@2x.png"; sourceTree = "<group>"; };
 		E2FD05701C59CA42004B2C34 /* SlideVC.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = SlideVC.h; sourceTree = "<group>"; };
 		E2FD05711C59CA42004B2C34 /* SlideVC.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = SlideVC.m; sourceTree = "<group>"; };
@@ -482,7 +479,6 @@
 			isa = PBXGroup;
 			children = (
 				E4EDCC441CC6343400267DF2 /* GoogleService-Info.plist */,
-				E2FD056B1C59CA09004B2C34 /* CacheHandler */,
 				E2FD056A1C59CA04004B2C34 /* ApiHandler */,
 				0084F3F51C7AFEE000E111D0 /* Fonts */,
 				E2FD05691C59C9FA004B2C34 /* ExtLibs */,
@@ -655,18 +651,9 @@
 			path = ApiHandler;
 			sourceTree = "<group>";
 		};
-		E2FD056B1C59CA09004B2C34 /* CacheHandler */ = {
-			isa = PBXGroup;
-			children = (
-			);
-			path = CacheHandler;
-			sourceTree = "<group>";
-		};
 		E2FD056C1C59CA0E004B2C34 /* Model */ = {
 			isa = PBXGroup;
 			children = (
-				E2FD01021C77866300DAB3C5 /* LocationOverlayView.h */,
-				E2FD01031C77866300DAB3C5 /* LocationOverlayView.m */,
 				E22A79A41C77A77100CE66E5 /* LocationAnnotation.h */,
 				E22A79A51C77A77100CE66E5 /* LocationAnnotation.m */,
 			);
@@ -975,7 +962,6 @@
 				3CE5EB1F1C84F8310068DF59 /* ProfileViewCell.m in Sources */,
 				E2D1034F1C6528EB00FD67A0 /* locationCell.m in Sources */,
 				E2FD05771C59E354004B2C34 /* SplashVC.m in Sources */,
-				E2FD01041C77866300DAB3C5 /* LocationOverlayView.m in Sources */,
 				3C2874B01C88E2E200725B40 /* Activity.m in Sources */,
 				3C9482EF1CA3F1EA007C4B79 /* CommentView.m in Sources */,
 				E2FD05821C59E4FD004B2C34 /* CameraVC.m in Sources */,

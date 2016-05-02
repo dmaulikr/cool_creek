@@ -29,7 +29,7 @@
 			<key>isShown</key>
 			<false/>
 		</dict>
-		<key>CCHMapClusterController.xcscheme</key>
+		<key>FBAnnotationClustering.xcscheme</key>
 		<dict>
 			<key>isShown</key>
 			<false/>
@@ -57,17 +57,17 @@
 	</dict>
 	<key>SuppressBuildableAutocreation</key>
 	<dict>
-		<key>09D7D2D799AC4B00D0C4B8DDDD9D1DF4</key>
-		<dict>
-			<key>primary</key>
-			<true/>
-		</dict>
 		<key>0E379356BC4A11F545860C016C625E19</key>
 		<dict>
 			<key>primary</key>
 			<true/>
 		</dict>
-		<key>2570995F1B3B806FEFCCDB0FB002DB90</key>
+		<key>47CBD14B596D62BC059DD753D14E4B16</key>
+		<dict>
+			<key>primary</key>
+			<true/>
+		</dict>
+		<key>47F297000224A08E8F3E51773A4A60F2</key>
 		<dict>
 			<key>primary</key>
 			<true/>
@@ -82,7 +82,7 @@
 			<key>primary</key>
 			<true/>
 		</dict>
-		<key>69825E76F3BB9351E66141942B5162EF</key>
+		<key>9CC9EEF48FB2EAEAA77949934D48A68C</key>
 		<dict>
 			<key>primary</key>
 			<true/>
@@ -97,7 +97,7 @@
 			<key>primary</key>
 			<true/>
 		</dict>
-		<key>BA1D781C39567BC6A8CDC64A9A3AD1EB</key>
+		<key>C04C1543F0B7BF09448B8F6651511EA7</key>
 		<dict>
 			<key>primary</key>
 			<true/>

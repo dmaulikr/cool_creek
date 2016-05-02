@@ -8,7 +8,7 @@ PODS:
     - AWSCore (= 2.3.5)
   - AWSSNS (2.3.5):
     - AWSCore (= 2.3.5)
-  - CCHMapClusterController (1.7.0)
+  - FBAnnotationClustering (0.2.2)
   - Flurry-iOS-SDK/FlurrySDK (7.6.0)
   - Google/Analytics (2.0.4):
     - Google/Core
@@ -35,7 +35,7 @@ DEPENDENCIES:
   - AWSDynamoDB
   - AWSS3
   - AWSSNS
-  - CCHMapClusterController
+  - FBAnnotationClustering
   - Flurry-iOS-SDK/FlurrySDK
   - Google/Analytics
   - SWTableViewCell (~> 0.3.7)
@@ -47,7 +47,7 @@ SPEC CHECKSUMS:
   AWSDynamoDB: 00123cb4cc540768dc4aef89f41b36a474de9363
   AWSS3: 967f4ad3c91f1ed2c9dca09a9dcf905111232a87
   AWSSNS: d95b17f039776ec0dd9cd9237313779d174b0215
-  CCHMapClusterController: d8cd12cd5682ec6cd76d911ac7198f981b6cc1b8
+  FBAnnotationClustering: 0fb150b264030ca72f7c182c94473dd769e9c43a
   Flurry-iOS-SDK: 9822fe709195f0e3ae3e52c785eee9ff651ff648
   Google: d0932824c5b97c96be489aa6f4e8cd6c294d637d
   GoogleAnalytics: 9be1afdb8deeac4bb5f13ca7f7d3b9db2a1f43dc

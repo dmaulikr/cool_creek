@@ -8,7 +8,7 @@
 
 #import "Location.h"
 #import "locationCell.h"
-#import "LocationOverlayView.h"
+
 #import "LocationAnnotation.h"
 #import "ActivityPhotoDetailsVC.h"
 #import "CameraVC.h"
@@ -18,14 +18,15 @@
 
 #import <FBSDKCoreKit/FBSDKCoreKit.h>
 #import <FBSDKLoginKit/FBSDKLoginKit.h>
-#import "CCHMapClusterController.h"
-#import "CCHMapClusterAnnotation.h"
+
+
 @interface LocationVC()
 @property (nonatomic,strong) UIRefreshControl * refreshControl;
 @property (nonatomic,strong) CustomInfiniteIndicator *infiniteIndicator;
 @property(strong,nonatomic) Location * annotationLocation;
-@property (strong, nonatomic) CCHMapClusterController *mapClusterController;
+
 @property (strong, nonatomic) NSMutableArray* annotationArray;
+@property (nonatomic, strong) FBClusteringManager *clusteringManager;
 @end
 
 
@@ -53,18 +54,19 @@
     [self.locationArray removeAllObjects];
     self.mapView.delegate=self;
     self.mapView.showsUserLocation=YES;
-    self.mapClusterController.delegate = self;
+    
     self.mainDelegate=(AppDelegate*)[[UIApplication sharedApplication]delegate];
     self.refreshControl = [[UIRefreshControl alloc]init];
     [self.locationTable addSubview:self.refreshControl];
     self.displayItemCount = 8;
     
     //self.mapClusterController = [[CCHMapClusterController alloc] initWithMapView:self.mapView];
-    self.annotationArray = [[NSMutableArray alloc]init];
+    
     [self.refreshControl addTarget:self action:@selector(updateData) forControlEvents:UIControlEventValueChanged];
     self.locationTable.infiniteScrollIndicatorStyle = UIActivityIndicatorViewStyleGray;
     self.infiniteIndicator = [[CustomInfiniteIndicator alloc] initWithFrame:CGRectMake(0, 0, 40, 40)];
-   // self.mapClusterController = [[CCHMapClusterController alloc] initWithMapView:self.mapView];
+    self.clusteringManager = [[FBClusteringManager alloc] initWithAnnotations:self.annotationArray];
+    self.clusteringManager.delegate = self;
     self.locationTable.infiniteScrollIndicatorView = self.infiniteIndicator;
     self.defaults = [NSUserDefaults standardUserDefaults];
     [self.locationTable addInfiniteScrollWithHandler:^(UITableView* tableView) {
@@ -91,12 +93,12 @@
         [self.tabBarController.tabBar setHidden:NO];
     else
         [self.tabBarController.tabBar setHidden:YES];
-//    if(self.mainDelegate.shouldRefreshLocation)
-//    {
-//        [self.refreshControl beginRefreshing];
-//        [self updateData];
-//        self.mainDelegate.shouldRefreshLocation = NO;
-//    }
+    //    if(self.mainDelegate.shouldRefreshLocation)
+    //    {
+    //        [self.refreshControl beginRefreshing];
+    //        [self updateData];
+    //        self.mainDelegate.shouldRefreshLocation = NO;
+    //    }
     [self.refreshControl beginRefreshing];
     [self updateData];
 }
@@ -117,7 +119,7 @@
     {
         count=0;
         if([self.locationArray count]>0)
-            count= self.displayItemCount;
+            count = self.displayItemCount;
         
     }
     return count;
@@ -233,7 +235,6 @@
     self.selectedIndex=indexPath.row;
     [self performSegueWithIdentifier:@"showLocationDetails" sender:self];
 }
-
 
 -(void) fbLogin
 {
@@ -353,13 +354,14 @@
 {
     
     self.locationArray=[[NSMutableArray alloc]init];
+    self.annotationArray = [[NSMutableArray alloc]init];
     self.mainDelegate.locationData=[[NSMutableDictionary alloc] init];
     AWSDynamoDBObjectMapper *dynamoDBObjectMapper = [AWSDynamoDBObjectMapper defaultDynamoDBObjectMapper];
     AWSDynamoDBScanExpression *scanExpression = [AWSDynamoDBScanExpression new];
     scanExpression.filterExpression = @"isDirty = :val";
     AWSS3TransferManager *transferManager = [AWSS3TransferManager defaultS3TransferManager];
     scanExpression.expressionAttributeValues = @{@":val":@"true"};
-    [self.mapView removeAnnotations:self.mapView.annotations];
+     [self.mapView removeAnnotations:self.mapView.annotations];
     [[dynamoDBObjectMapper scan:[Location class] expression:scanExpression] continueWithBlock:^id(AWSTask *task) {
         if (task.error) {
             
@@ -403,15 +405,22 @@
                     if (task2.result) {
                         
                         self.mainDelegate.locationData[location.location_id]=[UIImage imageWithContentsOfFile:downloadingFilePath];
+                        annotation.image = [UIImage imageWithContentsOfFile:downloadingFilePath];
                         [self.locationTable reloadData];
                         
-                          [self.mapView addAnnotation:annotation];
+                        // [self.mapView addAnnotation:annotation];
+                        
                         [self.annotationArray addObject:annotation];
+                        self.clusteringManager= [[FBClusteringManager alloc]init];
+                        [self.clusteringManager addAnnotations:_annotationArray];
+    
+                        
+                        // Update annotations on the map
+                        [self mapView:self.mapView regionDidChangeAnimated:NO];
+                        
                     }
                     return nil;
                 }];
-                
-                
             }
             dispatch_async(dispatch_get_main_queue(), ^{
                 
@@ -438,26 +447,10 @@
     
 }
 
-- (NSString *)mapClusterController:(CCHMapClusterController *)mapClusterController titleForMapClusterAnnotation:(CCHMapClusterAnnotation *)mapClusterAnnotation
-{
-    NSUInteger numAnnotations = mapClusterAnnotation.annotations.count;
-    NSString *unit = numAnnotations > 1 ? @"annotations" : @"annotation";
-    return [NSString stringWithFormat:@"%tu %@", numAnnotations, unit];
-}
-
-- (NSString *)mapClusterController:(CCHMapClusterController *)mapClusterController subtitleForMapClusterAnnotation:(CCHMapClusterAnnotation *)mapClusterAnnotation
-{
-    NSUInteger numAnnotations = MIN(mapClusterAnnotation.annotations.count, 5);
-    NSArray *annotations = [mapClusterAnnotation.annotations.allObjects subarrayWithRange:NSMakeRange(0, numAnnotations)];
-    NSArray *titles = [annotations valueForKey:@"title"];
-    return [titles componentsJoinedByString:@", "];
-}
-
 - (BOOL)swipeableTableViewCellShouldHideUtilityButtonsOnSwipe:(SWTableViewCell *)cell
 {
     return YES;
 }
-
 
 - (void)locationManager:(CLLocationManager *)manager
     didUpdateToLocation:(CLLocation *)newLocation
@@ -545,7 +538,19 @@
             break;
     }
 }
-- (MKAnnotationView *)mapView:(MKMapView *)mapView viewForAnnotation:(id<MKAnnotation>)annotation{
+
+- (void)mapView:(MKMapView *)mapView regionDidChangeAnimated:(BOOL)animated
+{
+    [[NSOperationQueue new] addOperationWithBlock:^{
+        double scale = self.mapView.bounds.size.width / self.mapView.visibleMapRect.size.width;
+        NSArray *annotations = [self.clusteringManager clusteredAnnotationsWithinMapRect:mapView.visibleMapRect withZoomScale:scale];
+        
+        [self.clusteringManager displayAnnotations:annotations onMapView:mapView];
+    }];
+}
+
+- (MKAnnotationView *)mapView:(MKMapView *)mapView viewForAnnotation:(LocationAnnotation * )annotation{
+    
     
     if(annotation == mapView.userLocation)
     {
@@ -569,15 +574,32 @@
     else
     {
         
-        LocationOverlayView *annotationView ;
-        //  if ([annotation isKindOfClass:CCHMapClusterAnnotation.class]) {
+        static NSString *const AnnotatioViewReuseID = @"AnnotatioViewReuseID";
         
-        annotationView = [[LocationOverlayView alloc] initWithAnnotation:annotation reuseIdentifier:@"Attraction"];
-        //}
+        MKAnnotationView *annotationView = (MKAnnotationView *)[mapView dequeueReusableAnnotationViewWithIdentifier:AnnotatioViewReuseID];
         
-        annotationView.canShowCallout = YES;
+        if (!annotationView) {
+            annotationView = [[MKAnnotationView alloc] initWithAnnotation:annotation reuseIdentifier:AnnotatioViewReuseID];
+        }
+        
+        // This is how you can check if annotation is a cluster
+        if ([annotation isKindOfClass:[FBAnnotationCluster class]]) {
+            FBAnnotationCluster *cluster = (FBAnnotationCluster *)annotation;
+            cluster.title = [NSString stringWithFormat:@"%lu", (unsigned long)cluster.annotations.count];
+            NSMutableArray * clusterArray = [[NSMutableArray alloc]initWithArray:cluster.annotations];
+            LocationAnnotation * ann = (LocationAnnotation*) clusterArray[0];
+            NSString *location_id = [NSString stringWithFormat:@"%f,%f",
+                                    ann.coordinate.latitude, ann.coordinate.longitude];
+            annotationView.image =[PhotoDetailsVC scaleImage:self.mainDelegate.locationData[location_id] toSize:CGSizeMake(50.0,50.0)];
+            annotationView.canShowCallout = YES;
+        } else {
+            NSString *location_id = [NSString stringWithFormat:@"%f,%f",
+                                     annotation.coordinate.latitude, annotation.coordinate.longitude];
+            annotationView.image =[PhotoDetailsVC scaleImage:self.mainDelegate.locationData[location_id] toSize:CGSizeMake(50.0,50.0)];
+            annotationView.canShowCallout = NO;
+        }
+        
         return annotationView;
-        
     }
 }
 
@@ -594,7 +616,7 @@
             break;
         }
     }
-    if(view.annotation !=mapView.userLocation)
+    if(view.annotation !=mapView.userLocation && self.annotationLocation.location_id)
         [self performSegueWithIdentifier:@"showMapDetails" sender:self];
     NSLog(@"selected annotation");
 }

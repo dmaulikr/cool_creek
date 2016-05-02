@@ -13,7 +13,7 @@
 @interface FacebookPostVC : BaseVC<UITabBarControllerDelegate>
 @property (strong, nonatomic) UIImage * firstPhoto;
 @property (strong, nonatomic) UIImage * secondPhoto;
-
+@property (strong, nonatomic) UIImage * postImage;
 @property (weak, nonatomic) IBOutlet UIImageView *fbImage;
 @property (weak, nonatomic) IBOutlet UIImageView *user_photo;
 @property (weak, nonatomic) IBOutlet UILabel *user_name;

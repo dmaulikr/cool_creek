@@ -3,14 +3,8 @@
 #import <CoreLocation/CoreLocation.h>
 #import "AppDelegate.h"
 #import "BaseVC.h"
-#import "CCHMapClusterAnnotation.h"
-#import "CCHMapClusterController.h"
-#import "CCHMapClusterControllerDelegate.h"
-#import "CCHCenterOfMassMapClusterer.h"
-#import "CCHNearCenterMapClusterer.h"
-#import "CCHFadeInOutMapAnimator.h"
-
-@interface LocationVC : BaseVC<UITableViewDelegate, UITableViewDataSource, MKMapViewDelegate, CLLocationManagerDelegate, CCHMapClusterControllerDelegate>
+#import <FBAnnotationClustering/FBAnnotationClustering.h>
+@interface LocationVC : BaseVC<UITableViewDelegate, UITableViewDataSource, MKMapViewDelegate, CLLocationManagerDelegate, FBClusteringManagerDelegate>
 
 @property (weak, nonatomic) IBOutlet UITableView *locationTable;
 

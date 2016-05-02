@@ -142,7 +142,7 @@
 }
 
 - (BOOL)textField:(UITextField *)textField shouldChangeCharactersInRange:(NSRange)range replacementString:(NSString *)string {
-    if ([_txtComment.text length] > 10)
+    if ([_txtComment.text length] > 255)
         return NO;
     else
         return YES;
