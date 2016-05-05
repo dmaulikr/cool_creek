@@ -60,8 +60,6 @@
     [self.locationTable addSubview:self.refreshControl];
     self.displayItemCount = 8;
     
-    //self.mapClusterController = [[CCHMapClusterController alloc] initWithMapView:self.mapView];
-    
     [self.refreshControl addTarget:self action:@selector(updateData) forControlEvents:UIControlEventValueChanged];
     self.locationTable.infiniteScrollIndicatorStyle = UIActivityIndicatorViewStyleGray;
     self.infiniteIndicator = [[CustomInfiniteIndicator alloc] initWithFrame:CGRectMake(0, 0, 40, 40)];
@@ -93,12 +91,6 @@
         [self.tabBarController.tabBar setHidden:NO];
     else
         [self.tabBarController.tabBar setHidden:YES];
-    //    if(self.mainDelegate.shouldRefreshLocation)
-    //    {
-    //        [self.refreshControl beginRefreshing];
-    //        [self updateData];
-    //        self.mainDelegate.shouldRefreshLocation = NO;
-    //    }
     [self.refreshControl beginRefreshing];
     [self updateData];
 }

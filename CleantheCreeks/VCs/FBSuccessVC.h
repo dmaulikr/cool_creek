@@ -12,5 +12,6 @@
 #import "BaseVC.h"
 @interface FBSuccessVC : BaseVC
 - (IBAction)showFBPost:(id)sender;
+- (IBAction)close:(UIButton *)sender;
 
 @end

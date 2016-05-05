@@ -9,11 +9,12 @@
 #import "FBSuccessVC.h"
 
 @implementation FBSuccessVC
+
 -(void)viewDidLoad
 {
     [super viewDidLoad];
     [self.profileTopBar setHeaderStyle:YES title:@"LOCATION DETAILS" rightBtnHidden:YES];
-    [self.tabBarController.tabBar setHidden:NO];
+    
 }
 - (IBAction)showFBPost:(id)sender {
    // NSUserDefaults *defaults = [NSUserDefaults standardUserDefaults];
@@ -24,11 +25,17 @@
     [[UIApplication sharedApplication] openURL:url];
 }
 
+- (IBAction)close:(UIButton *)sender {
+    [self.navigationController popToRootViewControllerAnimated:YES];
+}
+
 -(void)viewWillAppear:(BOOL)animated
 {
     [super viewWillAppear:animated];
     id<GAITracker> tracker = [[GAI sharedInstance] defaultTracker];
     [tracker set:kGAIScreenName value:@"Facebook Posting Success"];
     [tracker send:[[GAIDictionaryBuilder createScreenView] build]];
+    
 }
+
 @end

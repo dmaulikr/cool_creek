@@ -21,19 +21,10 @@ CLLocationManager * locationManager;
     self = [super init];
     if (!self) return nil;
     
-    // Add this instance of TestClass as an observer of the TestNotification.
-    // We tell the notification center to inform us of "TestNotification"
-    // notifications using the receiveTestNotification: selector. By
-    // specifying object:nil, we tell the notification center that we are not
-    // interested in who posted the notification. If you provided an actual
-    // object rather than nil, the notification center will only notify you
-    // when the notification was posted by that particular object.
-    
     [[NSNotificationCenter defaultCenter] addObserver:self
                                              selector:@selector(receivePushNotification:)
                                                  name:@"PushNotification"
                                                object:nil];
-    
     return self;
 }
 
@@ -52,7 +43,7 @@ CLLocationManager * locationManager;
 {
     if(!_freshLoad)
     {
-    self.selectedIndex=1;
+        self.selectedIndex=1;
         _freshLoad=YES;
     }
     NSUserDefaults *defaults = [NSUserDefaults standardUserDefaults];
@@ -71,7 +62,7 @@ CLLocationManager * locationManager;
          }
          return nil;
      }];
-
+    
 }
 
 -(void)locationManager:(CLLocationManager *)manager didUpdateToLocation:(CLLocation *)newLocation fromLocation:(CLLocation *)oldLocation{
@@ -94,14 +85,17 @@ CLLocationManager * locationManager;
     // Dispose of any resources that can be recreated.
 }
 
-- (void)tabBarController:(UITabBarController *)tabBarController didSelectViewController:(UIViewController *)viewController;
+
+- (void)tabBarController:(UITabBarController *)tabBarController didSelectViewController:(UIViewController *)viewController
 {
     if(tabBarController.selectedIndex==0)
     {
         NSLog(@"selected 1st");
         self.selectedViewController=[self.viewControllers objectAtIndex:1];
     }
+    
 }
+
 
 - (void) blocked
 {
@@ -122,7 +116,7 @@ CLLocationManager * locationManager;
     
     
     [self presentViewController:alertController animated:YES completion:nil];
-   
+    
 }
 
 #pragma mark - Navigation

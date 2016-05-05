@@ -63,7 +63,7 @@
     {
         picker.sourceType=UIImagePickerControllerSourceTypeCamera;
     }
-    picker.delegate=self;
+    picker.delegate = self;
     [self presentViewController:picker animated:YES completion:nil];
 }
 
@@ -82,9 +82,8 @@
 {
     [picker dismissViewControllerAnimated:YES completion:NULL];
     [self dismissVC];
-    [self.navigationController popToRootViewControllerAnimated:YES];
     [self.tabBarController setSelectedIndex:1];
-    self.photoTaken=NO;
+    self.photoTaken = NO;
 }
 
 - (void)didReceiveMemoryWarning
@@ -122,6 +121,7 @@
             photoDetailsVC.foundDate=[[NSDate date] timeIntervalSince1970];
             photoDetailsVC.secondPhototaken = NO;
         }
+       
     }
 }
 

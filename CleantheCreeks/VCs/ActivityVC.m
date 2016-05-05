@@ -16,20 +16,16 @@
 
 @implementation ActivityVC
 
-
-
 -(void) viewDidLoad
 {
     [super viewDidLoad];
     self.displayItemCount=8;
     
     [self.profileTopBar setHeaderStyle:YES title:@"ACTIVITY" rightBtnHidden:YES];
-    // Do any additional setup after loading the view.
     self.refreshControl = [[UIRefreshControl alloc]init];
     [self.tv addSubview:self.refreshControl];
     [self.refreshControl addTarget:self action:@selector(updateData) forControlEvents:UIControlEventValueChanged];
-    [self.refreshControl beginRefreshing];
-    [self updateData];
+    
     self.defaults = [NSUserDefaults standardUserDefaults];
     self.current_user_id = [self.defaults objectForKey:@"user_id"];
     self.tv.estimatedRowHeight = 65.f;
@@ -42,7 +38,7 @@
     self.appDelegate=(AppDelegate*)[[UIApplication sharedApplication]delegate];
     [self.tv addInfiniteScrollWithHandler:^(UITableView* tableView) {
         self.displayItemCount+=5;
-        self.displayItemCount = MIN(self.activityArray.count,self.displayItemCount);
+        
         [self.infiniteIndicator startAnimating];
         [tableView reloadData];
         [tableView finishInfiniteScroll];
@@ -54,14 +50,17 @@
 -(void) viewWillAppear:(BOOL)animated
 {
     [super viewWillAppear:animated];
+    [self.refreshControl beginRefreshing];
     id<GAITracker> tracker = [[GAI sharedInstance] defaultTracker];
     [tracker set:kGAIScreenName value:@"ActivityVC"];
     [tracker send:[[GAIDictionaryBuilder createScreenView] build]];
+    NSLog(@"VIEWDIDAPPEAR");
+    
     self.appDelegate.notificationCount=0;
     [[[[[self tabBarController] tabBar] items]
       objectAtIndex:2] setBadgeValue:nil];
-    [self.refreshControl beginRefreshing];
-    [self updateCell];
+    
+    [self updateData];
 }
 
 - (void)didReceiveMemoryWarning
@@ -69,7 +68,10 @@
     [super didReceiveMemoryWarning];
     // Dispose of any resources that can be recreated.
 }
-
+-(void) viewDidAppear:(BOOL)animated
+{
+    
+}
 #pragma UITableView Delegate Implementation
 -(void) updateData
 {
@@ -77,6 +79,7 @@
     self.imageArray=[[NSMutableDictionary alloc]init];
     AWSDynamoDBObjectMapper *dynamoDBObjectMapper = [AWSDynamoDBObjectMapper defaultDynamoDBObjectMapper];
     AWSDynamoDBScanExpression *scanExpression = [AWSDynamoDBScanExpression new];
+    [self.refreshControl beginRefreshing];
     [[dynamoDBObjectMapper scan:[User class] expression:scanExpression]
      continueWithBlock:^id(AWSTask *task) {
          if (task.error) {
@@ -93,11 +96,11 @@
                  for (User *user in paginatedOutput.items)
                  {
                      [self.appDelegate.userArray setObject:user forKey:user.user_id];
-                     //[self loadImage:user.user_id];
                  }
                  [self updateCell];
-                 
+                
              });
+             
          }
          return nil;
      }];
@@ -252,7 +255,6 @@
                         }
                     }
                     
-                    
                     // Adding commenters
                     if([location.founder_id isEqualToString:self.current_user_id])
                     {
@@ -295,10 +297,10 @@
                         double second = ((Activity*)b).activity_time;
                         return first<second;
                     }];
-                    self.displayItemCount=MIN(self.activityArray.count,self.displayItemCount);
+                    
                     [self.tv reloadData];
                     [self.refreshControl endRefreshing];
-                    
+
                 });
             }
             
@@ -335,7 +337,10 @@
     else if(section==1)
     {
         if([self.activityArray count]>0)
+        {
+            self.displayItemCount=MIN(self.activityArray.count,self.displayItemCount);
             return self.displayItemCount;
+        }
     }
     return 0;
 }
@@ -377,7 +382,7 @@
                                 dispatch_async(dispatch_get_main_queue(), ^{
                                     {
                                         if(image)
-                                            [self.imageArray setObject:image forKey:user.user_id];
+                                            [self.imageArray setObject:image forKey:activity.activity_id];
                                     }
                                     if(cell)
                                         [((CleaningDoneCell*)cell).profileAvatar setImage: image];
@@ -422,7 +427,7 @@
                 }
                 else if([activity.activity_type isEqualToString: @"follow"])
                 {
-                    [((CleaningCommentCell*)cell).lblContent setAttributedText:[self generateString:user.user_name content:@" started follwing you\n" location:@""]];
+                    [((CleaningCommentCell*)cell).lblContent setAttributedText:[self generateString:user.user_name content:@" started following you\n" location:@""]];
                 }
                 
                 [((CleaningCommentCell*)cell).profileAvatar addGestureRecognizer:followTap];
@@ -444,7 +449,7 @@
                             if (image) {
                                 dispatch_async(dispatch_get_main_queue(), ^{
                                     {
-                                        [self.imageArray setObject:image forKey:user.user_id];
+                                        [self.imageArray setObject:image forKey:activity.activity_id];
                                     }
                                     if(cell)
                                         [((CleaningCommentCell*)cell).profileAvatar setImage: image];
@@ -649,12 +654,15 @@
         else
         {
             int numberOfMins=secondsBetween/60;
-            timedifference=[[NSString alloc]initWithFormat:@"%d mins ago", numberOfMins];
+            if(numberOfMins>1)
+                timedifference=[[NSString alloc]initWithFormat:@"%d mins ago", numberOfMins];
+            else if(numberOfMins<=1)
+                timedifference = @"Now";
         }
     }
     else if(numberOfDays>30)
     {
-        timedifference=@"More than 1 month ago";
+        timedifference = @"More than 1 month ago";
     }
     else if(numberOfDays==1)
     {

@@ -86,6 +86,7 @@
 		E2FD05851C59E548004B2C34 /* ActivityVC.m in Sources */ = {isa = PBXBuildFile; fileRef = E2FD05841C59E548004B2C34 /* ActivityVC.m */; };
 		E2FD05881C59E579004B2C34 /* LocationVC.m in Sources */ = {isa = PBXBuildFile; fileRef = E2FD05871C59E579004B2C34 /* LocationVC.m */; };
 		E2FD058B1C59E5D8004B2C34 /* MainTabNav.m in Sources */ = {isa = PBXBuildFile; fileRef = E2FD058A1C59E5D8004B2C34 /* MainTabNav.m */; };
+		E406D6431CDAE9CF003652CA /* CameraNav.m in Sources */ = {isa = PBXBuildFile; fileRef = E406D6421CDAE9CF003652CA /* CameraNav.m */; };
 		E481116E1CBB4AA9000987E2 /* MessageUI.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = E481116D1CBB4AA9000987E2 /* MessageUI.framework */; };
 		E48111731CBB5773000987E2 /* Constants.m in Sources */ = {isa = PBXBuildFile; fileRef = E48111721CBB5773000987E2 /* Constants.m */; };
 		E49CE64E1CB57F22006CE1C8 /* FXPageControl.m in Sources */ = {isa = PBXBuildFile; fileRef = E49CE64D1CB57F22006CE1C8 /* FXPageControl.m */; };
@@ -231,6 +232,8 @@
 		E2FD05871C59E579004B2C34 /* LocationVC.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = LocationVC.m; sourceTree = "<group>"; };
 		E2FD05891C59E5D8004B2C34 /* MainTabNav.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = MainTabNav.h; sourceTree = "<group>"; };
 		E2FD058A1C59E5D8004B2C34 /* MainTabNav.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = MainTabNav.m; sourceTree = "<group>"; };
+		E406D6411CDAE9CF003652CA /* CameraNav.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = CameraNav.h; sourceTree = "<group>"; };
+		E406D6421CDAE9CF003652CA /* CameraNav.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = CameraNav.m; sourceTree = "<group>"; };
 		E481116D1CBB4AA9000987E2 /* MessageUI.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = MessageUI.framework; path = System/Library/Frameworks/MessageUI.framework; sourceTree = SDKROOT; };
 		E481116F1CBB56BB000987E2 /* Constants.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = Constants.h; sourceTree = "<group>"; };
 		E48111721CBB5773000987E2 /* Constants.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = Constants.m; sourceTree = "<group>"; };
@@ -561,6 +564,8 @@
 			children = (
 				E27FC50E1C69E7A300489DE3 /* LocationNav.h */,
 				E27FC50F1C69E7A300489DE3 /* LocationNav.m */,
+				E406D6411CDAE9CF003652CA /* CameraNav.h */,
+				E406D6421CDAE9CF003652CA /* CameraNav.m */,
 				E2FD05791C59E3D0004B2C34 /* LocationVC */,
 			);
 			name = LocationNav;
@@ -963,6 +968,7 @@
 				E2D1034F1C6528EB00FD67A0 /* locationCell.m in Sources */,
 				E2FD05771C59E354004B2C34 /* SplashVC.m in Sources */,
 				3C2874B01C88E2E200725B40 /* Activity.m in Sources */,
+				E406D6431CDAE9CF003652CA /* CameraNav.m in Sources */,
 				3C9482EF1CA3F1EA007C4B79 /* CommentView.m in Sources */,
 				E2FD05821C59E4FD004B2C34 /* CameraVC.m in Sources */,
 				E2FD05721C59CA42004B2C34 /* SlideVC.m in Sources */,

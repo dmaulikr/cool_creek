@@ -17,7 +17,7 @@
 {
     [super viewDidLoad];
     [self.profileTopBar setHeaderStyle:YES title:@"LOCATION DETAILS" rightBtnHidden:YES];
-    [self.tabBarController.tabBar setHidden:YES];
+    
     NSUserDefaults *defaults = [NSUserDefaults standardUserDefaults];
     NSString *user_name = [defaults objectForKey:@"user_name"];
     NSString *user_id = [defaults objectForKey:@"user_id"];
@@ -47,17 +47,10 @@
     id<GAITracker> tracker = [[GAI sharedInstance] defaultTracker];
     [tracker set:kGAIScreenName value:@"Facebook Posting"];
     [tracker send:[[GAIDictionaryBuilder createScreenView] build]];
+    [self.tabBarController.tabBar setHidden:YES];
 }
 
-- (void)tabBarController:(UITabBarController *)tabBarController
- didSelectViewController:(UIViewController *)viewController
-{
-    NSLog(@"controller class: %@", NSStringFromClass([viewController class]));
-    NSLog(@"controller title: %@", viewController.title);
-    
-    [self dismissVC];
-    [self.navigationController popToRootViewControllerAnimated:YES];
-}
+
 
 - (IBAction)skip:(id)sender {
     [self.tabBarController.tabBar setHidden:NO];
@@ -191,8 +184,6 @@
                 break;
             case SLComposeViewControllerResultDone:
                 [self performSegueWithIdentifier:@"showFBSuccess" sender:self];
-                [self.tabBarController.tabBar setHidden:NO];
-                
                 break;
             default:
                 break;

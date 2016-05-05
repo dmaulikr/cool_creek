@@ -168,9 +168,12 @@
         btnKudo.enabled = YES;
     });
     [self.profileTopBar setHeaderStyle:NO title:self.location.location_name rightBtnHidden:YES];
+    // Adding shadows on the comment box
+    self.commentView.layer.shadowColor = [[UIColor blackColor] CGColor];
+    self.commentView.layer.shadowOffset = CGSizeMake(1.0f, 1.0f);
+    self.commentView.layer.shadowRadius = 10.0f;
+    self.commentView.layer.shadowOpacity = 0.9f;
     
-    
-    //[self.tv setHeaderViewInsets:UIEdgeInsetsMake(-100, 0, 0, 0)];
 }
 
 -(void)dismissKeyboard {
@@ -254,9 +257,6 @@
     }
     return count;
 }
-
-// Row display. Implementers should *always* try to reuse cells by setting each cell's reuseIdentifier and querying for available reusable cells with dequeueReusableCellWithIdentifier:
-// Cell gets various attributes set automatically based on table (separators) and data source (accessory views, editing controls)
 
 - (UITableViewCell *)tableView:(UITableView *)tableView cellForRowAtIndexPath:(NSIndexPath *)indexPath
 {
@@ -444,6 +444,7 @@
 {
     self.commentVisible=!self.commentVisible;
     [self.commentView setHidden:!self.commentVisible];
+    [self.textComment becomeFirstResponder];
     sender.selected=self.commentVisible;
 }
 
@@ -559,14 +560,14 @@
              
              if(user.device_token)
              {
-                 if([AppDelegate isFollowing:user])
-                     [self.mainDelegate send_notification:user message:attributedString];
+                [self.mainDelegate send_notification:user message:attributedString];
              }
              
          }
          return nil;
      }];
 }
+
 -(void) takePhoto:(id)sender
 {
     self.defaults = [NSUserDefaults standardUserDefaults];
@@ -730,11 +731,11 @@
     
     NSString *cleanPath = [[paths objectAtIndex:0] stringByAppendingPathComponent:[NSString stringWithFormat:@"%@b.jpg", self.location.location_id]];
     UIImage* cimage2 = [PhotoDetailsVC scaleImage:self.afterPhoto toSize:CGSizeMake(320.0,320.0)];
-    [UIImagePNGRepresentation(cimage2) writeToFile:cleanPath atomically:YES];
+    [UIImageJPEGRepresentation(cimage2,0.8) writeToFile:cleanPath atomically:YES];
     NSURL* cleanURL = [NSURL fileURLWithPath:cleanPath];
     AWSS3TransferManagerUploadRequest *seconduploadRequest = [AWSS3TransferManagerUploadRequest new];
     seconduploadRequest.bucket = @"cleanthecreeks";
-    seconduploadRequest.contentType = @"image/png";
+    seconduploadRequest.contentType = @"image/jpg";
     seconduploadRequest.body = cleanURL;
     
     seconduploadRequest.key = [NSString stringWithFormat:@"%f,%fb",

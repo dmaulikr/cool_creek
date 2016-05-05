@@ -13,7 +13,6 @@
 @property (strong,nonatomic) NSMutableArray * activityArray;
 @property (strong,nonatomic) NSMutableDictionary * imageArray;
 @property (strong,nonatomic) AppDelegate * appDelegate;
-//@property (strong,nonatomic) NSMutableDictionary * userArray;
 @property(nonatomic) int displayItemCount;
 
 @property (strong, nonatomic) Location * selectedLocation;
@@ -22,7 +21,6 @@
 @property(nonatomic) int selectedImgIndex;
 @property(strong, nonatomic)NSMutableArray * indexPathArray;
 
--(void) giveKudoWithIndex:(int) index assigned:(bool)assigned;
 -(void) updateCell;
 
 - (NSMutableAttributedString *)generateString:(NSString*)name content:(NSString*)content location:(NSString*) location;

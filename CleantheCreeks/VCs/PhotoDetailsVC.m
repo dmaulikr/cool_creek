@@ -139,6 +139,13 @@
     [self.detailTable reloadData];
     self.detailTable.estimatedRowHeight = 5.f;
     self.detailTable.rowHeight = UITableViewAutomaticDimension;
+    
+    // Adding shadows on the comment box
+    self.commentView.layer.shadowColor = [[UIColor blackColor] CGColor];
+    self.commentView.layer.shadowOffset = CGSizeMake(1.0f, 1.0f);
+    self.commentView.layer.shadowRadius = 10.0f;
+    self.commentView.layer.shadowOpacity = 0.9f;
+
 }
 
 - (BOOL)textField:(UITextField *)textField shouldChangeCharactersInRange:(NSRange)range replacementString:(NSString *)string {
@@ -621,7 +628,7 @@
     NSURL* dirtyURL = [NSURL fileURLWithPath:dirtyPath];
     
     UIImage* cimage2 = [PhotoDetailsVC scaleImage:self.cleanedPhoto toSize:CGSizeMake(320.0,320.0)];
-    [UIImagePNGRepresentation(cimage2) writeToFile:cleanPath atomically:YES];
+    [UIImageJPEGRepresentation(cimage2,0.8) writeToFile:cleanPath atomically:YES];
     NSURL* cleanURL = [NSURL fileURLWithPath:cleanPath];
     
     AWSS3TransferManagerUploadRequest *uploadRequest = [AWSS3TransferManagerUploadRequest new];
@@ -663,7 +670,7 @@
     {
         AWSS3TransferManagerUploadRequest *seconduploadRequest = [AWSS3TransferManagerUploadRequest new];
         seconduploadRequest.bucket = @"cleanthecreeks";
-        seconduploadRequest.contentType = @"image/png";
+        seconduploadRequest.contentType = @"image/jpg";
         seconduploadRequest.body = cleanURL;
         if(self.location==nil)
             seconduploadRequest.key = [NSString stringWithFormat:@"%f,%fb",

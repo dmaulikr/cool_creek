@@ -23,6 +23,7 @@
     id<GAITracker> tracker = [[GAI sharedInstance] defaultTracker];
     [tracker set:kGAIScreenName value:@"Profile"];
     [tracker send:[[GAIDictionaryBuilder createScreenView] build]];
+    
 }
 
 - (void)viewDidLoad
@@ -413,7 +414,7 @@
              
              if(user.device_token)
              {
-                 if([AppDelegate isFollowed:user])
+                 if([AppDelegate isFollowing:user])
                      [self.appDelegate send_notification:user message:attributedString];
              }
              
