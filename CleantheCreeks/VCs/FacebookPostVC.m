@@ -22,20 +22,36 @@
     NSString *user_name = [defaults objectForKey:@"user_name"];
     NSString *user_id = [defaults objectForKey:@"user_id"];
     NSString *userImageURL = [NSString stringWithFormat:@"https://graph.facebook.com/%@/picture", user_id];
-    dispatch_async(dispatch_get_main_queue(), ^{
-        NSData * data = [[NSData alloc] initWithContentsOfURL: [NSURL URLWithString: userImageURL]];
-        if ( data != nil ){
-            [self.user_photo setImage:[UIImage imageWithData:data]];
+    
+    NSURL *url = [NSURL URLWithString:userImageURL];
+    
+    NSURLSessionTask *task = [[NSURLSession sharedSession] dataTaskWithURL:url completionHandler:^(NSData * _Nullable data, NSURLResponse * _Nullable response, NSError * _Nullable error) {
+        if (data) {
+            UIImage *image = [UIImage imageWithData:data];
+            if (image) {
+                dispatch_async(dispatch_get_main_queue(), ^{
+                    {
+                        if(image)
+                        {
+                          [self.user_photo setImage:[UIImage imageWithData:data]];
+                        }
+                        
+                    }
+                    
+                });
+            }
         }
-        
-    });
+    }];
+    [task resume];
+    
+    
     self.user_name.adjustsFontSizeToFitWidth = YES;
     self.time.adjustsFontSizeToFitWidth=YES;
     [self.user_name setText:user_name];
     UIImage* img=[self mergeImage:self.firstPhoto withImage:self.secondPhoto];
     CGImageRef firstImageRef = self.firstPhoto.CGImage;
     CGFloat size = CGImageGetWidth(firstImageRef);
-
+    
     self.postImage=[self displayImage:img bottom:[UIImage imageNamed:@"website2"] size:size];
     [_fbImage setImage:self.postImage];
     
@@ -103,7 +119,7 @@
     
     
     // Place bottom image
-
+    
     UIImage *newImage = UIGraphicsGetImageFromCurrentImageContext();
     
     // end context
@@ -164,7 +180,7 @@
         NSString *returnString = [[NSString alloc] initWithData:returnData encoding:NSUTF8StringEncoding];
         NSLog(@"%@", returnString);
     });
-
+    
     if([SLComposeViewController isAvailableForServiceType:SLServiceTypeFacebook]) //check if Facebook Account is linked
     {
         _mySLComposerSheet = [[SLComposeViewController alloc] init]; //initiate the Social Controller

@@ -17,4 +17,5 @@
 @property(strong,nonatomic) NSString * current_user_id;
 
 - (void) networkError;
+- (void) commentError;
 @end

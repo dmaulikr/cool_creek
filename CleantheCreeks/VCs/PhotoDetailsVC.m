@@ -145,7 +145,7 @@
     self.commentView.layer.shadowOffset = CGSizeMake(1.0f, 1.0f);
     self.commentView.layer.shadowRadius = 10.0f;
     self.commentView.layer.shadowOpacity = 0.9f;
-
+    
 }
 
 - (BOOL)textField:(UITextField *)textField shouldChangeCharactersInRange:(NSRange)range replacementString:(NSString *)string {
@@ -165,7 +165,7 @@
 }
 - (void)locationManager:(CLLocationManager *)manager didUpdateToLocation:(CLLocation *)newLocation fromLocation:(CLLocation *)oldLocation
 {
-    self.currentLocation=newLocation;
+    self.currentLocation = newLocation;
     CLGeocoder *ceo = [[CLGeocoder alloc]init];
     [ceo reverseGeocodeLocation:self.currentLocation
               completionHandler:^(NSArray *placemarks, NSError *error) {
@@ -385,6 +385,7 @@
 -(void)showComment:(id)sender
 {
     self.commentView.hidden=NO;
+    [self.txtComment becomeFirstResponder];
 }
 
 - (NSMutableAttributedString *)generateCommentString:(NSString*)name content:(NSString*)content
@@ -469,6 +470,7 @@
          return nil;
      }];
 }
+
 - (IBAction)nextPage:(id)sender {
     
     if(self.secondPhototaken)
@@ -491,6 +493,7 @@
         [alertController addAction:[UIAlertAction actionWithTitle:@"Wrap this up" style:UIAlertActionStyleDefault handler:^(UIAlertAction *action) {
             
             UIImagePickerController *picker=[[UIImagePickerController alloc] init];
+            picker.allowsEditing = YES;
             if([UIImagePickerController isSourceTypeAvailable:UIImagePickerControllerSourceTypeCamera]==NO)
             {
                 picker.sourceType=UIImagePickerControllerSourceTypePhotoLibrary;
@@ -498,6 +501,7 @@
             else
             {
                 picker.sourceType=UIImagePickerControllerSourceTypeCamera;
+                picker.cameraCaptureMode = UIImagePickerControllerCameraCaptureModePhoto;
             }
             picker.delegate = self;
             [self presentViewController:picker animated:YES completion:nil];
@@ -540,6 +544,7 @@
 
 - (IBAction)prevPage:(id)sender {
     UIImagePickerController *picker=[[UIImagePickerController alloc] init];
+    picker.allowsEditing = YES;
     if([UIImagePickerController isSourceTypeAvailable:UIImagePickerControllerSourceTypeCamera]==NO)
     {
         picker.sourceType=UIImagePickerControllerSourceTypePhotoLibrary;
@@ -547,6 +552,7 @@
     else
     {
         picker.sourceType=UIImagePickerControllerSourceTypeCamera;
+        picker.cameraCaptureMode = UIImagePickerControllerCameraCaptureModePhoto;
     }
     picker.delegate=self;
     [self presentViewController:picker animated:YES completion:nil];
@@ -708,14 +714,14 @@
 {
     NSLog(@"Photo taken");
     UIImage * photo=[[UIImage alloc]init];
-    photo=[info objectForKey:UIImagePickerControllerOriginalImage];
+    photo = (UIImage *)[info objectForKey:UIImagePickerControllerEditedImage];
     if(self.secondPhototaken)
     {
         [self setSecondPhoto:YES photo:photo];
     }
     else
     {
-        self.takenPhoto=photo;
+        self.takenPhoto = photo;
         if(self.location)
             self.secondPhototaken=YES;
     }
@@ -797,8 +803,15 @@
 }
 
 - (IBAction)btnSendComment:(id)sender {
-    self.commentText = self.txtComment.text;
-    self.commentView.hidden=YES;
-    [self dismissKeyboard];
+    if([self.txtComment.text length]>0)
+    {
+        self.commentText = self.txtComment.text;
+        self.commentView.hidden=YES;
+        [self dismissKeyboard];
+    }
+    else
+    {
+        [self commentError];
+    }
 }
 @end

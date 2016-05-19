@@ -118,51 +118,11 @@
     [self registerForKeyboardNotifications];
     self.tv.estimatedRowHeight = 65.f;
     self.tv.rowHeight = UITableViewAutomaticDimension;
-    AWSS3TransferManager *transferManager = [AWSS3TransferManager defaultS3TransferManager];
     
-    AWSS3TransferManagerDownloadRequest *firstRequest = [AWSS3TransferManagerDownloadRequest new];
-    firstRequest.bucket = @"cleanthecreeks";
-    NSString *downloadingFilePath = [NSTemporaryDirectory() stringByAppendingPathComponent:[self.location.location_id stringByAppendingString:@"a"]];
-    NSURL *downloadingFileURL = [NSURL fileURLWithPath:downloadingFilePath];
-    NSString * beforeKey=[self.location.location_id stringByAppendingString:@"a"];
-    firstRequest.key = beforeKey;
-    firstRequest.downloadingFileURL = downloadingFileURL;
-    [[transferManager download:firstRequest] continueWithExecutor:[AWSExecutor mainThreadExecutor] withBlock:^id(AWSTask *task2) {
-        if (task2.result) {
-            self.beforePhoto =[[UIImage alloc]init];
-            self.beforePhoto = [UIImage imageWithContentsOfFile:downloadingFilePath];
-            dispatch_async(dispatch_get_main_queue(), ^{
-                [self.tv reloadData];
-            });
-        }
-        return nil;
-    }];
     UIButton * btnKudo = [self.view viewWithTag:22];
     
     btnKudo.enabled = NO; //disabling the button while finishing the db update
-    if(self.cleaned)
-    {
-        AWSS3TransferManagerDownloadRequest *secondRequest = [AWSS3TransferManagerDownloadRequest new];
-        secondRequest.bucket = @"cleanthecreeks";
-        NSString *downloadingFilePath = [NSTemporaryDirectory() stringByAppendingPathComponent:[self.location.location_id stringByAppendingString:@"b"]];
-        NSURL *downloadingFileURL = [NSURL fileURLWithPath:downloadingFilePath];
-        NSString * beforeKey=[self.location.location_id stringByAppendingString:@"b"];
-        secondRequest.key = beforeKey;
-        secondRequest.downloadingFileURL = downloadingFileURL;
-        [[transferManager download:secondRequest] continueWithExecutor:[AWSExecutor mainThreadExecutor] withBlock:^id(AWSTask *task2) {
-            
-            if (task2.result) {
-                self.afterPhoto =[[UIImage alloc]init];
-                self.afterPhoto = [UIImage imageWithContentsOfFile:downloadingFilePath];
-                dispatch_async(dispatch_get_main_queue(), ^{
-                    [self.tv reloadData];
-                    btnKudo.enabled = YES;
-                });
-            }
-            return nil;
-        }];
-        
-    }
+    
     dispatch_async(dispatch_get_main_queue(), ^{
         [self.tv reloadData];
         btnKudo.enabled = YES;
@@ -173,7 +133,8 @@
     self.commentView.layer.shadowOffset = CGSizeMake(1.0f, 1.0f);
     self.commentView.layer.shadowRadius = 10.0f;
     self.commentView.layer.shadowOpacity = 0.9f;
-    
+    self.tv.estimatedRowHeight = 5.f;
+    self.tv.rowHeight = UITableViewAutomaticDimension;
 }
 
 -(void)dismissKeyboard {
@@ -193,7 +154,7 @@
     if(indexPath.section==0)
     {
         if(indexPath.row==0)
-            height = self.view.frame.size.height*0.3;
+            height = self.view.frame.size.width*0.5;
         if(indexPath.row==1)
             height = 49.f;
     }
@@ -238,22 +199,22 @@
 
 - (NSInteger)tableView:(UITableView *)tableView numberOfRowsInSection:(NSInteger)section
 {
-    NSInteger count=0;
-    if(section==0)
-        count=2;
-    else if(section==1)
+    NSInteger count = 0;
+    if(section == 0)
+        count = 2;
+    else if(section == 1)
     {
         if(self.cleaned)
-            count=4;
+            count = 4;
         else
-            count=3;
+            count = 3;
     }
     else if(section==2)
     {
         if(self.location.comments!=nil)
-            count=self.location.comments.count+1;
+            count = self.location.comments.count+1;
         else
-            count=2;
+            count = 1;
     }
     return count;
 }
@@ -268,9 +229,65 @@
         if(indexPath.row==0)
         {
             cell = (LocationPhotoCell*)[tableView dequeueReusableCellWithIdentifier:@"LocationPhotoCell"];
-            [((LocationPhotoCell*)cell).firstPhoto setImage:self.beforePhoto];
+            if(self.beforePhoto)
+                [((LocationPhotoCell*)cell).firstPhoto setImage:self.beforePhoto];
+            else
+            {
+                NSString *userImageURL = [NSString stringWithFormat:@"https://s3-ap-northeast-1.amazonaws.com/cleanthecreeks/%@%@", self.location.location_id,@"a"];
+                NSURL *url = [NSURL URLWithString:userImageURL];
+                
+                NSURLSessionTask *task = [[NSURLSession sharedSession] dataTaskWithURL:url completionHandler:^(NSData * _Nullable data, NSURLResponse * _Nullable response, NSError * _Nullable error) {
+                    if (data) {
+                        UIImage *image = [UIImage imageWithData:data];
+                        if (image) {
+                            
+                            dispatch_async(dispatch_get_main_queue(), ^{
+                                {
+                                    self.beforePhoto = image;
+                                    
+                                    [((LocationPhotoCell*)cell).firstPhoto setImage:image];
+                                    [self.tv reloadData];
+                                    
+                                }
+                                
+                            });
+                        }
+                    }
+                }];
+                [task resume];
+            }
+            
             if(self.cleaned)
-                [((LocationPhotoCell*)cell).secondPhoto setImage:self.afterPhoto];
+            {
+                if(self.afterPhoto)
+                    [((LocationPhotoCell*)cell).secondPhoto setImage:self.afterPhoto];
+                else
+                {
+                    NSString *userImageURL = [NSString stringWithFormat:@"https://s3-ap-northeast-1.amazonaws.com/cleanthecreeks/%@%@", self.location.location_id,@"b"];
+                    NSURL *url = [NSURL URLWithString:userImageURL];
+                    
+                    NSURLSessionTask *task = [[NSURLSession sharedSession] dataTaskWithURL:url completionHandler:^(NSData * _Nullable data, NSURLResponse * _Nullable response, NSError * _Nullable error) {
+                        if (data) {
+                            UIImage *image = [UIImage imageWithData:data];
+                            if (image) {
+                                
+                                dispatch_async(dispatch_get_main_queue(), ^{
+                                    {
+                                        self.afterPhoto = image;
+                                        
+                                        [((LocationPhotoCell*)cell).secondPhoto setImage:image];
+                                        [self.tv reloadData];
+                                        
+                                    }
+                                    
+                                });
+                            }
+                        }
+                    }];
+                    [task resume];
+                }
+                
+            }
             else
             {
                 [((LocationPhotoCell*)cell).secondPhoto setImage:[UIImage imageNamed:@"camera"]];
@@ -334,7 +351,7 @@
         else if(indexPath.row==2)
         {
             cell = (DetailCell*)[tableView dequeueReusableCellWithIdentifier:@"SecondDetailCell"];
-            if(self.location!=nil)
+            if(self.location!= nil)
                 [((DetailCell*)cell).finderName setText:self.location.found_by];
             else
                 [((DetailCell*)cell).finderName setText:user_name];
@@ -376,7 +393,8 @@
         {
             if(self.location!=nil)
             {
-                
+                if([self.location.comments count]>0)
+                {
                 cell = (CommentCell*)[tableView dequeueReusableCellWithIdentifier:@"CommentCell"];
                 NSMutableDictionary *commentItem=[self.location.comments objectAtIndex:indexPath.row-1];
                 User * commentUser=[self.mainDelegate.userArray objectForKey:[commentItem objectForKey:@"id"]];
@@ -391,36 +409,59 @@
                 [((CommentCell*)cell).commentLabel addGestureRecognizer:commentTap];
                 [((CommentCell*)cell).commentLabel setUserInteractionEnabled:YES];
                 ((CommentCell*)cell).commentLabel.tag =indexPath.row-1;
+                }
             }
             
         }
         
     }
-    if(!cell){
-        cell = nil;
-        
-    }
+    [[cell contentView] setFrame:[cell bounds]];
+    [[cell contentView] setAutoresizingMask:UIViewAutoresizingFlexibleWidth | UIViewAutoresizingFlexibleHeight];
     return cell;
 }
 
 -(void)showCleaner:(id)sender
 {
-    self.selected_user = self.location.cleaner_id;
-    [self performSegueWithIdentifier:@"showProfileFromDetails" sender:self];
+    self.defaults = [NSUserDefaults standardUserDefaults];
+    if([self.defaults objectForKey:@"user_id"])
+    {
+        self.selected_user = self.location.cleaner_id;
+        [self performSegueWithIdentifier:@"showProfileFromDetails" sender:self];
+    }
+    else
+    {
+        [self fbLogin];
+    }
 }
 
 -(void)showFinder:(id)sender
 {
-    self.selected_user = self.location.founder_id;
-    [self performSegueWithIdentifier:@"showProfileFromDetails" sender:self];
+    self.defaults = [NSUserDefaults standardUserDefaults];
+    if([self.defaults objectForKey:@"user_id"])
+    {
+        self.selected_user = self.location.founder_id;
+        [self performSegueWithIdentifier:@"showProfileFromDetails" sender:self];
+    }
+    else
+    {
+        [self fbLogin];
+    }
 }
 
 -(void)showCommenter:(id)sender
 {
-    UITapGestureRecognizer *gesture = (UITapGestureRecognizer *) sender;
-    NSMutableDictionary *commentItem=[self.location.comments objectAtIndex:gesture.view.tag];
-    self.selected_user = [commentItem objectForKey:@"id"];
-    [self performSegueWithIdentifier:@"showProfileFromDetails" sender:self];
+    self.defaults = [NSUserDefaults standardUserDefaults];
+    if([self.defaults objectForKey:@"user_id"])
+    {
+        UITapGestureRecognizer *gesture = (UITapGestureRecognizer *) sender;
+        NSMutableDictionary *commentItem=[self.location.comments objectAtIndex:gesture.view.tag];
+        self.selected_user = [commentItem objectForKey:@"id"];
+        [self performSegueWithIdentifier:@"showProfileFromDetails" sender:self];
+    }
+    else
+    {
+        [self fbLogin];
+    }
 }
 
 - (nullable NSString *)tableView:(UITableView *)tableView titleForHeaderInSection:(NSInteger)section
@@ -442,10 +483,16 @@
 
 -(void)commentButtonClicked:(UIButton*) sender
 {
-    self.commentVisible=!self.commentVisible;
-    [self.commentView setHidden:!self.commentVisible];
-    [self.textComment becomeFirstResponder];
-    sender.selected=self.commentVisible;
+    self.defaults = [NSUserDefaults standardUserDefaults];
+    if([self.defaults objectForKey:@"user_id"])
+    {
+        self.commentVisible=!self.commentVisible;
+        [self.commentView setHidden:!self.commentVisible];
+        [self.textComment becomeFirstResponder];
+        sender.selected=self.commentVisible;
+    }
+    else
+        [self fbLogin];
 }
 
 -(void)reportButtonClicked:(UIButton*) sender
@@ -496,51 +543,60 @@
 }
 
 - (IBAction)sendButtonClicked:(id)sender {
-    self.commentVisible = NO;
-    [self.commentView setHidden:YES];
-    
-    NSMutableArray * commentArray=[[NSMutableArray alloc] init];
-    if(self.location.comments!=nil)
-        commentArray=self.location.comments;
-    NSMutableDictionary *commentItem=[[NSMutableDictionary alloc]init];
-    NSUserDefaults *defaults = [NSUserDefaults standardUserDefaults];
-    self.current_user_id = [defaults objectForKey:@"user_id"];
-    [commentItem setObject:self.current_user_id forKey:@"id"];
-    [commentItem setObject:self.textComment.text forKey:@"text"];
-    double date =[[NSDate date]timeIntervalSince1970];
-    NSString *dateString=[NSString stringWithFormat:@"%f",date];
-    [commentItem setObject:dateString forKey:@"time"];
-    
-    
-    [commentArray addObject:commentItem];
-    
-    self.location.comments=[[NSMutableArray alloc] initWithArray:commentArray];
-    
-    AWSDynamoDBObjectMapper *dynamoDBObjectMapper = [AWSDynamoDBObjectMapper defaultDynamoDBObjectMapper];
-    AWSDynamoDBObjectMapperConfiguration *updateMapperConfig = [AWSDynamoDBObjectMapperConfiguration new];
-    updateMapperConfig.saveBehavior = AWSDynamoDBObjectMapperSaveBehaviorUpdate;
-    [self.textComment resignFirstResponder];
-    [[dynamoDBObjectMapper save:self.location configuration:updateMapperConfig]
-     continueWithBlock:^id(AWSTask *task) {
-         if (task.error) {
-             [self networkError];
-         }
-         if (task.exception) {
-             [self networkError];
-         }
-         if (task.result) {
-             dispatch_async(dispatch_get_main_queue(), ^{
-                 [self.textComment setText:@""];
-                 
-                 [self generateNotification:self.location.cleaner_id mode:@"comment"];
-                 [self.tv reloadData];
-                 NSLog(@"Updated Comment");
-             });
-         }
-         return nil;
-     }];
+    if([self.textComment.text length]>0)
+    {
+        self.commentVisible = NO;
+        [self.commentView setHidden:YES];
+        
+        NSMutableArray * commentArray=[[NSMutableArray alloc] init];
+        if(self.location.comments!=nil)
+            commentArray=self.location.comments;
+        NSMutableDictionary *commentItem=[[NSMutableDictionary alloc]init];
+        NSUserDefaults *defaults = [NSUserDefaults standardUserDefaults];
+        self.current_user_id = [defaults objectForKey:@"user_id"];
+        [commentItem setObject:self.current_user_id forKey:@"id"];
+        [commentItem setObject:self.textComment.text forKey:@"text"];
+        double date =[[NSDate date]timeIntervalSince1970];
+        NSString *dateString=[NSString stringWithFormat:@"%f",date];
+        [commentItem setObject:dateString forKey:@"time"];
+        
+        
+        [commentArray addObject:commentItem];
+        
+        self.location.comments=[[NSMutableArray alloc] initWithArray:commentArray];
+        
+        AWSDynamoDBObjectMapper *dynamoDBObjectMapper = [AWSDynamoDBObjectMapper defaultDynamoDBObjectMapper];
+        AWSDynamoDBObjectMapperConfiguration *updateMapperConfig = [AWSDynamoDBObjectMapperConfiguration new];
+        updateMapperConfig.saveBehavior = AWSDynamoDBObjectMapperSaveBehaviorUpdate;
+        [self.textComment resignFirstResponder];
+        [[dynamoDBObjectMapper save:self.location configuration:updateMapperConfig]
+         continueWithBlock:^id(AWSTask *task) {
+             if (task.error) {
+                 [self networkError];
+             }
+             if (task.exception) {
+                 [self networkError];
+             }
+             if (task.result) {
+                 dispatch_async(dispatch_get_main_queue(), ^{
+                     [self.textComment setText:@""];
+                     [self generateNotification:self.location.cleaner_id mode:@"comment"];
+                     [self.tv reloadData];
+                     CGPoint bottomOffset = CGPointMake(0,  self.tv.bounds.size.height - self.tv.contentInset.bottom - self.tv.contentSize.height);
+                     [self.tv setContentOffset:bottomOffset animated:YES];
+                     NSLog(@"Updated Comment");
+                 });
+             }
+             return nil;
+         }];
+    }
+    else
+    {
+        [self commentError];
+    }
     
 }
+
 -(void) generateNotification:(NSString*) target_id mode:(NSString*) mode
 {
     self.defaults=[NSUserDefaults standardUserDefaults];
@@ -560,7 +616,7 @@
              
              if(user.device_token)
              {
-                [self.mainDelegate send_notification:user message:attributedString];
+                 [self.mainDelegate send_notification:user message:attributedString];
              }
              
          }
@@ -574,6 +630,7 @@
     if([self.defaults objectForKey:@"user_id"])
     {
         UIImagePickerController *picker=[[UIImagePickerController alloc] init];
+        picker.allowsEditing = YES;
         if([UIImagePickerController isSourceTypeAvailable:UIImagePickerControllerSourceTypeCamera]==NO)
         {
             picker.sourceType=UIImagePickerControllerSourceTypePhotoLibrary;
@@ -581,8 +638,9 @@
         else
         {
             picker.sourceType=UIImagePickerControllerSourceTypeCamera;
+            picker.cameraCaptureMode = UIImagePickerControllerCameraCaptureModePhoto;
         }
-        picker.delegate=self;
+        picker.delegate = self;
         [self presentViewController:picker animated:YES completion:nil];
     }
     else
@@ -599,7 +657,7 @@
 {
     NSLog(@"Photo taken");
     UIImage * photo=[[UIImage alloc]init];
-    photo=[info objectForKey:UIImagePickerControllerOriginalImage];
+    photo = (UIImage *)[info objectForKey:UIImagePickerControllerEditedImage];;
     
     self.afterPhoto=photo;
     [picker dismissViewControllerAnimated:YES completion:nil];
@@ -613,8 +671,7 @@
 
 -(void) fbLogin
 {
-    
-    UIAlertController *alertController = [UIAlertController alertControllerWithTitle:@"Sign in with Facebook" message:@"In order to take a photo you must be signed in to your facebook account." preferredStyle:UIAlertControllerStyleAlert];
+    UIAlertController *alertController = [UIAlertController alertControllerWithTitle:@"Sign in with Facebook" message:@"In order to take a photo or commment you must be signed in to your facebook account." preferredStyle:UIAlertControllerStyleAlert];
     
     [alertController addAction:[UIAlertAction actionWithTitle:@"Cancel" style:UIAlertActionStyleDefault handler:^(UIAlertAction *action) {
         [alertController dismissViewControllerAnimated:YES completion:nil];
@@ -673,9 +730,7 @@
                                }
                                return nil;
                            }];
-                          
                       }
-                      
                   }];
              }
          }];
@@ -686,6 +741,53 @@
         [self presentViewController:alertController animated:YES completion:nil];
     });
     
+}
+
+- (BOOL)tableView:(UITableView *)tableView canEditRowAtIndexPath:(NSIndexPath *)indexPath {
+    self.defaults = [NSUserDefaults standardUserDefaults];
+    NSString *user_id = [self.defaults objectForKey:@"user_id"];
+    if(indexPath.section ==2 && indexPath.row>0)
+    {
+        
+        NSDictionary * commentItem = [self.location.comments objectAtIndex:indexPath.row-1];
+        if([[commentItem objectForKey:@"id"] isEqualToString:user_id])
+            return YES;
+        else
+            return NO;
+    }
+    else
+        return NO;
+}
+
+- (void)tableView:(UITableView *)tableView commitEditingStyle:(UITableViewCellEditingStyle)editingStyle forRowAtIndexPath:(NSIndexPath *)indexPath {
+    if (editingStyle == UITableViewCellEditingStyleDelete) {
+        dispatch_async(dispatch_get_main_queue(), ^ {
+            
+            NSMutableArray * commentArray=[[NSMutableArray alloc] init];
+            if(self.location.comments!=nil)
+            {
+                
+                [self.location.comments removeObjectAtIndex:indexPath.row-1];
+                
+            }
+            if([self.location.comments count]==0)
+                self.location.comments = nil;
+            [tableView reloadData];
+            AWSDynamoDBObjectMapper *dynamoDBObjectMapper = [AWSDynamoDBObjectMapper defaultDynamoDBObjectMapper];
+            AWSDynamoDBObjectMapperConfiguration *updateMapperConfig = [AWSDynamoDBObjectMapperConfiguration new];
+            updateMapperConfig.saveBehavior = AWSDynamoDBObjectMapperSaveBehaviorUpdate;
+            
+            [[dynamoDBObjectMapper save:self.location configuration:updateMapperConfig]
+             continueWithBlock:^id(AWSTask *task) {
+                 
+                 if (task.result) {
+                     [tableView reloadData];
+                 }
+                 
+                 return nil;
+             }];
+        });
+    }
 }
 
 - (void)imagePickerControllerDidCancel:(UIImagePickerController *)picker
@@ -844,8 +946,6 @@
             self.mainDelegate.shouldRefreshProfile = YES;
         }
     }
-    
-    
 }
 
 - (NSMutableAttributedString *)generateCommentString:(NSString*)name content:(NSString*)content

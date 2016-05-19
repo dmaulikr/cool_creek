@@ -33,34 +33,45 @@
     
     self.tv.infiniteScrollIndicatorStyle = UIActivityIndicatorViewStyleGray;
     self.infiniteIndicator = [[CustomInfiniteIndicator alloc] initWithFrame:CGRectMake(0, 0, 40, 40)];
-    
+    self.displayItemCount = 10;
     self.tv.infiniteScrollIndicatorView = self.infiniteIndicator;
     self.appDelegate=(AppDelegate*)[[UIApplication sharedApplication]delegate];
     [self.tv addInfiniteScrollWithHandler:^(UITableView* tableView) {
-        self.displayItemCount+=5;
-        
+        self.displayItemCount += 5;
+        [self.refreshControl endRefreshing];
         [self.infiniteIndicator startAnimating];
         [tableView reloadData];
         [tableView finishInfiniteScroll];
     }];
-        
+    
     
 }
 
 -(void) viewWillAppear:(BOOL)animated
 {
-    [super viewWillAppear:animated];
-    [self.refreshControl beginRefreshing];
+    
     id<GAITracker> tracker = [[GAI sharedInstance] defaultTracker];
     [tracker set:kGAIScreenName value:@"ActivityVC"];
     [tracker send:[[GAIDictionaryBuilder createScreenView] build]];
     NSLog(@"VIEWDIDAPPEAR");
-    
     self.appDelegate.notificationCount=0;
     [[[[[self tabBarController] tabBar] items]
       objectAtIndex:2] setBadgeValue:nil];
-    
+    [self.refreshControl endRefreshing];
+    [self.refreshControl beginRefreshing];
+    if (self.tv.contentOffset.y == 0) {
+        
+        [UIView animateWithDuration:0.25 delay:0 options:UIViewAnimationOptionBeginFromCurrentState animations:^(void){
+            
+            self.tv.contentOffset = CGPointMake(0, -self.refreshControl.frame.size.height);
+            
+        } completion:^(BOOL finished){
+            
+        }];
+        
+    }
     [self updateData];
+    
 }
 
 - (void)didReceiveMemoryWarning
@@ -68,18 +79,15 @@
     [super didReceiveMemoryWarning];
     // Dispose of any resources that can be recreated.
 }
--(void) viewDidAppear:(BOOL)animated
-{
-    
-}
+
 #pragma UITableView Delegate Implementation
 -(void) updateData
 {
     self.appDelegate.userArray=[[NSMutableDictionary alloc]init];
-    self.imageArray=[[NSMutableDictionary alloc]init];
+    self.imageArray = [[NSMutableDictionary alloc]init];
     AWSDynamoDBObjectMapper *dynamoDBObjectMapper = [AWSDynamoDBObjectMapper defaultDynamoDBObjectMapper];
     AWSDynamoDBScanExpression *scanExpression = [AWSDynamoDBScanExpression new];
-    [self.refreshControl beginRefreshing];
+    
     [[dynamoDBObjectMapper scan:[User class] expression:scanExpression]
      continueWithBlock:^id(AWSTask *task) {
          if (task.error) {
@@ -98,7 +106,7 @@
                      [self.appDelegate.userArray setObject:user forKey:user.user_id];
                  }
                  [self updateCell];
-                
+                 
              });
              
          }
@@ -109,6 +117,7 @@
 -(void) updateCell
 {
     self.activityArray=[[NSMutableArray alloc]init];
+    [self.activityArray removeAllObjects];
     if([self.appDelegate.userArray count]>0)
     {
         User * current_user = [self.appDelegate.userArray objectForKey:self.current_user_id];
@@ -207,20 +216,20 @@
                             [self.activityArray addObject:activity];
                         }
                         else if([location.founder_id isEqualToString:self.current_user_id])
-                            {
-                                Activity *activity=[[Activity alloc]init];
-                                activity.activity_id = location.founder_id;
-                                activity.activity_time=location.found_date;
-                                activity.activity_type = @"find";
-                                activity.activity_location = location;
-                                
-                                [self.activityArray addObject:activity];
-                            }
+                        {
+                            Activity *activity=[[Activity alloc]init];
+                            activity.activity_id = location.founder_id;
+                            activity.activity_time=location.found_date;
+                            activity.activity_type = @"find";
+                            activity.activity_location = location;
+                            
+                            [self.activityArray addObject:activity];
+                        }
                     }
                     
                     else //within 100kms
                     {
-                       
+                        
                         // Showing cleaned activities witin 100kms
                         if([location.isDirty isEqualToString:@"false"])
                         {
@@ -299,8 +308,8 @@
                     }];
                     
                     [self.tv reloadData];
+                    
                     [self.refreshControl endRefreshing];
-
                 });
             }
             
@@ -316,8 +325,8 @@
     if(indexPath.section==0)
     {
         if(indexPath.row==0)
-            height=5;
-            
+            height=23;
+        
     }
     else if(indexPath.section>0)
     {
@@ -328,7 +337,10 @@
 
 - (NSInteger)numberOfSectionsInTableView:(UITableView *)tableView
 {
-    return 2;
+    if([self.activityArray count]>0)
+        return 2;
+    else
+        return 1;
 }
 
 - (NSInteger)tableView:(UITableView *)tableView numberOfRowsInSection:(NSInteger)section{
@@ -341,19 +353,23 @@
             self.displayItemCount=MIN(self.activityArray.count,self.displayItemCount);
             return self.displayItemCount;
         }
+        else
+            return 0;
     }
     return 0;
+    
+    
 }
 
 - (UITableViewCell *)tableView:(UITableView *)tableView cellForRowAtIndexPath:(NSIndexPath *)indexPath{
     
     NSInteger row = indexPath.row;
-    UITableViewCell *cell;
+    UITableViewCell *cell = nil;
     if(indexPath.section == 0)
         cell=[tableView dequeueReusableCellWithIdentifier:@"Separator" forIndexPath:indexPath];
     else if(indexPath.section == 1)
     {
-        if([self.activityArray count]>0)
+        if([self.activityArray count]>0 && [self.activityArray objectAtIndex:indexPath.row])
         {
             Activity * activity = [self.activityArray objectAtIndex:row];
             User * user=[self.appDelegate.userArray objectForKey:activity.activity_id];
@@ -362,102 +378,110 @@
             if([activity.activity_type isEqualToString: @"clean"])
             {
                 cell = (CleaningDoneCell*)[tableView dequeueReusableCellWithIdentifier:@"CleaningDoneCell" forIndexPath:indexPath];
-                
-                [((CleaningDoneCell*)cell).lblContent setAttributedText:[self generateString:user.user_name content:@" has finished cleaning " location:activity.activity_location.location_name]];
-                [((CleaningDoneCell*)cell).activityHours setText:[self timeDifference:activity.activity_time]];
-                [((CleaningDoneCell*)cell).kudoCounter setTitle:[[NSString alloc] initWithFormat:@"%d Kudos",activity.kudo_count] forState:UIControlStateNormal];
-                if([self.imageArray objectForKey:activity.activity_id]!=nil)
+                if(cell)
                 {
-                    [((CleaningDoneCell*)cell).profileAvatar setImage: [self.imageArray objectForKey:user.user_id]];
-                }
-                else
-                {
-                    NSString *userImageURL = [NSString stringWithFormat:@"https://graph.facebook.com/%@/picture", activity.activity_id];
-                    NSURL *url = [NSURL URLWithString:userImageURL];
-                    
-                    NSURLSessionTask *task = [[NSURLSession sharedSession] dataTaskWithURL:url completionHandler:^(NSData * _Nullable data, NSURLResponse * _Nullable response, NSError * _Nullable error) {
-                        if (data) {
-                            UIImage *image = [UIImage imageWithData:data];
-                            if (image) {
-                                dispatch_async(dispatch_get_main_queue(), ^{
-                                    {
-                                        if(image)
-                                            [self.imageArray setObject:image forKey:activity.activity_id];
-                                    }
-                                    if(cell)
-                                        [((CleaningDoneCell*)cell).profileAvatar setImage: image];
-                                });
+                    [((CleaningDoneCell*)cell).lblContent setAttributedText:[self generateString:user.user_name content:@" has finished cleaning " location:activity.activity_location.location_name]];
+                    [((CleaningDoneCell*)cell).activityHours setText:[self timeDifference:activity.activity_time]];
+                    [((CleaningDoneCell*)cell).kudoCounter setTitle:[[NSString alloc] initWithFormat:@"%d Kudos",activity.kudo_count] forState:UIControlStateNormal];
+                    if([self.imageArray objectForKey:activity.activity_id]!=nil)
+                    {
+                        [((CleaningDoneCell*)cell).profileAvatar setImage: [self.imageArray objectForKey:activity.activity_id]];
+                    }
+                    else
+                    {
+                        NSString *userImageURL = [NSString stringWithFormat:@"https://graph.facebook.com/%@/picture", activity.activity_id];
+                        NSURL *url = [NSURL URLWithString:userImageURL];
+                        
+                        NSURLSessionTask *task = [[NSURLSession sharedSession] dataTaskWithURL:url completionHandler:^(NSData * _Nullable data, NSURLResponse * _Nullable response, NSError * _Nullable error) {
+                            if (data) {
+                                UIImage *image = [UIImage imageWithData:data];
+                                if (image) {
+                                    dispatch_async(dispatch_get_main_queue(), ^{
+                                        {
+                                            if(image)
+                                            {
+                                                [self.imageArray setObject:image forKey:activity.activity_id];
+                                                if(cell)
+                                                    [((CleaningDoneCell*)cell).profileAvatar setImage: image];
+                                            }
+                                            
+                                        }
+                                        
+                                    });
+                                }
                             }
-                        }
-                    }];
-                    [task resume];
+                        }];
+                        [task resume];
+                    }
+                    
+                    [((CleaningDoneCell*)cell).btnKudos setTitle:@"You Gave Kudos" forState:UIControlStateSelected];
+                    [((CleaningDoneCell*)cell).btnKudos setImage:[UIImage imageNamed:@"IconKudos3"] forState:UIControlStateSelected];
+                    [((CleaningDoneCell*)cell).btnKudos setTitle:@"Give Kudos" forState:UIControlStateNormal];
+                    [((CleaningDoneCell*)cell).btnKudos setImage:[UIImage imageNamed:@"IconKudos2"] forState:UIControlStateNormal];
+                    
+                    ((CleaningDoneCell*)cell).btnKudos.selected=activity.kudo_assigned;
+                    
+                    ((CleaningDoneCell*)cell).btnKudos.tag = indexPath.row;
+                    ((CleaningDoneCell*)cell).btnKudoCount.tag = indexPath.row;
+                    [((CleaningDoneCell*)cell).btnKudoCount addTarget:self action:@selector(kudoCountClicked:) forControlEvents:UIControlEventTouchUpInside];
+                    ((CleaningDoneCell*)cell).parentVC = self;
+                    [((CleaningDoneCell*)cell).profileAvatar addGestureRecognizer:followTap];
+                    ((CleaningDoneCell*)cell).profileAvatar.userInteractionEnabled=YES;
+                    ((CleaningDoneCell*)cell).profileAvatar.tag = indexPath.row;
+                    [((CleaningDoneCell*)cell).activityHours setText:[self timeDifference:activity.activity_time]];
                 }
-                
-                [((CleaningDoneCell*)cell).btnKudos setTitle:@"You Gave Kudos" forState:UIControlStateSelected];
-                [((CleaningDoneCell*)cell).btnKudos setImage:[UIImage imageNamed:@"IconKudos3"] forState:UIControlStateSelected];
-                [((CleaningDoneCell*)cell).btnKudos setTitle:@"Give Kudos" forState:UIControlStateNormal];
-                [((CleaningDoneCell*)cell).btnKudos setImage:[UIImage imageNamed:@"IconKudos2"] forState:UIControlStateNormal];
-                
-                ((CleaningDoneCell*)cell).btnKudos.selected=activity.kudo_assigned;
-                
-                ((CleaningDoneCell*)cell).btnKudos.tag = indexPath.row;
-                ((CleaningDoneCell*)cell).btnKudoCount.tag = indexPath.row;
-                [((CleaningDoneCell*)cell).btnKudoCount addTarget:self action:@selector(kudoCountClicked:) forControlEvents:UIControlEventTouchUpInside];
-                ((CleaningDoneCell*)cell).parentVC = self;
-                [((CleaningDoneCell*)cell).profileAvatar addGestureRecognizer:followTap];
-                ((CleaningDoneCell*)cell).profileAvatar.userInteractionEnabled=YES;
-                ((CleaningDoneCell*)cell).profileAvatar.tag = indexPath.row;
-                [((CleaningDoneCell*)cell).activityHours setText:[self timeDifference:activity.activity_time]];
-                
             }
             else
             {
                 cell = (CleaningCommentCell*)[tableView dequeueReusableCellWithIdentifier:@"CleaningCommentCell" forIndexPath:indexPath];
-                if([activity.activity_type isEqualToString: @"find"])
+                if(cell)
                 {
-                    [((CleaningCommentCell*)cell).lblContent setAttributedText:[self generateString:user.user_name content:@" found a new dirty spot " location:activity.activity_location.location_name]];
-                }
-                else if([activity.activity_type isEqualToString: @"comment"])
-                {
-                    [((CleaningCommentCell*)cell).lblContent setAttributedText:[self generateString:user.user_name content:@" commented on your clean up location " location:@""]];
-                }
-                else if([activity.activity_type isEqualToString: @"kudo"])
-                {
-                    [((CleaningCommentCell*)cell).lblContent setAttributedText:[self generateString:user.user_name content:@" gave you Kudos \n" location:@""]];
-                }
-                else if([activity.activity_type isEqualToString: @"follow"])
-                {
-                    [((CleaningCommentCell*)cell).lblContent setAttributedText:[self generateString:user.user_name content:@" started following you\n" location:@""]];
-                }
-                
-                [((CleaningCommentCell*)cell).profileAvatar addGestureRecognizer:followTap];
-                ((CleaningCommentCell*)cell).profileAvatar.userInteractionEnabled=YES;
-                ((CleaningCommentCell*)cell).profileAvatar.tag = indexPath.row;
-                [((CleaningCommentCell*)cell).activityHours setText:[self timeDifference:activity.activity_time]];
-                if([self.imageArray objectForKey:activity.activity_id]!=nil)
-                {
-                    [((CleaningCommentCell*)cell).profileAvatar setImage: [self.imageArray objectForKey:user.user_id]];
-                }
-                else
-                {
-                    NSString *userImageURL = [NSString stringWithFormat:@"https://graph.facebook.com/%@/picture", activity.activity_id];
-                    NSURL *url = [NSURL URLWithString:userImageURL];
+                    if([activity.activity_type isEqualToString: @"find"])
+                    {
+                        [((CleaningCommentCell*)cell).lblContent setAttributedText:[self generateString:user.user_name content:@" found a new dirty spot " location:activity.activity_location.location_name]];
+                    }
+                    else if([activity.activity_type isEqualToString: @"comment"])
+                    {
+                        [((CleaningCommentCell*)cell).lblContent setAttributedText:[self generateString:user.user_name content:@" commented on your clean up location " location:@""]];
+                    }
+                    else if([activity.activity_type isEqualToString: @"kudo"])
+                    {
+                        [((CleaningCommentCell*)cell).lblContent setAttributedText:[self generateString:user.user_name content:@" gave you Kudos \n" location:@""]];
+                    }
+                    else if([activity.activity_type isEqualToString: @"follow"])
+                    {
+                        [((CleaningCommentCell*)cell).lblContent setAttributedText:[self generateString:user.user_name content:@" started following you\n" location:@""]];
+                    }
                     
-                    NSURLSessionTask *task = [[NSURLSession sharedSession] dataTaskWithURL:url completionHandler:^(NSData * _Nullable data, NSURLResponse * _Nullable response, NSError * _Nullable error) {
-                        if (data) {
-                            UIImage *image = [UIImage imageWithData:data];
-                            if (image) {
-                                dispatch_async(dispatch_get_main_queue(), ^{
-                                    {
-                                        [self.imageArray setObject:image forKey:activity.activity_id];
-                                    }
-                                    if(cell)
-                                        [((CleaningCommentCell*)cell).profileAvatar setImage: image];
-                                });
+                    [((CleaningCommentCell*)cell).profileAvatar addGestureRecognizer:followTap];
+                    ((CleaningCommentCell*)cell).profileAvatar.userInteractionEnabled=YES;
+                    ((CleaningCommentCell*)cell).profileAvatar.tag = indexPath.row;
+                    [((CleaningCommentCell*)cell).activityHours setText:[self timeDifference:activity.activity_time]];
+                    if([self.imageArray objectForKey:activity.activity_id]!=nil)
+                    {
+                        [((CleaningCommentCell*)cell).profileAvatar setImage: [self.imageArray objectForKey:user.user_id]];
+                    }
+                    else
+                    {
+                        NSString *userImageURL = [NSString stringWithFormat:@"https://graph.facebook.com/%@/picture", activity.activity_id];
+                        NSURL *url = [NSURL URLWithString:userImageURL];
+                        
+                        NSURLSessionTask *task = [[NSURLSession sharedSession] dataTaskWithURL:url completionHandler:^(NSData * _Nullable data, NSURLResponse * _Nullable response, NSError * _Nullable error) {
+                            if (data) {
+                                UIImage *image = [UIImage imageWithData:data];
+                                if (image) {
+                                    dispatch_async(dispatch_get_main_queue(), ^{
+                                        {
+                                            [self.imageArray setObject:image forKey:activity.activity_id];
+                                        }
+                                        if(cell)
+                                            [((CleaningCommentCell*)cell).profileAvatar setImage: image];
+                                    });
+                                }
                             }
-                        }
-                    }];
-                    [task resume];
+                        }];
+                        [task resume];
+                    }
                 }
             }
         }
@@ -474,11 +498,14 @@
     UITapGestureRecognizer *gesture = (UITapGestureRecognizer *) sender;
     self.selectedImgIndex = gesture.view.tag;
     NSLog(@"%u",self.selectedImgIndex);
+    if([self.activityArray count] > 0)
+    {
     Activity * selectedActivity = [self.activityArray objectAtIndex:self.selectedImgIndex];
     if(![selectedActivity.activity_id isEqualToString:self.current_user_id])
     {
         
         [self performSegueWithIdentifier:@"showProfile" sender:self];
+    }
     }
 }
 

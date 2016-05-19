@@ -55,6 +55,8 @@
 -(void) takePhoto
 {
     UIImagePickerController *picker=[[UIImagePickerController alloc] init];
+    picker.allowsEditing = YES;
+   
     if([UIImagePickerController isSourceTypeAvailable:UIImagePickerControllerSourceTypeCamera]==NO)
     {
         picker.sourceType=UIImagePickerControllerSourceTypePhotoLibrary;
@@ -62,6 +64,7 @@
     else
     {
         picker.sourceType=UIImagePickerControllerSourceTypeCamera;
+         picker.cameraCaptureMode = UIImagePickerControllerCameraCaptureModePhoto;
     }
     picker.delegate = self;
     [self presentViewController:picker animated:YES completion:nil];
@@ -69,7 +72,7 @@
 
 -(void)imagePickerController:(UIImagePickerController *)picker didFinishPickingMediaWithInfo:(NSDictionary<NSString *,id> *)info
 {
-    self.cameraPicture=[info objectForKey:UIImagePickerControllerOriginalImage];
+    self.cameraPicture = (UIImage *)[info objectForKey:UIImagePickerControllerEditedImage];
     self.photoURL=[[NSURL alloc]init];
     self.photoURL=[info valueForKey:UIImagePickerControllerReferenceURL];
     [picker dismissViewControllerAnimated:YES completion:NULL];

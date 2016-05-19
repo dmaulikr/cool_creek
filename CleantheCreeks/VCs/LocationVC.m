@@ -68,7 +68,7 @@
     self.locationTable.infiniteScrollIndicatorView = self.infiniteIndicator;
     self.defaults = [NSUserDefaults standardUserDefaults];
     [self.locationTable addInfiniteScrollWithHandler:^(UITableView* tableView) {
-        self.displayItemCount+=10;
+        self.displayItemCount += 10;
         self.displayItemCount = MIN(self.locationArray.count,self.displayItemCount);
         [self.infiniteIndicator startAnimating];
         [tableView reloadData];
@@ -92,6 +92,18 @@
     else
         [self.tabBarController.tabBar setHidden:YES];
     [self.refreshControl beginRefreshing];
+    if (self.locationTable.contentOffset.y == 0) {
+        
+        [UIView animateWithDuration:0.25 delay:0 options:UIViewAnimationOptionBeginFromCurrentState animations:^(void){
+            
+            self.locationTable.contentOffset = CGPointMake(0, -self.refreshControl.frame.size.height);
+            
+        } completion:^(BOOL finished){
+            
+        }];
+        
+    }
+    
     [self updateData];
 }
 
@@ -159,6 +171,8 @@
             {
                 ((locationCell*)cell).image.image=(UIImage*)(self.mainDelegate.locationData[location.location_id]);
             }
+            
+            
             UITapGestureRecognizer *viewTap=[[UITapGestureRecognizer alloc]initWithTarget:self action:@selector(imageClicked:)];
             viewTap.numberOfTapsRequired=1;
             UITapGestureRecognizer *viewTap2=[[UITapGestureRecognizer alloc]initWithTarget:self action:@selector(imageClicked:)];
@@ -183,7 +197,6 @@
     if(!cell){
         cell=(locationCell*)[[UITableViewCell alloc]init];
     }
-    
     
     return cell;
 }
@@ -270,7 +283,7 @@
                           [loginInfo synchronize];
                           User * user_info = [User new];
                           user_info.user_id = result[@"id"];
-                          //user_info.kudos = [[NSArray alloc]init];
+                          
                           user_info.user_name = result[@"name"];
                           user_info.device_token = [loginInfo objectForKey:@"devicetoken"];
                           user_info.user_email= [loginInfo objectForKey:@"user_email"];
@@ -315,9 +328,23 @@
             vc.location = [[Location alloc]init];
             
             vc.location = location;
-            vc.beforePhoto = (UIImage*)(self.mainDelegate.locationData[location.location_id]);
+            if(self.mainDelegate.locationData[location.location_id])
+                vc.beforePhoto = (UIImage*)(self.mainDelegate.locationData[location.location_id]);
             vc.cleaned = NO;
             vc.fromLocationView = NO;
+            
+            if(location.kudos!=nil)
+            {
+                for(NSDictionary *kudo_gaver in location.kudos)
+                {
+                    if([[kudo_gaver objectForKey:@"id"] isEqualToString:self.current_user_id])
+                    {
+                        vc.isKudoed=YES;
+                        break;
+                    }
+                }
+            }
+            
         }
         else if([segue.identifier isEqualToString:@"showMapDetails"])
         {
@@ -351,9 +378,8 @@
     AWSDynamoDBObjectMapper *dynamoDBObjectMapper = [AWSDynamoDBObjectMapper defaultDynamoDBObjectMapper];
     AWSDynamoDBScanExpression *scanExpression = [AWSDynamoDBScanExpression new];
     scanExpression.filterExpression = @"isDirty = :val";
-    AWSS3TransferManager *transferManager = [AWSS3TransferManager defaultS3TransferManager];
     scanExpression.expressionAttributeValues = @{@":val":@"true"};
-     [self.mapView removeAnnotations:self.mapView.annotations];
+    [self.mapView removeAnnotations:self.mapView.annotations];
     [[dynamoDBObjectMapper scan:[Location class] expression:scanExpression] continueWithBlock:^id(AWSTask *task) {
         if (task.error) {
             
@@ -392,27 +418,40 @@
                 downloadRequest.key = key;
                 downloadRequest.downloadingFileURL = downloadingFileURL;
                 
-                //self.mainDelegate.locationData[location.location_id]=[UIImage imageNamed:@"EmptyPhoto"];
-                [[transferManager download:downloadRequest] continueWithExecutor:[AWSExecutor mainThreadExecutor] withBlock:^id(AWSTask *task2) {
-                    if (task2.result) {
-                        
-                        self.mainDelegate.locationData[location.location_id]=[UIImage imageWithContentsOfFile:downloadingFilePath];
-                        annotation.image = [UIImage imageWithContentsOfFile:downloadingFilePath];
-                        [self.locationTable reloadData];
-                        
-                        // [self.mapView addAnnotation:annotation];
-                        
-                        [self.annotationArray addObject:annotation];
-                        self.clusteringManager= [[FBClusteringManager alloc]init];
-                        [self.clusteringManager addAnnotations:_annotationArray];
-    
-                        
-                        // Update annotations on the map
-                        [self mapView:self.mapView regionDidChangeAnimated:NO];
-                        
-                    }
-                    return nil;
-                }];
+                if(!self.mainDelegate.locationData[location.location_id])
+                {
+                    
+                    NSString *userImageURL = [NSString stringWithFormat:@"https://s3-ap-northeast-1.amazonaws.com/cleanthecreeks/%@%@", location.location_id,@"a"];
+                    NSURL *url = [NSURL URLWithString:userImageURL];
+                    
+                    NSURLSessionTask *task = [[NSURLSession sharedSession] dataTaskWithURL:url completionHandler:^(NSData * _Nullable data, NSURLResponse * _Nullable response, NSError * _Nullable error) {
+                        if (data) {
+                            UIImage *image = [UIImage imageWithData:data];
+                            if (image) {
+                                
+                                dispatch_async(dispatch_get_main_queue(), ^{
+                                    {
+                                        [self.mainDelegate.locationData setObject:image forKey:location.location_id];
+                                        annotation.image = [UIImage imageWithContentsOfFile:downloadingFilePath];
+                                        
+                                        [self.annotationArray addObject:annotation];
+                                        self.clusteringManager= [[FBClusteringManager alloc]init];
+                                        [self.clusteringManager addAnnotations:_annotationArray];
+                                        
+                                        // Update annotations on the map
+                                        [self mapView:self.mapView regionDidChangeAnimated:NO];
+                                        [self.locationTable reloadData];
+                                        
+                                        
+                                    }
+                                    
+                                });
+                            }
+                        }
+                    }];
+                    [task resume];
+                }
+                
             }
             dispatch_async(dispatch_get_main_queue(), ^{
                 
@@ -581,7 +620,7 @@
             NSMutableArray * clusterArray = [[NSMutableArray alloc]initWithArray:cluster.annotations];
             LocationAnnotation * ann = (LocationAnnotation*) clusterArray[0];
             NSString *location_id = [NSString stringWithFormat:@"%f,%f",
-                                    ann.coordinate.latitude, ann.coordinate.longitude];
+                                     ann.coordinate.latitude, ann.coordinate.longitude];
             annotationView.image =[PhotoDetailsVC scaleImage:self.mainDelegate.locationData[location_id] toSize:CGSizeMake(50.0,50.0)];
             annotationView.canShowCallout = YES;
         } else {

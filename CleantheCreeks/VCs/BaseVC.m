@@ -47,6 +47,16 @@
     
     [self presentViewController:alertController animated:YES completion:nil];
 }
+
+-(void) commentError
+{
+    UIAlertController *alertController = [UIAlertController alertControllerWithTitle:@"Error" message:@"The comment text cannot be empty." preferredStyle:UIAlertControllerStyleAlert];
+    
+    UIAlertAction* ok = [UIAlertAction actionWithTitle:@"OK" style:UIAlertActionStyleDefault handler:nil];
+    [alertController addAction:ok];
+    
+    [self presentViewController:alertController animated:YES completion:nil];
+}
 #pragma ProfileTopBarVCDelegate Implementation
 
 - (void)leftBtnTopBarTapped:(UIButton *)sender topBar:(id)topBar{

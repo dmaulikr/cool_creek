@@ -104,12 +104,15 @@
     UITapGestureRecognizer *gesture = (UITapGestureRecognizer *) sender;
     self.selectedImgIndex = gesture.view.tag;
     NSLog(@"%u",self.selectedImgIndex);
-    NSDictionary * user = [self.displayArray objectAtIndex:self.selectedImgIndex];
-    NSString * user_id = [user objectForKey:@"id"];
-    if(![user_id isEqualToString:_profile_user.user_id])
+    if([self.displayArray count]>0)
     {
-        
-        [self performSegueWithIdentifier:@"showProfileFromFollow" sender:self];
+        NSDictionary * user = [self.displayArray objectAtIndex:self.selectedImgIndex];
+        NSString * user_id = [user objectForKey:@"id"];
+        if(![user_id isEqualToString:_profile_user.user_id])
+        {
+            
+            [self performSegueWithIdentifier:@"showProfileFromFollow" sender:self];
+        }
     }
 }
 

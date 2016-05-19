@@ -60,49 +60,6 @@
     
 }
 
--(void) loadImage:(Location *)location
-{
-    AWSS3TransferManager *transferManager = [AWSS3TransferManager defaultS3TransferManager];
-    //Setting the file download path
-    NSString *downloadingFilePath = [NSTemporaryDirectory() stringByAppendingPathComponent:location.location_id];
-    NSString *firstPath=[downloadingFilePath stringByAppendingString:@"a"];
-    NSString *secondPath=[downloadingFilePath stringByAppendingString:@"b"];
-    
-    AWSS3TransferManagerDownloadRequest *downloadRequest = [AWSS3TransferManagerDownloadRequest new];
-    downloadRequest.bucket = @"cleanthecreeks";
-    NSString * key=[location.location_id stringByAppendingString:@"a"];
-    downloadRequest.key = key;
-    downloadRequest.downloadingFileURL = [NSURL fileURLWithPath:firstPath];
-    if(![self.firstArray objectForKey:location.location_id])
-    {
-        [[transferManager download:downloadRequest] continueWithExecutor:[AWSExecutor mainThreadExecutor] withBlock:^id(AWSTask *task) {
-            if (task.result) {
-                [self.firstArray setObject:[UIImage imageWithContentsOfFile:firstPath] forKey:location.location_id];
-                [self.profileTable reloadData];
-                
-            }
-            return nil;
-        }];
-    }
-    AWSS3TransferManagerDownloadRequest *downloadRequest2 = [AWSS3TransferManagerDownloadRequest new];
-    downloadRequest2.bucket = @"cleanthecreeks";
-    
-    NSString * key2=[location.location_id stringByAppendingString:@"b"];
-    downloadRequest2.key = key2;
-    downloadRequest2.downloadingFileURL = [NSURL fileURLWithPath:secondPath];
-    if(![self.secondArray objectForKey:location.location_id])
-    {
-        [[transferManager download:downloadRequest2] continueWithExecutor:[AWSExecutor mainThreadExecutor] withBlock:^id(AWSTask *task) {
-            if (task.result) {
-                [self.secondArray setObject:[UIImage imageWithContentsOfFile:secondPath] forKey:location.location_id];
-                [self.profileTable reloadData];
-                
-            }
-            return nil;
-        }];
-    }
-}
-
 -(void) updateData
 {
     self.kudoCount=0;
@@ -111,6 +68,8 @@
         self.profile_user_id=self.current_user_id;
     }
     self.kudoArray=[[NSMutableDictionary alloc]init];
+    [self.firstArray removeAllObjects];
+    [self.secondArray removeAllObjects];
     self.firstArray=[[NSMutableDictionary alloc] init];
     self.secondArray=[[NSMutableDictionary alloc] init];
     self.dynamoDBObjectMapper = [AWSDynamoDBObjectMapper defaultDynamoDBObjectMapper];
@@ -145,10 +104,6 @@
                           {
                               //Counting item count
                               [self.locationArray addObject:location];
-                              
-                              //Loading images for the location
-                              [self loadImage:location];
-                              
                               //Adding total kudo count
                               self.kudoCount+=location.kudos.count;
                               if(location.kudos!=nil)
@@ -269,7 +224,7 @@
          
          return nil;
      }];
-
+    
 }
 
 -(void)followClicked:(UIButton*)sender
@@ -324,7 +279,6 @@
         [followingArray addObject:followingItem];
         
     }
-    
     
     if([followingArray count]!=0)
         currentuser.followings=[[NSMutableArray alloc] initWithArray:followingArray];
@@ -448,12 +402,10 @@
 - (UITableViewCell *)tableView:(UITableView *)tableView cellForRowAtIndexPath:(NSIndexPath *)indexPath{
     
     ProfileViewCell * cell=nil;
-    
     if(indexPath.section==0)
     {
         if(indexPath.row==0)
         {
-            
             if(self.profile_user)
             {
                 cell = (ProfileViewCell*)[tableView dequeueReusableCellWithIdentifier:@"profileViewCell"];
@@ -526,7 +478,7 @@
     }
     else if(indexPath.section>1)
     {
-        if([self.locationArray count]>0)
+        if([self.locationArray count] > 0)
         {
             if([self.locationArray objectAtIndex:indexPath.row])
             {
@@ -570,11 +522,71 @@
                 [cell.kudoCount setText:[[NSString alloc]initWithFormat:@"%ld",(long)location.kudos.count]];
                 cell.beforePhoto.tag = indexPath.row;
                 cell.afterPhoto.tag = indexPath.row;
-                
+                [cell.beforePhoto setImage:[UIImage imageNamed:@"EmptyPhoto"]];
+
+                [cell.afterPhoto setImage:[UIImage imageNamed:@"EmptyPhoto"]];
+
                 if([self.firstArray objectForKey:location.location_id])
                     [cell.beforePhoto setImage:[self.firstArray objectForKey:location.location_id]];
+                else
+                {
+                    
+                    NSString *userImageURL = [NSString stringWithFormat:@"https://s3-ap-northeast-1.amazonaws.com/cleanthecreeks/%@%@", location.location_id,@"a"];
+                    NSURL *url = [NSURL URLWithString:userImageURL];
+                    
+                    NSURLSessionTask *task = [[NSURLSession sharedSession] dataTaskWithURL:url completionHandler:^(NSData * _Nullable data, NSURLResponse * _Nullable response, NSError * _Nullable error) {
+                        if (data) {
+                            UIImage *image = [UIImage imageWithData:data];
+                            if (image) {
+                                
+                                dispatch_async(dispatch_get_main_queue(), ^{
+                                    {
+                                        
+                                            if(cell)
+                                                [cell.beforePhoto setImage: image];
+                                            [self.firstArray setObject:image forKey:location.location_id];
+                                        
+                                    }
+                                    
+                                });
+                            }
+                            else{
+                                NSLog(@"else");
+                            }
+                        }
+                    }];
+                    [task resume];
+                }
                 if([self.secondArray objectForKey:location.location_id])
                     [cell.afterPhoto setImage:[self.secondArray objectForKey:location.location_id]];
+                else
+                {
+                    NSString *userImageURL = [NSString stringWithFormat:@"https://s3-ap-northeast-1.amazonaws.com/cleanthecreeks/%@%@", location.location_id,@"b"];
+                    NSURL *url = [NSURL URLWithString:userImageURL];
+                    
+                    NSURLSessionTask *task = [[NSURLSession sharedSession] dataTaskWithURL:url completionHandler:^(NSData * _Nullable data, NSURLResponse * _Nullable response, NSError * _Nullable error) {
+                        if (data) {
+                            UIImage *image = [UIImage imageWithData:data];
+                            if (image) {
+                                
+                                dispatch_async(dispatch_get_main_queue(), ^{
+                                    {
+                                        if(cell)
+                                            [cell.afterPhoto setImage: image];
+                                            
+                                        [self.secondArray setObject:image forKey:location.location_id];
+
+                                    }
+                                    
+                                });
+                            }
+                            else{
+                                NSLog(@"else");
+                            }
+                        }
+                    }];
+                    [task resume];
+                }
                 UITapGestureRecognizer *locationTap=[[UITapGestureRecognizer alloc]initWithTarget:self action:@selector(showLocation:)];
                 locationTap.numberOfTapsRequired=1;
                 
@@ -659,6 +671,8 @@
         vc.location = [self.locationArray objectAtIndex:self.selectedIndex];
         vc.beforePhoto = [self.firstArray objectForKey:vc.location.location_id];
         vc.afterPhoto = [self.secondArray objectForKey:vc.location.location_id];
+        vc.isKudoed = [[self.kudoArray objectForKey:vc.location.location_id] isEqualToString:@"true"];
+        
         vc.cleaned = YES;
         vc.fromLocationView = YES;
         

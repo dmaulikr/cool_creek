@@ -25,6 +25,7 @@
 -(void) takePhoto
 {
     UIImagePickerController *picker=[[UIImagePickerController alloc] init];
+    picker.allowsEditing = YES;
     if([UIImagePickerController isSourceTypeAvailable:UIImagePickerControllerSourceTypeCamera]==NO)
     {
         picker.sourceType=UIImagePickerControllerSourceTypePhotoLibrary;
@@ -32,19 +33,20 @@
     else
     {
         picker.sourceType=UIImagePickerControllerSourceTypeCamera;
+        picker.cameraCaptureMode = UIImagePickerControllerCameraCaptureModePhoto;
     }
     picker.delegate=self;
     [self.window.rootViewController presentViewController:picker animated:YES completion:nil];
 }
 
--(void)tapDetected{
+- (void)tapDetected{
     NSLog(@"Tapped");
 }
 
--(void)imagePickerController:(UIImagePickerController *)picker didFinishPickingMediaWithInfo:(NSDictionary<NSString *,id> *)info
+- (void)imagePickerController:(UIImagePickerController *)picker didFinishPickingMediaWithInfo:(NSDictionary<NSString *,id> *)info
 {
     UIImage * photo=[[UIImage alloc]init];
-    photo=[info objectForKey:UIImagePickerControllerOriginalImage];
+    photo= (UIImage *)[info objectForKey:UIImagePickerControllerEditedImage];
     [picker dismissViewControllerAnimated:YES completion:NULL];
     [self.secondPhoto setImage:photo];
     [self.delegate setSecondPhoto:true photo:photo];
