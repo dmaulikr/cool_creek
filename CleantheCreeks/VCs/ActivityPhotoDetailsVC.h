@@ -33,4 +33,5 @@
 @property (strong,nonatomic )AppDelegate * mainDelegate;
 @property(nonatomic) bool fromLocationView;
 @property(nonatomic, strong) NSString * selected_user;
+@property (nonatomic, strong) UIImage * imgToShow;
 @end

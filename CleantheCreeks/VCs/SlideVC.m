@@ -67,19 +67,6 @@ UIButton *loginButton;
     [self performSegueWithIdentifier:@"Slide2MainTabNav" sender:self];
 }
 
--(void) prepareForSegue:(UIStoryboardSegue *)segue sender:(id)sender{
-
-    [super prepareForSegue:segue sender:sender];
-    if([segue.identifier isEqualToString:@"Slide2MainTabNav"])
-    {
-        
-    }
-    else
-    {
-        
-    }
-}
-
 -(void)loginButtonClicked
 {
     FBSDKLoginManager *login = [[FBSDKLoginManager alloc] init];
@@ -97,9 +84,9 @@ UIButton *loginButton;
              [parameters setValue:@"id,name,email,location,about" forKey:@"fields"];
              [[[FBSDKGraphRequest alloc] initWithGraphPath:@"me" parameters:parameters]
               startWithCompletionHandler:^(FBSDKGraphRequestConnection *connection, id result, NSError *error) {
-                  
-                      [self moveToMainNav];
-                  
+                   dispatch_async(dispatch_get_main_queue(), ^{
+                      
+                   });
                   if (!error) {
                      
                       NSLog(@"fetched user:%@  and Email : %@", result,result[@"email"]);
@@ -132,6 +119,7 @@ UIButton *loginButton;
                                NSLog(@"The request failed. Exception: [%@]", task.exception);
                            }
                            if (task.result) {
+                               [self moveToMainNav];
                                NSLog(@"new user is registered");
                            }
                            return nil;

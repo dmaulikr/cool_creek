@@ -15,7 +15,7 @@
 #import "Clean the Creek-Bridging-Header.h"
 #import <UIScrollView+InfiniteScroll.h>
 #import "CustomInfiniteIndicator.h"
-
+#import "LocationOverlayView.h"
 #import <FBSDKCoreKit/FBSDKCoreKit.h>
 #import <FBSDKLoginKit/FBSDKLoginKit.h>
 
@@ -103,8 +103,6 @@
         }];
         
     }
-    
-    [self updateData];
 }
 
 
@@ -396,9 +394,9 @@
             for (int i=0;i<paginatedOutput.items.count;i++) {
                 Location * location= [paginatedOutput.items objectAtIndex:i];
                 
-                //Setting the file download path
-                NSString *downloadingFilePath = [NSTemporaryDirectory() stringByAppendingPathComponent:location.location_id];
-                NSURL *downloadingFileURL = [NSURL fileURLWithPath:downloadingFilePath];
+//                //Setting the file download path
+//                NSString *downloadingFilePath = [NSTemporaryDirectory() stringByAppendingPathComponent:location.location_id];
+//                NSURL *downloadingFileURL = [NSURL fileURLWithPath:downloadingFilePath];
                 
                 if(![self.locationArray containsObject:location])
                     [self.locationArray addObject:location];
@@ -407,16 +405,13 @@
                 LocationAnnotation *annotation=[[LocationAnnotation alloc]init];
                 annotation.coordinate = CLLocationCoordinate2DMake(location.latitude, location.longitude);
                 
-                annotation.title = location.location_name;
-                annotation.subtitle = location.location_id;
-                
-                //Downloading files
-                
-                AWSS3TransferManagerDownloadRequest *downloadRequest = [AWSS3TransferManagerDownloadRequest new];
-                downloadRequest.bucket = @"cleanthecreeks";
-                NSString * key=[location.location_id stringByAppendingString:@"a"];
-                downloadRequest.key = key;
-                downloadRequest.downloadingFileURL = downloadingFileURL;
+//                //Downloading files
+//                
+//                AWSS3TransferManagerDownloadRequest *downloadRequest = [AWSS3TransferManagerDownloadRequest new];
+//                downloadRequest.bucket = @"cleanthecreeks";
+//                NSString * key=[location.location_id stringByAppendingString:@"a"];
+//                downloadRequest.key = key;
+//                downloadRequest.downloadingFileURL = downloadingFileURL;
                 
                 if(!self.mainDelegate.locationData[location.location_id])
                 {
@@ -432,11 +427,11 @@
                                 dispatch_async(dispatch_get_main_queue(), ^{
                                     {
                                         [self.mainDelegate.locationData setObject:image forKey:location.location_id];
-                                        annotation.image = [UIImage imageWithContentsOfFile:downloadingFilePath];
-                                        
+                                        annotation.image = image;
+                                       
                                         [self.annotationArray addObject:annotation];
                                         self.clusteringManager= [[FBClusteringManager alloc]init];
-                                        [self.clusteringManager addAnnotations:_annotationArray];
+                                        [self.clusteringManager setAnnotations:_annotationArray];
                                         
                                         // Update annotations on the map
                                         [self mapView:self.mapView regionDidChangeAnimated:NO];
@@ -498,12 +493,14 @@
     region.span = span;
     region.center = cLocation;
     
-    [self.mapView setRegion:region animated:YES];
-    [self.mapView setShowsUserLocation:YES];
+   
+    
     self.currentLocation=newLocation;
     self.mainDelegate.currentLocation=newLocation;
     if(!self.refreshed)
     {
+         [self.mapView setRegion:region animated:YES];
+        [self.mapView setShowsUserLocation:YES];
         [self updateData];
         self.refreshed = YES;
     }
@@ -607,10 +604,10 @@
         
         static NSString *const AnnotatioViewReuseID = @"AnnotatioViewReuseID";
         
-        MKAnnotationView *annotationView = (MKAnnotationView *)[mapView dequeueReusableAnnotationViewWithIdentifier:AnnotatioViewReuseID];
+        LocationOverlayView *annotationView = (LocationOverlayView *)[mapView dequeueReusableAnnotationViewWithIdentifier:AnnotatioViewReuseID];
         
         if (!annotationView) {
-            annotationView = [[MKAnnotationView alloc] initWithAnnotation:annotation reuseIdentifier:AnnotatioViewReuseID];
+            annotationView = [[LocationOverlayView alloc] initWithAnnotation:annotation reuseIdentifier:AnnotatioViewReuseID];
         }
         
         // This is how you can check if annotation is a cluster
@@ -621,11 +618,6 @@
             LocationAnnotation * ann = (LocationAnnotation*) clusterArray[0];
             NSString *location_id = [NSString stringWithFormat:@"%f,%f",
                                      ann.coordinate.latitude, ann.coordinate.longitude];
-            annotationView.image =[PhotoDetailsVC scaleImage:self.mainDelegate.locationData[location_id] toSize:CGSizeMake(50.0,50.0)];
-            annotationView.canShowCallout = YES;
-        } else {
-            NSString *location_id = [NSString stringWithFormat:@"%f,%f",
-                                     annotation.coordinate.latitude, annotation.coordinate.longitude];
             annotationView.image =[PhotoDetailsVC scaleImage:self.mainDelegate.locationData[location_id] toSize:CGSizeMake(50.0,50.0)];
             annotationView.canShowCallout = NO;
         }
@@ -643,13 +635,13 @@
     {
         if([loc.location_id isEqualToString:location_id])
         {
-            self.annotationLocation=loc;
+            self.annotationLocation = loc;
             break;
         }
     }
     if(view.annotation !=mapView.userLocation && self.annotationLocation.location_id)
         [self performSegueWithIdentifier:@"showMapDetails" sender:self];
-    NSLog(@"selected annotation");
+    NSLog(@"annotation");
 }
 
 - (IBAction)listButtonTapped:(id)sender{

@@ -7,7 +7,7 @@
 #import "AppDelegate.h"
 #import "ActivityPhotoDetailsVC.h"
 
-@interface ActivityVC : BaseVC<UITableViewDataSource, UITableViewDelegate,KudoDelegate>
+@interface ActivityVC : BaseVC<UITableViewDataSource, UITableViewDelegate, KudoDelegate>
 @property (weak, nonatomic) IBOutlet UITableView *tv;
 @property (strong,nonatomic) AWSDynamoDBObjectMapper *dynamoDBObjectMapper;
 @property (strong,nonatomic) NSMutableArray * activityArray;

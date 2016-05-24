@@ -54,7 +54,7 @@
     [tracker set:kGAIScreenName value:@"ActivityVC"];
     [tracker send:[[GAIDictionaryBuilder createScreenView] build]];
     NSLog(@"VIEWDIDAPPEAR");
-    self.appDelegate.notificationCount=0;
+    self.appDelegate.notificationCount = 0;
     [[[[[self tabBarController] tabBar] items]
       objectAtIndex:2] setBadgeValue:nil];
     [self.refreshControl endRefreshing];
@@ -87,6 +87,9 @@
     self.imageArray = [[NSMutableDictionary alloc]init];
     AWSDynamoDBObjectMapper *dynamoDBObjectMapper = [AWSDynamoDBObjectMapper defaultDynamoDBObjectMapper];
     AWSDynamoDBScanExpression *scanExpression = [AWSDynamoDBScanExpression new];
+    // Clean badges
+    [[[[[self tabBarController] tabBar] items]
+      objectAtIndex:2] setBadgeValue:nil];
     
     [[dynamoDBObjectMapper scan:[User class] expression:scanExpression]
      continueWithBlock:^id(AWSTask *task) {
@@ -375,6 +378,7 @@
             User * user=[self.appDelegate.userArray objectForKey:activity.activity_id];
             UITapGestureRecognizer *followTap=[[UITapGestureRecognizer alloc]initWithTarget:self action:@selector(showProfile:)];
             followTap.numberOfTapsRequired=1;
+            
             if([activity.activity_type isEqualToString: @"clean"])
             {
                 cell = (CleaningDoneCell*)[tableView dequeueReusableCellWithIdentifier:@"CleaningDoneCell" forIndexPath:indexPath];

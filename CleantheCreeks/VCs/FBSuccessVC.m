@@ -7,7 +7,7 @@
 //
 
 #import "FBSuccessVC.h"
-
+#import "CameraVC.h"
 @implementation FBSuccessVC
 
 -(void)viewDidLoad
@@ -26,6 +26,8 @@
 }
 
 - (IBAction)close:(UIButton *)sender {
+    [self.tabBarController setSelectedIndex:1];
+   
     [self.navigationController popToRootViewControllerAnimated:YES];
 }
 

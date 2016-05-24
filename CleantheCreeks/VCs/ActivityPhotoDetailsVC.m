@@ -24,13 +24,12 @@
 #import <MessageUI/MessageUI.h>
 #import <MessageUI/MFMailComposeViewController.h>
 #import "ProfileVC.h"
+#import "FullScreen.h"
 @implementation ActivityPhotoDetailsVC
 
 - (void)registerForKeyboardNotifications
 {
-    
     [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(keyboardWasShown:) name:UIKeyboardDidShowNotification object:nil];
-    
     [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(keyboardWillBeHidden:) name:UIKeyboardWillHideNotification object:nil];
 }
 
@@ -104,9 +103,8 @@
 -(void) viewDidLoad
 {
     [super viewDidLoad];
-    
     self.textComment.delegate=self;
-    self.commentVisible=NO;
+    self.commentVisible = NO;
     [self.commentView setHidden:!self.commentVisible];
     UITapGestureRecognizer *tap = [[UITapGestureRecognizer alloc]
                                    initWithTarget:self
@@ -116,9 +114,7 @@
     self.mainDelegate=(AppDelegate*)[[UIApplication sharedApplication]delegate];
     [self loadData];
     [self registerForKeyboardNotifications];
-    self.tv.estimatedRowHeight = 65.f;
-    self.tv.rowHeight = UITableViewAutomaticDimension;
-    
+
     UIButton * btnKudo = [self.view viewWithTag:22];
     
     btnKudo.enabled = NO; //disabling the button while finishing the db update
@@ -133,8 +129,7 @@
     self.commentView.layer.shadowOffset = CGSizeMake(1.0f, 1.0f);
     self.commentView.layer.shadowRadius = 10.0f;
     self.commentView.layer.shadowOpacity = 0.9f;
-    self.tv.estimatedRowHeight = 5.f;
-    self.tv.rowHeight = UITableViewAutomaticDimension;
+   
 }
 
 -(void)dismissKeyboard {
@@ -229,8 +224,15 @@
         if(indexPath.row==0)
         {
             cell = (LocationPhotoCell*)[tableView dequeueReusableCellWithIdentifier:@"LocationPhotoCell"];
+            
+            UITapGestureRecognizer *firstTap=[[UITapGestureRecognizer alloc]initWithTarget:self action:@selector(showFirstPhoto:)];
+            firstTap.numberOfTapsRequired=1;
+            [((LocationPhotoCell*)cell).firstPhoto addGestureRecognizer:firstTap];
             if(self.beforePhoto)
+            {
+                ((LocationPhotoCell*)cell).firstPhoto.userInteractionEnabled=YES;
                 [((LocationPhotoCell*)cell).firstPhoto setImage:self.beforePhoto];
+            }
             else
             {
                 NSString *userImageURL = [NSString stringWithFormat:@"https://s3-ap-northeast-1.amazonaws.com/cleanthecreeks/%@%@", self.location.location_id,@"a"];
@@ -244,7 +246,7 @@
                             dispatch_async(dispatch_get_main_queue(), ^{
                                 {
                                     self.beforePhoto = image;
-                                    
+                                    ((LocationPhotoCell*)cell).firstPhoto.userInteractionEnabled=YES;
                                     [((LocationPhotoCell*)cell).firstPhoto setImage:image];
                                     [self.tv reloadData];
                                     
@@ -257,10 +259,17 @@
                 [task resume];
             }
             
+            
             if(self.cleaned)
             {
                 if(self.afterPhoto)
+                {
                     [((LocationPhotoCell*)cell).secondPhoto setImage:self.afterPhoto];
+                    UITapGestureRecognizer *secondTap=[[UITapGestureRecognizer alloc]initWithTarget:self action:@selector(showSecondPhoto:)];
+                    secondTap.numberOfTapsRequired=1;
+                    [((LocationPhotoCell*)cell).secondPhoto addGestureRecognizer:secondTap];
+                    ((LocationPhotoCell*)cell).secondPhoto.userInteractionEnabled=YES;
+                }
                 else
                 {
                     NSString *userImageURL = [NSString stringWithFormat:@"https://s3-ap-northeast-1.amazonaws.com/cleanthecreeks/%@%@", self.location.location_id,@"b"];
@@ -274,7 +283,7 @@
                                 dispatch_async(dispatch_get_main_queue(), ^{
                                     {
                                         self.afterPhoto = image;
-                                        
+                                        ((LocationPhotoCell*)cell).secondPhoto.userInteractionEnabled = YES;
                                         [((LocationPhotoCell*)cell).secondPhoto setImage:image];
                                         [self.tv reloadData];
                                         
@@ -286,7 +295,6 @@
                     }];
                     [task resume];
                 }
-                
             }
             else
             {
@@ -307,18 +315,18 @@
             [((LocationBarCell*)cell).btnComment setImage:[UIImage imageNamed:@"IconQuote"] forState:UIControlStateNormal];
             
             [((LocationBarCell*)cell).btnComment setImage:[UIImage imageNamed:@"IconComment"] forState:UIControlStateSelected];
-            ((LocationBarCell*)cell).btnComment.selected=self.commentVisible;
+            ((LocationBarCell*)cell).btnComment.selected = self.commentVisible;
             ((LocationBarCell*)cell).btnLike.tag = 22;
             if(self.cleaned)
             {
                 [((LocationBarCell*)cell).btnLike setImage:[UIImage imageNamed:@"IconKudos4"] forState:UIControlStateNormal];
                 [((LocationBarCell*)cell).btnLike setImage:[UIImage imageNamed:@"IconKudos5"] forState:UIControlStateSelected];
-                ((LocationBarCell*)cell).btnLike.selected=self.isKudoed;
+                ((LocationBarCell*)cell).btnLike.selected = self.isKudoed;
                 [((LocationBarCell*)cell).btnLike addTarget:self action:@selector(kudoButtonClicked:) forControlEvents:UIControlEventTouchUpInside];
             }
             else
             {
-                ((LocationBarCell*)cell).btnLike.hidden=YES;
+                ((LocationBarCell*)cell).btnLike.hidden = YES;
                 ((LocationBarCell*)cell).kudoLeadingConst.constant = 0;
                 ((LocationBarCell*)cell).commentLeadingConst.constant = 0;
                 
@@ -336,11 +344,11 @@
         NSDateFormatter *dateFormatter=[[NSDateFormatter alloc] init];
         [dateFormatter setDateFormat:@"MMM dd, yyyy"];
         
-        if(indexPath.row==0)
+        if(indexPath.row == 0)
         {
             cell = [tableView dequeueReusableCellWithIdentifier:@"FirstBar"];
         }
-        else if(indexPath.row==1)
+        else if(indexPath.row == 1)
         {
             cell = (DetailCell*)[tableView dequeueReusableCellWithIdentifier:@"FirstDetailCell"];
             
@@ -348,7 +356,7 @@
             NSString * subLocation = [[NSString alloc]initWithFormat:@"%@, %@, %@", self.location.locality, self.location.state, self.location.country];
             [((DetailCell*)cell).locationName2 setText:subLocation];
         }
-        else if(indexPath.row==2)
+        else if(indexPath.row == 2)
         {
             cell = (DetailCell*)[tableView dequeueReusableCellWithIdentifier:@"SecondDetailCell"];
             if(self.location!= nil)
@@ -395,20 +403,20 @@
             {
                 if([self.location.comments count]>0)
                 {
-                cell = (CommentCell*)[tableView dequeueReusableCellWithIdentifier:@"CommentCell"];
-                NSMutableDictionary *commentItem=[self.location.comments objectAtIndex:indexPath.row-1];
-                User * commentUser=[self.mainDelegate.userArray objectForKey:[commentItem objectForKey:@"id"]];
-                NSString *commentUserName=commentUser.user_name;
-                NSString *commentText=[commentItem objectForKey:@"text"];
-                [((CommentCell*)cell).commentLabel setAttributedText:[self generateCommentString:commentUserName content:commentText]];
-                
-                UITapGestureRecognizer *commentTap = [[UITapGestureRecognizer alloc]
-                                                      initWithTarget:self
-                                                      action:@selector(showCommenter:)];
-                commentTap.numberOfTapsRequired=1;
-                [((CommentCell*)cell).commentLabel addGestureRecognizer:commentTap];
-                [((CommentCell*)cell).commentLabel setUserInteractionEnabled:YES];
-                ((CommentCell*)cell).commentLabel.tag =indexPath.row-1;
+                    cell = (CommentCell*)[tableView dequeueReusableCellWithIdentifier:@"CommentCell"];
+                    NSMutableDictionary *commentItem=[self.location.comments objectAtIndex:indexPath.row-1];
+                    User * commentUser=[self.mainDelegate.userArray objectForKey:[commentItem objectForKey:@"id"]];
+                    NSString *commentUserName=commentUser.user_name;
+                    NSString *commentText=[commentItem objectForKey:@"text"];
+                    [((CommentCell*)cell).commentLabel setAttributedText:[self generateCommentString:commentUserName content:commentText]];
+                    
+                    UITapGestureRecognizer *commentTap = [[UITapGestureRecognizer alloc]
+                                                          initWithTarget:self
+                                                          action:@selector(showCommenter:)];
+                    commentTap.numberOfTapsRequired=1;
+                    [((CommentCell*)cell).commentLabel addGestureRecognizer:commentTap];
+                    [((CommentCell*)cell).commentLabel setUserInteractionEnabled:YES];
+                    ((CommentCell*)cell).commentLabel.tag =indexPath.row-1;
                 }
             }
             
@@ -418,6 +426,18 @@
     [[cell contentView] setFrame:[cell bounds]];
     [[cell contentView] setAutoresizingMask:UIViewAutoresizingFlexibleWidth | UIViewAutoresizingFlexibleHeight];
     return cell;
+}
+
+-(void)showFirstPhoto:(id)sender
+{
+    self.imgToShow = self.beforePhoto;
+    [self performSegueWithIdentifier:@"showFullScreen" sender:self];
+}
+
+-(void)showSecondPhoto:(id)sender
+{
+    self.imgToShow = self.afterPhoto;
+    [self performSegueWithIdentifier:@"showFullScreen" sender:self];
 }
 
 -(void)showCleaner:(id)sender
@@ -532,6 +552,7 @@
             break;
     }
 }
+
 - (void)mailComposeController:(MFMailComposeViewController*)controller didFinishWithResult:(MFMailComposeResult)result error:(NSError*)error {
     [self dismissModalViewControllerAnimated:YES];
 }
@@ -582,7 +603,8 @@
                      [self.textComment setText:@""];
                      [self generateNotification:self.location.cleaner_id mode:@"comment"];
                      [self.tv reloadData];
-                     CGPoint bottomOffset = CGPointMake(0,  self.tv.bounds.size.height - self.tv.contentInset.bottom - self.tv.contentSize.height);
+                     CGPoint bottomOffset = CGPointMake(0,  self.tv.contentInset.bottom + self.tv.contentSize.height - self.tv.bounds.size.height);
+                     if(bottomOffset.y>0)
                      [self.tv setContentOffset:bottomOffset animated:YES];
                      NSLog(@"Updated Comment");
                  });
@@ -946,6 +968,13 @@
             self.mainDelegate.shouldRefreshProfile = YES;
         }
     }
+    else if([segue.identifier isEqualToString:@"showFullScreen"])
+    {
+        FullScreen * vc=(FullScreen*)segue.destinationViewController;
+        vc.img = self.imgToShow;
+        
+    }
+    
 }
 
 - (NSMutableAttributedString *)generateCommentString:(NSString*)name content:(NSString*)content

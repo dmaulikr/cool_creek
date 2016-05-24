@@ -134,7 +134,7 @@
         [self.nextButton setEnabled:YES];
     else
         [self.nextButton setEnabled:NO];
-    self.commentText=@"";
+    self.commentText = @"";
     self.txtComment.delegate=self;
     [self.detailTable reloadData];
     self.detailTable.estimatedRowHeight = 5.f;
@@ -163,6 +163,7 @@
     [tracker set:kGAIScreenName value:@"Adding new location"];
     [tracker send:[[GAIDictionaryBuilder createScreenView] build]];
 }
+
 - (void)locationManager:(CLLocationManager *)manager didUpdateToLocation:(CLLocation *)newLocation fromLocation:(CLLocation *)oldLocation
 {
     self.currentLocation = newLocation;
@@ -218,60 +219,24 @@
 }
 
 
-- (CGFloat)tableView:(UITableView *)tableView estimatedHeightForRowAtIndexPath:(NSIndexPath *)indexPath
-{
-    int height=0;
-    if(indexPath.section==0)
-    {
-        if(indexPath.row==0)
-            height=5;
-        else if(indexPath.row==1)
-            height=self.view.frame.size.height*0.3;
-    }
-    else if(indexPath.section==1)
-    {
-        if(indexPath.row==0)
-            height=5;
-        else if(indexPath.row==3)
-        {
-            if(self.secondPhototaken)
-                height=self.view.frame.size.height*0.13;
-            else
-                height=0;
-        }
-        else
-            height=self.view.frame.size.height*0.13;
-    }
-    else if(indexPath.section==2)
-    {
-        if(indexPath.row==0)
-            height=5;
-        else
-            height=self.view.frame.size.height*0.3;
-    }
-    
-    return height;
-    
-}
-
 - (NSInteger)tableView:(UITableView *)tableView numberOfRowsInSection:(NSInteger)section
 {
     NSInteger count=0;
-    if(section==0)
-        count=2;
-    else if(section==1)
+    if(section == 0)
+        count = 2;
+    else if(section == 1)
     {
         if(self.secondPhototaken)
             count = 4;
         else
             count = 3;
     }
-    else if(section==2)
+    else if(section == 2)
     {
-        if(self.location.comments==nil)
+        if(self.location.comments == nil)
             count = 2;
         else
-            count = self.location.comments.count+1;
+            count = self.location.comments.count+2;
     }
     return count;
 }
@@ -281,7 +246,7 @@
     UITableViewCell *cell = nil;
     cell=[[UITableViewCell alloc]init];
     
-    if(indexPath.section==0)
+    if(indexPath.section == 0)
     {
         if(indexPath.row==0)
             cell = [tableView dequeueReusableCellWithIdentifier:@"FirstBar"];
@@ -296,7 +261,7 @@
             ((PhotoViewCell*)cell).delegate=self;
         }
     }
-    else if(indexPath.section==1)
+    else if(indexPath.section == 1)
     {
         NSUserDefaults *defaults = [NSUserDefaults standardUserDefaults];
         NSString *user_name = [defaults objectForKey:@"user_name"];
@@ -323,7 +288,7 @@
             }
             
         }
-        else if(indexPath.row==2)
+        else if(indexPath.row == 2)
         {
             cell = (DetailCell*)[tableView dequeueReusableCellWithIdentifier:@"SecondDetailCell"];
             if(self.location!=nil)
@@ -344,31 +309,29 @@
         }
         
     }
-    else if(indexPath.section==2)
+    else if(indexPath.section == 2)
     {
-        if(indexPath.row==0)
+        if(indexPath.row == 0)
             cell = [tableView dequeueReusableCellWithIdentifier:@"ThirdBar"];
         else
         {
             cell = (CommentCell*)[tableView dequeueReusableCellWithIdentifier:@"CommentCell"];
-            if(self.location!=nil)
+            if(self.location!=nil && indexPath.row <= [self.location.comments count])
             {
-                NSMutableDictionary *commentItem=[self.location.comments objectAtIndex:indexPath.row-1];
+                NSMutableDictionary *commentItem = [self.location.comments objectAtIndex:indexPath.row-1];
                 
-                User * commentUser=[self.mainDelegate.userArray objectForKey:[commentItem objectForKey:@"id"]];
-                NSString *commentUserName=commentUser.user_name;
-                self.commentText=[commentItem objectForKey:@"text"];
+                User * commentUser = [self.mainDelegate.userArray objectForKey:[commentItem objectForKey:@"id"]];
+                NSString *commentUserName = commentUser.user_name;
+                self.commentText = [commentItem objectForKey:@"text"];
                 [((CommentCell*)cell).commentLabel setAttributedText:[self generateCommentString:commentUserName content:self.commentText]];
             }
             else
             {
-                if(self.commentText.length>0)
-                    [((CommentCell*)cell).commentLabel setText:self.commentText];
-                else
-                    [((CommentCell*)cell).commentLabel setText:@"Tap to comment"];
                 
-                UITapGestureRecognizer *tapClean=[[UITapGestureRecognizer alloc]initWithTarget:self action:@selector(showComment:)];
-                tapClean.numberOfTapsRequired=1;
+                [((CommentCell*)cell).commentLabel setText:@"Tap to comment"];
+                
+                UITapGestureRecognizer *tapClean = [[UITapGestureRecognizer alloc]initWithTarget:self action:@selector(showComment:)];
+                tapClean.numberOfTapsRequired = 1;
                 ((CommentCell*)cell).commentLabel.userInteractionEnabled = YES;
                 [((CommentCell*)cell).commentLabel addGestureRecognizer:tapClean];
             }
@@ -805,13 +768,80 @@
 - (IBAction)btnSendComment:(id)sender {
     if([self.txtComment.text length]>0)
     {
-        self.commentText = self.txtComment.text;
-        self.commentView.hidden=YES;
-        [self dismissKeyboard];
+        [self.commentView setHidden:YES];
+        
+        NSMutableArray * commentArray=[[NSMutableArray alloc] init];
+        if(self.location.comments!=nil)
+            commentArray=self.location.comments;
+        NSMutableDictionary *commentItem=[[NSMutableDictionary alloc]init];
+        NSUserDefaults *defaults = [NSUserDefaults standardUserDefaults];
+        self.current_user_id = [defaults objectForKey:@"user_id"];
+        [commentItem setObject:self.current_user_id forKey:@"id"];
+        [commentItem setObject:self.txtComment.text forKey:@"text"];
+        double date =[[NSDate date]timeIntervalSince1970];
+        NSString *dateString=[NSString stringWithFormat:@"%f",date];
+        [commentItem setObject:dateString forKey:@"time"];
+        
+        
+        [commentArray addObject:commentItem];
+        
+        self.location.comments=[[NSMutableArray alloc] initWithArray:commentArray];
+        
+        AWSDynamoDBObjectMapper *dynamoDBObjectMapper = [AWSDynamoDBObjectMapper defaultDynamoDBObjectMapper];
+        AWSDynamoDBObjectMapperConfiguration *updateMapperConfig = [AWSDynamoDBObjectMapperConfiguration new];
+        updateMapperConfig.saveBehavior = AWSDynamoDBObjectMapperSaveBehaviorUpdate;
+        [self.txtComment resignFirstResponder];
+        [[dynamoDBObjectMapper save:self.location configuration:updateMapperConfig]
+         continueWithBlock:^id(AWSTask *task) {
+             if (task.error) {
+                 [self networkError];
+             }
+             if (task.exception) {
+                 [self networkError];
+             }
+             if (task.result) {
+                 dispatch_async(dispatch_get_main_queue(), ^{
+                     [self.txtComment setText:@""];
+                     [self generateNotification:self.location.cleaner_id mode:@"comment"];
+                     [self.detailTable reloadData];
+                     
+                     [self.detailTable setContentOffset:CGPointMake(0, CGFLOAT_MAX)];
+                     NSLog(@"Updated Comment");
+                 });
+             }
+             return nil;
+         }];
     }
     else
     {
         [self commentError];
     }
+    
+}
+-(void) generateNotification:(NSString*) target_id mode:(NSString*) mode
+{
+    self.defaults=[NSUserDefaults standardUserDefaults];
+    NSString *user_name = [self.defaults objectForKey:@"user_name"];
+    AWSDynamoDBObjectMapper *dynamoDBObjectMapper = [AWSDynamoDBObjectMapper defaultDynamoDBObjectMapper];
+    NSString * attributedString;
+    if([mode isEqualToString:@"comment"])
+        attributedString=[NSString stringWithFormat:@"%@ commented on your clean up location", user_name];
+    else if([mode isEqualToString:@"clean"])
+        attributedString=[NSString stringWithFormat:@"%@ commented on your clean up location", user_name];
+    
+    [[dynamoDBObjectMapper load:[User class] hashKey:target_id rangeKey:nil]
+     continueWithBlock:^id(AWSTask *task) {
+         
+         if (task.result) {
+             User * user=task.result;
+             
+             if(user.device_token)
+             {
+                 [self.mainDelegate send_notification:user message:attributedString];
+             }
+             
+         }
+         return nil;
+     }];
 }
 @end

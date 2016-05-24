@@ -5,7 +5,7 @@
 {
     self = [super init];
     if (!self) return nil;
-    self.photoTaken=NO;
+    self.photoTaken = NO;
     return self;
     
 }
@@ -13,9 +13,9 @@
 - (void)viewDidLoad
 {
     [super viewDidLoad];
-    
     // Do any additional setup after loading the view.
 }
+
 -(void)viewWillAppear:(BOOL)animated
 {
     [super viewWillAppear:animated];
@@ -59,11 +59,11 @@
    
     if([UIImagePickerController isSourceTypeAvailable:UIImagePickerControllerSourceTypeCamera]==NO)
     {
-        picker.sourceType=UIImagePickerControllerSourceTypePhotoLibrary;
+        picker.sourceType = UIImagePickerControllerSourceTypePhotoLibrary;
     }
     else
     {
-        picker.sourceType=UIImagePickerControllerSourceTypeCamera;
+        picker.sourceType = UIImagePickerControllerSourceTypeCamera;
          picker.cameraCaptureMode = UIImagePickerControllerCameraCaptureModePhoto;
     }
     picker.delegate = self;
@@ -81,6 +81,7 @@
     
     
 }
+
 - (void)imagePickerControllerDidCancel:(UIImagePickerController *)picker
 {
     [picker dismissViewControllerAnimated:YES completion:NULL];
@@ -97,12 +98,10 @@
 
 -(void) cameraRefresh:(BOOL)set
 {
-    self.photoTaken=set;
+    self.photoTaken = set;
 }
 
 - (void)prepareForSegue:(UIStoryboardSegue *)segue sender:(id)sender {
-    // Get the new view controller using [segue destinationViewController].
-    // Pass the selected object to the new view controller.
     if([segue.identifier isEqual:@"showPhotoDetails"])
     {
         PhotoDetailsVC *photoDetailsVC=(PhotoDetailsVC*)segue.destinationViewController;
