@@ -233,10 +233,12 @@
     }
     else if(section == 2)
     {
+        
         if(self.location.comments == nil)
             count = 2;
         else
             count = self.location.comments.count+2;
+        
     }
     return count;
 }
@@ -322,18 +324,28 @@
                 
                 User * commentUser = [self.mainDelegate.userArray objectForKey:[commentItem objectForKey:@"id"]];
                 NSString *commentUserName = commentUser.user_name;
-                self.commentText = [commentItem objectForKey:@"text"];
-                [((CommentCell*)cell).commentLabel setAttributedText:[self generateCommentString:commentUserName content:self.commentText]];
+                
+                [((CommentCell*)cell).commentLabel setAttributedText:[self generateCommentString:commentUserName content:[commentItem objectForKey:@"text"]]];
             }
             else
             {
+                if(self.commentText.length > 0)
+                {
+                    self.defaults=[NSUserDefaults standardUserDefaults];
+                    NSString *user_name = [self.defaults objectForKey:@"user_name"];
+                    
+                    [((CommentCell*)cell).commentLabel setAttributedText:[self generateCommentString:user_name content:self.commentText]];
+                }
+                else
+                {
+                   [((CommentCell*)cell).commentLabel setText:@"Tap to add comments"];
+                    UITapGestureRecognizer *tapClean = [[UITapGestureRecognizer alloc]initWithTarget:self action:@selector(showComment:)];
+                    tapClean.numberOfTapsRequired = 1;
+                    ((CommentCell*)cell).commentLabel.userInteractionEnabled = YES;
+                    [((CommentCell*)cell).commentLabel addGestureRecognizer:tapClean];
+                }
                 
-                [((CommentCell*)cell).commentLabel setText:@"Tap to comment"];
                 
-                UITapGestureRecognizer *tapClean = [[UITapGestureRecognizer alloc]initWithTarget:self action:@selector(showComment:)];
-                tapClean.numberOfTapsRequired = 1;
-                ((CommentCell*)cell).commentLabel.userInteractionEnabled = YES;
-                [((CommentCell*)cell).commentLabel addGestureRecognizer:tapClean];
             }
         }
         
@@ -398,7 +410,7 @@
 {
     self.defaults=[NSUserDefaults standardUserDefaults];
     NSString *user_name = [self.defaults objectForKey:@"user_name"];
-    
+    NSString *current_user_id = [self.defaults objectForKey:@"user_id"];
     AWSDynamoDBObjectMapper *dynamoDBObjectMapper = [AWSDynamoDBObjectMapper defaultDynamoDBObjectMapper];
     NSString * attributedString;
     if(!mode)
@@ -423,9 +435,11 @@
                  if(user.device_token)
                  {
                      CLLocation* userLocation=[[CLLocation alloc]initWithLatitude:user.latitude longitude:user.longitude];
-                     CLLocationDistance distance=[userLocation distanceFromLocation:self.currentLocation];
+                     if(self.currentLocation==nil)
+                         self.currentLocation = [[CLLocation alloc]initWithLatitude:self.location.latitude longitude:self.location.longitude];
+                     CLLocationDistance distance=  [userLocation distanceFromLocation:self.currentLocation];
                      distance=distance/1000.0;
-                     if(distance<100.0 || [AppDelegate isFollowed:user] || [self.location.found_by isEqualToString:user.user_id])
+                     if(distance<100.0 || [AppDelegate isFollowed:user] || [self.location.found_by isEqualToString:current_user_id])
                          [self.mainDelegate send_notification:user message:attributedString];
                  }
              }
@@ -519,6 +533,8 @@
     }
     picker.delegate=self;
     [self presentViewController:picker animated:YES completion:nil];
+
+    //[self dismissVC];
 }
 
 -(void)storeData:(BOOL)isDirty
@@ -548,7 +564,7 @@
         self.location = [Location new];
         NSString *location_id = [NSString stringWithFormat:@"%f,%f",
                                  self.currentLocation.coordinate.latitude, self.currentLocation.coordinate.longitude];
-        self.location.location_id=location_id;
+        self.location.location_id = location_id;
         self.location.location_name = self.locationName1;
         self.location.locality = self.locationName2;
         self.location.state = self.stateName;
@@ -559,8 +575,7 @@
         self.location.found_date = self.foundDate;
         self.location.latitude = self.currentLocation.coordinate.latitude;
         self.location.longitude = self.currentLocation.coordinate.longitude;
-        if([commentArray count] > 0)
-            self.location.comments = commentArray;
+       
     }
     if(!isDirty)
     {
@@ -571,7 +586,8 @@
     }
     else
         self.location.isDirty=@"true";
-    
+    if([commentArray count] > 0)
+        self.location.comments = commentArray;
     AWSDynamoDBObjectMapper *dynamoDBObjectMapper = [AWSDynamoDBObjectMapper defaultDynamoDBObjectMapper];
     
     [[dynamoDBObjectMapper save:self.location]
@@ -678,6 +694,10 @@
     NSLog(@"Photo taken");
     UIImage * photo=[[UIImage alloc]init];
     photo = (UIImage *)[info objectForKey:UIImagePickerControllerEditedImage];
+    if(self.location)
+    {
+        self.secondPhototaken=YES;
+    }
     if(self.secondPhototaken)
     {
         [self setSecondPhoto:YES photo:photo];
@@ -685,9 +705,8 @@
     else
     {
         self.takenPhoto = photo;
-        if(self.location)
-            self.secondPhototaken=YES;
     }
+   
     [picker dismissViewControllerAnimated:YES completion:NULL];
     [self.detailTable reloadData];
 }
@@ -706,9 +725,8 @@
         }
         else  //Going back to location view when cleaning the exisitng lcoation
         {
-            [self.tabBarController setSelectedIndex:1];
-            [self.tabBarController.tabBar setHidden:NO];
-            [self.navigationController popToRootViewControllerAnimated:YES];
+           
+            [self.navigationController dismissViewControllerAnimated:YES completion:nil];
         }
         
     }
@@ -716,10 +734,8 @@
     {
         //[self.delegate cameraRefresh:YES];
         
-        [self.tabBarController.tabBar setHidden:NO];
-        [self.tabBarController setSelectedIndex:1];
-        [self.navigationController popToRootViewControllerAnimated:YES];
-        
+        [self.navigationController dismissViewControllerAnimated:YES completion:nil];
+       
         
     }
 }
@@ -762,61 +778,22 @@
 }
 
 - (IBAction)closeComment:(id)sender {
+    [self dismissKeyboard];
     self.commentView.hidden=YES;
 }
 
 - (IBAction)btnSendComment:(id)sender {
     if([self.txtComment.text length]>0)
     {
-        [self.commentView setHidden:YES];
-        
-        NSMutableArray * commentArray=[[NSMutableArray alloc] init];
-        if(self.location.comments!=nil)
-            commentArray=self.location.comments;
-        NSMutableDictionary *commentItem=[[NSMutableDictionary alloc]init];
-        NSUserDefaults *defaults = [NSUserDefaults standardUserDefaults];
-        self.current_user_id = [defaults objectForKey:@"user_id"];
-        [commentItem setObject:self.current_user_id forKey:@"id"];
-        [commentItem setObject:self.txtComment.text forKey:@"text"];
-        double date =[[NSDate date]timeIntervalSince1970];
-        NSString *dateString=[NSString stringWithFormat:@"%f",date];
-        [commentItem setObject:dateString forKey:@"time"];
-        
-        
-        [commentArray addObject:commentItem];
-        
-        self.location.comments=[[NSMutableArray alloc] initWithArray:commentArray];
-        
-        AWSDynamoDBObjectMapper *dynamoDBObjectMapper = [AWSDynamoDBObjectMapper defaultDynamoDBObjectMapper];
-        AWSDynamoDBObjectMapperConfiguration *updateMapperConfig = [AWSDynamoDBObjectMapperConfiguration new];
-        updateMapperConfig.saveBehavior = AWSDynamoDBObjectMapperSaveBehaviorUpdate;
-        [self.txtComment resignFirstResponder];
-        [[dynamoDBObjectMapper save:self.location configuration:updateMapperConfig]
-         continueWithBlock:^id(AWSTask *task) {
-             if (task.error) {
-                 [self networkError];
-             }
-             if (task.exception) {
-                 [self networkError];
-             }
-             if (task.result) {
-                 dispatch_async(dispatch_get_main_queue(), ^{
-                     [self.txtComment setText:@""];
-                     [self generateNotification:self.location.cleaner_id mode:@"comment"];
-                     [self.detailTable reloadData];
-                     
-                     [self.detailTable setContentOffset:CGPointMake(0, CGFLOAT_MAX)];
-                     NSLog(@"Updated Comment");
-                 });
-             }
-             return nil;
-         }];
+        self.commentText = self.txtComment.text;
+        self.commentView.hidden=YES;
+        [self dismissKeyboard];
+        [self.detailTable reloadData];
     }
     else
     {
         [self commentError];
     }
-    
 }
 -(void) generateNotification:(NSString*) target_id mode:(NSString*) mode
 {

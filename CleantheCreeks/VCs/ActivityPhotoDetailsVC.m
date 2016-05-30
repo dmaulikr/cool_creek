@@ -114,7 +114,9 @@
     self.mainDelegate=(AppDelegate*)[[UIApplication sharedApplication]delegate];
     [self loadData];
     [self registerForKeyboardNotifications];
-
+    self.defaults = [NSUserDefaults standardUserDefaults];
+    self.current_user_id = [self.defaults objectForKey:@"user_id"];
+    NSString * user_name = [self.defaults objectForKey:@"user_name"];
     UIButton * btnKudo = [self.view viewWithTag:22];
     
     btnKudo.enabled = NO; //disabling the button while finishing the db update
@@ -199,7 +201,7 @@
         count = 2;
     else if(section == 1)
     {
-        if(self.cleaned)
+        if([self.location.isDirty isEqualToString:@"false"])
             count = 4;
         else
             count = 3;
@@ -260,7 +262,7 @@
             }
             
             
-            if(self.cleaned)
+            if([self.location.isDirty isEqualToString:@"false"])
             {
                 if(self.afterPhoto)
                 {
@@ -317,7 +319,7 @@
             [((LocationBarCell*)cell).btnComment setImage:[UIImage imageNamed:@"IconComment"] forState:UIControlStateSelected];
             ((LocationBarCell*)cell).btnComment.selected = self.commentVisible;
             ((LocationBarCell*)cell).btnLike.tag = 22;
-            if(self.cleaned)
+            if([self.location.isDirty isEqualToString:@"false"])
             {
                 [((LocationBarCell*)cell).btnLike setImage:[UIImage imageNamed:@"IconKudos4"] forState:UIControlStateNormal];
                 [((LocationBarCell*)cell).btnLike setImage:[UIImage imageNamed:@"IconKudos5"] forState:UIControlStateSelected];
@@ -338,8 +340,8 @@
     
     else if(indexPath.section==1)
     {
-        NSUserDefaults *defaults = [NSUserDefaults standardUserDefaults];
-        NSString *user_name = [defaults objectForKey:@"user_name"];
+        
+        NSString *user_name = [self.defaults objectForKey:@"user_name"];
         
         NSDateFormatter *dateFormatter=[[NSDateFormatter alloc] init];
         [dateFormatter setDateFormat:@"MMM dd, yyyy"];
@@ -376,7 +378,7 @@
         else if(indexPath.row==3)
         {
             cell = (DetailCell*)[tableView dequeueReusableCellWithIdentifier:@"ThirdDetailCell"];
-            if(self.cleaned)
+            if([self.location.isDirty isEqualToString:@"false"])
                 [((DetailCell*)cell).cleanerName setText:self.location.cleaner_name];
             else
                 [((DetailCell*)cell).cleanerName setText:user_name];
@@ -405,15 +407,15 @@
                 {
                     cell = (CommentCell*)[tableView dequeueReusableCellWithIdentifier:@"CommentCell"];
                     NSMutableDictionary *commentItem=[self.location.comments objectAtIndex:indexPath.row-1];
-                    User * commentUser=[self.mainDelegate.userArray objectForKey:[commentItem objectForKey:@"id"]];
+                    User * commentUser = [self.mainDelegate.userArray objectForKey:[commentItem objectForKey:@"id"]];
                     NSString *commentUserName=commentUser.user_name;
-                    NSString *commentText=[commentItem objectForKey:@"text"];
+                    NSString *commentText = [commentItem objectForKey:@"text"];
                     [((CommentCell*)cell).commentLabel setAttributedText:[self generateCommentString:commentUserName content:commentText]];
                     
                     UITapGestureRecognizer *commentTap = [[UITapGestureRecognizer alloc]
                                                           initWithTarget:self
                                                           action:@selector(showCommenter:)];
-                    commentTap.numberOfTapsRequired=1;
+                    commentTap.numberOfTapsRequired = 1;
                     [((CommentCell*)cell).commentLabel addGestureRecognizer:commentTap];
                     [((CommentCell*)cell).commentLabel setUserInteractionEnabled:YES];
                     ((CommentCell*)cell).commentLabel.tag =indexPath.row-1;
@@ -442,7 +444,7 @@
 
 -(void)showCleaner:(id)sender
 {
-    self.defaults = [NSUserDefaults standardUserDefaults];
+    
     if([self.defaults objectForKey:@"user_id"])
     {
         self.selected_user = self.location.cleaner_id;
@@ -456,7 +458,7 @@
 
 -(void)showFinder:(id)sender
 {
-    self.defaults = [NSUserDefaults standardUserDefaults];
+    
     if([self.defaults objectForKey:@"user_id"])
     {
         self.selected_user = self.location.founder_id;
@@ -470,7 +472,6 @@
 
 -(void)showCommenter:(id)sender
 {
-    self.defaults = [NSUserDefaults standardUserDefaults];
     if([self.defaults objectForKey:@"user_id"])
     {
         UITapGestureRecognizer *gesture = (UITapGestureRecognizer *) sender;
@@ -498,7 +499,67 @@
 {
     sender.selected=!sender.selected;
     
-    [self.delegate giveKudoWithLocation:self.location assigned:sender.selected];
+    NSMutableArray * kudoArray=[[NSMutableArray alloc] init];
+    if(self.location.kudos!=nil)
+        kudoArray=self.location.kudos;
+    NSMutableDictionary *kudoItem=[[NSMutableDictionary alloc]init];
+    [kudoItem setObject:self.current_user_id forKey:@"id"];
+    double date =[[NSDate date]timeIntervalSince1970];
+    NSString *dateString=[NSString stringWithFormat:@"%f",date];
+    [kudoItem setObject:dateString forKey:@"time"];
+    
+    if(kudoArray!=nil)
+    {
+        NSMutableArray *removeArray=[[NSMutableArray alloc]init];
+        for(NSDictionary *kudo_gaver in kudoArray)
+        {
+            if([[kudo_gaver objectForKey:@"id"] isEqualToString:self.current_user_id])
+            {
+                [removeArray addObject:kudo_gaver];
+                
+            }
+        }
+        [kudoArray removeObjectsInArray:removeArray];
+    }
+    if(sender.selected)
+        [kudoArray addObject:kudoItem];
+    if([kudoArray count]!=0)
+        self.location.kudos=[[NSMutableArray alloc] initWithArray:kudoArray];
+    else
+        self.location.kudos=nil;
+    AWSDynamoDBObjectMapper *dynamoDBObjectMapper = [AWSDynamoDBObjectMapper defaultDynamoDBObjectMapper];
+    AWSDynamoDBObjectMapperConfiguration *updateMapperConfig = [AWSDynamoDBObjectMapperConfiguration new];
+    updateMapperConfig.saveBehavior = AWSDynamoDBObjectMapperSaveBehaviorUpdate;
+    
+    [[dynamoDBObjectMapper save:self.location configuration:updateMapperConfig]
+     continueWithBlock:^id(AWSTask *task) {
+         if (task.error) {
+             NSLog(@"The request failed. Error: [%@]", task.error);
+         }
+         if (task.exception) {
+             NSLog(@"The request failed. Exception: [%@]", task.exception);
+         }
+         if (task.result) {
+             self.isKudoed = sender.selected;
+             dispatch_async(dispatch_get_main_queue(), ^{
+                 [self.tv reloadData];
+             });
+             
+             if(sender.selected)
+             {
+                 User * user=[self.mainDelegate.userArray objectForKey:self.location.cleaner_id];
+                 NSString * user_name = [self.defaults objectForKey:@"user_name"];
+                 NSString * attributedString=[NSString stringWithFormat:@"%@ gave you kudos", user_name];
+                 
+                 [self.mainDelegate send_notification:user message:attributedString];
+                 NSLog(@"assigned");
+             }
+             else
+                 NSLog(@"unassigned");
+             
+         }
+         return nil;
+     }];
 }
 
 -(void)commentButtonClicked:(UIButton*) sender
@@ -506,10 +567,10 @@
     self.defaults = [NSUserDefaults standardUserDefaults];
     if([self.defaults objectForKey:@"user_id"])
     {
-        self.commentVisible=!self.commentVisible;
+        self.commentVisible = !self.commentVisible;
         [self.commentView setHidden:!self.commentVisible];
         [self.textComment becomeFirstResponder];
-        sender.selected=self.commentVisible;
+        sender.selected = self.commentVisible;
     }
     else
         [self fbLogin];
@@ -560,6 +621,7 @@
 - (IBAction)closeBtnClicked:(id)sender {
     self.commentVisible=NO;
     [self.commentView setHidden:YES];
+    [self dismissKeyboard];
     [self.tv reloadData];
 }
 
@@ -574,7 +636,7 @@
             commentArray=self.location.comments;
         NSMutableDictionary *commentItem=[[NSMutableDictionary alloc]init];
         NSUserDefaults *defaults = [NSUserDefaults standardUserDefaults];
-        self.current_user_id = [defaults objectForKey:@"user_id"];
+        
         [commentItem setObject:self.current_user_id forKey:@"id"];
         [commentItem setObject:self.textComment.text forKey:@"text"];
         double date =[[NSDate date]timeIntervalSince1970];
@@ -604,8 +666,8 @@
                      [self generateNotification:self.location.cleaner_id mode:@"comment"];
                      [self.tv reloadData];
                      CGPoint bottomOffset = CGPointMake(0,  self.tv.contentInset.bottom + self.tv.contentSize.height - self.tv.bounds.size.height);
-                     if(bottomOffset.y>0)
-                     [self.tv setContentOffset:bottomOffset animated:YES];
+                     if(bottomOffset.y > 0)
+                      [self.tv setContentOffset:bottomOffset animated:YES];
                      NSLog(@"Updated Comment");
                  });
              }
@@ -785,7 +847,6 @@
     if (editingStyle == UITableViewCellEditingStyleDelete) {
         dispatch_async(dispatch_get_main_queue(), ^ {
             
-            NSMutableArray * commentArray=[[NSMutableArray alloc] init];
             if(self.location.comments!=nil)
             {
                 
@@ -907,7 +968,7 @@
 {
     self.defaults=[NSUserDefaults standardUserDefaults];
     NSString *user_name = [self.defaults objectForKey:@"user_name"];
-    
+    NSString *current_user_id = [self.defaults objectForKey:@"user_id"];
     AWSDynamoDBObjectMapper *dynamoDBObjectMapper = [AWSDynamoDBObjectMapper defaultDynamoDBObjectMapper];
     NSString * attributedString;
     if(!mode)
@@ -934,7 +995,7 @@
                      CLLocation* userLocation=[[CLLocation alloc]initWithLatitude:user.latitude longitude:user.longitude];
                      CLLocationDistance distance=[userLocation distanceFromLocation:self.location];
                      distance=distance/1000.0;
-                     if(distance<100.0 || [AppDelegate isFollowed:user] || [self.location.found_by isEqualToString:user.user_id])
+                     if(distance<100.0 || [AppDelegate isFollowed:user] || [self.location.found_by isEqualToString:current_user_id])
                          [self.mainDelegate send_notification:user message:attributedString];
                  }
              }

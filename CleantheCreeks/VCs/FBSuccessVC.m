@@ -26,9 +26,10 @@
 }
 
 - (IBAction)close:(UIButton *)sender {
-    [self.tabBarController setSelectedIndex:1];
-   
+    
+    [self.navigationController dismissViewControllerAnimated:NO completion:nil];
     [self.navigationController popToRootViewControllerAnimated:YES];
+
 }
 
 -(void)viewWillAppear:(BOOL)animated

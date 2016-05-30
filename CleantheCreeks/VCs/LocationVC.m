@@ -25,7 +25,7 @@
 @property (nonatomic,strong) CustomInfiniteIndicator *infiniteIndicator;
 @property(strong,nonatomic) Location * annotationLocation;
 
-@property (strong, nonatomic) NSMutableArray* annotationArray;
+@property (strong, nonatomic) NSMutableDictionary* annotationArray;
 @property (nonatomic, strong) FBClusteringManager *clusteringManager;
 @end
 
@@ -63,7 +63,7 @@
     [self.refreshControl addTarget:self action:@selector(updateData) forControlEvents:UIControlEventValueChanged];
     self.locationTable.infiniteScrollIndicatorStyle = UIActivityIndicatorViewStyleGray;
     self.infiniteIndicator = [[CustomInfiniteIndicator alloc] initWithFrame:CGRectMake(0, 0, 40, 40)];
-    self.clusteringManager = [[FBClusteringManager alloc] initWithAnnotations:self.annotationArray];
+    self.clusteringManager = [[FBClusteringManager alloc] initWithAnnotations:[self.annotationArray allValues]];
     self.clusteringManager.delegate = self;
     self.locationTable.infiniteScrollIndicatorView = self.infiniteIndicator;
     self.defaults = [NSUserDefaults standardUserDefaults];
@@ -77,9 +77,10 @@
 }
 
 
--(void) viewWillAppear:(BOOL)animated
+-(void) viewDidAppear:(BOOL)animated
 {
     [super viewWillAppear:animated];
+    
     id<GAITracker> tracker = [[GAI sharedInstance] defaultTracker];
     [tracker set:kGAIScreenName value:@"LocationVC"];
     [tracker send:[[GAIDictionaryBuilder createScreenView] build]];
@@ -91,7 +92,9 @@
         [self.tabBarController.tabBar setHidden:NO];
     else
         [self.tabBarController.tabBar setHidden:YES];
+    
     [self.refreshControl beginRefreshing];
+    [self updateData];
     if (self.locationTable.contentOffset.y == 0) {
         
         [UIView animateWithDuration:0.25 delay:0 options:UIViewAnimationOptionBeginFromCurrentState animations:^(void){
@@ -353,15 +356,6 @@
             vc.fromLocationView = NO;
         }
         
-        else if([segue.identifier isEqualToString:@"cleanLocation"])
-        {
-            CameraVC * vc = (CameraVC*)segue.destinationViewController;
-            vc.photoTaken = NO;
-            vc.dirtyPhoto=(UIImage*)(self.mainDelegate.locationData[location.location_id]);
-            vc.location = [[Location alloc]init];
-            vc.location = location;
-            
-        }
     }
 }
 
@@ -371,13 +365,15 @@
 {
     
     self.locationArray=[[NSMutableArray alloc]init];
-    self.annotationArray = [[NSMutableArray alloc]init];
+    self.annotationArray = [[NSMutableDictionary alloc]init];
+    [self.annotationArray removeAllObjects];
     self.mainDelegate.locationData=[[NSMutableDictionary alloc] init];
     AWSDynamoDBObjectMapper *dynamoDBObjectMapper = [AWSDynamoDBObjectMapper defaultDynamoDBObjectMapper];
     AWSDynamoDBScanExpression *scanExpression = [AWSDynamoDBScanExpression new];
     scanExpression.filterExpression = @"isDirty = :val";
     scanExpression.expressionAttributeValues = @{@":val":@"true"};
     [self.mapView removeAnnotations:self.mapView.annotations];
+    self.clusteringManager= [[FBClusteringManager alloc]init];
     [[dynamoDBObjectMapper scan:[Location class] expression:scanExpression] continueWithBlock:^id(AWSTask *task) {
         if (task.error) {
             
@@ -393,25 +389,12 @@
             AWSDynamoDBPaginatedOutput *paginatedOutput = task.result;
             for (int i=0;i<paginatedOutput.items.count;i++) {
                 Location * location= [paginatedOutput.items objectAtIndex:i];
-                
-//                //Setting the file download path
-//                NSString *downloadingFilePath = [NSTemporaryDirectory() stringByAppendingPathComponent:location.location_id];
-//                NSURL *downloadingFileURL = [NSURL fileURLWithPath:downloadingFilePath];
-                
                 if(![self.locationArray containsObject:location])
                     [self.locationArray addObject:location];
                 
                 //Setting the annotation
                 LocationAnnotation *annotation=[[LocationAnnotation alloc]init];
                 annotation.coordinate = CLLocationCoordinate2DMake(location.latitude, location.longitude);
-                
-//                //Downloading files
-//                
-//                AWSS3TransferManagerDownloadRequest *downloadRequest = [AWSS3TransferManagerDownloadRequest new];
-//                downloadRequest.bucket = @"cleanthecreeks";
-//                NSString * key=[location.location_id stringByAppendingString:@"a"];
-//                downloadRequest.key = key;
-//                downloadRequest.downloadingFileURL = downloadingFileURL;
                 
                 if(!self.mainDelegate.locationData[location.location_id])
                 {
@@ -427,16 +410,14 @@
                                 dispatch_async(dispatch_get_main_queue(), ^{
                                     {
                                         [self.mainDelegate.locationData setObject:image forKey:location.location_id];
-                                        annotation.image = image;
-                                       
-                                        [self.annotationArray addObject:annotation];
-                                        self.clusteringManager= [[FBClusteringManager alloc]init];
-                                        [self.clusteringManager setAnnotations:_annotationArray];
+                                        
+                                        [self.annotationArray setObject:annotation forKey:location.location_id];
+                                        
+                                        [self.clusteringManager setAnnotations:[_annotationArray allValues]];
                                         
                                         // Update annotations on the map
                                         [self mapView:self.mapView regionDidChangeAnimated:NO];
                                         [self.locationTable reloadData];
-                                        
                                         
                                     }
                                     
@@ -492,16 +473,18 @@
     cLocation.longitude = newLocation.coordinate.longitude;
     region.span = span;
     region.center = cLocation;
-    
-   
-    
     self.currentLocation=newLocation;
     self.mainDelegate.currentLocation=newLocation;
+    if(![self.refreshControl isRefreshing])
+    {
+        [self.refreshControl beginRefreshing];
+   //     [self updateData];
+    }
     if(!self.refreshed)
     {
-         [self.mapView setRegion:region animated:YES];
+        [self.mapView setRegion:region animated:YES];
         [self.mapView setShowsUserLocation:YES];
-        [self updateData];
+        
         self.refreshed = YES;
     }
     CLGeocoder *ceo = [[CLGeocoder alloc]init];
@@ -557,7 +540,18 @@
             {
                 NSIndexPath *cellIndexPath = [self.locationTable indexPathForCell:cell];
                 self.selectedIndex = cellIndexPath.row;
-                [self performSegueWithIdentifier:@"cleanLocation" sender:self];
+                //[self performSegueWithIdentifier:@"cleanLocation" sender:self];
+                
+                CameraVC * vc = [self.storyboard instantiateViewControllerWithIdentifier:@"CameraVC"];
+                Location * location = [self.locationArray objectAtIndex:self.selectedIndex];
+                vc.photoTaken = NO;
+                vc.dirtyPhoto=(UIImage*)(self.mainDelegate.locationData[location.location_id]);
+                vc.location = [[Location alloc]init];
+                vc.location = location;
+                UINavigationController *navC = [[UINavigationController alloc] initWithRootViewController:vc];
+                [navC.navigationBar setHidden:YES];
+                [self presentViewController:navC animated:YES completion:nil];
+                
             }
             
             break;
@@ -575,6 +569,7 @@
         
         [self.clusteringManager displayAnnotations:annotations onMapView:mapView];
     }];
+    
 }
 
 - (MKAnnotationView *)mapView:(MKMapView *)mapView viewForAnnotation:(LocationAnnotation * )annotation{
@@ -603,7 +598,6 @@
     {
         
         static NSString *const AnnotatioViewReuseID = @"AnnotatioViewReuseID";
-        
         LocationOverlayView *annotationView = (LocationOverlayView *)[mapView dequeueReusableAnnotationViewWithIdentifier:AnnotatioViewReuseID];
         
         if (!annotationView) {
@@ -618,6 +612,12 @@
             LocationAnnotation * ann = (LocationAnnotation*) clusterArray[0];
             NSString *location_id = [NSString stringWithFormat:@"%f,%f",
                                      ann.coordinate.latitude, ann.coordinate.longitude];
+            annotationView.image =[PhotoDetailsVC scaleImage:self.mainDelegate.locationData[location_id] toSize:CGSizeMake(50.0,50.0)];
+            annotationView.canShowCallout = NO;
+        }
+        else {
+            NSString *location_id = [NSString stringWithFormat:@"%f,%f",
+                                     annotation.coordinate.latitude, annotation.coordinate.longitude];
             annotationView.image =[PhotoDetailsVC scaleImage:self.mainDelegate.locationData[location_id] toSize:CGSizeMake(50.0,50.0)];
             annotationView.canShowCallout = NO;
         }
@@ -645,6 +645,8 @@
 }
 
 - (IBAction)listButtonTapped:(id)sender{
+    [self.refreshControl beginRefreshing];
+    [self updateData];
     [self.locationTable setHidden:NO];
     [self.mapView setHidden:YES];
     [self.mapButton setImage:[UIImage imageNamed:@"HeaderMapBtnUnselected"] forState:UIControlStateNormal];
@@ -652,6 +654,7 @@
 }
 
 - (IBAction)mapButtonTapped:(id)sender{
+    [self updateData];
     [self.locationTable setHidden:YES];
     [self.mapView setHidden:NO];
     [self.mapButton setImage:[UIImage imageNamed:@"HeaderMapBtnSelected"] forState:UIControlStateNormal];

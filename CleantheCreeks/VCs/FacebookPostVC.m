@@ -69,9 +69,10 @@
 
 
 - (IBAction)skip:(id)sender {
-    [self.tabBarController.tabBar setHidden:NO];
-    [self.tabBarController setSelectedIndex:1];
+    
+    [self.navigationController dismissViewControllerAnimated:NO completion:nil];
     [self.navigationController popToRootViewControllerAnimated:YES];
+    
 }
 
 - (UIImage*)mergeImage:(UIImage*)first withImage:(UIImage*)second

@@ -84,9 +84,9 @@ UIButton *loginButton;
              [parameters setValue:@"id,name,email,location,about" forKey:@"fields"];
              [[[FBSDKGraphRequest alloc] initWithGraphPath:@"me" parameters:parameters]
               startWithCompletionHandler:^(FBSDKGraphRequestConnection *connection, id result, NSError *error) {
-                   dispatch_async(dispatch_get_main_queue(), ^{
-                      
-                   });
+                  
+                      [self moveToMainNav];
+                   
                   if (!error) {
                      
                       NSLog(@"fetched user:%@  and Email : %@", result,result[@"email"]);
@@ -119,7 +119,7 @@ UIButton *loginButton;
                                NSLog(@"The request failed. Exception: [%@]", task.exception);
                            }
                            if (task.result) {
-                               [self moveToMainNav];
+                               
                                NSLog(@"new user is registered");
                            }
                            return nil;

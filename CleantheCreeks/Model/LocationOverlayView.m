@@ -50,7 +50,8 @@
         NSDictionary *attributes = @{ NSFontAttributeName : self.label.font };
         CGSize size = [title sizeWithAttributes:attributes];
         self.width = MAX(size.width + 6, 22);
-    } else {
+    }
+    else {
         self.width = 0;
     }
     if(title)

@@ -384,7 +384,10 @@
                 cell = (CleaningDoneCell*)[tableView dequeueReusableCellWithIdentifier:@"CleaningDoneCell" forIndexPath:indexPath];
                 if(cell)
                 {
-                    [((CleaningDoneCell*)cell).lblContent setAttributedText:[self generateString:user.user_name content:@" has finished cleaning " location:activity.activity_location.location_name]];
+                    if(![self.current_user_id isEqualToString:user.user_id])
+                        [((CleaningDoneCell*)cell).lblContent setAttributedText:[self generateString:user.user_name content:@" has finished cleaning " location:activity.activity_location.location_name]];
+                    else
+                        [((CleaningDoneCell*)cell).lblContent setAttributedText:[self generateString:@"You" content:@" have finished cleaning " location:activity.activity_location.location_name]];
                     [((CleaningDoneCell*)cell).activityHours setText:[self timeDifference:activity.activity_time]];
                     [((CleaningDoneCell*)cell).kudoCounter setTitle:[[NSString alloc] initWithFormat:@"%d Kudos",activity.kudo_count] forState:UIControlStateNormal];
                     if([self.imageArray objectForKey:activity.activity_id]!=nil)
@@ -442,15 +445,24 @@
                 {
                     if([activity.activity_type isEqualToString: @"find"])
                     {
-                        [((CleaningCommentCell*)cell).lblContent setAttributedText:[self generateString:user.user_name content:@" found a new dirty spot " location:activity.activity_location.location_name]];
+                        if(![self.current_user_id isEqualToString:user.user_id])
+                            [((CleaningCommentCell*)cell).lblContent setAttributedText:[self generateString:user.user_name content:@" found a new dirty spot " location:activity.activity_location.location_name]];
+                        else
+                            [((CleaningCommentCell*)cell).lblContent setAttributedText:[self generateString:@"You" content:@" found a new dirty spot " location:activity.activity_location.location_name]];
                     }
                     else if([activity.activity_type isEqualToString: @"comment"])
                     {
-                        [((CleaningCommentCell*)cell).lblContent setAttributedText:[self generateString:user.user_name content:@" commented on your clean up location " location:@""]];
+                        if(![self.current_user_id isEqualToString:user.user_id])
+                            [((CleaningCommentCell*)cell).lblContent setAttributedText:[self generateString:user.user_name content:@" commented on your clean up location " location:@""]];
+                        else
+                            [((CleaningCommentCell*)cell).lblContent setAttributedText:[self generateString:@"You" content:@" commented on your clean up location " location:@""]];
                     }
                     else if([activity.activity_type isEqualToString: @"kudo"])
                     {
-                        [((CleaningCommentCell*)cell).lblContent setAttributedText:[self generateString:user.user_name content:@" gave you Kudos \n" location:@""]];
+                        if(![self.current_user_id isEqualToString:user.user_id])
+                            [((CleaningCommentCell*)cell).lblContent setAttributedText:[self generateString:user.user_name content:@" gave you Kudos \n" location:@""]];
+                        else
+                            [((CleaningCommentCell*)cell).lblContent setAttributedText:[self generateString:@"You" content:@" gave you Kudos \n" location:@""]];
                     }
                     else if([activity.activity_type isEqualToString: @"follow"])
                     {
@@ -504,21 +516,24 @@
     NSLog(@"%u",self.selectedImgIndex);
     if([self.activityArray count] > 0)
     {
-    Activity * selectedActivity = [self.activityArray objectAtIndex:self.selectedImgIndex];
-    if(![selectedActivity.activity_id isEqualToString:self.current_user_id])
-    {
-        
-        [self performSegueWithIdentifier:@"showProfile" sender:self];
-    }
+        Activity * selectedActivity = [self.activityArray objectAtIndex:self.selectedImgIndex];
+        if(![selectedActivity.activity_id isEqualToString:self.current_user_id])
+        {
+            
+            [self performSegueWithIdentifier:@"showProfile" sender:self];
+        }
     }
 }
 
 -(void) kudoCountClicked:(UIButton*)sender
 {
-    Activity * activity=[self.activityArray objectAtIndex:sender.tag];
-    self.selectedLocation=[[Location alloc]init];
-    self.selectedLocation=activity.activity_location;
-    [self performSegueWithIdentifier:@"showKudos" sender:nil];
+    if([self.activityArray count]>0)
+    {
+        Activity * activity=[self.activityArray objectAtIndex:sender.tag];
+        self.selectedLocation=[[Location alloc]init];
+        self.selectedLocation=activity.activity_location;
+        [self performSegueWithIdentifier:@"showKudos" sender:nil];
+    }
 }
 
 -(void) giveKudoWithLocation:(Location*) location assigned:(bool)assigned
@@ -615,11 +630,11 @@
             ActivityPhotoDetailsVC* vc = (ActivityPhotoDetailsVC*)segue.destinationViewController;
             vc.location = [[Location alloc]init];
             vc.location = activity.activity_location;
-            vc.cleaned=NO;
+            //vc.cleaned=NO;
             vc.isKudoed=activity.kudo_assigned;
             if([activity.activity_type isEqualToString: @"clean"])
             {
-                vc.cleaned=YES;
+                //  vc.cleaned=YES;
             }
             vc.delegate=self;
             

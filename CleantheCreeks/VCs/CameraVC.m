@@ -1,5 +1,5 @@
 #import "CameraVC.h"
-
+#import "PhotoDetailsVC.h"
 @implementation CameraVC
 - (id) init
 {
@@ -16,7 +16,7 @@
     // Do any additional setup after loading the view.
 }
 
--(void)viewWillAppear:(BOOL)animated
+-(void)viewDidAppear:(BOOL)animated
 {
     [super viewWillAppear:animated];
     
@@ -50,6 +50,8 @@
     id<GAITracker> tracker = [[GAI sharedInstance] defaultTracker];
     [tracker set:kGAIScreenName value:@"Camera View"];
     [tracker send:[[GAIDictionaryBuilder createScreenView] build]];
+    
+    
 }
 
 -(void) takePhoto
@@ -78,15 +80,15 @@
     [picker dismissViewControllerAnimated:YES completion:NULL];
     
     [self performSegueWithIdentifier:@"showPhotoDetails" sender:self];
-    
-    
 }
 
 - (void)imagePickerControllerDidCancel:(UIImagePickerController *)picker
 {
-    [picker dismissViewControllerAnimated:YES completion:NULL];
-    [self dismissVC];
-    [self.tabBarController setSelectedIndex:1];
+   
+    [picker dismissViewControllerAnimated:YES completion:^{
+        
+    }];
+    [self.navigationController dismissViewControllerAnimated:YES completion:nil];
     self.photoTaken = NO;
 }
 

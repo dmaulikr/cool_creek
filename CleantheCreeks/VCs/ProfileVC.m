@@ -147,10 +147,12 @@
               continueWithBlock:^id(AWSTask *task) {
                   
                   if (task.result) {
+                      dispatch_async(dispatch_get_main_queue(), ^{
                       AWSDynamoDBPaginatedOutput *paginatedOutput = task.result;
                       self.formattedFindsCount = [NSString stringWithFormat:@"%lu",(unsigned long)paginatedOutput.items.count];
                       
                       [self.profileTable reloadData];
+                      });
                   }
                   return nil;
               }];
@@ -409,6 +411,7 @@
             if(self.profile_user)
             {
                 cell = (ProfileViewCell*)[tableView dequeueReusableCellWithIdentifier:@"profileViewCell"];
+                [cell.btnFollow addTarget:self action:@selector(followClicked:) forControlEvents:UIControlEventTouchUpInside];
                 NSString *userImageURL = [NSString stringWithFormat:@"https://graph.facebook.com/%@/picture?width=100&&height=100", self.profile_user.user_id];
                 NSURL *url = [NSURL URLWithString:userImageURL];
                 
@@ -443,7 +446,7 @@
                 [cell.followingLabel addGestureRecognizer:followingTap];
                 [cell.user_follows addGestureRecognizer:followersTap];
                 [cell.followersLabel addGestureRecognizer:followersTap];
-                [cell.btnFollow addTarget:self action:@selector(followClicked:) forControlEvents:UIControlEventTouchUpInside];
+                
                 
                 cell.btnFollow.hidden = [self.profile_user.user_id  isEqualToString: self.current_user_id];
                 

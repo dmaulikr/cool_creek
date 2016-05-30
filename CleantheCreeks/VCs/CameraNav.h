@@ -8,6 +8,6 @@
 
 #import <UIKit/UIKit.h>
 
-@interface CameraNav : UINavigationController
+@interface CameraNav : UIViewController
 
 @end
