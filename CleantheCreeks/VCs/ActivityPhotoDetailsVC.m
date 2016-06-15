@@ -25,6 +25,7 @@
 #import <MessageUI/MFMailComposeViewController.h>
 #import "ProfileVC.h"
 #import "FullScreen.h"
+#import "MapVC.h"
 @implementation ActivityPhotoDetailsVC
 
 - (void)registerForKeyboardNotifications
@@ -357,6 +358,15 @@
             [((DetailCell*)cell).locationName1 setText:self.location.location_name];
             NSString * subLocation = [[NSString alloc]initWithFormat:@"%@, %@, %@", self.location.locality, self.location.state, self.location.country];
             [((DetailCell*)cell).locationName2 setText:subLocation];
+            ((DetailCell*)cell).locationName1.userInteractionEnabled = YES;
+            ((DetailCell*)cell).locationName2.userInteractionEnabled = YES;
+            UITapGestureRecognizer *firstTap=[[UITapGestureRecognizer alloc]initWithTarget:self action:@selector(showLocation)];
+            firstTap.numberOfTapsRequired=1;
+            [((DetailCell*)cell).locationName1 addGestureRecognizer:firstTap];
+            
+            UITapGestureRecognizer *secondTap=[[UITapGestureRecognizer alloc]initWithTarget:self action:@selector(showLocation)];
+            secondTap.numberOfTapsRequired=1;
+            [((DetailCell*)cell).locationName2 addGestureRecognizer:secondTap];
         }
         else if(indexPath.row == 2)
         {
@@ -440,6 +450,17 @@
 {
     self.imgToShow = self.afterPhoto;
     [self performSegueWithIdentifier:@"showFullScreen" sender:self];
+}
+
+-(void)showLocation
+{
+    MapVC * vc= [self.storyboard instantiateViewControllerWithIdentifier:@"MapView"];
+    vc.currentLocation = self.location;
+    vc.currentImage = self.mainDelegate.locationData[self.location.location_id];
+//    UINavigationController *navC = [[UINavigationController alloc] initWithRootViewController:vc];
+//    [navC.navigationBar setHidden:YES];
+    
+    [self.navigationController pushViewController:vc animated:YES];
 }
 
 -(void)showCleaner:(id)sender

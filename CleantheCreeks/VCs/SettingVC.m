@@ -7,6 +7,7 @@
 //
 
 #import "SettingVC.h"
+#import "SlideVC.h"
 
 @implementation SettingVC
 - (void) viewWillAppear:(BOOL)animated
@@ -132,11 +133,12 @@
         }
         [defs synchronize];
         
-        [self.navigationController popToRootViewControllerAnimated:NO];
+        SlideVC * vc = [self.storyboard instantiateViewControllerWithIdentifier:@"SlideVC"];
         
-        [self performSegueWithIdentifier:@"signOut" sender:self];
-        [self dismissVC];
-
+        UINavigationController *navC = [[UINavigationController alloc] initWithRootViewController:vc];
+        [navC.navigationBar setHidden:YES];
+        
+        [self presentViewController:navC animated:YES completion:nil];
     }]];
     
     [alertController addAction:[UIAlertAction actionWithTitle:@"NO" style:UIAlertActionStyleDefault handler:^(UIAlertAction *action) {

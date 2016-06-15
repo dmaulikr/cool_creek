@@ -89,6 +89,7 @@
 		E406D6431CDAE9CF003652CA /* CameraNav.m in Sources */ = {isa = PBXBuildFile; fileRef = E406D6421CDAE9CF003652CA /* CameraNav.m */; };
 		E45E43E51CF00B0700F56D7E /* LocationOverlayView.m in Sources */ = {isa = PBXBuildFile; fileRef = E45E43E31CF00B0700F56D7E /* LocationOverlayView.m */; };
 		E45E43E81CF2A19A00F56D7E /* FullScreen.m in Sources */ = {isa = PBXBuildFile; fileRef = E45E43E71CF2A19A00F56D7E /* FullScreen.m */; };
+		E46A37F21D0A6509000361B4 /* MapVC.m in Sources */ = {isa = PBXBuildFile; fileRef = E46A37F11D0A6509000361B4 /* MapVC.m */; };
 		E481116E1CBB4AA9000987E2 /* MessageUI.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = E481116D1CBB4AA9000987E2 /* MessageUI.framework */; };
 		E48111731CBB5773000987E2 /* Constants.m in Sources */ = {isa = PBXBuildFile; fileRef = E48111721CBB5773000987E2 /* Constants.m */; };
 		E49CE64E1CB57F22006CE1C8 /* FXPageControl.m in Sources */ = {isa = PBXBuildFile; fileRef = E49CE64D1CB57F22006CE1C8 /* FXPageControl.m */; };
@@ -240,6 +241,8 @@
 		E45E43E41CF00B0700F56D7E /* LocationOverlayView.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = LocationOverlayView.h; sourceTree = "<group>"; };
 		E45E43E61CF2A19A00F56D7E /* FullScreen.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = FullScreen.h; sourceTree = "<group>"; };
 		E45E43E71CF2A19A00F56D7E /* FullScreen.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = FullScreen.m; sourceTree = "<group>"; };
+		E46A37F01D0A6509000361B4 /* MapVC.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = MapVC.h; sourceTree = "<group>"; };
+		E46A37F11D0A6509000361B4 /* MapVC.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = MapVC.m; sourceTree = "<group>"; };
 		E481116D1CBB4AA9000987E2 /* MessageUI.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = MessageUI.framework; path = System/Library/Frameworks/MessageUI.framework; sourceTree = SDKROOT; };
 		E481116F1CBB56BB000987E2 /* Constants.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = Constants.h; sourceTree = "<group>"; };
 		E48111721CBB5773000987E2 /* Constants.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = Constants.m; sourceTree = "<group>"; };
@@ -690,6 +693,8 @@
 				3C324E531C9C665500EFBEC4 /* BaseVC */,
 				3C2874B41C88EC9D00725B40 /* FollowVC */,
 				E45E43E91CF2A1A000F56D7E /* FullScreen */,
+				E46A37F01D0A6509000361B4 /* MapVC.h */,
+				E46A37F11D0A6509000361B4 /* MapVC.m */,
 			);
 			path = VCs;
 			sourceTree = "<group>";
@@ -970,6 +975,7 @@
 				E2F36ED01C5AFFE700923DF0 /* IntroView.m in Sources */,
 				E2FD05881C59E579004B2C34 /* LocationVC.m in Sources */,
 				3CA250EF1C843D32004BB466 /* User.m in Sources */,
+				E46A37F21D0A6509000361B4 /* MapVC.m in Sources */,
 				0084F42B1C7B17D800E111D0 /* KudosCell.m in Sources */,
 				E45E43E51CF00B0700F56D7E /* LocationOverlayView.m in Sources */,
 				0084F4271C7B14A600E111D0 /* KudosVC.m in Sources */,

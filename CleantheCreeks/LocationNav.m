@@ -13,7 +13,7 @@
 
 -(void) viewDidLoad
 {
-    _locationManager=[[CLLocationManager alloc] init];
+    _locationManager = [[CLLocationManager alloc] init];
     
 }
 
