@@ -2,6 +2,8 @@
 #import "LocationVC.h"
 #import <FBSDKCoreKit/FBSDKCoreKit.h>
 #import <FBSDKLoginKit/FBSDKLoginKit.h>
+#import <AWSCore/AWSCore.h>
+#import <AWSDynamoDB/AWSDynamoDB.h>
 #import "User.h"
 #import "LocationVC.h"
 #import <Google/Analytics.h>
@@ -13,7 +15,6 @@ UIButton *loginButton;
 - (id)init
 {
     self = [super initWithNibName:nil bundle:nil];
-    self.wantsFullScreenLayout = YES;
     self.modalPresentationStyle = UIModalPresentationFullScreen;
     return self;
 }
@@ -21,9 +22,9 @@ UIButton *loginButton;
 - (void) loadView {
     [super loadView];
     
-    IntroModel *model1 = [[IntroModel alloc] initWithTitle:@"CLEAN THE CREEK" description:@"Track your Kudos with clean\nthe creek" image:@"back1.jpg" ToVC:self];
-    IntroModel *model2 = [[IntroModel alloc] initWithTitle:@"CLEAN THE CREEK" description:@"Tag a dirty spot" image:@"back2.jpg" ToVC:self];
-    IntroModel *model3 = [[IntroModel alloc] initWithTitle:@"CLEAN THE CREEK" description:@"Complete your deed and\nget kudos" image:@"back3.jpg" ToVC:self];
+    IntroModel *model1 = [[IntroModel alloc] initWithTitle:@"CLEAN THE CREEK" description:@"Leave it Cleaner than you found it. " image:@"back1.jpg" ToVC:self];
+    IntroModel *model2 = [[IntroModel alloc] initWithTitle:@"CLEAN THE CREEK" description:@"Tag dirty locations where you live in a fun social network." image:@"back2.jpg" ToVC:self];
+    IntroModel *model3 = [[IntroModel alloc] initWithTitle:@"CLEAN THE CREEK" description:@"Join forces or go in solo to create a cleaner environment." image:@"back3.jpg" ToVC:self];
     IntroModel *model4 = [[IntroModel alloc] initWithTitle:@"CLEAN THE CREEK" description:@"Post your kudos to facebook" image:@"back4.jpg" ToVC:self];
     IntroModel *model5 = [[IntroModel alloc] initWithTitle:@"CLEAN THE CREEK" description:@"Show your facebook friends\nyour good deeds." image:@"back1.jpg" ToVC:self];
     IntroControll *control=[[IntroControll alloc] initWithFrame:CGRectMake(0, 0, self.view.frame.size.width, self.view.frame.size.height) pages:@[model1, model2, model3,model4,model5]];
@@ -53,19 +54,31 @@ UIButton *loginButton;
 
 - (void)viewDidLoad
 {
+//    NSUserDefaults * defaults = [NSUserDefaults standardUserDefaults];
+//    NSString * termsAccepted = [defaults objectForKey:@"termsAccepted"];
+//    if(!termsAccepted)
+//    {
+//        UIViewController *tncView = [self.storyboard instantiateViewControllerWithIdentifier:@"TermsVC"];
+//        [tncView setModalInPopover:YES];
+//        [tncView setModalPresentationStyle:UIModalPresentationPopover];
+//        [self presentViewController:tncView animated:YES completion:NULL];
+//
+//    }
     [super viewDidLoad];
-	// Do any additional setup after loading the view.
+    self.mainDelegate=(AppDelegate*)[[UIApplication sharedApplication]delegate];
+    [self.mainDelegate loadData];
+    
 }
 
 - (void)didReceiveMemoryWarning
 {
     [super didReceiveMemoryWarning];
-    // Dispose of any resources that can be recreated.
 }
 
 - (void)moveToMainNav {
     [self performSegueWithIdentifier:@"Slide2MainTabNav" sender:self];
 }
+
 
 -(void)loginButtonClicked
 {
@@ -85,12 +98,12 @@ UIButton *loginButton;
              [[[FBSDKGraphRequest alloc] initWithGraphPath:@"me" parameters:parameters]
               startWithCompletionHandler:^(FBSDKGraphRequestConnection *connection, id result, NSError *error) {
                   
-                      [self moveToMainNav];
+                      //[self moveToMainNav];
                    
                   if (!error) {
                      
                       NSLog(@"fetched user:%@  and Email : %@", result,result[@"email"]);
-                       NSUserDefaults *loginInfo = [NSUserDefaults standardUserDefaults];
+                      NSUserDefaults *loginInfo = [NSUserDefaults standardUserDefaults];
                       NSString *fbUsername = [[result valueForKey:@"link"] lastPathComponent];
                       [loginInfo setObject:fbUsername forKey:@"username"];
                       [loginInfo setObject:result[@"id"] forKey:@"user_id"];
@@ -101,12 +114,26 @@ UIButton *loginButton;
                       [loginInfo synchronize];
                       User * user_info = [User new];
                       user_info.user_id = result[@"id"];
-                      //user_info.kudos = [[NSArray alloc]init];
                       user_info.user_name = result[@"name"];
                       user_info.device_token = [loginInfo objectForKey:@"devicetoken"];
-                      user_info.user_email= [loginInfo objectForKey:@"user_email"];
-                      user_info.user_about=[loginInfo objectForKey:@"user_about"];
+//                      user_info.user_email= [loginInfo objectForKey:@"user_email"];
+                      user_info.user_about = [loginInfo objectForKey:@"user_about"];
+                      NSString * nickName = [self generateUserName:user_info.user_name];
+                      NSMutableArray * userNameArray = [[NSMutableArray alloc]init];
+                      NSMutableArray * user_array= [NSMutableArray arrayWithObjects:userNameArray, nil];
+                      for(User* user in user_array)
+                      {
+                          if(user.nick_name)
+                          [userNameArray addObject:user.nick_name];
+                      }
                       
+                      int i=1;
+                      while([userNameArray containsObject:nickName])
+                      {
+                          nickName = [NSString stringWithFormat:@"%@%d",[self generateUserName:user_info.user_name],i];
+                          i++;
+                      }
+                      user_info.nick_name = nickName;
                       AWSDynamoDBObjectMapperConfiguration *updateMapperConfig = [AWSDynamoDBObjectMapperConfiguration new];
                       updateMapperConfig.saveBehavior = AWSDynamoDBObjectMapperSaveBehaviorAppendSet;
                       AWSDynamoDBObjectMapper *dynamoDBObjectMapper = [AWSDynamoDBObjectMapper defaultDynamoDBObjectMapper];
@@ -119,7 +146,6 @@ UIButton *loginButton;
                                NSLog(@"The request failed. Exception: [%@]", task.exception);
                            }
                            if (task.result) {
-                               
                                NSLog(@"new user is registered");
                            }
                            return nil;

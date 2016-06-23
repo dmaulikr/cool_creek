@@ -117,7 +117,7 @@
 #pragma TableViewDelegate Implementation
 
 - (NSInteger)tableView:(UITableView *)tableView numberOfRowsInSection:(NSInteger)section{
-    int count = 0;
+    long count = 0;
     if(section==0)
         count = 1;
     else if(section==1)
@@ -266,7 +266,7 @@
              {
                  
                  NSMutableDictionary* parameters = [NSMutableDictionary dictionary];
-                 [parameters setValue:@"id,name,email,location,about" forKey:@"fields"];
+                 [parameters setValue:@"id,name,location,about" forKey:@"fields"];
                  [[[FBSDKGraphRequest alloc] initWithGraphPath:@"me" parameters:parameters]
                   startWithCompletionHandler:^(FBSDKGraphRequestConnection *connection, id result, NSError *error) {
                       
@@ -278,7 +278,7 @@
                           [loginInfo setObject:fbUsername forKey:@"username"];
                           [loginInfo setObject:result[@"id"] forKey:@"user_id"];
                           [loginInfo setObject:result[@"name"] forKey:@"user_name"];
-                          [loginInfo setObject:result[@"email"] forKey:@"user_email"];
+                          //[loginInfo setObject:result[@"email"] forKey:@"user_email"];
                           [loginInfo setObject:result[@"location"] forKey:@"user_location"];
                           [loginInfo setObject:result[@"about"] forKey:@"user_about"];
                           [loginInfo synchronize];
@@ -287,7 +287,7 @@
                           
                           user_info.user_name = result[@"name"];
                           user_info.device_token = [loginInfo objectForKey:@"devicetoken"];
-                          user_info.user_email= [loginInfo objectForKey:@"user_email"];
+//                          user_info.user_email= [loginInfo objectForKey:@"user_email"];
                           user_info.user_about=[loginInfo objectForKey:@"user_about"];
                           
                           AWSDynamoDBObjectMapperConfiguration *updateMapperConfig = [AWSDynamoDBObjectMapperConfiguration new];
@@ -573,8 +573,6 @@
 }
 
 - (MKAnnotationView *)mapView:(MKMapView *)mapView viewForAnnotation:(LocationAnnotation * )annotation{
-    
-    
     if(annotation == mapView.userLocation)
     {
         MKAnnotationView *pin = (MKAnnotationView *) [self.mapView dequeueReusableAnnotationViewWithIdentifier: @"VoteSpotPin"];
@@ -587,7 +585,6 @@
         {
             pin.annotation = annotation;
         }
-        
         [pin setImage:[UIImage imageNamed:@"Dot"]];
         pin.canShowCallout = NO;
         pin.rightCalloutAccessoryView = [UIButton buttonWithType:UIButtonTypeDetailDisclosure];

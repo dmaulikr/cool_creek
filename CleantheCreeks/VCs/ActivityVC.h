@@ -13,12 +13,12 @@
 @property (strong,nonatomic) NSMutableArray * activityArray;
 @property (strong,nonatomic) NSMutableDictionary * imageArray;
 @property (strong,nonatomic) AppDelegate * appDelegate;
-@property(nonatomic) int displayItemCount;
+@property(nonatomic) long displayItemCount;
 
 @property (strong, nonatomic) Location * selectedLocation;
 @property(strong,nonatomic)NSString *current_user;
 @property(nonatomic)NSInteger selectedIndex;
-@property(nonatomic) int selectedImgIndex;
+@property(nonatomic) long selectedImgIndex;
 @property(strong, nonatomic)NSMutableArray * indexPathArray;
 
 -(void) updateCell;

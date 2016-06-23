@@ -17,6 +17,7 @@
     [tracker set:kGAIScreenName value:@"Settings"];
     [tracker send:[[GAIDictionaryBuilder createScreenView] build]];
 }
+
 - (void)viewDidLoad{
     [super viewDidLoad];
     [self.profileTopBar setHeaderStyle:NO title:@"SETTINGS" rightBtnHidden:YES];
@@ -56,7 +57,19 @@
             [self.measurementButton setTitle:@"Metric" forState:UIControlStateNormal];
         }
     }
+    self.imgAvatar.layer.cornerRadius = 30.0f;
+    self.imgAvatar.layer.masksToBounds = YES;
     [self.tabBarController.tabBar setHidden:YES];
+   self.delegate=(AppDelegate*)[[UIApplication sharedApplication]delegate];
+    [self.delegate loadData];
+    self.current_user_id = [settingInfo objectForKey:@"user_id"];
+    
+    User * current_user= [self.delegate.userArray objectForKey:self.current_user_id];
+    [self.fullName setText:[settingInfo objectForKey:@"user_name"]];
+    [self.fullName setText:current_user.nick_name];
+    [self.website setText:current_user.website_url];
+    [self.bio setText:current_user.description];
+    
 }
 
 #pragma ProfileTopBarVCDelegate Implementation

@@ -80,7 +80,6 @@
 
 -(void)loadData
 {
-    
     AWSDynamoDBObjectMapper *dynamoDBObjectMapper = [AWSDynamoDBObjectMapper defaultDynamoDBObjectMapper];
     AWSDynamoDBScanExpression *scanExpression = [AWSDynamoDBScanExpression new];
     [[dynamoDBObjectMapper scan:[User class] expression:scanExpression]
@@ -117,7 +116,6 @@
     [self registerForKeyboardNotifications];
     self.defaults = [NSUserDefaults standardUserDefaults];
     self.current_user_id = [self.defaults objectForKey:@"user_id"];
-    NSString * user_name = [self.defaults objectForKey:@"user_name"];
     UIButton * btnKudo = [self.view viewWithTag:22];
     
     btnKudo.enabled = NO; //disabling the button while finishing the db update
@@ -132,7 +130,8 @@
     self.commentView.layer.shadowOffset = CGSizeMake(1.0f, 1.0f);
     self.commentView.layer.shadowRadius = 10.0f;
     self.commentView.layer.shadowOpacity = 0.9f;
-   
+    
+    
 }
 
 -(void)dismissKeyboard {
@@ -457,19 +456,16 @@
     MapVC * vc= [self.storyboard instantiateViewControllerWithIdentifier:@"MapView"];
     vc.currentLocation = self.location;
     vc.currentImage = self.mainDelegate.locationData[self.location.location_id];
-//    UINavigationController *navC = [[UINavigationController alloc] initWithRootViewController:vc];
-//    [navC.navigationBar setHidden:YES];
     
     [self.navigationController pushViewController:vc animated:YES];
 }
 
 -(void)showCleaner:(id)sender
 {
-    
     if([self.defaults objectForKey:@"user_id"])
     {
         self.selected_user = self.location.cleaner_id;
-        [self performSegueWithIdentifier:@"showProfileFromDetails" sender:self];
+        [self showProfileWithValidation];
     }
     else
     {
@@ -479,16 +475,24 @@
 
 -(void)showFinder:(id)sender
 {
-    
     if([self.defaults objectForKey:@"user_id"])
     {
         self.selected_user = self.location.founder_id;
-        [self performSegueWithIdentifier:@"showProfileFromDetails" sender:self];
+        [self showProfileWithValidation];
     }
     else
     {
         [self fbLogin];
     }
+}
+
+-(void) showProfileWithValidation
+{
+    User * profile_user = [self.mainDelegate.userArray objectForKey:self.selected_user];
+    if(![profile_user.blocked_by containsObject:[self.defaults objectForKey:@"user_id"]])
+        [self performSegueWithIdentifier:@"showProfileFromDetails" sender:self];
+    else
+        NSLog(@"blocked");
 }
 
 -(void)showCommenter:(id)sender
@@ -498,7 +502,7 @@
         UITapGestureRecognizer *gesture = (UITapGestureRecognizer *) sender;
         NSMutableDictionary *commentItem=[self.location.comments objectAtIndex:gesture.view.tag];
         self.selected_user = [commentItem objectForKey:@"id"];
-        [self performSegueWithIdentifier:@"showProfileFromDetails" sender:self];
+        [self showProfileWithValidation];
     }
     else
     {
@@ -656,7 +660,6 @@
         if(self.location.comments!=nil)
             commentArray=self.location.comments;
         NSMutableDictionary *commentItem=[[NSMutableDictionary alloc]init];
-        NSUserDefaults *defaults = [NSUserDefaults standardUserDefaults];
         
         [commentItem setObject:self.current_user_id forKey:@"id"];
         [commentItem setObject:self.textComment.text forKey:@"text"];
@@ -798,7 +801,7 @@
              {
                  
                  NSMutableDictionary* parameters = [NSMutableDictionary dictionary];
-                 [parameters setValue:@"id,name,email,location,about" forKey:@"fields"];
+                 [parameters setValue:@"id,name,location,about" forKey:@"fields"];
                  [[[FBSDKGraphRequest alloc] initWithGraphPath:@"me" parameters:parameters]
                   startWithCompletionHandler:^(FBSDKGraphRequestConnection *connection, id result, NSError *error) {
                       
@@ -810,7 +813,7 @@
                           [loginInfo setObject:fbUsername forKey:@"username"];
                           [loginInfo setObject:result[@"id"] forKey:@"user_id"];
                           [loginInfo setObject:result[@"name"] forKey:@"user_name"];
-                          [loginInfo setObject:result[@"email"] forKey:@"user_email"];
+//                          [loginInfo setObject:result[@"email"] forKey:@"user_email"];
                           [loginInfo setObject:result[@"location"] forKey:@"user_location"];
                           [loginInfo setObject:result[@"about"] forKey:@"user_about"];
                           [loginInfo synchronize];
@@ -819,7 +822,7 @@
                           //user_info.kudos = [[NSArray alloc]init];
                           user_info.user_name = result[@"name"];
                           user_info.device_token = [loginInfo objectForKey:@"devicetoken"];
-                          user_info.user_email= [loginInfo objectForKey:@"user_email"];
+//                          user_info.user_email= [loginInfo objectForKey:@"user_email"];
                           user_info.user_about=[loginInfo objectForKey:@"user_about"];
                           
                           AWSDynamoDBObjectMapperConfiguration *updateMapperConfig = [AWSDynamoDBObjectMapperConfiguration new];

@@ -18,4 +18,6 @@
 
 - (void) networkError;
 - (void) commentError;
+- (NSString*) generateUserName:(NSString *)userName;
+
 @end

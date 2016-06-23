@@ -58,6 +58,13 @@
     [self presentViewController:alertController animated:YES completion:nil];
 }
 #pragma ProfileTopBarVCDelegate Implementation
+- (NSString*) generateUserName:(NSString *)userName
+{
+    NSString * nickname;
+    nickname = [userName stringByReplacingOccurrencesOfString:@" " withString:@""];
+    nickname = [nickname lowercaseString];
+    return nickname;
+}
 
 - (void)leftBtnTopBarTapped:(UIButton *)sender topBar:(id)topBar{
     

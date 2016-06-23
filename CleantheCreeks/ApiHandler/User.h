@@ -14,7 +14,7 @@
 @interface User : AWSDynamoDBObjectModel <AWSDynamoDBModeling>
 
 @property (nonatomic, strong) NSString *user_id;
-
+@property (nonatomic, strong) NSString * nick_name;
 @property (nonatomic, strong) NSString *user_name;
 @property (nonatomic, strong) NSString *location;
 @property (nonatomic, strong) NSString *state;
@@ -22,9 +22,11 @@
 @property (nonatomic, strong) NSMutableArray *followings;
 @property (nonatomic, strong) NSString* device_token;
 @property (nonatomic, strong) NSMutableArray *followers;
-@property (nonatomic, strong) NSString *user_email;
+@property (nonatomic, strong) NSString *website_url;
+@property (nonatomic, strong) NSString *tagline;
 @property (nonatomic, strong) NSString *user_about;
 @property (nonatomic, strong) NSString *is_blocked;
+@property (nonatomic, strong) NSMutableArray *blocked_by;
 @property  double latitude;
 @property  double longitude;
 @end

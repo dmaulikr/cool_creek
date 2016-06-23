@@ -60,9 +60,7 @@
     [self.refreshControl endRefreshing];
     [self.refreshControl beginRefreshing];
     if (self.tv.contentOffset.y == 0) {
-        
         [UIView animateWithDuration:0.25 delay:0 options:UIViewAnimationOptionBeginFromCurrentState animations:^(void){
-            
             self.tv.contentOffset = CGPointMake(0, -self.refreshControl.frame.size.height);
             
         } completion:^(BOOL finished){
@@ -232,7 +230,6 @@
                     
                     else //within 100kms
                     {
-                        
                         // Showing cleaned activities witin 100kms
                         if([location.isDirty isEqualToString:@"false"])
                         {
@@ -389,7 +386,7 @@
                     else
                         [((CleaningDoneCell*)cell).lblContent setAttributedText:[self generateString:@"You" content:@" have finished cleaning " location:activity.activity_location.location_name]];
                     [((CleaningDoneCell*)cell).activityHours setText:[self timeDifference:activity.activity_time]];
-                    [((CleaningDoneCell*)cell).kudoCounter setTitle:[[NSString alloc] initWithFormat:@"%d Kudos",activity.kudo_count] forState:UIControlStateNormal];
+                    [((CleaningDoneCell*)cell).kudoCounter setTitle:[[NSString alloc] initWithFormat:@"%ld Kudos",activity.kudo_count] forState:UIControlStateNormal];
                     if([self.imageArray objectForKey:activity.activity_id]!=nil)
                     {
                         [((CleaningDoneCell*)cell).profileAvatar setImage: [self.imageArray objectForKey:activity.activity_id]];
@@ -513,17 +510,22 @@
     
     UITapGestureRecognizer *gesture = (UITapGestureRecognizer *) sender;
     self.selectedImgIndex = gesture.view.tag;
-    NSLog(@"%u",self.selectedImgIndex);
+    NSLog(@"%ld",self.selectedImgIndex);
     if([self.activityArray count] > 0)
     {
         Activity * selectedActivity = [self.activityArray objectAtIndex:self.selectedImgIndex];
         if(![selectedActivity.activity_id isEqualToString:self.current_user_id])
         {
+            User * profile_user = [self.appDelegate.userArray objectForKey:selectedActivity.activity_id];
+            if(![profile_user.blocked_by containsObject:[self.defaults objectForKey:@"user_id"]])
+                [self performSegueWithIdentifier:@"showProfile" sender:self];
+            else
+                NSLog(@"blocked");
             
-            [self performSegueWithIdentifier:@"showProfile" sender:self];
         }
     }
 }
+
 
 -(void) kudoCountClicked:(UIButton*)sender
 {
@@ -608,11 +610,7 @@
         Activity * activity = [self.activityArray objectAtIndex:indexPath.row];
         self.selectedIndex=indexPath.row;
         if([activity.activity_type isEqualToString: @"clean"] || [activity.activity_type isEqualToString: @"find"] || [activity.activity_type isEqualToString: @"comment"])
-        {
-            
             [self performSegueWithIdentifier:@"ActivityVC2ActivityPhotoDetailVC" sender:nil];
-        }
-        
     }
     
 }

@@ -53,7 +53,11 @@
         [tableView reloadData];
         [tableView finishInfiniteScroll];
     }];
-    [self.profileTopBar setHeaderStyle:!self.mode title:@"" rightBtnHidden:self.mode];
+    [self.profileTopBar setHeaderStyle:!self.mode title:@"" rightBtnHidden:NO];
+    if(self.mode)
+    {
+        [self.profileTopBar.rightBtn setImage:[UIImage imageNamed:@"ItemMore2"] forState:UIControlStateNormal];
+    }
     [self.refreshControl beginRefreshing];
     
     [self updateData];
@@ -87,7 +91,7 @@
          }
          if (task.result) {
              self.profile_user=task.result;
-             [self.profileTopBar setHeaderStyle:!self.mode title:self.profile_user.user_name rightBtnHidden:self.mode];
+             [self.profileTopBar setHeaderStyle:!self.mode title:self.profile_user.user_name rightBtnHidden:NO];
              
              AWSDynamoDBScanExpression *scanExpression = [AWSDynamoDBScanExpression new];
              scanExpression.filterExpression = @"cleaner_id = :val";
@@ -191,7 +195,6 @@
                      //Counting item count
                      [self.locationArray addObject:location];
                      
-                     
                      //Adding total kudo count
                      self.kudoCount+=location.kudos.count;
                      if(location.kudos!=nil)
@@ -208,7 +211,6 @@
                  }
                  
              }
-             
              
              dispatch_async(dispatch_get_main_queue(), ^{
                  if([self.locationArray count]>0)
@@ -301,7 +303,6 @@
              
          }
          if (task.result) {
-             
              //Updating target using followers
              if(![target_id isEqual:user])
              {
@@ -334,8 +335,8 @@
                           
                           dispatch_async(dispatch_get_main_queue(), ^{
                               [self.appDelegate loadData];
-                              sender.selected=!sender.selected;
-                              sender.enabled=YES;
+                              sender.selected = !sender.selected;
+                              sender.enabled = YES;
                               [self.profileTable reloadData];
                               if(selected)
                                   [self generateNotification:target_id];
@@ -633,7 +634,70 @@
 }
 
 - (void)rightBtnTopBarTapped:(UIButton *)sender topBar:(id)topBar{
-    [self performSegueWithIdentifier:@"ProfileVC2SettingVC" sender:nil];
+    self.defaults = [NSUserDefaults standardUserDefaults];
+    NSString *user= [self.defaults objectForKey:@"user_id"];
+    User * currentuser=[self.appDelegate.userArray objectForKey:self.profile_user_id];
+    NSString * title = @"Block User";
+    if([currentuser.blocked_by containsObject:user])
+        title = @"Unblock User";
+    //Add current user to the follower list of the user on the table
+    if(!self.mode)
+        [self performSegueWithIdentifier:@"ProfileVC2SettingVC" sender:nil];
+    else
+    {
+        UIAlertController *actionSheet = [UIAlertController alertControllerWithTitle:title message:@"" preferredStyle:UIAlertControllerStyleActionSheet];
+        
+        [actionSheet addAction:[UIAlertAction actionWithTitle:@"Cancel" style:UIAlertActionStyleCancel handler:^(UIAlertAction *action) {
+            
+            // Cancel button tappped.
+            [self dismissViewControllerAnimated:YES completion:^{
+            }];
+        }]];
+        
+        [actionSheet addAction:[UIAlertAction actionWithTitle:title style:UIAlertActionStyleDestructive handler:^(UIAlertAction *action) {
+            
+            NSMutableArray * blockArray=[[NSMutableArray alloc] init];
+            if(currentuser.blocked_by!=nil)
+                blockArray = currentuser.blocked_by;
+            
+            if(![blockArray containsObject:user])
+                [blockArray addObject:user];
+            else
+                [blockArray removeObject:user];
+            if([blockArray count]>0)
+                currentuser.blocked_by = blockArray;
+            else
+                currentuser.blocked_by = nil;
+            AWSDynamoDBObjectMapper *dynamoDBObjectMapper = [AWSDynamoDBObjectMapper defaultDynamoDBObjectMapper];
+            AWSDynamoDBObjectMapperConfiguration *updateMapperConfig = [AWSDynamoDBObjectMapperConfiguration new];
+            updateMapperConfig.saveBehavior = AWSDynamoDBObjectMapperSaveBehaviorUpdate;
+            
+            [[dynamoDBObjectMapper save:currentuser configuration:updateMapperConfig]
+             continueWithBlock:^id(AWSTask *task) {
+                 if (task.error) {
+                     NSLog(@"%@",task.error);
+                 }
+                 if (task.exception) {
+                     [self networkError];
+                     
+                 }
+                 if (task.result) {
+                     
+                     //Updating target using followers
+                 }
+                 
+                 return nil;
+             }];
+
+            // Distructive button tapped.
+            [self dismissViewControllerAnimated:YES completion:^{
+                
+            }];
+        }]];
+        
+        // Present action sheet.
+        [self presentViewController:actionSheet animated:YES completion:nil];
+    }
 }
 
 -(void)showFollowing
@@ -681,6 +745,5 @@
         
     }
 }
-
 
 @end

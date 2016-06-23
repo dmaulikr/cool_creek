@@ -45,6 +45,10 @@
 		3CA8D7D61C8CA60A00838FDC /* LocationPhotoCell.m in Sources */ = {isa = PBXBuildFile; fileRef = 3CA8D7D51C8CA60A00838FDC /* LocationPhotoCell.m */; };
 		3CA8D7DA1C8D0D5900838FDC /* FBSuccessVC.m in Sources */ = {isa = PBXBuildFile; fileRef = 3CA8D7D91C8D0D5800838FDC /* FBSuccessVC.m */; };
 		3CE5EB1F1C84F8310068DF59 /* ProfileViewCell.m in Sources */ = {isa = PBXBuildFile; fileRef = 3CE5EB1E1C84F8310068DF59 /* ProfileViewCell.m */; };
+		A1E327501D11B5AF00C3CB15 /* eula.html in Resources */ = {isa = PBXBuildFile; fileRef = A1E3274F1D11B5AF00C3CB15 /* eula.html */; };
+		A1E327531D11E21200C3CB15 /* TermsVC.m in Sources */ = {isa = PBXBuildFile; fileRef = A1E327521D11E21200C3CB15 /* TermsVC.m */; };
+		A1E327551D1236BA00C3CB15 /* back3.jpg in Resources */ = {isa = PBXBuildFile; fileRef = A1E327541D1236BA00C3CB15 /* back3.jpg */; };
+		A1E327571D1236C200C3CB15 /* back2.jpg in Resources */ = {isa = PBXBuildFile; fileRef = A1E327561D1236C200C3CB15 /* back2.jpg */; };
 		BD06039F1C595D4700A2C3EC /* main.m in Sources */ = {isa = PBXBuildFile; fileRef = BD06039E1C595D4700A2C3EC /* main.m */; };
 		BD0603A21C595D4700A2C3EC /* AppDelegate.m in Sources */ = {isa = PBXBuildFile; fileRef = BD0603A11C595D4700A2C3EC /* AppDelegate.m */; };
 		BD0603AA1C595D4700A2C3EC /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = BD0603A91C595D4700A2C3EC /* Assets.xcassets */; };
@@ -72,8 +76,6 @@
 		E2F36ECF1C5AFFE700923DF0 /* IntroModel.m in Sources */ = {isa = PBXBuildFile; fileRef = E2F36ECA1C5AFFE700923DF0 /* IntroModel.m */; };
 		E2F36ED01C5AFFE700923DF0 /* IntroView.m in Sources */ = {isa = PBXBuildFile; fileRef = E2F36ECC1C5AFFE700923DF0 /* IntroView.m */; };
 		E2F36ED51C5B0BF300923DF0 /* back1.jpg in Resources */ = {isa = PBXBuildFile; fileRef = E2F36ED11C5B0BF300923DF0 /* back1.jpg */; };
-		E2F36ED61C5B0BF300923DF0 /* back2.jpg in Resources */ = {isa = PBXBuildFile; fileRef = E2F36ED21C5B0BF300923DF0 /* back2.jpg */; };
-		E2F36ED71C5B0BF300923DF0 /* back3.jpg in Resources */ = {isa = PBXBuildFile; fileRef = E2F36ED31C5B0BF300923DF0 /* back3.jpg */; };
 		E2F36ED81C5B0BF300923DF0 /* back4.jpg in Resources */ = {isa = PBXBuildFile; fileRef = E2F36ED41C5B0BF300923DF0 /* back4.jpg */; };
 		E2F36EDB1C5B103400923DF0 /* LastPageView.m in Sources */ = {isa = PBXBuildFile; fileRef = E2F36EDA1C5B103400923DF0 /* LastPageView.m */; };
 		E2F36EDD1C5B253000923DF0 /* FBSDKLoginKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = E2F36EDC1C5B253000923DF0 /* FBSDKLoginKit.framework */; };
@@ -169,6 +171,11 @@
 		4656214352E34CC700C152CD /* libPods.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; includeInIndex = 0; path = libPods.a; sourceTree = BUILT_PRODUCTS_DIR; };
 		4C6CBB01DE1D421604AC1E1D /* Pods.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = Pods.debug.xcconfig; path = "Pods/Target Support Files/Pods/Pods.debug.xcconfig"; sourceTree = "<group>"; };
 		893EA3F1F71074BC15B9E306 /* Pods.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = Pods.release.xcconfig; path = "Pods/Target Support Files/Pods/Pods.release.xcconfig"; sourceTree = "<group>"; };
+		A1E3274F1D11B5AF00C3CB15 /* eula.html */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.html; path = eula.html; sourceTree = "<group>"; };
+		A1E327511D11E21200C3CB15 /* TermsVC.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = TermsVC.h; sourceTree = "<group>"; };
+		A1E327521D11E21200C3CB15 /* TermsVC.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = TermsVC.m; sourceTree = "<group>"; };
+		A1E327541D1236BA00C3CB15 /* back3.jpg */ = {isa = PBXFileReference; lastKnownFileType = image.jpeg; path = back3.jpg; sourceTree = "<group>"; };
+		A1E327561D1236C200C3CB15 /* back2.jpg */ = {isa = PBXFileReference; lastKnownFileType = image.jpeg; path = back2.jpg; sourceTree = "<group>"; };
 		BD06039A1C595D4700A2C3EC /* CTC.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = CTC.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		BD06039E1C595D4700A2C3EC /* main.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = main.m; sourceTree = "<group>"; };
 		BD0603A01C595D4700A2C3EC /* AppDelegate.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = AppDelegate.h; sourceTree = "<group>"; };
@@ -213,8 +220,6 @@
 		E2F36ECB1C5AFFE700923DF0 /* IntroView.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = IntroView.h; sourceTree = "<group>"; };
 		E2F36ECC1C5AFFE700923DF0 /* IntroView.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = IntroView.m; sourceTree = "<group>"; };
 		E2F36ED11C5B0BF300923DF0 /* back1.jpg */ = {isa = PBXFileReference; lastKnownFileType = image.jpeg; path = back1.jpg; sourceTree = "<group>"; };
-		E2F36ED21C5B0BF300923DF0 /* back2.jpg */ = {isa = PBXFileReference; lastKnownFileType = image.jpeg; path = back2.jpg; sourceTree = "<group>"; };
-		E2F36ED31C5B0BF300923DF0 /* back3.jpg */ = {isa = PBXFileReference; lastKnownFileType = image.jpeg; path = back3.jpg; sourceTree = "<group>"; };
 		E2F36ED41C5B0BF300923DF0 /* back4.jpg */ = {isa = PBXFileReference; lastKnownFileType = image.jpeg; path = back4.jpg; sourceTree = "<group>"; };
 		E2F36ED91C5B103400923DF0 /* LastPageView.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = LastPageView.h; sourceTree = "<group>"; };
 		E2F36EDA1C5B103400923DF0 /* LastPageView.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = LastPageView.m; sourceTree = "<group>"; };
@@ -466,6 +471,25 @@
 			name = ProfileViewCell;
 			sourceTree = "<group>";
 		};
+		A1E3274B1D11A47B00C3CB15 /* TermsVC */ = {
+			isa = PBXGroup;
+			children = (
+				A1E327511D11E21200C3CB15 /* TermsVC.h */,
+				A1E327521D11E21200C3CB15 /* TermsVC.m */,
+			);
+			name = TermsVC;
+			path = ..;
+			sourceTree = "<group>";
+		};
+		A1E3274E1D11B02F00C3CB15 /* MapVC */ = {
+			isa = PBXGroup;
+			children = (
+				E46A37F01D0A6509000361B4 /* MapVC.h */,
+				E46A37F11D0A6509000361B4 /* MapVC.m */,
+			);
+			name = MapVC;
+			sourceTree = "<group>";
+		};
 		BD0603911C595D4700A2C3EC = {
 			isa = PBXGroup;
 			children = (
@@ -627,9 +651,10 @@
 		E2FD055E1C59C96B004B2C34 /* Resource */ = {
 			isa = PBXGroup;
 			children = (
+				A1E327561D1236C200C3CB15 /* back2.jpg */,
+				A1E327541D1236BA00C3CB15 /* back3.jpg */,
+				A1E3274F1D11B5AF00C3CB15 /* eula.html */,
 				E2F36ED11C5B0BF300923DF0 /* back1.jpg */,
-				E2F36ED21C5B0BF300923DF0 /* back2.jpg */,
-				E2F36ED31C5B0BF300923DF0 /* back3.jpg */,
 				E2F36ED41C5B0BF300923DF0 /* back4.jpg */,
 				E2FD05631C59C96B004B2C34 /* shadow@2x.png */,
 			);
@@ -679,6 +704,7 @@
 		E2FD056D1C59CA16004B2C34 /* VCs */ = {
 			isa = PBXGroup;
 			children = (
+				A1E3274B1D11A47B00C3CB15 /* TermsVC */,
 				3CA8D7DB1C8D0E1C00838FDC /* FBSuccess */,
 				000467E21C7CB51700946DE8 /* TopBarVCs */,
 				E27FC5111C69E7BC00489DE3 /* LocationNav */,
@@ -693,8 +719,7 @@
 				3C324E531C9C665500EFBEC4 /* BaseVC */,
 				3C2874B41C88EC9D00725B40 /* FollowVC */,
 				E45E43E91CF2A1A000F56D7E /* FullScreen */,
-				E46A37F01D0A6509000361B4 /* MapVC.h */,
-				E46A37F11D0A6509000361B4 /* MapVC.m */,
+				A1E3274E1D11B02F00C3CB15 /* MapVC */,
 			);
 			path = VCs;
 			sourceTree = "<group>";
@@ -881,9 +906,11 @@
 				0084F4221C7B086B00E111D0 /* Lato-SemiboldItalic.ttf in Resources */,
 				0084F41E1C7B086B00E111D0 /* Lato-Medium.ttf in Resources */,
 				0084F4151C7B086B00E111D0 /* Lato-Bold.ttf in Resources */,
+				A1E327501D11B5AF00C3CB15 /* eula.html in Resources */,
 				E2F36ED51C5B0BF300923DF0 /* back1.jpg in Resources */,
 				0084F4211C7B086B00E111D0 /* Lato-Semibold.ttf in Resources */,
 				0084F4131C7B086B00E111D0 /* Lato-Black.ttf in Resources */,
+				A1E327551D1236BA00C3CB15 /* back3.jpg in Resources */,
 				E4EDCC451CC6343400267DF2 /* GoogleService-Info.plist in Resources */,
 				0084F4241C7B086B00E111D0 /* Lato-ThinItalic.ttf in Resources */,
 				E4EDCC471CC6343C00267DF2 /* GoogleService-Info.plist in Resources */,
@@ -893,13 +920,12 @@
 				E2FD05681C59C96B004B2C34 /* shadow@2x.png in Resources */,
 				BD0603AD1C595D4700A2C3EC /* LaunchScreen.storyboard in Resources */,
 				E27FC50D1C69E31600489DE3 /* Main.storyboard in Resources */,
+				A1E327571D1236C200C3CB15 /* back2.jpg in Resources */,
 				BD0603AA1C595D4700A2C3EC /* Assets.xcassets in Resources */,
 				0084F41D1C7B086B00E111D0 /* Lato-LightItalic.ttf in Resources */,
-				E2F36ED71C5B0BF300923DF0 /* back3.jpg in Resources */,
 				0084F41F1C7B086B00E111D0 /* Lato-MediumItalic.ttf in Resources */,
 				E2F36ED81C5B0BF300923DF0 /* back4.jpg in Resources */,
 				0084F4231C7B086B00E111D0 /* Lato-Thin.ttf in Resources */,
-				E2F36ED61C5B0BF300923DF0 /* back2.jpg in Resources */,
 				0084F4201C7B086B00E111D0 /* Lato-Regular.ttf in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -970,6 +996,7 @@
 				3C75ACA11C9063750054AA3F /* CommentCell.m in Sources */,
 				E49CE64E1CB57F22006CE1C8 /* FXPageControl.m in Sources */,
 				3C2874B31C88EC9800725B40 /* FollowVC.m in Sources */,
+				A1E327531D11E21200C3CB15 /* TermsVC.m in Sources */,
 				3CA8D7DA1C8D0D5900838FDC /* FBSuccessVC.m in Sources */,
 				E2F36EDB1C5B103400923DF0 /* LastPageView.m in Sources */,
 				E2F36ED01C5AFFE700923DF0 /* IntroView.m in Sources */,
@@ -1146,7 +1173,7 @@
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				CLANG_ENABLE_MODULES = YES;
-				CODE_SIGN_IDENTITY = "iPhone Distribution: Red Cherry Consulting Inc (835ZX9XC8P)";
+				CODE_SIGN_IDENTITY = "iPhone Developer: Eiji Kimura (VG6XFZ6ZNQ)";
 				FRAMEWORK_SEARCH_PATHS = (
 					"$(inherited)",
 					"$(PROJECT_DIR)",
@@ -1155,7 +1182,7 @@
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks";
 				PRODUCT_BUNDLE_IDENTIFIER = com.redcherry.CleantheCreeks;
 				PRODUCT_NAME = CTC;
-				PROVISIONING_PROFILE = "1e9c4fb2-9b87-4010-93f1-5c12195b2f73";
+				PROVISIONING_PROFILE = "ad6f6351-1618-4548-a72e-2e850477a498";
 				SWIFT_OBJC_BRIDGING_HEADER = "CleantheCreeks/Utils/Clean the Creek-Bridging-Header.h";
 				SWIFT_OPTIMIZATION_LEVEL = "-Onone";
 			};
@@ -1167,8 +1194,8 @@
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				CLANG_ENABLE_MODULES = YES;
-				CODE_SIGN_IDENTITY = "iPhone Distribution: Red Cherry Consulting Inc (835ZX9XC8P)";
-				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "iPhone Distribution: Red Cherry Consulting Inc (835ZX9XC8P)";
+				CODE_SIGN_IDENTITY = "iPhone Developer: Eiji Kimura (VG6XFZ6ZNQ)";
+				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "iPhone Developer: Eiji Kimura (VG6XFZ6ZNQ)";
 				FRAMEWORK_SEARCH_PATHS = (
 					"$(inherited)",
 					"$(PROJECT_DIR)",
@@ -1177,7 +1204,7 @@
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks";
 				PRODUCT_BUNDLE_IDENTIFIER = com.redcherry.CleantheCreeks;
 				PRODUCT_NAME = CTC;
-				PROVISIONING_PROFILE = "1e9c4fb2-9b87-4010-93f1-5c12195b2f73";
+				PROVISIONING_PROFILE = "ad6f6351-1618-4548-a72e-2e850477a498";
 				SWIFT_OBJC_BRIDGING_HEADER = "CleantheCreeks/Utils/Clean the Creek-Bridging-Header.h";
 			};
 			name = Release;

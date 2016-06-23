@@ -77,9 +77,6 @@
 {
     LocationAnnotation *currentAnnotation=[[LocationAnnotation alloc]init];
     currentAnnotation.coordinate = CLLocationCoordinate2DMake(_currentLocation.latitude, _currentLocation.longitude);
-    
-    NSString *userImageURL = [NSString stringWithFormat:@"https://s3-ap-northeast-1.amazonaws.com/cleanthecreeks/%@%@", _currentLocation.location_id,@"a"];
-    NSURL *url = [NSURL URLWithString:userImageURL];
     [self.mapView addAnnotation:currentAnnotation];
     
 }
@@ -130,7 +127,6 @@
 }
 
 - (MKAnnotationView *)mapView:(MKMapView *)mapView viewForAnnotation:(LocationAnnotation * )annotation{
-    
     if(annotation == mapView.userLocation)
     {
         MKAnnotationView *pin = (MKAnnotationView *) [self.mapView dequeueReusableAnnotationViewWithIdentifier: @"VoteSpotPin"];
@@ -161,9 +157,6 @@
         }
         
         // This is how you can check if annotation is a cluster
-        
-        NSString *location_id = [NSString stringWithFormat:@"%f,%f",
-                                 annotation.coordinate.latitude, annotation.coordinate.longitude];
         annotationView.image =[PhotoDetailsVC scaleImage:self.currentImage toSize:CGSizeMake(50.0,50.0)];
         annotationView.canShowCallout = NO;
         

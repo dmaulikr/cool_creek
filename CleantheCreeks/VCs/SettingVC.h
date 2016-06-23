@@ -8,7 +8,7 @@
 
 #import <UIKit/UIKit.h>
 #import "BaseVC.h"
-
+#import "AppDelegate.h"
 @interface SettingVC : BaseVC
 @property (weak, nonatomic) IBOutlet UISwitch *switchComments;
 @property (weak, nonatomic) IBOutlet UISwitch *switchKudos;
@@ -21,7 +21,13 @@
 - (IBAction)switchTagUpdated:(id)sender;
 - (IBAction)switchLocationUpdate:(id)sender;
 - (IBAction)measurementUpdate:(id)sender;
+@property (weak, nonatomic) IBOutlet UIImageView *imgAvatar;
 @property (weak, nonatomic) IBOutlet UIButton *measurementButton;
 - (IBAction)signOut:(id)sender;
+@property (weak, nonatomic) IBOutlet UITextField *fullName;
+@property (weak, nonatomic) IBOutlet UITextField *userName;
+@property (weak, nonatomic) IBOutlet UITextField *website;
+@property (weak, nonatomic) IBOutlet UITextField *bio;
+@property(strong,nonatomic) AppDelegate * delegate;
 
 @end
