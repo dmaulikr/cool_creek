@@ -156,6 +156,8 @@
     else
     {
         NSString *userImageURL = [NSString stringWithFormat:@"https://graph.facebook.com/%@/picture", user.user_id];
+        if([user.has_photo isEqualToString:@"yes"])
+            userImageURL = [NSString stringWithFormat:@"https://s3-ap-northeast-1.amazonaws.com/cleanthecreeks/%@", user.user_id];
         NSURL *url = [NSURL URLWithString:userImageURL];
         
         NSURLSessionTask *task = [[NSURLSession sharedSession] dataTaskWithURL:url completionHandler:^(NSData * _Nullable data, NSURLResponse * _Nullable response, NSError * _Nullable error) {

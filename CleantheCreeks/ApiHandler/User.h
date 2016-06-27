@@ -26,6 +26,7 @@
 @property (nonatomic, strong) NSString *tagline;
 @property (nonatomic, strong) NSString *user_about;
 @property (nonatomic, strong) NSString *is_blocked;
+@property (nonatomic, strong) NSString *has_photo;
 @property (nonatomic, strong) NSMutableArray *blocked_by;
 @property  double latitude;
 @property  double longitude;

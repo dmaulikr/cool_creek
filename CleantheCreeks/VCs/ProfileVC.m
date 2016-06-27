@@ -10,6 +10,7 @@
 #import <UIScrollView+InfiniteScroll.h>
 #import "CustomInfiniteIndicator.h"
 #import "ActivityPhotoDetailsVC.h"
+#import "SettingVC.h"
 @interface ProfileVC()
 @property (nonatomic,strong) UIRefreshControl * refreshControl;
 @property (nonatomic,strong) CustomInfiniteIndicator *infiniteIndicator;
@@ -23,7 +24,9 @@
     id<GAITracker> tracker = [[GAI sharedInstance] defaultTracker];
     [tracker set:kGAIScreenName value:@"Profile"];
     [tracker send:[[GAIDictionaryBuilder createScreenView] build]];
+    [self.refreshControl beginRefreshing];
     
+    [self updateData];
 }
 
 - (void)viewDidLoad
@@ -58,9 +61,7 @@
     {
         [self.profileTopBar.rightBtn setImage:[UIImage imageNamed:@"ItemMore2"] forState:UIControlStateNormal];
     }
-    [self.refreshControl beginRefreshing];
     
-    [self updateData];
     
 }
 
@@ -91,7 +92,7 @@
          }
          if (task.result) {
              self.profile_user=task.result;
-             [self.profileTopBar setHeaderStyle:!self.mode title:self.profile_user.user_name rightBtnHidden:NO];
+             [self.profileTopBar setHeaderStyle:!self.mode title:self.profile_user.nick_name rightBtnHidden:NO];
              
              AWSDynamoDBScanExpression *scanExpression = [AWSDynamoDBScanExpression new];
              scanExpression.filterExpression = @"cleaner_id = :val";
@@ -152,10 +153,10 @@
                   
                   if (task.result) {
                       dispatch_async(dispatch_get_main_queue(), ^{
-                      AWSDynamoDBPaginatedOutput *paginatedOutput = task.result;
-                      self.formattedFindsCount = [NSString stringWithFormat:@"%lu",(unsigned long)paginatedOutput.items.count];
-                      
-                      [self.profileTable reloadData];
+                          AWSDynamoDBPaginatedOutput *paginatedOutput = task.result;
+                          self.formattedFindsCount = [NSString stringWithFormat:@"%lu",(unsigned long)paginatedOutput.items.count];
+                          
+                          [self.profileTable reloadData];
                       });
                   }
                   return nil;
@@ -414,6 +415,9 @@
                 cell = (ProfileViewCell*)[tableView dequeueReusableCellWithIdentifier:@"profileViewCell"];
                 [cell.btnFollow addTarget:self action:@selector(followClicked:) forControlEvents:UIControlEventTouchUpInside];
                 NSString *userImageURL = [NSString stringWithFormat:@"https://graph.facebook.com/%@/picture?width=100&&height=100", self.profile_user.user_id];
+                
+                if([self.profile_user.has_photo isEqualToString:@"yes"])
+                    userImageURL = [NSString stringWithFormat:@"https://s3-ap-northeast-1.amazonaws.com/cleanthecreeks/%@", self.profile_user.user_id];
                 NSURL *url = [NSURL URLWithString:userImageURL];
                 
                 NSURLSessionTask *task = [[NSURLSession sharedSession] dataTaskWithURL:url completionHandler:^(NSData * _Nullable data, NSURLResponse * _Nullable response, NSError * _Nullable error) {
@@ -422,6 +426,7 @@
                         if (image) {
                             dispatch_async(dispatch_get_main_queue(), ^{
                                 {
+                                    self.profileImage = image;
                                     if(cell)
                                         [cell.userPhoto setImage: image];
                                 }
@@ -448,9 +453,7 @@
                 [cell.user_follows addGestureRecognizer:followersTap];
                 [cell.followersLabel addGestureRecognizer:followersTap];
                 
-                
                 cell.btnFollow.hidden = [self.profile_user.user_id  isEqualToString: self.current_user_id];
-                
                 [cell.btnFollow setImage:[UIImage imageNamed:@"btnKudoSelect"] forState:UIControlStateNormal];
                 [cell.btnFollow setImage:[UIImage imageNamed:@"btnKudoUnselect"] forState:UIControlStateSelected];
                 
@@ -527,9 +530,9 @@
                 cell.beforePhoto.tag = indexPath.row;
                 cell.afterPhoto.tag = indexPath.row;
                 [cell.beforePhoto setImage:[UIImage imageNamed:@"EmptyPhoto"]];
-
+                
                 [cell.afterPhoto setImage:[UIImage imageNamed:@"EmptyPhoto"]];
-
+                
                 if([self.firstArray objectForKey:location.location_id])
                     [cell.beforePhoto setImage:[self.firstArray objectForKey:location.location_id]];
                 else
@@ -546,9 +549,9 @@
                                 dispatch_async(dispatch_get_main_queue(), ^{
                                     {
                                         
-                                            if(cell)
-                                                [cell.beforePhoto setImage: image];
-                                            [self.firstArray setObject:image forKey:location.location_id];
+                                        if(cell)
+                                            [cell.beforePhoto setImage: image];
+                                        [self.firstArray setObject:image forKey:location.location_id];
                                         
                                     }
                                     
@@ -577,9 +580,9 @@
                                     {
                                         if(cell)
                                             [cell.afterPhoto setImage: image];
-                                            
+                                        
                                         [self.secondArray setObject:image forKey:location.location_id];
-
+                                        
                                     }
                                     
                                 });
@@ -688,7 +691,7 @@
                  
                  return nil;
              }];
-
+            
             // Distructive button tapped.
             [self dismissViewControllerAnimated:YES completion:^{
                 
@@ -743,6 +746,12 @@
         vc.cleaned = YES;
         vc.fromLocationView = YES;
         
+    }
+    else if ([segue.identifier isEqualToString:@"ProfileVC2SettingVC"])
+    {
+        SettingVC *vc=(SettingVC*)segue.destinationViewController;
+        vc.current_user = self.profile_user;
+        vc.profile_image = self.profileImage;
     }
 }
 

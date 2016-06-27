@@ -1100,8 +1100,8 @@
 				CLANG_WARN_OBJC_ROOT_CLASS = YES_ERROR;
 				CLANG_WARN_UNREACHABLE_CODE = YES;
 				CLANG_WARN__DUPLICATE_METHOD_MATCH = YES;
-				CODE_SIGN_IDENTITY = "iPhone Distribution: Red Cherry Consulting Inc (835ZX9XC8P)";
-				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "iPhone Distribution: Red Cherry Consulting Inc (835ZX9XC8P)";
+				CODE_SIGN_IDENTITY = "iPhone Developer: Eiji Kimura (VG6XFZ6ZNQ)";
+				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "iPhone Developer: Eiji Kimura (VG6XFZ6ZNQ)";
 				COPY_PHASE_STRIP = NO;
 				DEBUG_INFORMATION_FORMAT = dwarf;
 				ENABLE_STRICT_OBJC_MSGSEND = YES;
@@ -1123,7 +1123,7 @@
 				IPHONEOS_DEPLOYMENT_TARGET = 9.2;
 				MTL_ENABLE_DEBUG_INFO = YES;
 				ONLY_ACTIVE_ARCH = YES;
-				PROVISIONING_PROFILE = "7b5f6957-51f8-4bc1-8c4a-c681ee167672";
+				PROVISIONING_PROFILE = "ad6f6351-1618-4548-a72e-2e850477a498";
 				SDKROOT = iphoneos;
 			};
 			name = Debug;
@@ -1145,8 +1145,8 @@
 				CLANG_WARN_OBJC_ROOT_CLASS = YES_ERROR;
 				CLANG_WARN_UNREACHABLE_CODE = YES;
 				CLANG_WARN__DUPLICATE_METHOD_MATCH = YES;
-				CODE_SIGN_IDENTITY = "iPhone Distribution: Red Cherry Consulting Inc (835ZX9XC8P)";
-				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "iPhone Distribution: Red Cherry Consulting Inc (835ZX9XC8P)";
+				CODE_SIGN_IDENTITY = "iPhone Developer: Eiji Kimura (VG6XFZ6ZNQ)";
+				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "iPhone Developer: Eiji Kimura (VG6XFZ6ZNQ)";
 				COPY_PHASE_STRIP = NO;
 				DEBUG_INFORMATION_FORMAT = "dwarf-with-dsym";
 				ENABLE_NS_ASSERTIONS = NO;
@@ -1161,7 +1161,7 @@
 				GCC_WARN_UNUSED_VARIABLE = YES;
 				IPHONEOS_DEPLOYMENT_TARGET = 9.2;
 				MTL_ENABLE_DEBUG_INFO = NO;
-				PROVISIONING_PROFILE = "7b5f6957-51f8-4bc1-8c4a-c681ee167672";
+				PROVISIONING_PROFILE = "ad6f6351-1618-4548-a72e-2e850477a498";
 				SDKROOT = iphoneos;
 				VALIDATE_PRODUCT = YES;
 			};

@@ -9,7 +9,8 @@
 #import <UIKit/UIKit.h>
 #import "BaseVC.h"
 #import "AppDelegate.h"
-@interface SettingVC : BaseVC
+#import "User.h"
+@interface SettingVC : BaseVC<UITextFieldDelegate>
 @property (weak, nonatomic) IBOutlet UISwitch *switchComments;
 @property (weak, nonatomic) IBOutlet UISwitch *switchKudos;
 @property (weak, nonatomic) IBOutlet UISwitch *switchFollows;
@@ -29,5 +30,9 @@
 @property (weak, nonatomic) IBOutlet UITextField *website;
 @property (weak, nonatomic) IBOutlet UITextField *bio;
 @property(strong,nonatomic) AppDelegate * delegate;
-
+- (IBAction)editPhoto:(UIButton *)sender;
+@property(strong, nonatomic) User * current_user;
+@property (weak, nonatomic) IBOutlet UIImageView *photo;
+@property(strong, nonatomic) UIImage * profile_image;
+@property (nonatomic, assign) id currentResponder;
 @end

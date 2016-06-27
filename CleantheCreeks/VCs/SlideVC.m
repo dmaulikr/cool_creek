@@ -98,7 +98,7 @@ UIButton *loginButton;
              [[[FBSDKGraphRequest alloc] initWithGraphPath:@"me" parameters:parameters]
               startWithCompletionHandler:^(FBSDKGraphRequestConnection *connection, id result, NSError *error) {
                   
-                      //[self moveToMainNav];
+                      [self moveToMainNav];
                    
                   if (!error) {
                      
@@ -118,38 +118,57 @@ UIButton *loginButton;
                       user_info.device_token = [loginInfo objectForKey:@"devicetoken"];
 //                      user_info.user_email= [loginInfo objectForKey:@"user_email"];
                       user_info.user_about = [loginInfo objectForKey:@"user_about"];
-                      NSString * nickName = [self generateUserName:user_info.user_name];
-                      NSMutableArray * userNameArray = [[NSMutableArray alloc]init];
-                      NSMutableArray * user_array= [NSMutableArray arrayWithObjects:userNameArray, nil];
-                      for(User* user in user_array)
-                      {
-                          if(user.nick_name)
-                          [userNameArray addObject:user.nick_name];
-                      }
                       
-                      int i=1;
-                      while([userNameArray containsObject:nickName])
-                      {
-                          nickName = [NSString stringWithFormat:@"%@%d",[self generateUserName:user_info.user_name],i];
-                          i++;
-                      }
-                      user_info.nick_name = nickName;
-                      AWSDynamoDBObjectMapperConfiguration *updateMapperConfig = [AWSDynamoDBObjectMapperConfiguration new];
-                      updateMapperConfig.saveBehavior = AWSDynamoDBObjectMapperSaveBehaviorAppendSet;
                       AWSDynamoDBObjectMapper *dynamoDBObjectMapper = [AWSDynamoDBObjectMapper defaultDynamoDBObjectMapper];
-                      [[dynamoDBObjectMapper save:user_info configuration:updateMapperConfig]
+                      AWSDynamoDBScanExpression *scanExpression = [AWSDynamoDBScanExpression new];
+                      [[dynamoDBObjectMapper scan:[User class] expression:scanExpression]
                        continueWithBlock:^id(AWSTask *task) {
-                           if (task.error) {
-                               NSLog(@"The request failed. Error: [%@]", task.error);
-                           }
-                           if (task.exception) {
-                               NSLog(@"The request failed. Exception: [%@]", task.exception);
-                           }
+                           
                            if (task.result) {
-                               NSLog(@"new user is registered");
+                               AWSDynamoDBPaginatedOutput *paginatedOutput = task.result;
+                               for (User *user in paginatedOutput.items)
+                               {
+                                   [self.mainDelegate.userArray setObject:user forKey:user.user_id];
+                                   
+                               }
+                               NSMutableArray * userNameArray = [[NSMutableArray alloc]init];
+                               NSMutableArray * user_array= [NSMutableArray arrayWithObjects:self.mainDelegate.userArray, nil];
+                               for(User* user in user_array)
+                               {
+                                   if(user.nick_name)
+                                       [userNameArray addObject:user.nick_name];
+                               }
+                               
+                               int i=1;
+                               NSString * nickName = [self generateUserName:user_info.user_name];
+                               while([userNameArray containsObject:nickName])
+                               {
+                                   nickName = [NSString stringWithFormat:@"%@%d",[self generateUserName:user_info.user_name],i];
+                                   i++;
+                               }
+                               user_info.nick_name = nickName;
+                               AWSDynamoDBObjectMapperConfiguration *updateMapperConfig = [AWSDynamoDBObjectMapperConfiguration new];
+                               updateMapperConfig.saveBehavior = AWSDynamoDBObjectMapperSaveBehaviorAppendSet;
+                               AWSDynamoDBObjectMapper *dynamoDBObjectMapper = [AWSDynamoDBObjectMapper defaultDynamoDBObjectMapper];
+                               [[dynamoDBObjectMapper save:user_info configuration:updateMapperConfig]
+                                continueWithBlock:^id(AWSTask *task) {
+                                    if (task.error) {
+                                        NSLog(@"The request failed. Error: [%@]", task.error);
+                                    }
+                                    if (task.exception) {
+                                        NSLog(@"The request failed. Exception: [%@]", task.exception);
+                                    }
+                                    if (task.result) {
+                                        NSLog(@"new user is registered");
+                                    }
+                                    return nil;
+                                }];
+
                            }
                            return nil;
                        }];
+                      
+
 
                   }
               }];
@@ -177,4 +196,8 @@ UIButton *loginButton;
     [tracker send:[[GAIDictionaryBuilder createScreenView] build]];
 }
 
+-(void) loadData
+{
+    
+}
 @end
