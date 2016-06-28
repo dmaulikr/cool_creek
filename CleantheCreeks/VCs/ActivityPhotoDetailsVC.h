@@ -11,12 +11,13 @@
 #import "Location.h"
 #import "CommentView.h"
 #import "AppDelegate.h"
+#import "TGCameraViewController.h"
 @protocol KudoDelegate<NSObject>
 @optional
 -(void) giveKudoWithLocation:(Location*)location assigned:(bool) assigned;
 @end
 
-@interface ActivityPhotoDetailsVC : BaseVC<UITableViewDataSource, UITableViewDelegate,UITextFieldDelegate, UIImagePickerControllerDelegate>
+@interface ActivityPhotoDetailsVC : BaseVC<UITableViewDataSource, UITableViewDelegate,UITextFieldDelegate, UIImagePickerControllerDelegate,TGCameraDelegate>
 @property (weak, nonatomic) IBOutlet UITableView *tv;
 @property (strong, nonatomic) Location * location;
 @property (nonatomic) BOOL cleaned,isKudoed;

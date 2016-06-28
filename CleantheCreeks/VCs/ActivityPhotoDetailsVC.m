@@ -26,6 +26,7 @@
 #import "ProfileVC.h"
 #import "FullScreen.h"
 #import "MapVC.h"
+
 @implementation ActivityPhotoDetailsVC
 
 - (void)registerForKeyboardNotifications
@@ -455,7 +456,7 @@
 {
     MapVC * vc= [self.storyboard instantiateViewControllerWithIdentifier:@"MapView"];
     vc.currentLocation = self.location;
-    vc.currentImage = self.mainDelegate.locationData[self.location.location_id];
+    vc.currentImage = [PhotoDetailsVC scaleImage:self.beforePhoto toSize:CGSizeMake(320.0,320.0)];
     
     [self.navigationController pushViewController:vc animated:YES];
 }
@@ -488,8 +489,8 @@
 
 -(void) showProfileWithValidation
 {
-    User * profile_user = [self.mainDelegate.userArray objectForKey:self.selected_user];
-    if(![profile_user.blocked_by containsObject:[self.defaults objectForKey:@"user_id"]])
+    User * current_user = [self.mainDelegate.userArray objectForKey:[self.defaults objectForKey:@"user_id"]];
+    if(![current_user.blocked_by containsObject:self.selected_user])
         [self performSegueWithIdentifier:@"showProfileFromDetails" sender:self];
     else
         NSLog(@"blocked");
@@ -737,22 +738,27 @@
     self.defaults = [NSUserDefaults standardUserDefaults];
     if([self.defaults objectForKey:@"user_id"])
     {
-        UIImagePickerController *picker=[[UIImagePickerController alloc] init];
-        picker.allowsEditing = YES;
-        if([UIImagePickerController isSourceTypeAvailable:UIImagePickerControllerSourceTypeCamera]==NO)
-        {
-            picker.sourceType=UIImagePickerControllerSourceTypePhotoLibrary;
-        }
-        else
-        {
-            picker.sourceType=UIImagePickerControllerSourceTypeCamera;
-            picker.cameraCaptureMode = UIImagePickerControllerCameraCaptureModePhoto;
-        }
-        picker.delegate = self;
-        [self presentViewController:picker animated:YES completion:nil];
+//        UIImagePickerController *picker=[[UIImagePickerController alloc] init];
+//        picker.allowsEditing = YES;
+//        if([UIImagePickerController isSourceTypeAvailable:UIImagePickerControllerSourceTypeCamera]==NO)
+//        {
+//            picker.sourceType=UIImagePickerControllerSourceTypePhotoLibrary;
+//        }
+//        else
+//        {
+//            picker.sourceType=UIImagePickerControllerSourceTypeCamera;
+//            picker.cameraCaptureMode = UIImagePickerControllerCameraCaptureModePhoto;
+//        }
+//        picker.delegate = self;
+//        [self presentViewController:picker animated:YES completion:nil];
+        TGCameraNavigationController *navigationController =
+        [TGCameraNavigationController newWithCameraDelegate:self];
+        
+        [self presentViewController:navigationController animated:YES completion:nil];
     }
     else
         [self fbLogin];
+   
 }
 
 - (BOOL)textField:(UITextField *)textField shouldChangeCharactersInRange:(NSRange)range replacementString:(NSString *)string {
@@ -761,20 +767,35 @@
     else
         return YES;
 }
--(void)imagePickerController:(UIImagePickerController *)picker didFinishPickingMediaWithInfo:(NSDictionary<NSString *,id> *)info
+//-(void)imagePickerController:(UIImagePickerController *)picker didFinishPickingMediaWithInfo:(NSDictionary<NSString *,id> *)info
+//{
+//    NSLog(@"Photo taken");
+//    UIImage * photo=[[UIImage alloc]init];
+//    photo = (UIImage *)[info objectForKey:UIImagePickerControllerEditedImage];;
+//    
+//    self.afterPhoto=photo;
+//    [picker dismissViewControllerAnimated:YES completion:nil];
+//    
+//    dispatch_async(dispatch_get_main_queue(), ^ {
+//        [self cleanLocation];
+//    });
+//    [self dismissViewControllerAnimated:NO completion:nil];
+//    
+//}
+
+- (void)cameraDidTakePhoto:(UIImage *)image
 {
     NSLog(@"Photo taken");
     UIImage * photo=[[UIImage alloc]init];
-    photo = (UIImage *)[info objectForKey:UIImagePickerControllerEditedImage];;
+    photo = image;
     
     self.afterPhoto=photo;
-    [picker dismissViewControllerAnimated:YES completion:nil];
+    [self dismissViewControllerAnimated:YES completion:nil];
     
     dispatch_async(dispatch_get_main_queue(), ^ {
         [self cleanLocation];
     });
     [self dismissViewControllerAnimated:NO completion:nil];
-    
 }
 
 -(void) fbLogin
@@ -897,9 +918,14 @@
     }
 }
 
-- (void)imagePickerControllerDidCancel:(UIImagePickerController *)picker
+//- (void)imagePickerControllerDidCancel:(UIImagePickerController *)picker
+//{
+//    [picker dismissViewControllerAnimated:YES completion:nil];
+//}
+
+- (void)cameraDidCancel
 {
-    [picker dismissViewControllerAnimated:YES completion:nil];
+    [self dismissViewControllerAnimated:YES completion:nil];
 }
 
 -(void) cleanLocation

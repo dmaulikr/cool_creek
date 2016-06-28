@@ -256,6 +256,10 @@
         {
             cell = (PhotoViewCell*)[tableView dequeueReusableCellWithIdentifier:@"PhotoCell"];
             [((PhotoViewCell*)cell).firstPhoto setImage:[PhotoDetailsVC scaleImage:self.takenPhoto toSize:CGSizeMake(320.0,320.0)]];
+            UITapGestureRecognizer *singleTap=[[UITapGestureRecognizer alloc]initWithTarget:self action:@selector(takePhoto)];
+            singleTap.numberOfTapsRequired=1;
+            [((PhotoViewCell*)cell).secondPhoto setUserInteractionEnabled:YES];
+            [((PhotoViewCell*)cell).secondPhoto addGestureRecognizer:singleTap];
             if(self.secondPhototaken)
                 [((PhotoViewCell*)cell).secondPhoto setImage:[PhotoDetailsVC scaleImage:self.cleanedPhoto toSize:CGSizeMake(320.0,320.0)]];
             else
@@ -355,6 +359,29 @@
         
     }
     return cell;
+}
+
+-(void) takePhoto
+{
+    //    UIImagePickerController *picker=[[UIImagePickerController alloc] init];
+    //    picker.allowsEditing = YES;
+    //    if([UIImagePickerController isSourceTypeAvailable:UIImagePickerControllerSourceTypeCamera]==NO)
+    //    {
+    //        picker.sourceType=UIImagePickerControllerSourceTypePhotoLibrary;
+    //    }
+    //    else
+    //    {
+    //        picker.sourceType=UIImagePickerControllerSourceTypeCamera;
+    //        picker.cameraCaptureMode = UIImagePickerControllerCameraCaptureModePhoto;
+    //    }
+    //    picker.delegate=self;
+    //    [self.window.rootViewController presentViewController:picker animated:YES completion:nil];
+    
+    TGCameraNavigationController *navigationController =
+    [TGCameraNavigationController newWithCameraDelegate:self];
+
+    self.secondPhototaken = YES;
+    [self presentViewController:navigationController animated:YES completion:nil];
 }
 
 -(void)showComment:(id)sender
@@ -469,19 +496,23 @@
         
         [alertController addAction:[UIAlertAction actionWithTitle:@"Wrap this up" style:UIAlertActionStyleDefault handler:^(UIAlertAction *action) {
             
-            UIImagePickerController *picker=[[UIImagePickerController alloc] init];
-            picker.allowsEditing = YES;
-            if([UIImagePickerController isSourceTypeAvailable:UIImagePickerControllerSourceTypeCamera]==NO)
-            {
-                picker.sourceType=UIImagePickerControllerSourceTypePhotoLibrary;
-            }
-            else
-            {
-                picker.sourceType=UIImagePickerControllerSourceTypeCamera;
-                picker.cameraCaptureMode = UIImagePickerControllerCameraCaptureModePhoto;
-            }
-            picker.delegate = self;
-            [self presentViewController:picker animated:YES completion:nil];
+//            UIImagePickerController *picker=[[UIImagePickerController alloc] init];
+//            picker.allowsEditing = YES;
+//            if([UIImagePickerController isSourceTypeAvailable:UIImagePickerControllerSourceTypeCamera]==NO)
+//            {
+//                picker.sourceType=UIImagePickerControllerSourceTypePhotoLibrary;
+//            }
+//            else
+//            {
+//                picker.sourceType=UIImagePickerControllerSourceTypeCamera;
+//                picker.cameraCaptureMode = UIImagePickerControllerCameraCaptureModePhoto;
+//            }
+//            picker.delegate = self;
+//            [self presentViewController:picker animated:YES completion:nil];
+            TGCameraNavigationController *navigationController =
+            [TGCameraNavigationController newWithCameraDelegate:self];
+            
+            [self presentViewController:navigationController animated:YES completion:nil];
             self.secondPhototaken=YES;
         }]];
         
@@ -520,20 +551,23 @@
 }
 
 - (IBAction)prevPage:(id)sender {
-    UIImagePickerController *picker=[[UIImagePickerController alloc] init];
-    picker.allowsEditing = YES;
-    if([UIImagePickerController isSourceTypeAvailable:UIImagePickerControllerSourceTypeCamera]==NO)
-    {
-        picker.sourceType=UIImagePickerControllerSourceTypePhotoLibrary;
-    }
-    else
-    {
-        picker.sourceType=UIImagePickerControllerSourceTypeCamera;
-        picker.cameraCaptureMode = UIImagePickerControllerCameraCaptureModePhoto;
-    }
-    picker.delegate=self;
-    [self presentViewController:picker animated:YES completion:nil];
-
+//    UIImagePickerController *picker=[[UIImagePickerController alloc] init];
+//    picker.allowsEditing = YES;
+//    if([UIImagePickerController isSourceTypeAvailable:UIImagePickerControllerSourceTypeCamera]==NO)
+//    {
+//        picker.sourceType=UIImagePickerControllerSourceTypePhotoLibrary;
+//    }
+//    else
+//    {
+//        picker.sourceType=UIImagePickerControllerSourceTypeCamera;
+//        picker.cameraCaptureMode = UIImagePickerControllerCameraCaptureModePhoto;
+//    }
+//    picker.delegate=self;
+//    [self presentViewController:picker animated:YES completion:nil];
+    TGCameraNavigationController *navigationController =
+    [TGCameraNavigationController newWithCameraDelegate:self];
+    
+    [self presentViewController:navigationController animated:YES completion:nil];
     //[self dismissVC];
 }
 
@@ -689,32 +723,79 @@
     }
 }
 
--(void)imagePickerController:(UIImagePickerController *)picker didFinishPickingMediaWithInfo:(NSDictionary<NSString *,id> *)info
+//-(void)imagePickerController:(UIImagePickerController *)picker didFinishPickingMediaWithInfo:(NSDictionary<NSString *,id> *)info
+//{
+//    NSLog(@"Photo taken");
+//    UIImage * photo=[[UIImage alloc]init];
+//    photo = (UIImage *)[info objectForKey:UIImagePickerControllerEditedImage];
+//    if(self.location)
+//    {
+//        self.secondPhototaken=YES;
+//    }
+//    if(self.secondPhototaken)
+//    {
+//        [self setSecondPhoto:YES photo:photo];
+//    }
+//    else
+//    {
+//        self.takenPhoto = photo;
+//    }
+//   
+//    [picker dismissViewControllerAnimated:YES completion:NULL];
+//    [self.detailTable reloadData];
+//}
+
+- (void)cameraDidTakePhoto:(UIImage *)image
 {
-    NSLog(@"Photo taken");
-    UIImage * photo=[[UIImage alloc]init];
-    photo = (UIImage *)[info objectForKey:UIImagePickerControllerEditedImage];
+    
     if(self.location)
     {
         self.secondPhototaken=YES;
     }
     if(self.secondPhototaken)
     {
-        [self setSecondPhoto:YES photo:photo];
+        [self setSecondPhoto:YES photo:image];
     }
     else
     {
-        self.takenPhoto = photo;
+        self.takenPhoto = image;
     }
-   
-    [picker dismissViewControllerAnimated:YES completion:NULL];
+    [self dismissViewControllerAnimated:YES completion:nil];
     [self.detailTable reloadData];
+    
 }
 
-- (void)imagePickerControllerDidCancel:(UIImagePickerController *)picker
+//- (void)imagePickerControllerDidCancel:(UIImagePickerController *)picker
+//{
+//    [picker dismissViewControllerAnimated:YES completion:NULL];
+//    
+//    if(self.secondPhototaken) //do not remove the item when it's clean mode from location view
+//    {
+//        if(self.location==nil)
+//        {
+//            self.secondPhototaken=NO; //One step backward by removing the 2nd taken photo when adding new location
+//            [self setSecondPhoto:NO photo:nil];
+//            
+//        }
+//        else  //Going back to location view when cleaning the exisitng lcoation
+//        {
+//           
+//            [self.navigationController dismissViewControllerAnimated:YES completion:nil];
+//        }
+//        
+//    }
+//    else
+//    {
+//        //[self.delegate cameraRefresh:YES];
+//        
+//        [self.navigationController dismissViewControllerAnimated:YES completion:nil];
+//       
+//        
+//    }
+//}
+- (void)cameraDidCancel
 {
-    [picker dismissViewControllerAnimated:YES completion:NULL];
-    
+    [self dismissViewControllerAnimated:YES completion:nil];
     if(self.secondPhototaken) //do not remove the item when it's clean mode from location view
     {
         if(self.location==nil)
@@ -725,7 +806,7 @@
         }
         else  //Going back to location view when cleaning the exisitng lcoation
         {
-           
+            
             [self.navigationController dismissViewControllerAnimated:YES completion:nil];
         }
         
@@ -735,10 +816,11 @@
         //[self.delegate cameraRefresh:YES];
         
         [self.navigationController dismissViewControllerAnimated:YES completion:nil];
-       
+        
         
     }
 }
+
 
 +(UIImage *)scaleImage:(UIImage *)image toSize:(CGSize)newSize
 {

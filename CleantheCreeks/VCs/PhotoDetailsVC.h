@@ -13,12 +13,12 @@
 #import "Location.h"
 #import "BaseVC.h"
 #import "AppDelegate.h"
-
+#import "TGCameraViewController.h"
 @protocol CameraRefreshDelegate<NSObject>
 @optional
 -(void) cameraRefresh:(BOOL)set;
 @end
-@interface PhotoDetailsVC : BaseVC<UITableViewDataSource,UITableViewDelegate,CLLocationManagerDelegate,SetPhotoDelegate,UIImagePickerControllerDelegate,UITextFieldDelegate>
+@interface PhotoDetailsVC : BaseVC<UITableViewDataSource,UITableViewDelegate,CLLocationManagerDelegate,SetPhotoDelegate,UIImagePickerControllerDelegate,UITextFieldDelegate,TGCameraDelegate>
 @property(nonatomic, strong) Location* location;
 @property (strong,nonatomic) UIImage*takenPhoto;
 @property (strong,nonatomic) UIImage*cleanedPhoto;

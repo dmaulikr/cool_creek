@@ -33,6 +33,8 @@
 @property (weak, nonatomic) IBOutlet UIButton *btnFollow;
 @property (weak, nonatomic) IBOutlet UIButton *btnKudo;
 - (IBAction)kudoClicked:(id)sender;
+@property (weak, nonatomic) IBOutlet UILabel *user_tagline;
+@property (weak, nonatomic) IBOutlet UILabel *website_url;
 
 @property (strong, nonatomic) ProfileVC * parentVC;
 @end

@@ -479,6 +479,8 @@
                     else
                     {
                         NSString *userImageURL = [NSString stringWithFormat:@"https://graph.facebook.com/%@/picture", activity.activity_id];
+                        if([user.has_photo isEqualToString:@"yes"])
+                            userImageURL = [NSString stringWithFormat:@"https://s3-ap-northeast-1.amazonaws.com/cleanthecreeks/%@", user.user_id];
                         NSURL *url = [NSURL URLWithString:userImageURL];
                         
                         NSURLSessionTask *task = [[NSURLSession sharedSession] dataTaskWithURL:url completionHandler:^(NSData * _Nullable data, NSURLResponse * _Nullable response, NSError * _Nullable error) {
@@ -518,8 +520,8 @@
         Activity * selectedActivity = [self.activityArray objectAtIndex:self.selectedImgIndex];
         if(![selectedActivity.activity_id isEqualToString:self.current_user_id])
         {
-            User * profile_user = [self.appDelegate.userArray objectForKey:selectedActivity.activity_id];
-            if(![profile_user.blocked_by containsObject:[self.defaults objectForKey:@"user_id"]])
+            User * current_user = [self.appDelegate.userArray objectForKey:[self.defaults objectForKey:@"user_id"]];
+            if(![current_user.blocked_by containsObject:selectedActivity.activity_id])
                 [self performSegueWithIdentifier:@"showProfile" sender:self];
             else
                 NSLog(@"blocked");
@@ -668,20 +670,27 @@
     UIColor * color2= [UIColor colorWithRed:(145/255.0) green:(145/255.0) blue:(145/255.0) alpha:1.0];
     NSDictionary * attributes1 = [NSDictionary dictionaryWithObject:color1 forKey:NSForegroundColorAttributeName];
     NSDictionary * attributes2 = [NSDictionary dictionaryWithObject:color2 forKey:NSForegroundColorAttributeName];
+    
+    UIFont *font1 = [UIFont fontWithName:@"Lato-Bold" size:16.0];
+    NSDictionary *fontAttr1 = [NSDictionary dictionaryWithObject:font1 forKey:NSFontAttributeName];
+    NSAttributedString * nameStr;
     if(name!=nil)
     {
-        NSAttributedString * nameStr = [[NSAttributedString alloc] initWithString:name attributes:attributes1];
+        nameStr = [[NSAttributedString alloc] initWithString:name attributes:attributes1];
         [string appendAttributedString:nameStr];
     }
+    [string addAttributes:fontAttr1 range:NSMakeRange(0,[nameStr length])];
+    NSAttributedString * middleStr;
     if(content!=nil)
     {
-        NSAttributedString * middleStr = [[NSAttributedString alloc] initWithString:content attributes:attributes2];
+        middleStr = [[NSAttributedString alloc] initWithString:content attributes:attributes2];
         [string appendAttributedString:middleStr];
     }
     if(location!=nil)
     {
         NSAttributedString * locationStr = [[NSAttributedString alloc] initWithString:location attributes:attributes1];
         [string appendAttributedString:locationStr];
+        [string addAttributes:fontAttr1 range:NSMakeRange([nameStr length]+[middleStr length],[locationStr length])];
     }
     return string;
 }

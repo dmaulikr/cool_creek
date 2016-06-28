@@ -1,5 +1,7 @@
 #import "CameraVC.h"
 #import "PhotoDetailsVC.h"
+#define CAMERA_TRANSFORM_X 1
+#define CAMERA_TRANSFORM_Y 0.5
 @implementation CameraVC
 - (id) init
 {
@@ -56,41 +58,71 @@
 
 -(void) takePhoto
 {
-    UIImagePickerController *picker=[[UIImagePickerController alloc] init];
-    picker.allowsEditing = YES;
+//    UIImagePickerController *picker=[[UIImagePickerController alloc] init];
+//    picker.allowsEditing = YES;
+//    
+//    if([UIImagePickerController isSourceTypeAvailable:UIImagePickerControllerSourceTypeCamera]==NO)
+//    {
+//        picker.sourceType = UIImagePickerControllerSourceTypePhotoLibrary;
+//    }
+//    else
+//    {
+//        picker.sourceType = UIImagePickerControllerSourceTypeCamera;
+//         picker.cameraCaptureMode = UIImagePickerControllerCameraCaptureModePhoto;
+//        
+//    }
    
-    if([UIImagePickerController isSourceTypeAvailable:UIImagePickerControllerSourceTypeCamera]==NO)
-    {
-        picker.sourceType = UIImagePickerControllerSourceTypePhotoLibrary;
-    }
-    else
-    {
-        picker.sourceType = UIImagePickerControllerSourceTypeCamera;
-         picker.cameraCaptureMode = UIImagePickerControllerCameraCaptureModePhoto;
-    }
-    picker.delegate = self;
-    [self presentViewController:picker animated:YES completion:nil];
-}
-
--(void)imagePickerController:(UIImagePickerController *)picker didFinishPickingMediaWithInfo:(NSDictionary<NSString *,id> *)info
-{
-    self.cameraPicture = (UIImage *)[info objectForKey:UIImagePickerControllerEditedImage];
-    self.photoURL=[[NSURL alloc]init];
-    self.photoURL=[info valueForKey:UIImagePickerControllerReferenceURL];
-    [picker dismissViewControllerAnimated:YES completion:NULL];
+//   
+//    picker.delegate = self;
+//    [self presentViewController:picker animated:YES completion:nil];
+    TGCameraNavigationController *navigationController =
+    [TGCameraNavigationController newWithCameraDelegate:self];
     
-    [self performSegueWithIdentifier:@"showPhotoDetails" sender:self];
+    [self presentViewController:navigationController animated:YES completion:nil];
 }
 
-- (void)imagePickerControllerDidCancel:(UIImagePickerController *)picker
+//-(void)imagePickerController:(UIImagePickerController *)picker didFinishPickingMediaWithInfo:(NSDictionary<NSString *,id> *)info
+//{
+//    
+//    self.cameraPicture = (UIImage *)[info objectForKey:UIImagePickerControllerEditedImage];
+//    self.photoURL=[[NSURL alloc]init];
+//    self.photoURL=[info valueForKey:UIImagePickerControllerReferenceURL];
+//    [picker dismissViewControllerAnimated:YES completion:NULL];
+//    
+//    [self performSegueWithIdentifier:@"showPhotoDetails" sender:self];
+//}
+
+- (void)cameraDidTakePhoto:(UIImage *)image
 {
-   
-    [picker dismissViewControllerAnimated:YES completion:^{
-        
-    }];
+    self.cameraPicture = image;
+    [self performSegueWithIdentifier:@"showPhotoDetails" sender:self];
+
+    [self dismissViewControllerAnimated:YES completion:nil];
+}
+
+- (void)cameraDidSelectAlbumPhoto:(UIImage *)image
+{
+    self.cameraPicture = image;
+    [self performSegueWithIdentifier:@"showPhotoDetails" sender:self];
+    [self dismissViewControllerAnimated:YES completion:nil];
+}
+
+- (void)cameraDidCancel
+{
+    [self dismissViewControllerAnimated:YES completion:nil];
     [self.navigationController dismissViewControllerAnimated:YES completion:nil];
     self.photoTaken = NO;
 }
+
+//- (void)imagePickerControllerDidCancel:(UIImagePickerController *)picker
+//{
+//   
+//    [picker dismissViewControllerAnimated:YES completion:^{
+//        
+//    }];
+//    [self.navigationController dismissViewControllerAnimated:YES completion:nil];
+//    self.photoTaken = NO;
+//}
 
 - (void)didReceiveMemoryWarning
 {

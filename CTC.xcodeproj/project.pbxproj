@@ -34,7 +34,6 @@
 		0084F4271C7B14A600E111D0 /* KudosVC.m in Sources */ = {isa = PBXBuildFile; fileRef = 0084F4261C7B14A600E111D0 /* KudosVC.m */; };
 		0084F42B1C7B17D800E111D0 /* KudosCell.m in Sources */ = {isa = PBXBuildFile; fileRef = 0084F42A1C7B17D800E111D0 /* KudosCell.m */; };
 		0084F42E1C7B1C8500E111D0 /* ActivityPhotoDetailsVC.m in Sources */ = {isa = PBXBuildFile; fileRef = 0084F42D1C7B1C8500E111D0 /* ActivityPhotoDetailsVC.m */; };
-		095F77783019A58BBD9134E1 /* libPods.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 4656214352E34CC700C152CD /* libPods.a */; };
 		3C2874B01C88E2E200725B40 /* Activity.m in Sources */ = {isa = PBXBuildFile; fileRef = 3C2874AF1C88E2E200725B40 /* Activity.m */; };
 		3C2874B31C88EC9800725B40 /* FollowVC.m in Sources */ = {isa = PBXBuildFile; fileRef = 3C2874B21C88EC9800725B40 /* FollowVC.m */; };
 		3C324E561C9C8E2400EFBEC4 /* LocationBarCell.m in Sources */ = {isa = PBXBuildFile; fileRef = 3C324E551C9C8E2400EFBEC4 /* LocationBarCell.m */; };
@@ -45,6 +44,7 @@
 		3CA8D7D61C8CA60A00838FDC /* LocationPhotoCell.m in Sources */ = {isa = PBXBuildFile; fileRef = 3CA8D7D51C8CA60A00838FDC /* LocationPhotoCell.m */; };
 		3CA8D7DA1C8D0D5900838FDC /* FBSuccessVC.m in Sources */ = {isa = PBXBuildFile; fileRef = 3CA8D7D91C8D0D5800838FDC /* FBSuccessVC.m */; };
 		3CE5EB1F1C84F8310068DF59 /* ProfileViewCell.m in Sources */ = {isa = PBXBuildFile; fileRef = 3CE5EB1E1C84F8310068DF59 /* ProfileViewCell.m */; };
+		6D73E9D4C35B07FF39D76E78 /* libPods-CTC.a in Frameworks */ = {isa = PBXBuildFile; fileRef = CE7D737360035E8A79681299 /* libPods-CTC.a */; };
 		A1E327501D11B5AF00C3CB15 /* eula.html in Resources */ = {isa = PBXBuildFile; fileRef = A1E3274F1D11B5AF00C3CB15 /* eula.html */; };
 		A1E327531D11E21200C3CB15 /* TermsVC.m in Sources */ = {isa = PBXBuildFile; fileRef = A1E327521D11E21200C3CB15 /* TermsVC.m */; };
 		A1E327551D1236BA00C3CB15 /* back3.jpg in Resources */ = {isa = PBXBuildFile; fileRef = A1E327541D1236BA00C3CB15 /* back3.jpg */; };
@@ -168,9 +168,8 @@
 		3CA8D7D91C8D0D5800838FDC /* FBSuccessVC.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = FBSuccessVC.m; sourceTree = "<group>"; };
 		3CE5EB1D1C84F8310068DF59 /* ProfileViewCell.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ProfileViewCell.h; sourceTree = "<group>"; };
 		3CE5EB1E1C84F8310068DF59 /* ProfileViewCell.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = ProfileViewCell.m; sourceTree = "<group>"; };
-		4656214352E34CC700C152CD /* libPods.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; includeInIndex = 0; path = libPods.a; sourceTree = BUILT_PRODUCTS_DIR; };
-		4C6CBB01DE1D421604AC1E1D /* Pods.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = Pods.debug.xcconfig; path = "Pods/Target Support Files/Pods/Pods.debug.xcconfig"; sourceTree = "<group>"; };
-		893EA3F1F71074BC15B9E306 /* Pods.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = Pods.release.xcconfig; path = "Pods/Target Support Files/Pods/Pods.release.xcconfig"; sourceTree = "<group>"; };
+		887FE867BC72F219F565332A /* Pods-CTC.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-CTC.release.xcconfig"; path = "Pods/Target Support Files/Pods-CTC/Pods-CTC.release.xcconfig"; sourceTree = "<group>"; };
+		92B93D08FB0E420C8A81C160 /* Pods-CTC.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-CTC.debug.xcconfig"; path = "Pods/Target Support Files/Pods-CTC/Pods-CTC.debug.xcconfig"; sourceTree = "<group>"; };
 		A1E3274F1D11B5AF00C3CB15 /* eula.html */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.html; path = eula.html; sourceTree = "<group>"; };
 		A1E327511D11E21200C3CB15 /* TermsVC.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = TermsVC.h; sourceTree = "<group>"; };
 		A1E327521D11E21200C3CB15 /* TermsVC.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = TermsVC.m; sourceTree = "<group>"; };
@@ -189,6 +188,7 @@
 		BD0603DE1C595F7000A2C3EC /* UIKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = UIKit.framework; path = System/Library/Frameworks/UIKit.framework; sourceTree = SDKROOT; };
 		BD0603E01C595F8500A2C3EC /* Foundation.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Foundation.framework; path = System/Library/Frameworks/Foundation.framework; sourceTree = SDKROOT; };
 		BD0603E21C595F9500A2C3EC /* CoreGraphics.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = CoreGraphics.framework; path = System/Library/Frameworks/CoreGraphics.framework; sourceTree = SDKROOT; };
+		CE7D737360035E8A79681299 /* libPods-CTC.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; includeInIndex = 0; path = "libPods-CTC.a"; sourceTree = BUILT_PRODUCTS_DIR; };
 		E2149DF31C755FE00005D50A /* FacebookPostVC.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = FacebookPostVC.h; sourceTree = "<group>"; };
 		E2149DF41C755FE00005D50A /* FacebookPostVC.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = FacebookPostVC.m; sourceTree = "<group>"; };
 		E22A79A41C77A77100CE66E5 /* LocationAnnotation.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = LocationAnnotation.h; sourceTree = "<group>"; };
@@ -277,7 +277,7 @@
 				BD0603E11C595F8500A2C3EC /* Foundation.framework in Frameworks */,
 				E2F36EDD1C5B253000923DF0 /* FBSDKLoginKit.framework in Frameworks */,
 				BD0603DF1C595F7000A2C3EC /* UIKit.framework in Frameworks */,
-				095F77783019A58BBD9134E1 /* libPods.a in Frameworks */,
+				6D73E9D4C35B07FF39D76E78 /* libPods-CTC.a in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -369,11 +369,11 @@
 			name = KudoCell;
 			sourceTree = "<group>";
 		};
-		29EB99E7AFF272E8C286239F /* Pods */ = {
+		232E648C6B7AD6E547EC7219 /* Pods */ = {
 			isa = PBXGroup;
 			children = (
-				4C6CBB01DE1D421604AC1E1D /* Pods.debug.xcconfig */,
-				893EA3F1F71074BC15B9E306 /* Pods.release.xcconfig */,
+				92B93D08FB0E420C8A81C160 /* Pods-CTC.debug.xcconfig */,
+				887FE867BC72F219F565332A /* Pods-CTC.release.xcconfig */,
 			);
 			name = Pods;
 			sourceTree = "<group>";
@@ -498,7 +498,7 @@
 				E2FD055E1C59C96B004B2C34 /* Resource */,
 				BD0603B61C595D4700A2C3EC /* CleantheCreeksTests */,
 				BD06039B1C595D4700A2C3EC /* Products */,
-				29EB99E7AFF272E8C286239F /* Pods */,
+				232E648C6B7AD6E547EC7219 /* Pods */,
 			);
 			sourceTree = "<group>";
 		};
@@ -566,7 +566,7 @@
 				BD0603E21C595F9500A2C3EC /* CoreGraphics.framework */,
 				BD0603E01C595F8500A2C3EC /* Foundation.framework */,
 				BD0603DE1C595F7000A2C3EC /* UIKit.framework */,
-				4656214352E34CC700C152CD /* libPods.a */,
+				CE7D737360035E8A79681299 /* libPods-CTC.a */,
 			);
 			name = Frameworks;
 			sourceTree = "<group>";
@@ -821,12 +821,12 @@
 			isa = PBXNativeTarget;
 			buildConfigurationList = BD0603BC1C595D4700A2C3EC /* Build configuration list for PBXNativeTarget "CTC" */;
 			buildPhases = (
+				63115919ECFFE2239BBE50CE /* [CP] Check Pods Manifest.lock */,
 				BD0603961C595D4700A2C3EC /* Sources */,
-				F014797FAA42CD4BD11E2E1B /* Check Pods Manifest.lock */,
 				BD0603981C595D4700A2C3EC /* Resources */,
 				BD0603971C595D4700A2C3EC /* Frameworks */,
-				993B031DFA96827DF8D70BC4 /* Embed Pods Frameworks */,
-				A7FB0902CD177F13B9727355 /* Copy Pods Resources */,
+				310DEF1E6FDF9AA46E2C1F54 /* [CP] Embed Pods Frameworks */,
+				0232B0A65F69097229D31515 /* [CP] Copy Pods Resources */,
 			);
 			buildRules = (
 			);
@@ -940,44 +940,44 @@
 /* End PBXResourcesBuildPhase section */
 
 /* Begin PBXShellScriptBuildPhase section */
-		993B031DFA96827DF8D70BC4 /* Embed Pods Frameworks */ = {
+		0232B0A65F69097229D31515 /* [CP] Copy Pods Resources */ = {
 			isa = PBXShellScriptBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
 			);
 			inputPaths = (
 			);
-			name = "Embed Pods Frameworks";
+			name = "[CP] Copy Pods Resources";
 			outputPaths = (
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 			shellPath = /bin/sh;
-			shellScript = "\"${SRCROOT}/Pods/Target Support Files/Pods/Pods-frameworks.sh\"\n";
+			shellScript = "\"${SRCROOT}/Pods/Target Support Files/Pods-CTC/Pods-CTC-resources.sh\"\n";
 			showEnvVarsInLog = 0;
 		};
-		A7FB0902CD177F13B9727355 /* Copy Pods Resources */ = {
+		310DEF1E6FDF9AA46E2C1F54 /* [CP] Embed Pods Frameworks */ = {
 			isa = PBXShellScriptBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
 			);
 			inputPaths = (
 			);
-			name = "Copy Pods Resources";
+			name = "[CP] Embed Pods Frameworks";
 			outputPaths = (
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 			shellPath = /bin/sh;
-			shellScript = "\"${SRCROOT}/Pods/Target Support Files/Pods/Pods-resources.sh\"\n";
+			shellScript = "\"${SRCROOT}/Pods/Target Support Files/Pods-CTC/Pods-CTC-frameworks.sh\"\n";
 			showEnvVarsInLog = 0;
 		};
-		F014797FAA42CD4BD11E2E1B /* Check Pods Manifest.lock */ = {
+		63115919ECFFE2239BBE50CE /* [CP] Check Pods Manifest.lock */ = {
 			isa = PBXShellScriptBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
 			);
 			inputPaths = (
 			);
-			name = "Check Pods Manifest.lock";
+			name = "[CP] Check Pods Manifest.lock";
 			outputPaths = (
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -1169,7 +1169,7 @@
 		};
 		BD0603BD1C595D4700A2C3EC /* Debug */ = {
 			isa = XCBuildConfiguration;
-			baseConfigurationReference = 4C6CBB01DE1D421604AC1E1D /* Pods.debug.xcconfig */;
+			baseConfigurationReference = 92B93D08FB0E420C8A81C160 /* Pods-CTC.debug.xcconfig */;
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				CLANG_ENABLE_MODULES = YES;
@@ -1190,7 +1190,7 @@
 		};
 		BD0603BE1C595D4700A2C3EC /* Release */ = {
 			isa = XCBuildConfiguration;
-			baseConfigurationReference = 893EA3F1F71074BC15B9E306 /* Pods.release.xcconfig */;
+			baseConfigurationReference = 887FE867BC72F219F565332A /* Pods-CTC.release.xcconfig */;
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				CLANG_ENABLE_MODULES = YES;

@@ -27,6 +27,7 @@ PODS:
   - GoogleUtilities (1.3.0):
     - GoogleSymbolUtilities (~> 1.0)
   - SWTableViewCell (0.3.7)
+  - TGCameraViewController (2.2.2)
   - UIScrollView-InfiniteScroll (0.7.3)
 
 DEPENDENCIES:
@@ -39,6 +40,7 @@ DEPENDENCIES:
   - Flurry-iOS-SDK/FlurrySDK
   - Google/Analytics
   - SWTableViewCell (~> 0.3.7)
+  - TGCameraViewController
   - UIScrollView-InfiniteScroll
 
 SPEC CHECKSUMS:
@@ -56,6 +58,9 @@ SPEC CHECKSUMS:
   GoogleSymbolUtilities: eb3965ea12710569c7b80db198a39e39b18613f7
   GoogleUtilities: 5c653f7df2eedf0ce0efdfe5afe4f831f375fd7a
   SWTableViewCell: 2a94aadc9d47b2b611fa064566bf57948b95b579
+  TGCameraViewController: 010082bae689f3940b132b310b44e4ddc5a4f8e4
   UIScrollView-InfiniteScroll: b6c7d6d155dca7f9c5dd43813ecffeb301b3d50c
 
-COCOAPODS: 0.39.0
+PODFILE CHECKSUM: c3c46f857215021a1a9992ed94aa810fb8002236
+
+COCOAPODS: 1.0.1

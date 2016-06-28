@@ -54,7 +54,7 @@
     [self.locationArray removeAllObjects];
     self.mapView.delegate=self;
     self.mapView.showsUserLocation=YES;
-    
+    //self.mapView.mapType = MKMapTypeSatellite;
     self.mainDelegate=(AppDelegate*)[[UIApplication sharedApplication]delegate];
     self.refreshControl = [[UIRefreshControl alloc]init];
     [self.locationTable addSubview:self.refreshControl];
@@ -389,9 +389,11 @@
             AWSDynamoDBPaginatedOutput *paginatedOutput = task.result;
             for (int i=0;i<paginatedOutput.items.count;i++) {
                 Location * location= [paginatedOutput.items objectAtIndex:i];
+                if(location)
+                {
                 if(![self.locationArray containsObject:location])
                     [self.locationArray addObject:location];
-                
+                }
                 //Setting the annotation
                 LocationAnnotation *annotation=[[LocationAnnotation alloc]init];
                 annotation.coordinate = CLLocationCoordinate2DMake(location.latitude, location.longitude);
@@ -648,6 +650,7 @@
     [self.mapView setHidden:YES];
     [self.mapButton setImage:[UIImage imageNamed:@"HeaderMapBtnUnselected"] forState:UIControlStateNormal];
     [self.listButton setImage:[UIImage imageNamed:@"HeaderMenuBtnSelected"] forState:UIControlStateNormal];
+    [self.view bringSubviewToFront:self.locationTable];
 }
 
 - (IBAction)mapButtonTapped:(id)sender{

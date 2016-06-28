@@ -60,6 +60,11 @@
     if(self.mode)
     {
         [self.profileTopBar.rightBtn setImage:[UIImage imageNamed:@"ItemMore2"] forState:UIControlStateNormal];
+        if([self.profile_user_id  isEqualToString: self.current_user_id])
+        {
+            self.profileTopBar.rightBtn.hidden=YES;
+            self.profileTopBar.rightBtn.enabled=NO;
+        }
     }
     
     
@@ -92,8 +97,8 @@
          }
          if (task.result) {
              self.profile_user=task.result;
-             [self.profileTopBar setHeaderStyle:!self.mode title:self.profile_user.nick_name rightBtnHidden:NO];
              
+             [self.profileTopBar.lblTopBarTitle setText:self.profile_user.nick_name];
              AWSDynamoDBScanExpression *scanExpression = [AWSDynamoDBScanExpression new];
              scanExpression.filterExpression = @"cleaner_id = :val";
              scanExpression.expressionAttributeValues = @{@":val":self.profile_user.user_id};
@@ -438,8 +443,10 @@
                 [task resume];
                 
                 [cell.user_name setText:self.profile_user.user_name ];
-                [cell.user_quotes setText:self.profile_user.user_about];
+                //[cell.user_quotes setText:self.profile_user.user_about];
                 [cell.user_location setText:self.luser_location];
+                [cell.user_tagline setText:self.profile_user.tagline];
+                [cell.website_url setText:self.profile_user.website_url];
                 //Removed email
                 //[cell.user_email setText:self.profile_user.user_email];
                 UITapGestureRecognizer *followingTap=[[UITapGestureRecognizer alloc]initWithTarget:self action:@selector(showFollowing)];
@@ -495,22 +502,31 @@
                 NSMutableAttributedString * string = [[NSMutableAttributedString alloc] initWithString:@""];
                 UIColor * color1 = [UIColor blackColor];
                 UIColor * color2= [UIColor colorWithRed:(145/255.0) green:(145/255.0) blue:(145/255.0) alpha:1.0];
+                
+                UIFont *font1 = [UIFont fontWithName:@"Lato-Bold" size:15.0];
+                NSDictionary *fontAttr1 = [NSDictionary dictionaryWithObject:font1 forKey:NSFontAttributeName];
                 NSDictionary * attributes1 = [NSDictionary dictionaryWithObject:color1 forKey:NSForegroundColorAttributeName];
+                
                 NSDictionary * attributes2 = [NSDictionary dictionaryWithObject:color2 forKey:NSForegroundColorAttributeName];
+                NSAttributedString * nameStr;
                 if(self.profile_user.user_name!=nil)
                 {
-                    NSAttributedString * nameStr = [[NSAttributedString alloc] initWithString:self.profile_user.user_name attributes:attributes1];
+                    nameStr = [[NSAttributedString alloc] initWithString:self.profile_user.user_name attributes:attributes1];
+                    
                     [string appendAttributedString:nameStr];
-                }
                 
+                }
+                [string addAttributes:fontAttr1 range:NSMakeRange(0,[nameStr length])];
                 NSAttributedString * middleStr = [[NSAttributedString alloc] initWithString:@" finished cleaning " attributes:attributes2];
                 [string appendAttributedString:middleStr];
-                
+                NSAttributedString * locationStr;
                 if(location.location_name!=nil)
                 {
-                    NSAttributedString * locationStr = [[NSAttributedString alloc] initWithString:location.location_name attributes:attributes1];
+                    locationStr = [[NSAttributedString alloc] initWithString:location.location_name attributes:attributes1];
+                    
                     [string appendAttributedString:locationStr];
                 }
+                [string addAttributes:fontAttr1 range:NSMakeRange([nameStr length]+[middleStr length],[locationStr length])];
                 [cell.comment setAttributedText:string];
                 [cell.location setText: location.location_name];
                 NSDateFormatter *dateFormatter=[[NSDateFormatter alloc] init];

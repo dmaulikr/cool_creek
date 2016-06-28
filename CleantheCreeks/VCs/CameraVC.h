@@ -4,7 +4,8 @@
 #import "BaseVC.h"
 #import "PhotoDetailsVC.h"
 #import "Reachability.h"
-@interface CameraVC : BaseVC<UIImagePickerControllerDelegate,CameraRefreshDelegate>
+#import "TGCameraViewController.h"
+@interface CameraVC : BaseVC<UIImagePickerControllerDelegate,CameraRefreshDelegate,TGCameraDelegate>
 -(void) takePhoto;
 @property(weak,atomic) UIImage * cameraPicture;
 @property(strong,atomic) NSURL* photoURL;
