@@ -154,7 +154,7 @@
         if(indexPath.row==0)
             height = self.view.frame.size.width*0.5;
         if(indexPath.row==1)
-            height = 49.f;
+            height = 50.f;
     }
     else if(indexPath.section==1)
     {
@@ -162,10 +162,17 @@
             height=5;
         else if(indexPath.row==3)
         {
-            if(self.location!=nil)
+            if([self.location.isDirty isEqualToString:@"false"])
                 height=self.view.frame.size.height*0.13;
             else
                 height=0;
+        }
+        else if(indexPath.row==2)
+        {
+            if([self.location.isDirty isEqualToString:@"true"])
+                height=self.view.frame.size.height*0.13+2;
+            else
+                height=self.view.frame.size.height*0.13;
         }
         else
             height=self.view.frame.size.height*0.13;
@@ -175,7 +182,7 @@
         if(indexPath.row==0)
             height=5;
         else
-            height=self.view.frame.size.height*0.13;
+            height=self.view.frame.size.height*0.13+2;
     }
     
     return height;
@@ -202,6 +209,7 @@
         count = 2;
     else if(section == 1)
     {
+       
         if([self.location.isDirty isEqualToString:@"false"])
             count = 4;
         else
@@ -217,6 +225,17 @@
     return count;
 }
 
+- (CGFloat)tableView:(UITableView *)tableView heightForHeaderInSection:(NSInteger)section
+{
+    if(section>0)
+        return 40.f;
+    return 0;
+}
+
+//- (CGFloat)tableView:(UITableView *)tableView heightForFooterInSection:(NSInteger)section
+//{
+//    return 20.f;
+//}
 - (UITableViewCell *)tableView:(UITableView *)tableView cellForRowAtIndexPath:(NSIndexPath *)indexPath
 {
     UITableViewCell *cell = nil;
@@ -314,7 +333,16 @@
         
         else if(indexPath.row==1)
         {
+            
             cell = (LocationBarCell*)[tableView dequeueReusableCellWithIdentifier:@"BarCell"];
+            // Adding shadows
+            ((LocationBarCell*)cell).barCellView.layer.masksToBounds = NO;
+            ((LocationBarCell*)cell).barCellView.layer.shadowColor = [[UIColor blackColor] CGColor] ;
+            ((LocationBarCell*)cell).barCellView.layer.shadowOffset = CGSizeMake(0, 1);
+            ((LocationBarCell*)cell).barCellView.layer.shadowRadius = 1.0f;
+            ((LocationBarCell*)cell).barCellView.layer.shadowOpacity = 0.6f;
+            
+            
             [((LocationBarCell*)cell).btnComment setImage:[UIImage imageNamed:@"IconQuote"] forState:UIControlStateNormal];
             
             [((LocationBarCell*)cell).btnComment setImage:[UIImage imageNamed:@"IconComment"] forState:UIControlStateSelected];
@@ -367,6 +395,12 @@
             UITapGestureRecognizer *secondTap=[[UITapGestureRecognizer alloc]initWithTarget:self action:@selector(showLocation)];
             secondTap.numberOfTapsRequired=1;
             [((DetailCell*)cell).locationName2 addGestureRecognizer:secondTap];
+            ((DetailCell*)cell).cellView.layer.masksToBounds = NO;
+            ((DetailCell*)cell).cellView.layer.shadowColor = [[UIColor blackColor] CGColor] ;
+            ((DetailCell*)cell).cellView.layer.shadowOffset = CGSizeMake(0.5, 1);
+            //((DetailCell*)cell).cellView.layer.shadowRadius = 1;
+            ((DetailCell*)cell).cellView.layer.shadowOpacity = 0.6f;
+
         }
         else if(indexPath.row == 2)
         {
@@ -384,6 +418,17 @@
             finderNameTap.numberOfTapsRequired=1;
             [((DetailCell*)cell).finderName addGestureRecognizer:finderNameTap];
             [((DetailCell*)cell).finderName setUserInteractionEnabled:YES];
+            [((DetailCell*)cell).cleanerName setUserInteractionEnabled:YES];
+            ((DetailCell*)cell).cellView.layer.masksToBounds = NO;
+            ((DetailCell*)cell).cellView.layer.shadowColor = [[UIColor blackColor] CGColor] ;
+            ((DetailCell*)cell).cellView.layer.shadowOffset = CGSizeMake(0.5, 1);
+            //((DetailCell*)cell).cellView.layer.shadowRadius = 1;
+            ((DetailCell*)cell).cellView.layer.shadowOpacity = 0.6f;
+            if([self.location.isDirty isEqualToString:@"true"])
+                [((DetailCell*)cell).bottomShadow setConstant:2];
+            else if([self.location.isDirty isEqualToString:@"false"])
+                [((DetailCell*)cell).bottomShadow setConstant:0];
+
         }
         else if(indexPath.row==3)
         {
@@ -401,6 +446,13 @@
             cleanerNameTap.numberOfTapsRequired=1;
             [((DetailCell*)cell).cleanerName addGestureRecognizer:cleanerNameTap];
             [((DetailCell*)cell).cleanerName setUserInteractionEnabled:YES];
+            ((DetailCell*)cell).cellView.layer.masksToBounds = NO;
+            ((DetailCell*)cell).cellView.layer.shadowColor = [[UIColor blackColor] CGColor] ;
+            ((DetailCell*)cell).cellView.layer.shadowOffset = CGSizeMake(0.5, 1);
+            //((DetailCell*)cell).cellView.layer.shadowRadius = 1;
+            ((DetailCell*)cell).cellView.layer.shadowOpacity = 0.6f;
+
+
         }
         
     }
@@ -429,6 +481,16 @@
                     [((CommentCell*)cell).commentLabel addGestureRecognizer:commentTap];
                     [((CommentCell*)cell).commentLabel setUserInteractionEnabled:YES];
                     ((CommentCell*)cell).commentLabel.tag =indexPath.row-1;
+                    ((CommentCell*)cell).cellView.layer.masksToBounds = NO;
+                    ((CommentCell*)cell).cellView.layer.shadowColor = [[UIColor blackColor] CGColor] ;
+                    ((CommentCell*)cell).cellView.layer.shadowOffset = CGSizeMake(0.5, 1);
+                    //((DetailCell*)cell).cellView.layer.shadowRadius = 1;
+                    ((CommentCell*)cell).cellView.layer.shadowOpacity = 0.6f;
+                    
+                    if(indexPath.row==self.location.comments.count)
+                        [((CommentCell*)cell).bottomShadow setConstant:-6];
+                    else
+                        [((CommentCell*)cell).bottomShadow setConstant:-8];
                 }
             }
             
@@ -489,11 +551,11 @@
 
 -(void) showProfileWithValidation
 {
-    User * current_user = [self.mainDelegate.userArray objectForKey:[self.defaults objectForKey:@"user_id"]];
-    if(![current_user.blocked_by containsObject:self.selected_user])
+//    User * current_user = [self.mainDelegate.userArray objectForKey:[self.defaults objectForKey:@"user_id"]];
+//    if(![current_user.blocked_by containsObject:self.selected_user])
         [self performSegueWithIdentifier:@"showProfileFromDetails" sender:self];
-    else
-        NSLog(@"blocked");
+//    else
+//        NSLog(@"blocked");
 }
 
 -(void)showCommenter:(id)sender

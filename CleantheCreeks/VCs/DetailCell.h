@@ -17,6 +17,8 @@
 @property (weak, nonatomic) IBOutlet UILabel *foundDate;
 
 @property (weak, nonatomic) IBOutlet UITextField *commentText;
+@property (weak, nonatomic) IBOutlet UIView *cellView;
+@property (weak, nonatomic) IBOutlet NSLayoutConstraint *bottomShadow;
 
 
 @property (weak, nonatomic) IBOutlet UILabel *locationName2;

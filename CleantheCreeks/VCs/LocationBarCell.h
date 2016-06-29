@@ -13,6 +13,7 @@
 @property (weak, nonatomic) IBOutlet UIButton *btnComment;
 @property (weak, nonatomic) IBOutlet NSLayoutConstraint *kudoLeadingConst;
 @property (weak, nonatomic) IBOutlet NSLayoutConstraint *commentLeadingConst;
+@property (weak, nonatomic) IBOutlet UIView *barCellView;
 @property (weak, nonatomic) IBOutlet UIButton *btnReport;
 
 @end

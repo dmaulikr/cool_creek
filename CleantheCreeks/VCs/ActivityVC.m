@@ -117,8 +117,10 @@
 
 -(void) updateCell
 {
+    User * user = [self.appDelegate.userArray objectForKey:self.current_user_id];
     self.activityArray=[[NSMutableArray alloc]init];
     [self.activityArray removeAllObjects];
+    
     if([self.appDelegate.userArray count]>0)
     {
         User * current_user = [self.appDelegate.userArray objectForKey:self.current_user_id];
@@ -138,6 +140,8 @@
                 for(NSDictionary * item in current_user.followers)
                 {
                     NSString * follower_id=[item objectForKey:@"id"];
+                    if(![current_user.blocked_by containsObject:follower_id])
+                    {
                     NSNumber * following_date=[item objectForKey:@"time"];
                     // Adding finders to the activity array
                     Activity *activity=[[Activity alloc]init];
@@ -145,6 +149,7 @@
                     activity.activity_time=[following_date doubleValue];
                     activity.activity_type = @"follow";
                     [self.activityArray addObject:activity];
+                    }
                 }
                 
                 //Adding find and clean activites for following users
@@ -158,10 +163,12 @@
                         for(NSDictionary * iterator in current_user.followings)
                         {
                             NSString * person_id=[iterator objectForKey:@"id"];
-                            
+                            if(![current_user.blocked_by containsObject:person_id])
+                            {
                             //Adding following cleaners to the activity array
                             if([location.cleaner_id isEqualToString:person_id] && ![location.founder_id isEqualToString:self.current_user_id]&&[location.isDirty isEqualToString:@"false"])
                             {
+                                
                                 Activity *activity=[[Activity alloc]init];
                                 activity.activity_id = location.cleaner_id;
                                 activity.activity_time=location.cleaned_date;
@@ -192,14 +199,16 @@
                                 
                                 [self.activityArray addObject:activity];
                             }
+                            }
                         }
                         
                         // Showing cleaned activities on my found areas
-                        if([location.founder_id isEqualToString:self.current_user_id] && [location.isDirty isEqualToString:@"false"])
+                        if([location.founder_id isEqualToString:self.current_user_id] && [location.isDirty isEqualToString:@"false"] && ![current_user.blocked_by containsObject:location.founder_id])
+                           
                         {
                             Activity *activity=[[Activity alloc]init];
                             activity.activity_id = location.cleaner_id;
-                            activity.activity_time=location.cleaned_date;
+                            activity.activity_time = location.cleaned_date;
                             activity.activity_type = @"clean";
                             activity.activity_location = location;
                             activity.kudo_count=[location.kudos count];
@@ -216,7 +225,7 @@
                             }
                             [self.activityArray addObject:activity];
                         }
-                        else if([location.founder_id isEqualToString:self.current_user_id])
+                        else if([location.founder_id isEqualToString:self.current_user_id]&&![current_user.blocked_by containsObject:location.founder_id])
                         {
                             Activity *activity=[[Activity alloc]init];
                             activity.activity_id = location.founder_id;
@@ -231,7 +240,7 @@
                     else //within 100kms
                     {
                         // Showing cleaned activities witin 100kms
-                        if([location.isDirty isEqualToString:@"false"])
+                        if([location.isDirty isEqualToString:@"false"] && ![current_user.blocked_by containsObject:location.cleaner_id])
                         {
                             Activity *activity=[[Activity alloc]init];
                             activity.activity_id = location.cleaner_id;
@@ -252,7 +261,7 @@
                             }
                             [self.activityArray addObject:activity];
                         }
-                        else  //Showing all found activities
+                        else  if(![current_user.blocked_by containsObject:location.founder_id])//Showing all found activities
                         {
                             Activity *activity=[[Activity alloc]init];
                             activity.activity_id = location.founder_id;
@@ -265,11 +274,13 @@
                     }
                     
                     // Adding commenters
-                    if([location.founder_id isEqualToString:self.current_user_id])
+                    if([location.founder_id isEqualToString:self.current_user_id] )
                     {
                         for(NSDictionary * item in location.comments)
                         {
                             NSString * commenter_id=[item objectForKey:@"id"];
+                            if(![current_user.blocked_by containsObject:location.founder_id])
+                            {
                             NSString * comment_date=[item objectForKey:@"time"];
                             Activity *activity=[[Activity alloc]init];
                             activity.activity_id=commenter_id;
@@ -277,16 +288,19 @@
                             activity.activity_type = @"comment";
                             activity.activity_location = location;
                             [self.activityArray addObject:activity];
+                            }
                         }
                         
                     }
                     
                     // Adding kudos
-                    if([location.cleaner_id isEqualToString:self.current_user_id])
+                    if([location.cleaner_id isEqualToString:self.current_user_id] )
                     {
                         for(NSDictionary * iterator in location.kudos)
                         {
                             NSString * kudo_person_id=[iterator objectForKey:@"id"];
+                            if( ![current_user.blocked_by containsObject:kudo_person_id])
+                            {
                             NSString * kudo_date=[iterator objectForKey:@"time"];
                             // Adding finders to the activity array
                             Activity *activity=[[Activity alloc]init];
@@ -295,6 +309,7 @@
                             activity.activity_type = @"kudo";
                             
                             [self.activityArray addObject:activity];
+                            }
                             
                         }
                     }
@@ -520,11 +535,11 @@
         Activity * selectedActivity = [self.activityArray objectAtIndex:self.selectedImgIndex];
         if(![selectedActivity.activity_id isEqualToString:self.current_user_id])
         {
-            User * current_user = [self.appDelegate.userArray objectForKey:[self.defaults objectForKey:@"user_id"]];
-            if(![current_user.blocked_by containsObject:selectedActivity.activity_id])
+//            User * current_user = [self.appDelegate.userArray objectForKey:[self.defaults objectForKey:@"user_id"]];
+//            if(![current_user.blocked_by containsObject:selectedActivity.activity_id])
                 [self performSegueWithIdentifier:@"showProfile" sender:self];
-            else
-                NSLog(@"blocked");
+//            else
+//                NSLog(@"blocked");
             
         }
     }

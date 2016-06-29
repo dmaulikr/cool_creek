@@ -11,6 +11,8 @@
 @interface CommentCell : UITableViewCell
 
 @property (weak, nonatomic) IBOutlet UILabel *commentLabel;
+@property (weak, nonatomic) IBOutlet UIView *cellView;
+@property (weak, nonatomic) IBOutlet NSLayoutConstraint *bottomShadow;
 
 
 @end
