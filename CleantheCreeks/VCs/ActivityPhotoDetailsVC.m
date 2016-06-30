@@ -26,7 +26,7 @@
 #import "ProfileVC.h"
 #import "FullScreen.h"
 #import "MapVC.h"
-
+#import "TGCameraColor.h"
 @implementation ActivityPhotoDetailsVC
 
 - (void)registerForKeyboardNotifications
@@ -107,6 +107,8 @@
     self.textComment.delegate=self;
     self.commentVisible = NO;
     [self.commentView setHidden:!self.commentVisible];
+    UIColor *tintColor = [UIColor colorWithRed:1/255.0 green:122/255.0 blue:1 alpha:1.0];
+    [TGCameraColor setTintColor:tintColor];
     UITapGestureRecognizer *tap = [[UITapGestureRecognizer alloc]
                                    initWithTarget:self
                                    action:@selector(dismissKeyboard)];

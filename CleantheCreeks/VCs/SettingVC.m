@@ -81,9 +81,14 @@
     
     UITapGestureRecognizer *singleTap = [[UITapGestureRecognizer alloc] initWithTarget:self action:@selector(resignOnTap:)];
     [singleTap setNumberOfTapsRequired:1];
-    [singleTap setNumberOfTouchesRequired:1];
+    
     [self.view addGestureRecognizer:singleTap];
     
+    
+    UITapGestureRecognizer *privacyTap = [[UITapGestureRecognizer alloc] initWithTarget:self action:@selector(privacyTapped:)];
+    [privacyTap setNumberOfTapsRequired:1];
+    
+    [self.privacyPolicyView addGestureRecognizer:privacyTap];
 }
 
 - (void)resignOnTap:(id)iSender {
@@ -91,6 +96,14 @@
     [self.userName resignFirstResponder];
     [self.website resignFirstResponder];
     [self.bio resignFirstResponder];
+    
+}
+- (void)privacyTapped:(id)iSender {
+    NSURL *url = [NSURL URLWithString:@"https://www.iubenda.com/privacy-policy/7811463"];
+    if ([[UIApplication sharedApplication] canOpenURL:url]) {
+        [[UIApplication sharedApplication] openURL:url];
+    }
+    
     
 }
 - (BOOL)textFieldShouldReturn:(UITextField *)textField

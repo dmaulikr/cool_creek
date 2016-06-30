@@ -1,5 +1,6 @@
 #import "CameraVC.h"
 #import "PhotoDetailsVC.h"
+#import "TGCameraColor.h"
 #define CAMERA_TRANSFORM_X 1
 #define CAMERA_TRANSFORM_Y 0.5
 @implementation CameraVC
@@ -15,6 +16,8 @@
 - (void)viewDidLoad
 {
     [super viewDidLoad];
+    UIColor *tintColor = [UIColor colorWithRed:1/255.0 green:122/255.0 blue:1 alpha:1.0];
+    [TGCameraColor setTintColor:tintColor];
     // Do any additional setup after loading the view.
 }
 

@@ -447,6 +447,8 @@
                 [cell.user_location setText:self.luser_location];
                 [cell.user_tagline setText:self.profile_user.tagline];
                 [cell.website_url setText:self.profile_user.website_url];
+                
+                
                 //Removed email
                 //[cell.user_email setText:self.profile_user.user_email];
                 UITapGestureRecognizer *followingTap=[[UITapGestureRecognizer alloc]initWithTarget:self action:@selector(showFollowing)];
@@ -455,11 +457,14 @@
                 UITapGestureRecognizer *followersTap=[[UITapGestureRecognizer alloc]initWithTarget:self action:@selector(showFollower)];
                 followersTap.numberOfTapsRequired=1;
                 
+                UITapGestureRecognizer *webTap=[[UITapGestureRecognizer alloc]initWithTarget:self action:@selector(showWebsite)];
+                webTap.numberOfTapsRequired=1;
+                
                 [cell.user_following addGestureRecognizer:followingTap];
                 [cell.followingLabel addGestureRecognizer:followingTap];
                 [cell.user_follows addGestureRecognizer:followersTap];
                 [cell.followersLabel addGestureRecognizer:followersTap];
-                
+                [cell.website_url addGestureRecognizer:webTap];
                 cell.btnFollow.hidden = [self.profile_user.user_id  isEqualToString: self.current_user_id];
                 [cell.btnFollow setImage:[UIImage imageNamed:@"btnKudoSelect"] forState:UIControlStateNormal];
                 [cell.btnFollow setImage:[UIImage imageNamed:@"btnKudoUnselect"] forState:UIControlStateSelected];
@@ -486,6 +491,13 @@
                 [cell.user_cleans setTitle:self.formattedCleansCount forState:UIControlStateNormal];
                 [cell.user_spotsfound setTitle:self.formattedFindsCount forState:UIControlStateNormal];
                 [cell.user_kudos setTitle:[NSString stringWithFormat:@"%lu", (long)self.kudoCount] forState:UIControlStateNormal];
+                
+                cell.layer.masksToBounds = NO;
+                cell.layer.shadowColor = [[UIColor blackColor] CGColor] ;
+                cell.layer.shadowOffset = CGSizeMake(0, 1);
+                cell.layer.shadowRadius = 1.0f;
+                cell.layer.shadowOpacity = 0.6f;
+
             }
         }
         
@@ -621,6 +633,13 @@
                 [cell.beforePhoto addGestureRecognizer:locationTap];
                 [cell.afterPhoto addGestureRecognizer:locationTap2];
                 
+                //Adding shadows
+                
+                ((ProfileViewCell*)cell).cellView.layer.masksToBounds = NO;
+                ((ProfileViewCell*)cell).cellView.layer.shadowColor = [[UIColor blackColor] CGColor] ;
+                ((ProfileViewCell*)cell).cellView.layer.shadowOffset = CGSizeMake(0, 1);
+                ((ProfileViewCell*)cell).cellView.layer.shadowRadius = 1.0f;
+                ((ProfileViewCell*)cell).cellView.layer.shadowOpacity = 0.6f;
             }
         }
         
@@ -630,6 +649,23 @@
         cell.backgroundColor=[UIColor colorWithRed:238.0 green:238.0 blue:238.0 alpha:1];
     }
     return cell;
+}
+
+-(void) showWebsite
+{
+    NSURL *url = [NSURL URLWithString:self.profile_user.website_url];
+    if ([[UIApplication sharedApplication] canOpenURL:url]) {
+        [[UIApplication sharedApplication] openURL:url];
+    }
+    else
+    {
+        UIAlertController *alertController = [UIAlertController alertControllerWithTitle:@"Error" message:@"Invalid url" preferredStyle:UIAlertControllerStyleAlert];
+        
+        UIAlertAction* ok = [UIAlertAction actionWithTitle:@"OK" style:UIAlertActionStyleDefault handler:nil];
+        [alertController addAction:ok];
+        
+        [self presentViewController:alertController animated:YES completion:nil];
+    }
 }
 
 -(void) showLocation:(id) sender

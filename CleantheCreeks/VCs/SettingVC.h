@@ -33,6 +33,7 @@
 - (IBAction)editPhoto:(UIButton *)sender;
 @property(strong, nonatomic) User * current_user;
 @property (weak, nonatomic) IBOutlet UIImageView *photo;
+@property (weak, nonatomic) IBOutlet UIView *privacyPolicyView;
 @property(strong, nonatomic) UIImage * profile_image;
 @property (nonatomic, assign) id currentResponder;
 @end

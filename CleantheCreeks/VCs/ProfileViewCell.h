@@ -35,6 +35,7 @@
 - (IBAction)kudoClicked:(id)sender;
 @property (weak, nonatomic) IBOutlet UILabel *user_tagline;
 @property (weak, nonatomic) IBOutlet UILabel *website_url;
+@property (weak, nonatomic) IBOutlet UIView *cellView;
 
 @property (strong, nonatomic) ProfileVC * parentVC;
 @end

@@ -13,6 +13,7 @@
 #import <AWSDynamoDB/AWSDynamoDB.h>
 #import <AWSS3/AWSS3.h>
 #import "FacebookPostVC.h"
+#import "TGCameraColor.h"
 @implementation PhotoDetailsVC
 
 - (void)registerForKeyboardNotifications
@@ -78,7 +79,10 @@
     [super viewDidLoad];
     [self.delegate cameraRefresh:NO];
     [self registerForKeyboardNotifications];
+    
     [self.tabBarController.tabBar setHidden:YES];
+    UIColor *tintColor = [UIColor colorWithRed:1/255.0 green:122/255.0 blue:1 alpha:1.0];
+    [TGCameraColor setTintColor:tintColor];
     _locationManager=[[CLLocationManager alloc] init];
     self.mainDelegate=(AppDelegate*)[[UIApplication sharedApplication]delegate];
     UITapGestureRecognizer *tap = [[UITapGestureRecognizer alloc]
