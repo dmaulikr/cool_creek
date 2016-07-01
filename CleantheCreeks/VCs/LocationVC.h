@@ -27,5 +27,5 @@
 - (IBAction)listButtonTapped:(id)sender;
 - (IBAction)mapButtonTapped:(id)sender;
 @property (nonatomic) bool fromSlider, refreshed;
-
+@property (nonatomic) User * user;
 @end

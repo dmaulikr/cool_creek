@@ -34,6 +34,7 @@
 @property(strong, nonatomic) User * current_user;
 @property (weak, nonatomic) IBOutlet UIImageView *photo;
 @property (weak, nonatomic) IBOutlet UIView *privacyPolicyView;
+@property (weak, nonatomic) IBOutlet UIView *blockedView;
 @property(strong, nonatomic) UIImage * profile_image;
 @property (nonatomic, assign) id currentResponder;
 @end

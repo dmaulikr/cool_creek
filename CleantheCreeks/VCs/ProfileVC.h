@@ -10,7 +10,6 @@
 
 
 @property (strong,nonatomic) NSMutableArray * locationArray;
-@property (strong,nonatomic) NSMutableArray * locationImageArray;
 @property (weak, nonatomic) IBOutlet UITableView *profileTable;
 
 @property (strong, nonatomic) UIImage * profileImage;

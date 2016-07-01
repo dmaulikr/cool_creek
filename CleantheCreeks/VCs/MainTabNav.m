@@ -36,11 +36,6 @@ CLLocationManager * locationManager;
                                                  name:@"PushNotification"
                                                object:nil];
     self.mainDelegate=(AppDelegate*)[[UIApplication sharedApplication]delegate];
-    
-}
-
-- (void)viewWillAppear:(BOOL)animated
-{
     if(!_freshLoad)
     {
         self.selectedIndex=1;
@@ -54,7 +49,7 @@ CLLocationManager * locationManager;
      continueWithBlock:^id(AWSTask *task) {
          if (task.result) {
              User *user=task.result;
-             
+             self.current_user = task.result;
              if([user.is_blocked isEqualToString:@"1"])
              {
                  [self blocked];
@@ -62,6 +57,12 @@ CLLocationManager * locationManager;
          }
          return nil;
      }];
+
+}
+
+- (void)viewWillAppear:(BOOL)animated
+{
+    [super viewWillAppear:animated];
     
 }
 

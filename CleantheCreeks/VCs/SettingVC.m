@@ -13,6 +13,7 @@
 
 #import <AWSS3/AWSS3.h>
 #import "PhotoDetailsVC.h"
+
 @implementation SettingVC
 - (void) viewWillAppear:(BOOL)animated
 {
@@ -87,8 +88,11 @@
     
     UITapGestureRecognizer *privacyTap = [[UITapGestureRecognizer alloc] initWithTarget:self action:@selector(privacyTapped:)];
     [privacyTap setNumberOfTapsRequired:1];
-    
     [self.privacyPolicyView addGestureRecognizer:privacyTap];
+    
+    UITapGestureRecognizer *blockedTap = [[UITapGestureRecognizer alloc] initWithTarget:self action:@selector(blockedTapped:)];
+    [blockedTap setNumberOfTapsRequired:1];
+    [self.blockedView addGestureRecognizer:blockedTap];
 }
 
 - (void)resignOnTap:(id)iSender {
@@ -98,13 +102,19 @@
     [self.bio resignFirstResponder];
     
 }
+- (void)blockedTapped:(id)iSender {
+    [self performSegueWithIdentifier:@"showBlockedUsers" sender:self];
+    
+    
+}
+
 - (void)privacyTapped:(id)iSender {
     NSURL *url = [NSURL URLWithString:@"https://www.iubenda.com/privacy-policy/7811463"];
     if ([[UIApplication sharedApplication] canOpenURL:url]) {
         [[UIApplication sharedApplication] openURL:url];
     }
     
-    
+   
 }
 - (BOOL)textFieldShouldReturn:(UITextField *)textField
 
@@ -329,4 +339,5 @@
     }];
 
 }
+
 @end

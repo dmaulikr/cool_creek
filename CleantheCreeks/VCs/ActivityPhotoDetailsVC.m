@@ -133,8 +133,6 @@
     self.commentView.layer.shadowOffset = CGSizeMake(1.0f, 1.0f);
     self.commentView.layer.shadowRadius = 10.0f;
     self.commentView.layer.shadowOpacity = 0.9f;
-    
-    
 }
 
 -(void)dismissKeyboard {
@@ -234,10 +232,6 @@
     return 0;
 }
 
-//- (CGFloat)tableView:(UITableView *)tableView heightForFooterInSection:(NSInteger)section
-//{
-//    return 20.f;
-//}
 - (UITableViewCell *)tableView:(UITableView *)tableView cellForRowAtIndexPath:(NSIndexPath *)indexPath
 {
     UITableViewCell *cell = nil;

@@ -18,7 +18,7 @@
 #import "LocationOverlayView.h"
 #import <FBSDKCoreKit/FBSDKCoreKit.h>
 #import <FBSDKLoginKit/FBSDKLoginKit.h>
-
+#import "MainTabNav.h"
 
 @interface LocationVC()
 @property (nonatomic,strong) UIRefreshControl * refreshControl;
@@ -59,7 +59,8 @@
     self.refreshControl = [[UIRefreshControl alloc]init];
     [self.locationTable addSubview:self.refreshControl];
     self.displayItemCount = 8;
-    
+    self.defaults = [NSUserDefaults standardUserDefaults];
+    self.current_user_id = [self.defaults objectForKey:@"user_id"];
     [self.refreshControl addTarget:self action:@selector(updateData) forControlEvents:UIControlEventValueChanged];
     self.locationTable.infiniteScrollIndicatorStyle = UIActivityIndicatorViewStyleGray;
     self.infiniteIndicator = [[CustomInfiniteIndicator alloc] initWithFrame:CGRectMake(0, 0, 40, 40)];
@@ -74,6 +75,7 @@
         [tableView reloadData];
         [tableView finishInfiniteScroll];
     }];
+   
 }
 
 
@@ -363,12 +365,22 @@
 
 - (void) updateData
 {
+    AWSDynamoDBObjectMapper *dynamoDBObjectMapper = [AWSDynamoDBObjectMapper defaultDynamoDBObjectMapper];
     
+    [[dynamoDBObjectMapper load:[User class] hashKey:self.current_user_id rangeKey:nil]
+     continueWithBlock:^id(AWSTask *task) {
+         if (task.result) {
+             self.user=task.result;
+            
+         }
+         return nil;
+     }];
+
     self.locationArray=[[NSMutableArray alloc]init];
     self.annotationArray = [[NSMutableDictionary alloc]init];
     [self.annotationArray removeAllObjects];
     self.mainDelegate.locationData=[[NSMutableDictionary alloc] init];
-    AWSDynamoDBObjectMapper *dynamoDBObjectMapper = [AWSDynamoDBObjectMapper defaultDynamoDBObjectMapper];
+    
     AWSDynamoDBScanExpression *scanExpression = [AWSDynamoDBScanExpression new];
     scanExpression.filterExpression = @"isDirty = :val";
     scanExpression.expressionAttributeValues = @{@":val":@"true"};
@@ -392,7 +404,11 @@
                 if(location)
                 {
                 if(![self.locationArray containsObject:location])
-                    [self.locationArray addObject:location];
+                {
+                    if(!([self.user.blocked_by containsObject:location.founder_id] || [self.user.blocked_by containsObject:location.cleaner_id]))
+                        [self.locationArray addObject:location];
+                }
+                    
                 }
                 //Setting the annotation
                 LocationAnnotation *annotation=[[LocationAnnotation alloc]init];

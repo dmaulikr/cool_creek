@@ -239,8 +239,8 @@
 
 -(void)followClicked:(UIButton*)sender
 {
-    NSUserDefaults *defaults = [NSUserDefaults standardUserDefaults];
-    NSString *user= [defaults objectForKey:@"user_id"];
+    
+    NSString *user= [self.defaults objectForKey:@"user_id"];
     User * currentuser=[self.appDelegate.userArray objectForKey:user];
     
     NSString * target_id=self.profile_user.user_id;
@@ -405,7 +405,12 @@
 
 - (NSInteger)numberOfSectionsInTableView:(UITableView *)tableView
 {
-    return 3;
+    NSInteger sectionCount=3;
+    NSString *user= [self.defaults objectForKey:@"user_id"];
+    User * currentuser=[self.appDelegate.userArray objectForKey:user];
+    if([currentuser.blocked_by containsObject:self.profile_user.user_id])
+        sectionCount = 2;
+    return sectionCount;
 }
 
 - (UITableViewCell *)tableView:(UITableView *)tableView cellForRowAtIndexPath:(NSIndexPath *)indexPath{
