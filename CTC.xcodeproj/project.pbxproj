@@ -45,6 +45,7 @@
 		3CA8D7DA1C8D0D5900838FDC /* FBSuccessVC.m in Sources */ = {isa = PBXBuildFile; fileRef = 3CA8D7D91C8D0D5800838FDC /* FBSuccessVC.m */; };
 		3CE5EB1F1C84F8310068DF59 /* ProfileViewCell.m in Sources */ = {isa = PBXBuildFile; fileRef = 3CE5EB1E1C84F8310068DF59 /* ProfileViewCell.m */; };
 		6D73E9D4C35B07FF39D76E78 /* libPods-CTC.a in Frameworks */ = {isa = PBXBuildFile; fileRef = CE7D737360035E8A79681299 /* libPods-CTC.a */; };
+		A134B38A1D3342B900DCA0DE /* FBList.m in Sources */ = {isa = PBXBuildFile; fileRef = A134B3891D3342B900DCA0DE /* FBList.m */; };
 		A19C1F171D25AD40009858CC /* BlockedVC.m in Sources */ = {isa = PBXBuildFile; fileRef = A19C1F161D25AD40009858CC /* BlockedVC.m */; };
 		A1E327501D11B5AF00C3CB15 /* eula.html in Resources */ = {isa = PBXBuildFile; fileRef = A1E3274F1D11B5AF00C3CB15 /* eula.html */; };
 		A1E327531D11E21200C3CB15 /* TermsVC.m in Sources */ = {isa = PBXBuildFile; fileRef = A1E327521D11E21200C3CB15 /* TermsVC.m */; };
@@ -171,6 +172,8 @@
 		3CE5EB1E1C84F8310068DF59 /* ProfileViewCell.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = ProfileViewCell.m; sourceTree = "<group>"; };
 		887FE867BC72F219F565332A /* Pods-CTC.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-CTC.release.xcconfig"; path = "Pods/Target Support Files/Pods-CTC/Pods-CTC.release.xcconfig"; sourceTree = "<group>"; };
 		92B93D08FB0E420C8A81C160 /* Pods-CTC.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-CTC.debug.xcconfig"; path = "Pods/Target Support Files/Pods-CTC/Pods-CTC.debug.xcconfig"; sourceTree = "<group>"; };
+		A134B3881D3342B900DCA0DE /* FBList.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = FBList.h; sourceTree = "<group>"; };
+		A134B3891D3342B900DCA0DE /* FBList.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = FBList.m; sourceTree = "<group>"; };
 		A19C1F151D25AD40009858CC /* BlockedVC.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = BlockedVC.h; sourceTree = "<group>"; };
 		A19C1F161D25AD40009858CC /* BlockedVC.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = BlockedVC.m; sourceTree = "<group>"; };
 		A1E3274F1D11B5AF00C3CB15 /* eula.html */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.html; path = eula.html; sourceTree = "<group>"; };
@@ -733,6 +736,8 @@
 				E45E43E91CF2A1A000F56D7E /* FullScreen */,
 				A1E3274E1D11B02F00C3CB15 /* MapVC */,
 				A19C1F181D25AD4B009858CC /* BlockedVC */,
+				A134B3881D3342B900DCA0DE /* FBList.h */,
+				A134B3891D3342B900DCA0DE /* FBList.m */,
 			);
 			path = VCs;
 			sourceTree = "<group>";
@@ -1036,6 +1041,7 @@
 				3C2874B01C88E2E200725B40 /* Activity.m in Sources */,
 				E406D6431CDAE9CF003652CA /* CameraNav.m in Sources */,
 				3C9482EF1CA3F1EA007C4B79 /* CommentView.m in Sources */,
+				A134B38A1D3342B900DCA0DE /* FBList.m in Sources */,
 				E2FD05821C59E4FD004B2C34 /* CameraVC.m in Sources */,
 				E2FD05721C59CA42004B2C34 /* SlideVC.m in Sources */,
 				E22A79A61C77A77100CE66E5 /* LocationAnnotation.m in Sources */,
@@ -1186,8 +1192,9 @@
 			baseConfigurationReference = 92B93D08FB0E420C8A81C160 /* Pods-CTC.debug.xcconfig */;
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
+				CLANG_ALLOW_NON_MODULAR_INCLUDES_IN_FRAMEWORK_MODULES = YES;
 				CLANG_ENABLE_MODULES = YES;
-				CODE_SIGN_IDENTITY = "iPhone Distribution: Red Cherry Consulting Inc (835ZX9XC8P)";
+				CODE_SIGN_IDENTITY = "iPhone Developer: Eiji Kimura (VG6XFZ6ZNQ)";
 				FRAMEWORK_SEARCH_PATHS = (
 					"$(inherited)",
 					"$(PROJECT_DIR)",
@@ -1196,7 +1203,7 @@
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks";
 				PRODUCT_BUNDLE_IDENTIFIER = com.redcherry.CleantheCreeks;
 				PRODUCT_NAME = CTC;
-				PROVISIONING_PROFILE = "d1cec093-5ccd-4c5a-92b4-d33ebecb1be8";
+				PROVISIONING_PROFILE = "8e75df2d-eafa-4412-8853-552c2123a35c";
 				SWIFT_OBJC_BRIDGING_HEADER = "CleantheCreeks/Utils/Clean the Creek-Bridging-Header.h";
 				SWIFT_OPTIMIZATION_LEVEL = "-Onone";
 			};
@@ -1207,9 +1214,10 @@
 			baseConfigurationReference = 887FE867BC72F219F565332A /* Pods-CTC.release.xcconfig */;
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
+				CLANG_ALLOW_NON_MODULAR_INCLUDES_IN_FRAMEWORK_MODULES = YES;
 				CLANG_ENABLE_MODULES = YES;
-				CODE_SIGN_IDENTITY = "iPhone Distribution: Red Cherry Consulting Inc (835ZX9XC8P)";
-				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "iPhone Distribution: Red Cherry Consulting Inc (835ZX9XC8P)";
+				CODE_SIGN_IDENTITY = "iPhone Developer: Eiji Kimura (VG6XFZ6ZNQ)";
+				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "iPhone Developer: Eiji Kimura (VG6XFZ6ZNQ)";
 				FRAMEWORK_SEARCH_PATHS = (
 					"$(inherited)",
 					"$(PROJECT_DIR)",
@@ -1218,7 +1226,7 @@
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks";
 				PRODUCT_BUNDLE_IDENTIFIER = com.redcherry.CleantheCreeks;
 				PRODUCT_NAME = CTC;
-				PROVISIONING_PROFILE = "d1cec093-5ccd-4c5a-92b4-d33ebecb1be8";
+				PROVISIONING_PROFILE = "8e75df2d-eafa-4412-8853-552c2123a35c";
 				SWIFT_OBJC_BRIDGING_HEADER = "CleantheCreeks/Utils/Clean the Creek-Bridging-Header.h";
 			};
 			name = Release;

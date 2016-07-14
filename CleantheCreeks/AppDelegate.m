@@ -15,6 +15,7 @@
 #import "User.h"
 #import "Constants.h"
 #import "Flurry.h"
+#import "Bolts/Bolts.h"
 #define kGeoCodingString @"http://maps.google.com/maps/geo?q=%f,%f&output=csv"
 @interface AppDelegate ()
 
@@ -25,6 +26,35 @@
 @synthesize locationManager=_locationManager;
 @synthesize locationData=_locationData;
 
+
+- (BOOL)application:(UIApplication *)application
+            openURL:(NSURL *)url
+  sourceApplication:(NSString *)sourceApplication
+         annotation:(id)annotation {
+    BOOL handled = [[FBSDKApplicationDelegate sharedInstance] application:application
+                                                                  openURL:url
+                                                        sourceApplication:sourceApplication
+                                                               annotation:annotation
+                    ];
+    
+    if (handled) {
+        return handled;
+    }
+    
+    // If the SDK did not handle the incoming URL, check it for app link data
+    BFURL *parsedUrl = [BFURL URLWithInboundURL:url sourceApplication:sourceApplication];
+    if ([parsedUrl appLinkData]) {
+        NSURL *targetUrl = [parsedUrl targetURL];
+        
+        // ...process app link data...
+        
+        return YES;
+    }
+    
+    // ...add any other custom processing...
+    
+    return YES;
+}
 - (BOOL)application:(UIApplication *)application didFinishLaunchingWithOptions:(NSDictionary *)launchOptions {
     // Override point for customization after application launch.
     
@@ -97,6 +127,7 @@
 
 - (void)application:(UIApplication *)application didReceiveRemoteNotification:(NSDictionary *)userInfo fetchCompletionHandler:(void (^)(UIBackgroundFetchResult result))handler
 {
+    NSLog(@"%@",userInfo);
     self.notificationCount++;
     if ([UIApplication sharedApplication].applicationState == UIApplicationStateInactive) {
         [[NSNotificationCenter defaultCenter] postNotificationName:@"PushNotification" object:nil];
@@ -113,6 +144,7 @@
     }//End background
     
 }
+
 - (void)application:(UIApplication *)application didRegisterUserNotificationSettings:(UIUserNotificationSettings *)notificationSettings // NS_AVAILABLE_IOS(8_0);
 {
     [application registerForRemoteNotifications];
@@ -191,15 +223,7 @@
     // Called when the application is about to terminate. Save data if appropriate. See also applicationDidEnterBackground:.
 }
 
-- (BOOL)application:(UIApplication *)application
-            openURL:(NSURL *)url
-  sourceApplication:(NSString *)sourceApplication
-         annotation:(id)annotation {
-    return [[FBSDKApplicationDelegate sharedInstance] application:application
-                                                          openURL:url
-                                                sourceApplication:sourceApplication
-                                                       annotation:annotation];
-}
+
 
 + (UIImage *)imageFromColor:(UIColor *)color forSize:(CGSize)size withCornerRadius:(CGFloat)radius
 {

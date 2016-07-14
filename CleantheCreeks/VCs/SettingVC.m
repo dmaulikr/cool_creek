@@ -13,7 +13,9 @@
 
 #import <AWSS3/AWSS3.h>
 #import "PhotoDetailsVC.h"
-
+#import <FBSDKCoreKit/FBSDKCoreKit.h>
+#import <FBSDKLoginKit/FBSDKLoginKit.h>
+#import <FBSDKShareKit/FBSDKShareKit.h>
 @implementation SettingVC
 - (void) viewWillAppear:(BOOL)animated
 {
@@ -93,6 +95,10 @@
     UITapGestureRecognizer *blockedTap = [[UITapGestureRecognizer alloc] initWithTarget:self action:@selector(blockedTapped:)];
     [blockedTap setNumberOfTapsRequired:1];
     [self.blockedView addGestureRecognizer:blockedTap];
+    
+    UITapGestureRecognizer *inviteTap = [[UITapGestureRecognizer alloc] initWithTarget:self action:@selector(inviteTapped:)];
+    [inviteTap setNumberOfTapsRequired:1];
+    [self.inviteFB addGestureRecognizer:inviteTap];
 }
 
 - (void)resignOnTap:(id)iSender {
@@ -102,10 +108,24 @@
     [self.bio resignFirstResponder];
     
 }
+
 - (void)blockedTapped:(id)iSender {
     [self performSegueWithIdentifier:@"showBlockedUsers" sender:self];
+}
+
+- (void)inviteTapped:(id)iSender {
+    //[self performSegueWithIdentifier:@"showFBFriends" sender:self];
+    FBSDKAppInviteContent *content =[[FBSDKAppInviteContent alloc] init];
+    content.appLinkURL = [NSURL URLWithString:@"https://fb.me/1614282345550943"];
+    //optionally set previewImageURL
+    content.appInvitePreviewImageURL = [NSURL URLWithString:@"http://cleanthecreek.com/fb-invite.jpg"];
     
-    
+    // Present the dialog. Assumes self is a view controller
+    // which implements the protocol `FBSDKAppInviteDialogDelegate`.
+    [FBSDKAppInviteDialog showFromViewController:self
+                                     withContent:content
+                                        delegate:nil];
+
 }
 
 - (void)privacyTapped:(id)iSender {
@@ -333,11 +353,9 @@
 
 - (void)imagePickerControllerDidCancel:(UIImagePickerController *)picker
 {
-    
     [picker dismissViewControllerAnimated:YES completion:^{
         
     }];
-
 }
 
 @end

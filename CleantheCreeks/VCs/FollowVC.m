@@ -13,7 +13,6 @@
 #import <AWSCore/AWSCore.h>
 #import <AWSDynamoDB/AWSDynamoDB.h>
 
-#import <AWSS3/AWSS3.h>
 #import "User.h"
 #import "Location.h"
 #import "ProfileVC.h"

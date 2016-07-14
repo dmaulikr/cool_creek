@@ -36,5 +36,6 @@
 @property (weak, nonatomic) IBOutlet UIView *privacyPolicyView;
 @property (weak, nonatomic) IBOutlet UIView *blockedView;
 @property(strong, nonatomic) UIImage * profile_image;
+@property (weak, nonatomic) IBOutlet UIView *inviteFB;
 @property (nonatomic, assign) id currentResponder;
 @end

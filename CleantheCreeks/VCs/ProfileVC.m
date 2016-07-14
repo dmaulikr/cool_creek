@@ -11,6 +11,7 @@
 #import "CustomInfiniteIndicator.h"
 #import "ActivityPhotoDetailsVC.h"
 #import "SettingVC.h"
+
 @interface ProfileVC()
 @property (nonatomic,strong) UIRefreshControl * refreshControl;
 @property (nonatomic,strong) CustomInfiniteIndicator *infiniteIndicator;

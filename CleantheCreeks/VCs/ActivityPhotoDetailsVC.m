@@ -21,6 +21,7 @@
 #import "FacebookPostVC.h"
 #import <FBSDKCoreKit/FBSDKCoreKit.h>
 #import <FBSDKLoginKit/FBSDKLoginKit.h>
+#import <FBSDKShareKit/FBSDKShareKit.h>
 #import <MessageUI/MessageUI.h>
 #import <MessageUI/MFMailComposeViewController.h>
 #import "ProfileVC.h"
@@ -662,41 +663,78 @@
 
 -(void)reportButtonClicked:(UIButton*) sender
 {
-    UIActionSheet *popup = [[UIActionSheet alloc] initWithTitle:@"Report" delegate:self cancelButtonTitle:@"Cancel" destructiveButtonTitle:nil otherButtonTitles:
-                            @"Report",
-                            nil];
-    popup.tag = 1;
-    [popup showInView:self.view];
+    
+    UIAlertController *actionSheet = [UIAlertController alertControllerWithTitle:@"Title" message:@"" preferredStyle:UIAlertControllerStyleActionSheet];
+    
+    [actionSheet addAction:[UIAlertAction actionWithTitle:@"Cancel" style:UIAlertActionStyleCancel handler:^(UIAlertAction *action) {
+        
+        // Cancel button tappped.
+        [self dismissViewControllerAnimated:YES completion:^{
+        }];
+    }]];
+    
+    [actionSheet addAction:[UIAlertAction actionWithTitle:@"Invite friends" style:UIAlertActionStyleDefault handler:^(UIAlertAction *action) {
+        FBSDKAppInviteContent *content =[[FBSDKAppInviteContent alloc] init];
+        content.appLinkURL = [NSURL URLWithString:@"http://cleanthecreek.com"];
+        //optionally set previewImageURL
+        content.appInvitePreviewImageURL = [NSURL URLWithString:@"http://cleanthecreek.com/fb-invite.jpg"];
+        
+        // Present the dialog. Assumes self is a view controller
+        // which implements the protocol `FBSDKAppInviteDialogDelegate`.
+        [FBSDKAppInviteDialog showFromViewController:self
+                                         withContent:content
+                                            delegate:self];
+
+    }]];
+
+    
+    [actionSheet addAction:[UIAlertAction actionWithTitle:@"Report abuse" style:UIAlertActionStyleDefault handler:^(UIAlertAction *action) {
+        
+        if([MFMailComposeViewController canSendMail]) {
+            MFMailComposeViewController *mailCont = [[MFMailComposeViewController alloc] init];
+            mailCont.mailComposeDelegate = self;
+            NSString * title = [NSString stringWithFormat:@"%@ has uploaded irrelevant photos.",self.location.found_by];
+            [mailCont setSubject:title];
+            [mailCont setToRecipients:[NSArray arrayWithObject:@"abuse@cleanthecreek.com"]];
+            NSString * message=[NSString stringWithFormat:@"%@ with id %@ has uploaded irrelevant photos on %@, %@, %@",self.location.found_by, self.location.founder_id, self.location.location_name, self.location.state, self.location.country];
+            [mailCont setMessageBody:message isHTML:NO];
+            
+            [self presentViewController:mailCont animated:YES completion:nil];
+        }
+    }]];
+    
+    // Present action sheet.
+    [self presentViewController:actionSheet animated:YES completion:nil];
     
 }
 
-- (void)actionSheet:(UIActionSheet *)popup clickedButtonAtIndex:(NSInteger)buttonIndex {
-    
-    switch (popup.tag) {
-        case 1: {
-            switch (buttonIndex) {
-                case 0:
-                    if([MFMailComposeViewController canSendMail]) {
-                        MFMailComposeViewController *mailCont = [[MFMailComposeViewController alloc] init];
-                        mailCont.mailComposeDelegate = self;
-                        NSString * title = [NSString stringWithFormat:@"%@ has uploaded irrelevant photos.",self.location.found_by];
-                        [mailCont setSubject:title];
-                        [mailCont setToRecipients:[NSArray arrayWithObject:@"abuse@cleanthecreek.com"]];
-                        NSString * message=[NSString stringWithFormat:@"%@ with id %@ has uploaded irrelevant photos on %@, %@, %@",self.location.found_by, self.location.founder_id, self.location.location_name, self.location.state, self.location.country];
-                        [mailCont setMessageBody:message isHTML:NO];
-                        
-                        [self presentModalViewController:mailCont animated:YES];
-                    }
-                    break;
-                default:
-                    break;
-            }
-            break;
-        }
-        default:
-            break;
-    }
-}
+//- (void)actionSheet:(UIActionSheet *)popup clickedButtonAtIndex:(NSInteger)buttonIndex {
+//    
+//    switch (popup.tag) {
+//        case 1: {
+//            switch (buttonIndex) {
+//                case 0:
+//                    if([MFMailComposeViewController canSendMail]) {
+//                        MFMailComposeViewController *mailCont = [[MFMailComposeViewController alloc] init];
+//                        mailCont.mailComposeDelegate = self;
+//                        NSString * title = [NSString stringWithFormat:@"%@ has uploaded irrelevant photos.",self.location.found_by];
+//                        [mailCont setSubject:title];
+//                        [mailCont setToRecipients:[NSArray arrayWithObject:@"abuse@cleanthecreek.com"]];
+//                        NSString * message=[NSString stringWithFormat:@"%@ with id %@ has uploaded irrelevant photos on %@, %@, %@",self.location.found_by, self.location.founder_id, self.location.location_name, self.location.state, self.location.country];
+//                        [mailCont setMessageBody:message isHTML:NO];
+//                        
+//                        [self presentModalViewController:mailCont animated:YES];
+//                    }
+//                    break;
+//                default:
+//                    break;
+//            }
+//            break;
+//        }
+//        default:
+//            break;
+//    }
+//}
 
 - (void)mailComposeController:(MFMailComposeViewController*)controller didFinishWithResult:(MFMailComposeResult)result error:(NSError*)error {
     [self dismissModalViewControllerAnimated:YES];

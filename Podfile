@@ -11,4 +11,5 @@ pod 'SWTableViewCell', '~> 0.3.7'
 pod 'Flurry-iOS-SDK/FlurrySDK'
 pod "FBAnnotationClustering"
 pod 'TGCameraViewController'
+pod 'Bolts'
 end

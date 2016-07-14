@@ -84,7 +84,7 @@ UIButton *loginButton;
 {
     FBSDKLoginManager *login = [[FBSDKLoginManager alloc] init];
     [login
-     logInWithReadPermissions: @[@"public_profile",@"email"]
+     logInWithReadPermissions: @[@"public_profile",@"email",@"user_friends"]
      fromViewController:self
      handler:^(FBSDKLoginManagerLoginResult *result, NSError *error) {
          if (error) {
@@ -111,6 +111,10 @@ UIButton *loginButton;
                       [loginInfo setObject:result[@"email"] forKey:@"user_email"];
                       [loginInfo setObject:result[@"location"] forKey:@"user_location"];
                       [loginInfo setObject:result[@"about"] forKey:@"user_about"];
+                      // Storing FB token
+                      NSString *access_token=[FBSDKAccessToken currentAccessToken].tokenString;
+                      [loginInfo setObject:access_token forKey:@"fb_token"];
+                
                       [loginInfo synchronize];
                       User * user_info = [User new];
                       user_info.user_id = result[@"id"];
