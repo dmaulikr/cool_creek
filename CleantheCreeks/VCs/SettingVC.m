@@ -114,17 +114,17 @@
 }
 
 - (void)inviteTapped:(id)iSender {
-    //[self performSegueWithIdentifier:@"showFBFriends" sender:self];
-    FBSDKAppInviteContent *content =[[FBSDKAppInviteContent alloc] init];
-    content.appLinkURL = [NSURL URLWithString:@"https://fb.me/1614282345550943"];
-    //optionally set previewImageURL
-    content.appInvitePreviewImageURL = [NSURL URLWithString:@"http://cleanthecreek.com/fb-invite.jpg"];
-    
-    // Present the dialog. Assumes self is a view controller
-    // which implements the protocol `FBSDKAppInviteDialogDelegate`.
-    [FBSDKAppInviteDialog showFromViewController:self
-                                     withContent:content
-                                        delegate:nil];
+    [self performSegueWithIdentifier:@"showFBFriends" sender:self];
+//    FBSDKAppInviteContent *content =[[FBSDKAppInviteContent alloc] init];
+//    content.appLinkURL = [NSURL URLWithString:@"https://fb.me/1614282345550943"];
+//    //optionally set previewImageURL
+//    content.appInvitePreviewImageURL = [NSURL URLWithString:@"http://cleanthecreek.com/fb-invite.jpg"];
+//    
+//    // Present the dialog. Assumes self is a view controller
+//    // which implements the protocol `FBSDKAppInviteDialogDelegate`.
+//    [FBSDKAppInviteDialog showFromViewController:self
+//                                     withContent:content
+//                                        delegate:nil];
 
 }
 
