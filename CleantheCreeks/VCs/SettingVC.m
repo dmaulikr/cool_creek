@@ -69,7 +69,6 @@
     [self.delegate loadData];
     self.current_user_id = [settingInfo objectForKey:@"user_id"];
     
-    
     [self.fullName setText:[settingInfo objectForKey:@"user_name"]];
     [self.userName setText:self.current_user.nick_name];
     [self.website setText:self.current_user.website_url];
@@ -84,9 +83,7 @@
     
     UITapGestureRecognizer *singleTap = [[UITapGestureRecognizer alloc] initWithTarget:self action:@selector(resignOnTap:)];
     [singleTap setNumberOfTapsRequired:1];
-    
     [self.view addGestureRecognizer:singleTap];
-    
     
     UITapGestureRecognizer *privacyTap = [[UITapGestureRecognizer alloc] initWithTarget:self action:@selector(privacyTapped:)];
     [privacyTap setNumberOfTapsRequired:1];
@@ -114,18 +111,15 @@
 }
 
 - (void)inviteTapped:(id)iSender {
-    [self performSegueWithIdentifier:@"showFBFriends" sender:self];
-//    FBSDKAppInviteContent *content =[[FBSDKAppInviteContent alloc] init];
-//    content.appLinkURL = [NSURL URLWithString:@"https://fb.me/1614282345550943"];
-//    //optionally set previewImageURL
-//    content.appInvitePreviewImageURL = [NSURL URLWithString:@"http://cleanthecreek.com/fb-invite.jpg"];
-//    
-//    // Present the dialog. Assumes self is a view controller
-//    // which implements the protocol `FBSDKAppInviteDialogDelegate`.
-//    [FBSDKAppInviteDialog showFromViewController:self
-//                                     withContent:content
-//                                        delegate:nil];
-
+    FBSDKAppInviteContent *content =[[FBSDKAppInviteContent alloc] init];
+    content.appLinkURL = [NSURL URLWithString:@"https://fb.me/1619190835060094"];
+    //optionally set previewImageURL
+    content.appInvitePreviewImageURL = [NSURL URLWithString:@"http://cleanthecreek.com/fb-invite.jpg"];
+    // Present the dialog. Assumes self is a view controller
+    // which implements the protocol `FBSDKAppInviteDialogDelegate`.
+    [FBSDKAppInviteDialog showFromViewController:self
+                                     withContent:content
+                                        delegate:nil];
 }
 
 - (void)privacyTapped:(id)iSender {

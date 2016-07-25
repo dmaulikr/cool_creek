@@ -8,7 +8,6 @@
 #import "User.h"
 @interface ProfileVC : BaseVC<UITableViewDataSource, UITableViewDelegate>
 
-
 @property (strong,nonatomic) NSMutableArray * locationArray;
 @property (weak, nonatomic) IBOutlet UITableView *profileTable;
 
@@ -28,4 +27,5 @@
 @property (strong, nonatomic) NSMutableDictionary * kudoArray;
 - (void)updateData;
 - (void)updateCell;
+
 @end

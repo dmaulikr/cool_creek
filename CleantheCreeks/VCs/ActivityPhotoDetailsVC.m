@@ -675,15 +675,14 @@
     
     [actionSheet addAction:[UIAlertAction actionWithTitle:@"Invite friends" style:UIAlertActionStyleDefault handler:^(UIAlertAction *action) {
         FBSDKAppInviteContent *content =[[FBSDKAppInviteContent alloc] init];
-        content.appLinkURL = [NSURL URLWithString:@"http://cleanthecreek.com"];
+        content.appLinkURL = [NSURL URLWithString:@"https://fb.me/1619190835060094"];
         //optionally set previewImageURL
         content.appInvitePreviewImageURL = [NSURL URLWithString:@"http://cleanthecreek.com/fb-invite.jpg"];
-        
         // Present the dialog. Assumes self is a view controller
         // which implements the protocol `FBSDKAppInviteDialogDelegate`.
         [FBSDKAppInviteDialog showFromViewController:self
                                          withContent:content
-                                            delegate:self];
+                                            delegate:nil];
 
     }]];
 

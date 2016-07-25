@@ -117,7 +117,6 @@
 
 -(void) updateCell
 {
-    User * user = [self.appDelegate.userArray objectForKey:self.current_user_id];
     self.activityArray=[[NSMutableArray alloc]init];
     [self.activityArray removeAllObjects];
     
