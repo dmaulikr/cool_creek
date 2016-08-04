@@ -490,34 +490,21 @@
     }
     else
     {
-        UIAlertController *alertController = [UIAlertController alertControllerWithTitle:@"Whoa Whoa Whoa!" message:@"What is the deal? Do you want to tag this spot as a dirty location or can we wrap this one up." preferredStyle:UIAlertControllerStyleAlert];
+        UIAlertController *alertController = [UIAlertController alertControllerWithTitle:@"New Dirty Location Found!" message:@"Would you like to post this location on the map as a new dirty location with the just the before photo so others or your self can clean it up later? Or post the after clean up photo now?" preferredStyle:UIAlertControllerStyleAlert];
         
-        [alertController addAction:[UIAlertAction actionWithTitle:@"Tag as dirty" style:UIAlertActionStyleDefault handler:^(UIAlertAction *action) {
-            [self storeData:true];
-            [self generateNotification:NO];
-            [self performSegueWithIdentifier:@"foundFBPost" sender:self];
-        }]];
-        
-        [alertController addAction:[UIAlertAction actionWithTitle:@"Wrap this up" style:UIAlertActionStyleDefault handler:^(UIAlertAction *action) {
-            
-//            UIImagePickerController *picker=[[UIImagePickerController alloc] init];
-//            picker.allowsEditing = YES;
-//            if([UIImagePickerController isSourceTypeAvailable:UIImagePickerControllerSourceTypeCamera]==NO)
-//            {
-//                picker.sourceType=UIImagePickerControllerSourceTypePhotoLibrary;
-//            }
-//            else
-//            {
-//                picker.sourceType=UIImagePickerControllerSourceTypeCamera;
-//                picker.cameraCaptureMode = UIImagePickerControllerCameraCaptureModePhoto;
-//            }
-//            picker.delegate = self;
-//            [self presentViewController:picker animated:YES completion:nil];
+        [alertController addAction:[UIAlertAction actionWithTitle:@"I’ve Cleaned It Up" style:UIAlertActionStyleDefault handler:^(UIAlertAction *action) {
             TGCameraNavigationController *navigationController =
             [TGCameraNavigationController newWithCameraDelegate:self];
             
             [self presentViewController:navigationController animated:YES completion:nil];
             self.secondPhototaken=YES;
+                    }]];
+        
+        [alertController addAction:[UIAlertAction actionWithTitle:@"Post New Dirty Location" style:UIAlertActionStyleDefault handler:^(UIAlertAction *action) {
+            [self storeData:true];
+            [self generateNotification:NO];
+            [self performSegueWithIdentifier:@"foundFBPost" sender:self];
+
         }]];
         
         dispatch_async(dispatch_get_main_queue(), ^ {

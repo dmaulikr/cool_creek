@@ -97,9 +97,7 @@ UIButton *loginButton;
              [parameters setValue:@"id,name,email,location,about" forKey:@"fields"];
              [[[FBSDKGraphRequest alloc] initWithGraphPath:@"me" parameters:parameters]
               startWithCompletionHandler:^(FBSDKGraphRequestConnection *connection, id result, NSError *error) {
-                  
                       [self moveToMainNav];
-                   
                   if (!error) {
                      
                       NSLog(@"fetched user:%@  and Email : %@", result,result[@"email"]);
@@ -120,7 +118,6 @@ UIButton *loginButton;
                       user_info.user_id = result[@"id"];
                       user_info.user_name = result[@"name"];
                       user_info.device_token = [loginInfo objectForKey:@"devicetoken"];
-//                      user_info.user_email= [loginInfo objectForKey:@"user_email"];
                       user_info.user_about = [loginInfo objectForKey:@"user_about"];
                       
                       AWSDynamoDBObjectMapper *dynamoDBObjectMapper = [AWSDynamoDBObjectMapper defaultDynamoDBObjectMapper];
