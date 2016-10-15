@@ -117,6 +117,7 @@
     // Present action sheet.
     [self presentViewController:actionSheet animated:YES completion:nil];
 }
+
 -(void)updateData
 {
     
@@ -137,7 +138,6 @@
                  if([user.blocked_by containsObject:self.current_user_id])
                  {
                      [self.blockedArray addObject:user];
-                     
                      
                  }
                  

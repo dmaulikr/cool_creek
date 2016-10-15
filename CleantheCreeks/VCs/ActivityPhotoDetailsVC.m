@@ -66,7 +66,6 @@
 
 - (void)keyboardWillBeHidden:(NSNotification*)aNotification
 {
-    
     UIEdgeInsets contentInsets = UIEdgeInsetsZero;
     self.tv.contentInset = contentInsets;
     self.tv.scrollIndicatorInsets = contentInsets;
@@ -74,7 +73,6 @@
 }
 
 - (BOOL)textFieldShouldEndEditing:(UITextField *)textField
-
 {
     [textField resignFirstResponder];
     return YES;
@@ -707,34 +705,6 @@
     
 }
 
-//- (void)actionSheet:(UIActionSheet *)popup clickedButtonAtIndex:(NSInteger)buttonIndex {
-//    
-//    switch (popup.tag) {
-//        case 1: {
-//            switch (buttonIndex) {
-//                case 0:
-//                    if([MFMailComposeViewController canSendMail]) {
-//                        MFMailComposeViewController *mailCont = [[MFMailComposeViewController alloc] init];
-//                        mailCont.mailComposeDelegate = self;
-//                        NSString * title = [NSString stringWithFormat:@"%@ has uploaded irrelevant photos.",self.location.found_by];
-//                        [mailCont setSubject:title];
-//                        [mailCont setToRecipients:[NSArray arrayWithObject:@"abuse@cleanthecreek.com"]];
-//                        NSString * message=[NSString stringWithFormat:@"%@ with id %@ has uploaded irrelevant photos on %@, %@, %@",self.location.found_by, self.location.founder_id, self.location.location_name, self.location.state, self.location.country];
-//                        [mailCont setMessageBody:message isHTML:NO];
-//                        
-//                        [self presentModalViewController:mailCont animated:YES];
-//                    }
-//                    break;
-//                default:
-//                    break;
-//            }
-//            break;
-//        }
-//        default:
-//            break;
-//    }
-//}
-
 - (void)mailComposeController:(MFMailComposeViewController*)controller didFinishWithResult:(MFMailComposeResult)result error:(NSError*)error {
     [self dismissModalViewControllerAnimated:YES];
 }
@@ -862,21 +832,6 @@
     else
         return YES;
 }
-//-(void)imagePickerController:(UIImagePickerController *)picker didFinishPickingMediaWithInfo:(NSDictionary<NSString *,id> *)info
-//{
-//    NSLog(@"Photo taken");
-//    UIImage * photo=[[UIImage alloc]init];
-//    photo = (UIImage *)[info objectForKey:UIImagePickerControllerEditedImage];;
-//    
-//    self.afterPhoto=photo;
-//    [picker dismissViewControllerAnimated:YES completion:nil];
-//    
-//    dispatch_async(dispatch_get_main_queue(), ^ {
-//        [self cleanLocation];
-//    });
-//    [self dismissViewControllerAnimated:NO completion:nil];
-//    
-//}
 
 - (void)cameraDidTakePhoto:(UIImage *)image
 {
@@ -929,16 +884,14 @@
                           [loginInfo setObject:fbUsername forKey:@"username"];
                           [loginInfo setObject:result[@"id"] forKey:@"user_id"];
                           [loginInfo setObject:result[@"name"] forKey:@"user_name"];
-//                          [loginInfo setObject:result[@"email"] forKey:@"user_email"];
                           [loginInfo setObject:result[@"location"] forKey:@"user_location"];
                           [loginInfo setObject:result[@"about"] forKey:@"user_about"];
                           [loginInfo synchronize];
                           User * user_info = [User new];
                           user_info.user_id = result[@"id"];
-                          //user_info.kudos = [[NSArray alloc]init];
                           user_info.user_name = result[@"name"];
                           user_info.device_token = [loginInfo objectForKey:@"devicetoken"];
-//                          user_info.user_email= [loginInfo objectForKey:@"user_email"];
+
                           user_info.user_about=[loginInfo objectForKey:@"user_about"];
                           
                           AWSDynamoDBObjectMapperConfiguration *updateMapperConfig = [AWSDynamoDBObjectMapperConfiguration new];
@@ -1012,11 +965,6 @@
         });
     }
 }
-
-//- (void)imagePickerControllerDidCancel:(UIImagePickerController *)picker
-//{
-//    [picker dismissViewControllerAnimated:YES completion:nil];
-//}
 
 - (void)cameraDidCancel
 {

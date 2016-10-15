@@ -83,7 +83,7 @@
                         <viewControllerLayoutGuide type="bottom" id="wfy-db-euE"/>
                     </layoutGuides>
                     <view key="view" contentMode="scaleToFill" id="8bC-Xf-vdC">
-                        <rect key="frame" x="0.0" y="0.0" width="600" height="600"/>
+                        <rect key="frame" x="0.0" y="0.0" width="400" height="1000"/>
                         <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
                         <color key="backgroundColor" white="1" alpha="1" colorSpace="custom" customColorSpace="calibratedWhite"/>
                     </view>
@@ -332,7 +332,7 @@
                         <viewControllerLayoutGuide type="bottom" id="Sjy-nu-FH9"/>
                     </layoutGuides>
                     <view key="view" contentMode="scaleToFill" id="wOU-RE-3Uu">
-                        <rect key="frame" x="0.0" y="0.0" width="600" height="600"/>
+                        <rect key="frame" x="0.0" y="0.0" width="400" height="1000"/>
                         <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
                         <color key="backgroundColor" white="1" alpha="1" colorSpace="calibratedWhite"/>
                     </view>
@@ -3131,7 +3131,7 @@
                         <viewControllerLayoutGuide type="bottom" id="KLv-UZ-hgA"/>
                     </layoutGuides>
                     <view key="view" contentMode="scaleToFill" id="LAg-nS-5qg">
-                        <rect key="frame" x="0.0" y="0.0" width="600" height="600"/>
+                        <rect key="frame" x="0.0" y="0.0" width="400" height="1000"/>
                         <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
                         <subviews>
                             <view contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="33F-VS-lvl">
@@ -3650,7 +3650,7 @@
                         <viewControllerLayoutGuide type="bottom" id="fum-5R-OeK"/>
                     </layoutGuides>
                     <view key="view" contentMode="scaleToFill" id="zii-rL-Fzp">
-                        <rect key="frame" x="0.0" y="0.0" width="600" height="600"/>
+                        <rect key="frame" x="0.0" y="0.0" width="400" height="1000"/>
                         <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
                         <subviews>
                             <containerView opaque="NO" contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="jI2-Uq-H1A">
@@ -4287,7 +4287,7 @@
                         <viewControllerLayoutGuide type="bottom" id="GDc-YI-X7f"/>
                     </layoutGuides>
                     <view key="view" contentMode="scaleToFill" id="8Ek-HR-Wnk">
-                        <rect key="frame" x="0.0" y="0.0" width="600" height="600"/>
+                        <rect key="frame" x="0.0" y="0.0" width="400" height="1000"/>
                         <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
                         <subviews>
                             <containerView opaque="NO" contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="YaL-9Q-rFO">
@@ -8978,7 +8978,7 @@
                         <viewControllerLayoutGuide type="bottom" id="cXx-Vu-mHf"/>
                     </layoutGuides>
                     <view key="view" contentMode="scaleToFill" id="Ahm-Se-eMb">
-                        <rect key="frame" x="0.0" y="0.0" width="600" height="600"/>
+                        <rect key="frame" x="0.0" y="0.0" width="375" height="800"/>
                         <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
                         <subviews>
                             <containerView opaque="NO" contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="Fxw-9r-SDa">
@@ -9046,9 +9046,8 @@
                                                                     <exclude reference="ELK-0r-YZ1"/>
                                                                 </mask>
                                                             </variation>
-                                                            <variation key="heightClass=regular-widthClass=compact" ambiguous="YES">
+                                                            <variation key="heightClass=regular-widthClass=compact">
                                                                 <fontDescription key="fontDescription" name="HelveticaNeue" family="Helvetica Neue" pointSize="16"/>
-                                                                <rect key="frame" x="82" y="27" width="207" height="34"/>
                                                                 <mask key="constraints">
                                                                     <exclude reference="4of-wD-Lwt"/>
                                                                     <include reference="ELK-0r-YZ1"/>
@@ -9067,8 +9066,7 @@
                                                                     <exclude reference="5Ax-oq-j9h"/>
                                                                 </mask>
                                                             </variation>
-                                                            <variation key="heightClass=regular-widthClass=compact" ambiguous="YES">
-                                                                <rect key="frame" x="8" y="5" width="60" height="60"/>
+                                                            <variation key="heightClass=regular-widthClass=compact">
                                                                 <mask key="constraints">
                                                                     <include reference="0WR-DZ-94R"/>
                                                                     <include reference="5Ax-oq-j9h"/>
@@ -9088,9 +9086,8 @@
                                                                     <exclude reference="sF1-7K-04s"/>
                                                                 </mask>
                                                             </variation>
-                                                            <variation key="heightClass=regular-widthClass=compact" ambiguous="YES">
+                                                            <variation key="heightClass=regular-widthClass=compact">
                                                                 <fontDescription key="fontDescription" name="HelveticaNeue" family="Helvetica Neue" pointSize="17"/>
-                                                                <rect key="frame" x="82" y="5" width="207" height="19"/>
                                                                 <mask key="constraints">
                                                                     <include reference="sF1-7K-04s"/>
                                                                 </mask>
@@ -9113,8 +9110,7 @@
                                                                     <exclude reference="Sru-Wm-Jip"/>
                                                                 </mask>
                                                             </variation>
-                                                            <variation key="heightClass=regular-widthClass=compact" ambiguous="YES">
-                                                                <rect key="frame" x="297" y="5" width="64" height="60"/>
+                                                            <variation key="heightClass=regular-widthClass=compact">
                                                                 <mask key="constraints">
                                                                     <include reference="P3e-BB-5gk"/>
                                                                     <include reference="Sru-Wm-Jip"/>
@@ -9179,8 +9175,7 @@
                                                             <exclude reference="btl-41-4Zj"/>
                                                         </mask>
                                                     </variation>
-                                                    <variation key="heightClass=regular-widthClass=compact" ambiguous="YES" misplaced="YES">
-                                                        <rect key="frame" x="0.0" y="5" width="365" height="70"/>
+                                                    <variation key="heightClass=regular-widthClass=compact">
                                                         <mask key="subviews">
                                                             <include reference="tGv-D5-yaj"/>
                                                             <include reference="rmF-S1-Koe"/>
@@ -9243,8 +9238,7 @@
                                                     <exclude reference="u73-F2-rwf"/>
                                                 </mask>
                                             </variation>
-                                            <variation key="heightClass=regular-widthClass=compact" ambiguous="YES">
-                                                <rect key="frame" x="0.0" y="0.0" width="382" height="79"/>
+                                            <variation key="heightClass=regular-widthClass=compact">
                                                 <mask key="subviews">
                                                     <include reference="HB3-NT-pRE"/>
                                                 </mask>
@@ -9297,6 +9291,9 @@
                                     <segment title="FOLLOWING"/>
                                     <segment title="FOLLOWERS"/>
                                 </segments>
+                                <variation key="heightClass=regular-widthClass=compact" misplaced="YES">
+                                    <rect key="frame" x="96" y="82" width="185" height="29"/>
+                                </variation>
                                 <connections>
                                     <action selector="followingChange:" destination="0aN-Wt-yoX" eventType="valueChanged" id="Ij7-t6-dYk"/>
                                 </connections>
@@ -9709,7 +9706,7 @@
                         <viewControllerLayoutGuide type="bottom" id="Bhq-VN-roI"/>
                     </layoutGuides>
                     <view key="view" contentMode="scaleToFill" id="zDA-Gr-EVh">
-                        <rect key="frame" x="0.0" y="0.0" width="600" height="600"/>
+                        <rect key="frame" x="0.0" y="0.0" width="400" height="1000"/>
                         <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
                         <subviews>
                             <containerView opaque="NO" contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="ydb-tG-Wkz">
@@ -10151,14 +10148,14 @@
         <image name="personal4" width="40" height="38"/>
     </resources>
     <inferredMetricsTieBreakers>
-        <segue reference="ftQ-fn-Ifp"/>
-        <segue reference="yox-nr-2ui"/>
         <segue reference="3W8-Vp-ceG"/>
         <segue reference="4Px-2i-OHW"/>
-        <segue reference="0Fy-iE-bFK"/>
-        <segue reference="PZm-Yi-vmH"/>
-        <segue reference="HdR-nW-3VV"/>
+        <segue reference="iUs-hN-Evy"/>
         <segue reference="m8v-6I-Pen"/>
         <segue reference="yF2-Rg-sXf"/>
+        <segue reference="PZm-Yi-vmH"/>
+        <segue reference="4Er-3o-nRK"/>
+        <segue reference="aWT-n8-56e"/>
+        <segue reference="yox-nr-2ui"/>
     </inferredMetricsTieBreakers>
 </document>

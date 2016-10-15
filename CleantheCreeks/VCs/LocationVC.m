@@ -496,7 +496,6 @@
     if(![self.refreshControl isRefreshing])
     {
         [self.refreshControl beginRefreshing];
-   //     [self updateData];
     }
     if(!self.refreshed)
     {
@@ -548,7 +547,6 @@
         case 0:
         {
             // Delete button was pressed
-            
             NSUserDefaults *loginInfo = [NSUserDefaults standardUserDefaults];
             if(![loginInfo objectForKey:@"user_id"])
             {
@@ -558,8 +556,6 @@
             {
                 NSIndexPath *cellIndexPath = [self.locationTable indexPathForCell:cell];
                 self.selectedIndex = cellIndexPath.row;
-                //[self performSegueWithIdentifier:@"cleanLocation" sender:self];
-                
                 CameraVC * vc = [self.storyboard instantiateViewControllerWithIdentifier:@"CameraVC"];
                 Location * location = [self.locationArray objectAtIndex:self.selectedIndex];
                 vc.photoTaken = NO;
@@ -569,7 +565,6 @@
                 UINavigationController *navC = [[UINavigationController alloc] initWithRootViewController:vc];
                 [navC.navigationBar setHidden:YES];
                 [self presentViewController:navC animated:YES completion:nil];
-                
             }
             
             break;
@@ -611,14 +606,12 @@
     }
     else
     {
-        
         static NSString *const AnnotatioViewReuseID = @"AnnotatioViewReuseID";
         LocationOverlayView *annotationView = (LocationOverlayView *)[mapView dequeueReusableAnnotationViewWithIdentifier:AnnotatioViewReuseID];
         
         if (!annotationView) {
             annotationView = [[LocationOverlayView alloc] initWithAnnotation:annotation reuseIdentifier:AnnotatioViewReuseID];
         }
-        
         // This is how you can check if annotation is a cluster
         if ([annotation isKindOfClass:[FBAnnotationCluster class]]) {
             FBAnnotationCluster *cluster = (FBAnnotationCluster *)annotation;

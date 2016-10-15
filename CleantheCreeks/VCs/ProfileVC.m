@@ -524,8 +524,7 @@
                 UIFont *font1 = [UIFont fontWithName:@"Lato-Bold" size:15.0];
                 NSDictionary *fontAttr1 = [NSDictionary dictionaryWithObject:font1 forKey:NSFontAttributeName];
                 NSDictionary * attributes1 = [NSDictionary dictionaryWithObject:color1 forKey:NSForegroundColorAttributeName];
-                
-                NSDictionary * attributes2 = [NSDictionary dictionaryWithObject:color2 forKey:NSForegroundColorAttributeName];
+                                NSDictionary * attributes2 = [NSDictionary dictionaryWithObject:color2 forKey:NSForegroundColorAttributeName];
                 NSAttributedString * nameStr;
                 if(self.profile_user.user_name!=nil)
                 {

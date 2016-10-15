@@ -176,9 +176,9 @@
                                 activity.kudo_count = [location.kudos count];
                                 if(location.kudos!=nil)
                                 {
-                                    for(NSDictionary *kudo_gaver in location.kudos)
+                                    for(NSDictionary *kudo_giver in location.kudos)
                                     {
-                                        if([[kudo_gaver objectForKey:@"id"] isEqualToString:self.current_user_id])
+                                        if([[kudo_giver objectForKey:@"id"] isEqualToString:self.current_user_id])
                                         {
                                             activity.kudo_assigned=YES;
                                             break;
@@ -213,9 +213,9 @@
                             activity.kudo_count=[location.kudos count];
                             if(location.kudos!=nil)
                             {
-                                for(NSDictionary *kudo_gaver in location.kudos)
+                                for(NSDictionary *kudo_giver in location.kudos)
                                 {
-                                    if([[kudo_gaver objectForKey:@"id"] isEqualToString:self.current_user_id])
+                                    if([[kudo_giver objectForKey:@"id"] isEqualToString:self.current_user_id])
                                     {
                                         activity.kudo_assigned=YES;
                                         break;
@@ -249,9 +249,9 @@
                             activity.kudo_count=[location.kudos count];
                             if(location.kudos!=nil)
                             {
-                                for(NSDictionary *kudo_gaver in location.kudos)
+                                for(NSDictionary *kudo_giver in location.kudos)
                                 {
-                                    if([[kudo_gaver objectForKey:@"id"] isEqualToString:self.current_user_id])
+                                    if([[kudo_giver objectForKey:@"id"] isEqualToString:self.current_user_id])
                                     {
                                         activity.kudo_assigned=YES;
                                         break;
@@ -571,11 +571,11 @@
     if(kudoArray!=nil)
     {
         NSMutableArray *removeArray=[[NSMutableArray alloc]init];
-        for(NSDictionary *kudo_gaver in kudoArray)
+        for(NSDictionary *kudo_giver in kudoArray)
         {
-            if([[kudo_gaver objectForKey:@"id"] isEqualToString:self.current_user_id])
+            if([[kudo_giver objectForKey:@"id"] isEqualToString:self.current_user_id])
             {
-                [removeArray addObject:kudo_gaver];
+                [removeArray addObject:kudo_giver];
                 
             }
         }
